@@ -1,8 +1,9 @@
+import { SplashScreenProps } from "@/types/components/splash";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import { Animated, Image, Text, View } from "react-native";
 
-const SplashScreen = ({ onFinish }) => {
+const SplashScreen = ({ onFinish }: SplashScreenProps) => {
   const [fadeAnim] = useState(new Animated.Value(1));
 
   useEffect(() => {
