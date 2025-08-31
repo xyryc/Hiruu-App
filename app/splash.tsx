@@ -1,4 +1,4 @@
-import { SplashScreenProps } from "@/types/components/splash";
+import { SplashScreenProps } from "@/types";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useEffect, useState } from "react";
 import { Animated, Image, Text, View } from "react-native";
