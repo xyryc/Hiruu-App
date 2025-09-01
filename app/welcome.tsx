@@ -54,7 +54,7 @@ const Welcome = () => {
           <View className="flex-row mx-auto gap-1">
             <Text className="text-sm">Already have an account?</Text>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
               <Text className="text-sm font-semibold underline">Log in</Text>
             </TouchableOpacity>
           </View>
