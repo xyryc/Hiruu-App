@@ -2,6 +2,7 @@ import PrimaryButton from "@/components/ui/PrimaryButton";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -10,7 +11,12 @@ const Welcome = () => {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F7F7F7]">
+    <SafeAreaView
+      className="flex-1 bg-[#BDE4F9]"
+      edges={["top", "left", "right", "bottom"]}
+    >
+      <StatusBar style="dark" backgroundColor="#BDE4F9" />
+
       <LinearGradient
         colors={["#BDE4F9", "#F7F7F7"]}
         locations={[0, 0.38]}
@@ -26,7 +32,7 @@ const Welcome = () => {
         />
 
         {/* text content */}
-        <View className="mt-[71px] items-center">
+        <View className="mt-[71px] items-center h-screen">
           <View className="w-4/5">
             <Text className="text-2xl font-bold capitalize mb-4 text-center text-[#111111]">
               Welcome to Hiruu

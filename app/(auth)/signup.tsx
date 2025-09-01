@@ -37,8 +37,11 @@ const SignUp = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1">
-      <StatusBar style="dark" />
+    <SafeAreaView
+      className="flex-1 bg-[#BDE4F9]"
+      edges={["top", "left", "right", "bottom"]}
+    >
+      <StatusBar style="dark" backgroundColor="#BDE4F9" />
 
       <LinearGradient
         colors={["#BDE4F9", "#F7F7F7"]}
@@ -47,7 +50,11 @@ const SignUp = () => {
       >
         <ScrollView className="px-5 h-screen">
           {/* Header */}
-          <Header className="mt-[71px] mb-7" />
+          <Header
+            className="mt-[71px] mb-7"
+            title="Create Your Account"
+            subtitle="Start by creating your account to explore jobs, manage shifts, and connect with teams."
+          />
 
           {/* Tab Selector */}
           <View className="flex-row rounded-full mb-8">
@@ -205,7 +212,7 @@ const SignUp = () => {
           <PrimaryButton
             className="w-full mb-7"
             title="Sign Up"
-            onPress={() => router.push("/(auth)/login")}
+            onPress={() => router.push("/(auth)/verifiy")}
           />
 
           {/* OR Divider */}

@@ -8,5 +8,7 @@ export interface PrimaryButtonProps {
 
 
 export interface HeaderProps {
-  className: string
+  className: string,
+  title: string, 
+  subtitle: string
 }
