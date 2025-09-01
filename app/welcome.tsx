@@ -26,7 +26,7 @@ const Welcome = () => {
         />
 
         {/* text content */}
-        <View className="mt-[76px] items-center">
+        <View className="mt-[71px] items-center">
           <View className="w-4/5">
             <Text className="text-2xl font-bold capitalize mb-4 text-center text-[#111111]">
               Welcome to Hiruu
@@ -45,11 +45,11 @@ const Welcome = () => {
             onPress={() => router.push("/(auth)/signup")}
           />
 
-          <View className="flex-row">
+          <View className="flex-row mx-auto gap-1">
             <Text className="text-sm">Already have an account?</Text>
 
             <TouchableOpacity>
-              <Text className="text-sm font-semibold">Log in</Text>
+              <Text className="text-sm font-semibold underline">Log in</Text>
             </TouchableOpacity>
           </View>
         </View>

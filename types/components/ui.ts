@@ -1,7 +1,12 @@
 import { GestureResponderEvent } from "react-native";
 
 export interface PrimaryButtonProps {
-  className: string;
+  className?: string;
   title: string;
   onPress?: (event: GestureResponderEvent) => void;
+}
+
+
+export interface HeaderProps {
+  className: string
 }
