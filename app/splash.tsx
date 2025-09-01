@@ -13,7 +13,7 @@ const SplashScreen = ({ onFinish }: SplashScreenProps) => {
         duration: 500,
         useNativeDriver: true,
       }).start(() => onFinish());
-    }, 2000);
+    }, 500);
   }, []);
 
   return (
