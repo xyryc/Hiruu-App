@@ -1,8 +1,8 @@
-import { HeaderProps } from "@/types";
+import { TitleHeaderProps } from "@/types";
 import React from "react";
 import { Text, View } from "react-native";
 
-const Header = ({ className, title, subtitle }: HeaderProps) => {
+const TitleHeader = ({ className, title, subtitle }: TitleHeaderProps) => {
   return (
     <View className={className}>
       <Text className="text-2xl font-bold text-[#111111] text-center mb-4">
@@ -15,4 +15,4 @@ const Header = ({ className, title, subtitle }: HeaderProps) => {
   );
 };
 
-export default Header;
+export default TitleHeader;

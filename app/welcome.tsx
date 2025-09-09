@@ -26,7 +26,7 @@ const Welcome = () => {
           source={require("@/assets/images/welcome-image.svg")}
           style={{
             width: "100%",
-            height: 488,
+            height: "30%",
           }}
           contentFit="cover"
         />

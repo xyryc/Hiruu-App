@@ -1,6 +1,6 @@
-import Header from "@/components/ui/Header";
 import PrimaryButton from "@/components/ui/PrimaryButton";
 import SocialAuth from "@/components/ui/SocialAuth";
+import TitleHeader from "@/components/ui/TitleHeader";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -48,9 +48,9 @@ const SignUp = () => {
         locations={[0, 0.38]}
         className="flex-1 justify-center items-center"
       >
-        <ScrollView className="px-5 h-screen">
+        <ScrollView className="px-5 h-screen" contentContainerClassName="pb-10">
           {/* Header */}
-          <Header
+          <TitleHeader
             className="mt-[71px] mb-7"
             title="Create Your Account"
             subtitle="Start by creating your account to explore jobs, manage shifts, and connect with teams."

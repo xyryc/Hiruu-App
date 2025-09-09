@@ -1,5 +1,5 @@
-import Header from "@/components/ui/Header";
 import PrimaryButton from "@/components/ui/PrimaryButton";
+import TitleHeader from "@/components/ui/TitleHeader";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -64,7 +64,7 @@ const Verify = () => {
       >
         <ScrollView className="px-5 h-screen">
           {/* Header */}
-          <Header
+          <TitleHeader
             className="mt-28 mb-7"
             title="Verify OTP Now"
             subtitle="Onetime OTP has been sent to your registered email or phone number"
@@ -103,7 +103,7 @@ const Verify = () => {
           <PrimaryButton
             className="w-full"
             title="Verify"
-            onPress={() => router.push("/(auth)/login")}
+            onPress={() => router.push("/(profile-setup)/progress")}
           />
         </View>
 

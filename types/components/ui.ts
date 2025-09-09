@@ -6,9 +6,8 @@ export interface PrimaryButtonProps {
   onPress?: (event: GestureResponderEvent) => void;
 }
 
-
-export interface HeaderProps {
-  className: string,
-  title: string, 
-  subtitle: string
+export interface TitleHeaderProps {
+  className: string;
+  title: string;
+  subtitle: string;
 }
