@@ -1,6 +1,8 @@
 import ScreenHeader from "@/components/layout/ProfileHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import OTPInput from "@/components/ui/inputs/OTPInput";
 import PhoneNumberInput from "@/components/ui/inputs/PhoneNumberInput";
+import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
@@ -14,6 +16,8 @@ export default function Step5({
   onComplete,
   handleBack,
 }: any) {
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   return (
     <AnimatedView
       entering={FadeIn.duration(300)}
@@ -61,7 +65,18 @@ export default function Step5({
         contentContainerStyle={{ paddingBottom: 100 }}
         className="flex-1"
       >
-        <PhoneNumberInput />
+        <View>
+          <Text className="text-sm mb-2 text-[#7A7A7A]">Phone number</Text>
+          <PhoneNumberInput
+            phoneNumber={phoneNumber}
+            setPhoneNumber={setPhoneNumber}
+          />
+        </View>
+
+        <View className="mt-4">
+          <Text className="text-sm mb-2 text-[#7A7A7A]">OTP input</Text>
+          <OTPInput otp={otp} setOtp={setOtp} />
+        </View>
       </ScrollView>
 
       {/* Button fixed at bottom */}

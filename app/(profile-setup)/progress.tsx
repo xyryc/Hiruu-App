@@ -4,15 +4,13 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import { View } from "react-native";
-import Animated, { SlideInRight } from "react-native-reanimated";
+import { SlideInRight } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
 import Step5 from "./Step5";
-
-const AnimatedView = Animated.createAnimatedComponent(View);
 
 const ProgressFlow = () => {
   const [currentStep, setCurrentStep] = useState(1);

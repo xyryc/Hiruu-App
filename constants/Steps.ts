@@ -4,6 +4,7 @@ export const STEP_NAMES = {
   3: "Experience",
   4: "Interest",
   5: "Verify",
+  6: "Verify",
 } as const;
 
 export type StepKey = keyof typeof STEP_NAMES;

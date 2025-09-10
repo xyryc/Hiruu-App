@@ -2,9 +2,8 @@ import React, { useState } from "react";
 import { Text, View } from "react-native";
 import PhoneInput from "react-native-phone-input";
 
-const PhoneNumberInput = () => {
+const PhoneNumberInput = ({ phoneNumber, setPhoneNumber }: any) => {
   let phoneRef: any = null;
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [isValidPhone, setIsValidPhone] = useState(true);
 
   const handlePhoneChange = () => {
@@ -17,8 +16,6 @@ const PhoneNumberInput = () => {
 
   return (
     <View>
-      <Text className="text-sm mb-2 text-[#7A7A7A]">Phone number</Text>
-
       <PhoneInput
         ref={(ref) => {
           phoneRef = ref;
