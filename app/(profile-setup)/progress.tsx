@@ -43,13 +43,17 @@ const ProgressFlow = () => {
   return (
     <SafeAreaView
       className="flex-1 bg-[#BDE4F9]"
-      edges={["top", "left", "right", "bottom"]}
+      edges={["top", "left", "right"]}
     >
       <StatusBar style="dark" backgroundColor="#BDE4F9" />
 
-      <LinearGradient colors={["#BDE4F9", "#F7F7F7"]} locations={[0, 0.38]}>
+      <LinearGradient
+        colors={["#BDE4F9", "#F7F7F7"]}
+        locations={[0, 0.38]}
+        style={{ flex: 1 }}
+      >
         {/* Animated Step Content */}
-        <View className="px-5">
+        <View className="px-5 flex-1">
           {currentStep === 1 && (
             <Step1
               progress={progress}

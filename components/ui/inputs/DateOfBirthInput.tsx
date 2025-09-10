@@ -108,7 +108,7 @@ const DateOfBirthInput = ({ value, onDateChange }: DateOfBirthInputProps) => {
                 </View>
 
                 {/* Date Picker */}
-                <View className="px-6 py-4">
+                <View className="px-6 py-4 items-center">
                   <DateTimePicker
                     value={tempDate}
                     mode="date"

@@ -41,6 +41,7 @@ export default function Step1({
       entering={FadeIn.duration(300)}
       exiting={FadeOut.duration(200)}
       layout={Layout.springify()}
+      className="flex-1"
     >
       <ScreenHeader
         onPressBack={handleBack}
@@ -77,7 +78,11 @@ export default function Step1({
       </View>
 
       {/* main content */}
-      <ScrollView className="h-screen-safe">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 100 }} // Add padding here
+        className="flex-1" // Add flex-1 to ScrollView
+      >
         {/* name */}
         <View>
           <Text className="text-sm font-semibold mb-2.5">Name</Text>
@@ -126,6 +131,7 @@ export default function Step1({
           />
         </View>
 
+        {/* socials */}
         <View className="mt-7">
           <Text className="text-sm font-semibold mb-2.5">
             Connect Your Socials
@@ -135,11 +141,10 @@ export default function Step1({
         </View>
       </ScrollView>
 
-      <PrimaryButton
-        title="Next"
-        className="w-full absolute bottom-36"
-        onPress={onComplete}
-      />
+      {/* Button fixed at bottom */}
+      <View className="pb-10 pt-4 bg-transparent">
+        <PrimaryButton title="Next" className="w-full" onPress={onComplete} />
+      </View>
     </AnimatedView>
   );
 }
