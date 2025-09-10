@@ -1,6 +1,11 @@
-import PrimaryButton from "@/components/ui/PrimaryButton";
-import ScreenHeader from "@/components/ui/ProfileHeader";
-import { Text, View } from "react-native";
+import ScreenHeader from "@/components/layout/ProfileHeader";
+import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
+import DateOfBirthInput from "@/components/ui/inputs/DateOfBirthInput";
+import GenderSelection from "@/components/ui/inputs/GenderSelection";
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Dropdown } from "react-native-element-dropdown";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 
@@ -13,6 +18,24 @@ export default function Step1({
   onComplete,
   handleBack,
 }: any) {
+  const [value, setValue] = useState(null);
+  const states = [
+    {
+      label: "Central Park, New York, NY",
+      value: "Central Park, New York, NY",
+    },
+    { label: "Central Park, New York, NY", value: "AK" },
+    {
+      label: "central park South, New York, NY",
+      value: "central park South, New York, NY",
+    },
+  ];
+
+  // dob
+  const [dateOfBirth, setDateOfBirth] = useState(null);
+  // gender
+  const [selectedGender, setSelectedGender] = useState(null);
+
   return (
     <AnimatedView
       entering={FadeIn.duration(300)}
@@ -23,34 +46,126 @@ export default function Step1({
         onPressBack={handleBack}
         title="Personal Details"
         buttonTitle="Skip"
-        className="mt-3 mb-8"
+        className="mt-3"
       />
 
-      <View className="flex-row items-center justify-between mb-6">
-        <Text className="text-sm font-semibold">
-          Your Progress: {currentStep}%
-        </Text>
+      {/* progress details */}
+      <View className="my-7">
+        <View className="flex-row items-center justify-between mb-6">
+          <Text className="text-sm font-semibold">
+            Your Progress: {currentStep}%
+          </Text>
 
-        <Text className="text-sm font-semibold">
-          {getStepName(currentStep)}
-        </Text>
+          <Text className="text-sm font-semibold">
+            {getStepName(currentStep)}
+          </Text>
+        </View>
+
+        <AnimatedView layout={Layout.springify()}>
+          <Progress.Bar
+            progress={progress}
+            width={null}
+            height={11}
+            color="#11293A"
+            unfilledColor="#FFFFFF"
+            borderWidth={0}
+            borderRadius={100}
+            animated={true}
+            animationConfig={{ duration: 300 }}
+          />
+        </AnimatedView>
       </View>
 
-      <AnimatedView layout={Layout.springify()}>
-        <Progress.Bar
-          progress={progress}
-          width={null}
-          height={11}
-          color="#11293A"
-          unfilledColor="#FFFFFF"
-          borderWidth={0}
-          borderRadius={100}
-          animated={true}
-          animationConfig={{ duration: 300 }}
-        />
-      </AnimatedView>
+      {/* main content */}
+      <ScrollView className="h-screen-safe">
+        {/* name */}
+        <View>
+          <Text className="text-sm font-semibold mb-2.5">Name</Text>
 
-      <PrimaryButton title="Next" className="w-full" onPress={onComplete} />
+          <TextInput
+            placeholder="Enter Email"
+            className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm"
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+        </View>
+
+        {/* location*/}
+        <View className="mt-7">
+          <Text className="text-sm font-semibold mb-2.5">Location</Text>
+
+          <Dropdown
+            data={states}
+            labelField="label"
+            valueField="value"
+            placeholder="Select location"
+            value={value}
+            onChange={(item) => setValue(item.value)}
+            style={styles.dropdown}
+            placeholderStyle={styles.placeholderStyle}
+            selectedTextStyle={styles.selectedTextStyle}
+            containerStyle={styles.containerStyle}
+            itemTextStyle={styles.itemTextStyle}
+          />
+        </View>
+
+        {/* date of birth */}
+        <View className="mt-7">
+          <Text className="text-sm font-semibold mb-2.5">Date of Birth</Text>
+
+          <DateOfBirthInput value={dateOfBirth} onDateChange={setDateOfBirth} />
+        </View>
+
+        {/* gender */}
+        <View className="mt-7">
+          <Text className="text-sm font-semibold mb-2.5">Date of Birth</Text>
+
+          <GenderSelection
+            value={selectedGender}
+            onGenderChange={setSelectedGender}
+          />
+        </View>
+
+        <View className="mt-7">
+          <Text className="text-sm font-semibold mb-2.5">
+            Connect Your Socials
+          </Text>
+
+          <ConnectSocials />
+        </View>
+      </ScrollView>
+
+      <PrimaryButton
+        title="Next"
+        className="w-full absolute bottom-36"
+        onPress={onComplete}
+      />
     </AnimatedView>
   );
 }
+
+const styles = StyleSheet.create({
+  dropdown: {
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#EEEEEE",
+    borderRadius: 10,
+    padding: 12,
+  },
+  placeholderStyle: {
+    fontSize: 14,
+    color: "#9CA3AF",
+  },
+  selectedTextStyle: {
+    fontSize: 14,
+    color: "#111111",
+  },
+  containerStyle: {
+    borderRadius: 10,
+    backgroundColor: "white",
+  },
+  itemTextStyle: {
+    fontSize: 14,
+    color: "#3D3D3D",
+  },
+});

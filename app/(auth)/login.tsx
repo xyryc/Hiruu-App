@@ -1,6 +1,6 @@
-import PrimaryButton from "@/components/ui/PrimaryButton";
-import SocialAuth from "@/components/ui/SocialAuth";
-import TitleHeader from "@/components/ui/TitleHeader";
+import SocialAuth from "@/components/layout/SocialAuth";
+import TitleHeader from "@/components/layout/TitleHeader";
+import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";

@@ -3,7 +3,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
 import Animated, { SlideInRight } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Step1 from "./Step1";
@@ -47,36 +47,30 @@ const ProgressFlow = () => {
     >
       <StatusBar style="dark" backgroundColor="#BDE4F9" />
 
-      <LinearGradient
-        colors={["#BDE4F9", "#F7F7F7"]}
-        locations={[0, 0.38]}
-        className="flex-1 justify-center items-center"
-      >
-        <ScrollView className="px-5 h-screen" contentContainerClassName="pb-10">
-          {/* Animated Step Content */}
-          <View className="flex-1">
-            {currentStep === 1 && (
-              <Step1
-                progress={progress}
-                currentStep={currentStep}
-                getStepName={getStepName}
-                onComplete={handleNext}
-                entering={getAnimationStyle(1)}
-                handleBack={handleBack}
-              />
-            )}
-            {currentStep === 2 && (
-              <Step2
-                progress={progress}
-                currentStep={currentStep}
-                getStepName={getStepName}
-                onComplete={handleNext}
-                entering={getAnimationStyle(2)}
-                handleBack={handleBack}
-              />
-            )}
-          </View>
-        </ScrollView>
+      <LinearGradient colors={["#BDE4F9", "#F7F7F7"]} locations={[0, 0.38]}>
+        {/* Animated Step Content */}
+        <View className="px-5">
+          {currentStep === 1 && (
+            <Step1
+              progress={progress}
+              currentStep={currentStep}
+              getStepName={getStepName}
+              onComplete={handleNext}
+              entering={getAnimationStyle(1)}
+              handleBack={handleBack}
+            />
+          )}
+          {currentStep === 2 && (
+            <Step2
+              progress={progress}
+              currentStep={currentStep}
+              getStepName={getStepName}
+              onComplete={handleNext}
+              entering={getAnimationStyle(2)}
+              handleBack={handleBack}
+            />
+          )}
+        </View>
       </LinearGradient>
     </SafeAreaView>
   );

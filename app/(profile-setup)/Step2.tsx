@@ -1,5 +1,5 @@
-import PrimaryButton from "@/components/ui/PrimaryButton";
-import ScreenHeader from "@/components/ui/ProfileHeader";
+import ScreenHeader from "@/components/layout/ProfileHeader";
+import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
@@ -26,6 +26,7 @@ export default function Step2({
         className="mt-3 mb-8"
       />
 
+      {/* progress details */}
       <View className="flex-row items-center justify-between mb-6">
         <Text className="text-sm font-semibold">
           Your Progress: {currentStep}%

@@ -1,5 +1,5 @@
-import PrimaryButton from "@/components/ui/PrimaryButton";
-import TitleHeader from "@/components/ui/TitleHeader";
+import TitleHeader from "@/components/layout/TitleHeader";
+import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";

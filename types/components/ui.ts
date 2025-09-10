@@ -11,3 +11,15 @@ export interface TitleHeaderProps {
   title: string;
   subtitle: string;
 }
+
+export interface DateOfBirthInputProps {
+  value: Date | null;
+  onDateChange: (date: Date | null) => void;
+}
+
+type GenderOption = "male" | "female" | "other" | null;
+
+export interface GenderSelectionProps {
+  value: GenderOption;
+  onGenderChange: (gender: GenderOption) => void;
+}
