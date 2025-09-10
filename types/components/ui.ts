@@ -23,3 +23,9 @@ export interface GenderSelectionProps {
   value: GenderOption;
   onGenderChange: (gender: GenderOption) => void;
 }
+
+export interface ProfileImagePickerProps {
+  value: string | null;
+  onImageChange: (imageUri: string | null) => void;
+  size?: number;
+}

@@ -1,20 +1,13 @@
 import ScreenHeader from "@/components/layout/ProfileHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import ProfileImagePicker from "@/components/ui/inputs/ProfileImagePicker";
 import { useState } from "react";
-import {
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export default function Step2({
+export default function Step3({
   progress,
   currentStep,
   getStepName,
@@ -32,7 +25,7 @@ export default function Step2({
     >
       <ScreenHeader
         onPressBack={handleBack}
-        title="Profile Photo"
+        title="Work Experience"
         buttonTitle="Skip"
         className="mt-3"
       />
@@ -69,41 +62,7 @@ export default function Step2({
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 }} // Add padding here
         className="flex-1" // Add flex-1 to ScrollView
-      >
-        {/* profile image */}
-        <View>
-          <ProfileImagePicker
-            value={profileImage}
-            onImageChange={setProfileImage}
-            size={120}
-          />
-
-          {profileImage && (
-            <TouchableOpacity
-              onPress={() => setProfileImage(null)}
-              className="mt-6 px-4 py-2 bg-red-500 rounded-lg"
-            >
-              <Text className="text-white font-medium text-center">
-                Remove Photo
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* intro  */}
-        <View className="mt-7">
-          <Text className="text-sm font-semibold mb-2.5">
-            Add a personal intro
-          </Text>
-
-          <TextInput
-            placeholder="Type here..."
-            className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm h-20"
-            autoCapitalize="none"
-            multiline={true}
-          />
-        </View>
-      </ScrollView>
+      ></ScrollView>
 
       {/* Button fixed at bottom */}
       <View className="pb-10 pt-4 bg-transparent">

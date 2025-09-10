@@ -54,7 +54,7 @@ export default function Step1({
       <View className="my-7">
         <View className="flex-row items-center justify-between mb-6">
           <Text className="text-sm font-semibold">
-            Your Progress: {currentStep}%
+            Your Progress: {currentStep * 20}%
           </Text>
 
           <Text className="text-sm font-semibold">
