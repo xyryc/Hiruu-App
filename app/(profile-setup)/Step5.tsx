@@ -1,22 +1,19 @@
 import ScreenHeader from "@/components/layout/ProfileHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import InterestSelection from "@/components/ui/inputs/InterestSelection";
-import { useState } from "react";
+import PhoneNumberInput from "@/components/ui/inputs/PhoneNumberInput";
 import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
-export default function Step4({
+export default function Step5({
   progress,
   currentStep,
   getStepName,
   onComplete,
   handleBack,
 }: any) {
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-
   return (
     <AnimatedView
       entering={FadeIn.duration(300)}
@@ -26,7 +23,7 @@ export default function Step4({
     >
       <ScreenHeader
         onPressBack={handleBack}
-        title="Interest"
+        title="Mobile Verification"
         buttonTitle="Skip"
         className="mt-3"
       />
@@ -64,11 +61,7 @@ export default function Step4({
         contentContainerStyle={{ paddingBottom: 100 }}
         className="flex-1"
       >
-        <InterestSelection
-          selectedInterests={selectedInterests}
-          onInterestsChange={setSelectedInterests}
-          maxSelections={8}
-        />
+        <PhoneNumberInput />
       </ScrollView>
 
       {/* Button fixed at bottom */}

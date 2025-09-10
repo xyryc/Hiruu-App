@@ -1,5 +1,8 @@
 import ScreenHeader from "@/components/layout/ProfileHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import MultiSelectCompanyDropdown from "@/components/ui/inputs/MultiSelectCompanyDropdown";
+import { Company, WorkExperience } from "@/types";
+import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
@@ -13,6 +16,9 @@ export default function Step3({
   onComplete,
   handleBack,
 }: any) {
+  const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
+  const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
+
   return (
     <AnimatedView
       entering={FadeIn.duration(300)}
@@ -28,7 +34,7 @@ export default function Step3({
       />
 
       {/* progress details */}
-      <View className="my-7">
+      <View className="mt-7">
         <View className="flex-row items-center justify-between mb-6">
           <Text className="text-sm font-semibold">
             Your Progress: {currentStep * 20}%
@@ -57,9 +63,21 @@ export default function Step3({
       {/* main content */}
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }} // Add padding here
-        className="flex-1" // Add flex-1 to ScrollView
-      ></ScrollView>
+        contentContainerStyle={{ paddingBottom: 100 }}
+        className="flex-1"
+      >
+        {/* company  */}
+        <View className="mt-7">
+          <Text className="text-sm font-semibold mb-2.5">Company/Employer</Text>
+
+          <MultiSelectCompanyDropdown
+            selectedCompanies={selectedCompanies}
+            workExperiences={workExperiences}
+            onCompaniesChange={setSelectedCompanies}
+            onWorkExperiencesChange={setWorkExperiences}
+          />
+        </View>
+      </ScrollView>
 
       {/* Button fixed at bottom */}
       <View className="pb-10 pt-4 bg-transparent">

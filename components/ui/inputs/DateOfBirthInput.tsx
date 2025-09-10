@@ -41,18 +41,13 @@ const DateOfBirthInput = ({ value, onDateChange }: DateOfBirthInputProps) => {
     return `${day}/${month}/${year}`;
   };
 
-  // Date constraints
+  // In DateOfBirthInput component, you could make these configurable:
   const getMaxDate = () => {
-    const today = new Date();
-    return new Date(
-      today.getFullYear() - 16,
-      today.getMonth(),
-      today.getDate()
-    );
+    return new Date(); // For work dates, allow up to today
   };
 
   const getMinDate = () => {
-    return new Date(1940, 0, 1);
+    return new Date(1950, 0, 1); // Reasonable work start date
   };
 
   return (

@@ -49,7 +49,6 @@ export default function Step1({
       <ScreenHeader
         onPressBack={handleBack}
         title="Personal Details"
-        buttonTitle="Skip"
         className="mt-3"
       />
 
