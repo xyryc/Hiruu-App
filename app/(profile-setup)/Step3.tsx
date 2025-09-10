@@ -1,6 +1,5 @@
 import ScreenHeader from "@/components/layout/ProfileHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
@@ -14,8 +13,6 @@ export default function Step3({
   onComplete,
   handleBack,
 }: any) {
-  const [profileImage, setProfileImage] = useState(null);
-
   return (
     <AnimatedView
       entering={FadeIn.duration(300)}

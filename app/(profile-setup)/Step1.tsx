@@ -3,6 +3,7 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import DateOfBirthInput from "@/components/ui/inputs/DateOfBirthInput";
 import GenderSelection from "@/components/ui/inputs/GenderSelection";
+import { GenderOption } from "@/types";
 import { useState } from "react";
 import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
@@ -32,9 +33,11 @@ export default function Step1({
   ];
 
   // dob
-  const [dateOfBirth, setDateOfBirth] = useState(null);
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   // gender
-  const [selectedGender, setSelectedGender] = useState(null);
+  const [selectedGender, setSelectedGender] = useState<GenderOption | null>(
+    null
+  );
 
   return (
     <AnimatedView

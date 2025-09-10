@@ -17,7 +17,7 @@ export interface DateOfBirthInputProps {
   onDateChange: (date: Date | null) => void;
 }
 
-type GenderOption = "male" | "female" | "other" | null;
+export type GenderOption = "male" | "female" | "other" | null;
 
 export interface GenderSelectionProps {
   value: GenderOption;

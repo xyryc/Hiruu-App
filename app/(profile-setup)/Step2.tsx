@@ -21,7 +21,7 @@ export default function Step2({
   onComplete,
   handleBack,
 }: any) {
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   return (
     <AnimatedView
