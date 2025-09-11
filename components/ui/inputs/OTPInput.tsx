@@ -40,23 +40,31 @@ const OTPInput = ({ otp, setOtp }: any) => {
 
   return (
     <View className="flex-row justify-between px-2">
-      {otp.map((digit, index) => (
-        <TextInput
-          key={index}
-          ref={(ref) => (inputRefs.current[index] = ref)}
-          className={`w-14 h-14 border rounded-[10px] text-center text-lg place-items-center ${
-            digit ? "border-gray-300 bg-white" : "border-[#EEEEEE] bg-white"
-          }`}
-          value={digit}
-          onChangeText={(value) => handleOtpChange(value, index)}
-          onKeyPress={({ nativeEvent }) =>
-            handleKeyPress(nativeEvent.key, index)
-          }
-          keyboardType="numeric"
-          maxLength={1}
-          selectTextOnFocus
-        />
-      ))}
+      {otp.map(
+        (
+          //@ts-ignore
+          digit,
+          //@ts-ignore
+          index
+        ) => (
+          <TextInput
+            key={index}
+            //@ts-ignore
+            ref={(ref) => (inputRefs.current[index] = ref)}
+            className={`w-14 h-14 border rounded-[10px] text-center text-lg place-items-center ${
+              digit ? "border-gray-300 bg-white" : "border-[#EEEEEE] bg-white"
+            }`}
+            value={digit}
+            onChangeText={(value) => handleOtpChange(value, index)}
+            onKeyPress={({ nativeEvent }) =>
+              handleKeyPress(nativeEvent.key, index)
+            }
+            keyboardType="numeric"
+            maxLength={1}
+            selectTextOnFocus
+          />
+        )
+      )}
     </View>
   );
 };

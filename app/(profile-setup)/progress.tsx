@@ -23,7 +23,7 @@ const ProgressFlow = () => {
     if (step === currentStep) {
       return direction === "forward"
         ? SlideInRight.duration(300)
-        : SlideInRight.duration(300); // For back animation, use SlideInLeft
+        : SlideInRight.duration(300);
     }
     return undefined;
   };
@@ -32,7 +32,7 @@ const ProgressFlow = () => {
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      router.push(`/(auth)/login`);
+      router.push("/(profile-setup)/complete");
     }
   };
 
