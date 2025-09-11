@@ -7,7 +7,7 @@ export interface PrimaryButtonProps {
 }
 
 export interface TitleHeaderProps {
-  className: string;
+  className?: string;
   title: string;
   subtitle: string;
 }

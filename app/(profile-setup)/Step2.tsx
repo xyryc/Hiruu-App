@@ -1,6 +1,7 @@
 import ScreenHeader from "@/components/layout/ProfileHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ProfileImagePicker from "@/components/ui/inputs/ProfileImagePicker";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ScrollView,
@@ -22,6 +23,7 @@ export default function Step2({
   handleBack,
 }: any) {
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const router = useRouter();
 
   return (
     <AnimatedView
@@ -35,6 +37,7 @@ export default function Step2({
         title="Profile Photo"
         buttonTitle="Skip"
         className="mt-3"
+        onPress={() => router.push("/(profile-setup)/complete")}
       />
 
       {/* progress details */}

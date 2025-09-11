@@ -1,6 +1,7 @@
 import ScreenHeader from "@/components/layout/ProfileHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import InterestSelection from "@/components/ui/inputs/InterestSelection";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
@@ -15,6 +16,7 @@ export default function Step4({
   onComplete,
   handleBack,
 }: any) {
+  const router = useRouter();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
   return (
@@ -29,6 +31,7 @@ export default function Step4({
         title="Interest"
         buttonTitle="Skip"
         className="mt-3"
+        onPress={() => router.push("/(profile-setup)/complete")}
       />
 
       {/* progress details */}

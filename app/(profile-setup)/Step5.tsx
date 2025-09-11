@@ -2,6 +2,7 @@ import ScreenHeader from "@/components/layout/ProfileHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import OTPInput from "@/components/ui/inputs/OTPInput";
 import PhoneNumberInput from "@/components/ui/inputs/PhoneNumberInput";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
@@ -16,6 +17,7 @@ export default function Step5({
   onComplete,
   handleBack,
 }: any) {
+  const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   return (
@@ -30,6 +32,7 @@ export default function Step5({
         title="Mobile Verification"
         buttonTitle="Skip"
         className="mt-3"
+        onPress={() => router.push("/(profile-setup)/complete")}
       />
 
       {/* progress details */}

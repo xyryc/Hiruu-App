@@ -2,6 +2,7 @@ import ScreenHeader from "@/components/layout/ProfileHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import MultiSelectCompanyDropdown from "@/components/ui/inputs/MultiSelectCompanyDropdown";
 import { Company, WorkExperience } from "@/types";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
@@ -16,6 +17,7 @@ export default function Step3({
   onComplete,
   handleBack,
 }: any) {
+  const router = useRouter();
   const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
   const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
 
@@ -31,6 +33,7 @@ export default function Step3({
         title="Work Experience"
         buttonTitle="Skip"
         className="mt-3"
+        onPress={() => router.push("/(profile-setup)/complete")}
       />
 
       {/* progress details */}
