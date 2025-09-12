@@ -37,7 +37,7 @@ const WelcomeHeader = ({ className }: WelcomeHeaderProps) => {
           contentFit="scale-down"
         />
         <View className="px-5 py-2 bg-[#DDF1FF] -ml-4 -z-10 rounded-r-[40px]">
-          <Text className="text-sm font-semibold">5</Text>
+          <Text className="text-sm font-semibold">05</Text>
         </View>
       </View>
     </View>

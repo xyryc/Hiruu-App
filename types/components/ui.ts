@@ -1,3 +1,4 @@
+import { ImageSource } from "expo-image";
 import { GestureResponderEvent } from "react-native";
 
 export interface PrimaryButtonProps {
@@ -79,5 +80,16 @@ export interface JoinCollegueProps {
 }
 
 export interface FindNewJobProps {
+  className?: string;
+}
+
+export interface ActionCardProps {
+  title: string;
+  buttonTitle: string;
+  rightIcon: ImageSource;
+  background: ImageSource;
+}
+
+export interface BusinessProfileProps {
   className?: string;
 }

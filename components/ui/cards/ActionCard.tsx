@@ -1,21 +1,25 @@
+import { ActionCardProps } from "@/types";
 import { Image } from "expo-image";
 import React from "react";
 import { Text, View } from "react-native";
 import SecondaryButton from "../buttons/SecondaryButton";
 
-const ActionCard = () => {
+const ActionCard = ({
+  title,
+  buttonTitle,
+  rightIcon,
+  background,
+}: ActionCardProps) => {
   return (
     <View className="flex-row justify-between p-4 bg-[#4FB2F3] rounded-[14px]">
       <View>
-        <Text className="text-lg font-bold mb-4 text-white">
-          Explore All Job Listings
-        </Text>
+        <Text className="text-lg font-bold mb-4 text-white">{title}</Text>
 
-        <SecondaryButton title="Find Now" />
+        <SecondaryButton title={buttonTitle} />
       </View>
 
       <Image
-        source={require("@/assets/images/toolbox.svg")}
+        source={rightIcon}
         style={{
           width: 110,
           height: 80,
@@ -24,9 +28,9 @@ const ActionCard = () => {
       />
 
       {/* background */}
-      <View className="absolute -right-10 top-0">
+      <View className="absolute -right-6 top-0">
         <Image
-          source={require("@/assets/images/chessboard-bg.svg")}
+          source={background}
           style={{
             width: 100,
             height: 100,

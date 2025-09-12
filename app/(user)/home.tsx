@@ -1,3 +1,4 @@
+import BusinessProfile from "@/components/layout/BusinessProfile";
 import FindNewJob from "@/components/layout/FindNewJob";
 import HomeHeader from "@/components/layout/HomeHeader";
 import JoinCollegue from "@/components/layout/JoinCollegue";
@@ -8,7 +9,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserHome = () => {
   return (
-    <SafeAreaView className="flex-1" edges={["top", "left", "right", "bottom"]}>
+    <SafeAreaView
+      className="flex-1 bg-white"
+      edges={["top", "left", "right", "bottom"]}
+    >
       <StatusBar barStyle="dark-content" backgroundColor="#BDE4F9" />
 
       <HomeHeader className="mt-2.5 mb-5" />
@@ -22,6 +26,9 @@ const UserHome = () => {
 
         {/* find new job */}
         <FindNewJob className="mt-7" />
+
+        {/* do you  manage a business */}
+        <BusinessProfile className="mt-7" />
       </ScrollView>
     </SafeAreaView>
   );

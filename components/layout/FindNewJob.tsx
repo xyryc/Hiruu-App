@@ -9,7 +9,12 @@ const FindNewJob = ({ className }: FindNewJobProps) => {
       <Text className="text-xl font-semibold mb-4">Find New Job</Text>
 
       {/* job listing card */}
-      <ActionCard />
+      <ActionCard
+        title="Explore All Job Listings"
+        buttonTitle="Find Now"
+        rightIcon={require("@/assets/images/toolbox.svg")}
+        background={require("@/assets/images/chessboard-bg.svg")}
+      />
     </View>
   );
 };
