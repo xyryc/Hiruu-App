@@ -6,6 +6,18 @@ export interface PrimaryButtonProps {
   onPress?: (event: GestureResponderEvent) => void;
 }
 
+export interface SecondaryButtonProps {
+  className?: string;
+  title: string;
+  onPress?: (event: GestureResponderEvent) => void;
+}
+
+export interface SmallButtonProps {
+  className?: string;
+  title: string;
+  onPress?: (event: GestureResponderEvent) => void;
+}
+
 export interface TitleHeaderProps {
   className?: string;
   title: string;
@@ -59,5 +71,13 @@ export interface HomeHeaderProps {
 }
 
 export interface WelcomeHeaderProps {
+  className?: string;
+}
+
+export interface JoinCollegueProps {
+  className?: string;
+}
+
+export interface FindNewJobProps {
   className?: string;
 }

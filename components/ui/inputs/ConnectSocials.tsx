@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import SecondaryButton from "../buttons/SecondaryButton";
+import SmallButton from "../buttons/SmallButton";
 
 const ConnectSocials = () => {
   return (
@@ -21,7 +21,7 @@ const ConnectSocials = () => {
           <Text className="text-sm font-semibold">Facebook</Text>
         </TouchableOpacity>
 
-        <SecondaryButton title="Link" />
+        <SmallButton title="Link" />
       </View>
 
       {/* linkedin */}
@@ -39,7 +39,7 @@ const ConnectSocials = () => {
           <Text className="text-sm font-semibold">Facebook</Text>
         </TouchableOpacity>
 
-        <SecondaryButton title="Link" />
+        <SmallButton title="Link" />
       </View>
 
       {/* whatsapp */}
@@ -57,7 +57,7 @@ const ConnectSocials = () => {
           <Text className="text-sm font-semibold">Facebook</Text>
         </TouchableOpacity>
 
-        <SecondaryButton title="Link" />
+        <SmallButton title="Link" />
       </View>
 
       {/* twitter */}
@@ -75,7 +75,7 @@ const ConnectSocials = () => {
           <Text className="text-sm font-semibold">Facebook</Text>
         </TouchableOpacity>
 
-        <SecondaryButton title="Link" />
+        <SmallButton title="Link" />
       </View>
 
       {/* telegram */}
@@ -93,7 +93,7 @@ const ConnectSocials = () => {
           <Text className="text-sm font-semibold">Facebook</Text>
         </TouchableOpacity>
 
-        <SecondaryButton title="Link" />
+        <SmallButton title="Link" />
       </View>
 
       {/* instagram */}
@@ -111,7 +111,7 @@ const ConnectSocials = () => {
           <Text className="text-sm font-semibold">Instagram</Text>
         </TouchableOpacity>
 
-        <SecondaryButton title="Link" />
+        <SmallButton title="Link" />
       </View>
     </View>
   );

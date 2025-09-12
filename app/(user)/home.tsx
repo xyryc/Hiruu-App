@@ -1,4 +1,6 @@
+import FindNewJob from "@/components/layout/FindNewJob";
 import HomeHeader from "@/components/layout/HomeHeader";
+import JoinCollegue from "@/components/layout/JoinCollegue";
 import WelcomeHeader from "@/components/layout/WelcomeHeader";
 import React from "react";
 import { ScrollView, StatusBar } from "react-native";
@@ -14,7 +16,13 @@ const UserHome = () => {
       <WelcomeHeader />
 
       {/* main content */}
-      <ScrollView></ScrollView>
+      <ScrollView>
+        {/* join your collegues */}
+        <JoinCollegue className="mt-7" />
+
+        {/* find new job */}
+        <FindNewJob className="mt-7" />
+      </ScrollView>
     </SafeAreaView>
   );
 };
