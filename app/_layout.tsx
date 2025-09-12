@@ -15,11 +15,11 @@ import SplashScreen from "./splash";
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [showSplash, setShowSplash] = useState(true);
-  const [loaded] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+  const [fontsLoaded] = useFonts({
+    ProximaNova: require("../assets/fonts/proximanova_regular.ttf"),
   });
 
-  if (!loaded) {
+  if (!fontsLoaded) {
     return null;
   }
 

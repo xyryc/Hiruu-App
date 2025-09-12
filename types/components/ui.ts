@@ -53,3 +53,11 @@ export interface MultiSelectCompanyDropdownProps {
   onCompaniesChange: (companies: Company[]) => void;
   onWorkExperiencesChange: (experiences: WorkExperience[]) => void;
 }
+
+export interface HomeHeaderProps {
+  className?: string;
+}
+
+export interface WelcomeHeaderProps {
+  className?: string;
+}
