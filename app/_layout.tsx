@@ -16,7 +16,13 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [showSplash, setShowSplash] = useState(true);
   const [fontsLoaded] = useFonts({
-    ProximaNova: require("../assets/fonts/proximanova_regular.ttf"),
+    "ProximaNova-Thin": require("../assets/fonts/ProximaNova-Thin.ttf"),
+    "ProximaNova-Light": require("../assets/fonts/ProximaNova-Light.ttf"),
+    "ProximaNova-Regular": require("../assets/fonts/ProximaNova-Regular.ttf"),
+    "ProximaNova-Medium": require("../assets/fonts/ProximaNova-Medium.ttf"),
+    "ProximaNova-Semibold": require("../assets/fonts/ProximaNova-Semibold.ttf"),
+    "ProximaNova-Bold": require("../assets/fonts/ProximaNova-Bold.ttf"),
+    "ProximaNova-Black": require("../assets/fonts/ProximaNova-Black.ttf"),
   });
 
   if (!fontsLoaded) {

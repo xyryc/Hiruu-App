@@ -16,7 +16,7 @@ const SecondaryButton = ({
       <Text className="font-semibold text-sm pl-6 pr-4">{title}</Text>
 
       <AntDesign
-        name="arrowright"
+        name="arrow-right"
         size={18}
         color="#fff"
         className="p-2 bg-primary rounded-full"

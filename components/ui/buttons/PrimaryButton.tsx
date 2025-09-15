@@ -1,5 +1,5 @@
 import { PrimaryButtonProps } from "@/types";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 
@@ -11,8 +11,8 @@ const PrimaryButton = ({ className, title, onPress }: PrimaryButtonProps) => {
     >
       <Text className="text-white text-center flex-1">{title}</Text>
 
-      <AntDesign
-        name="arrowright"
+      <Feather
+        name="arrow-right"
         size={24}
         color="#000000"
         className="p-2 bg-white rounded-full"

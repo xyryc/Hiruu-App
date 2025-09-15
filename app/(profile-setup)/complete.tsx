@@ -2,11 +2,14 @@ import TitleHeader from "@/components/layout/TitleHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { useRouter } from "expo-router";
 import React from "react";
 import { StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Complete = () => {
+  const router = useRouter();
+
   return (
     <SafeAreaView className="flex-1" edges={["left", "right", "bottom"]}>
       <StatusBar barStyle="dark-content" backgroundColor="#BDE4F9" />
@@ -37,7 +40,11 @@ const Complete = () => {
         </View>
 
         <View className="absolute bottom-0 inset-x-5">
-          <PrimaryButton className="w-full" title="Go to Profile" />
+          <PrimaryButton
+            onPress={() => router.push("/(user)/home")}
+            className="w-full"
+            title="Go to Profile"
+          />
         </View>
       </LinearGradient>
     </SafeAreaView>

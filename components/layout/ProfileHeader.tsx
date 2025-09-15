@@ -1,4 +1,4 @@
-import AntDesign from "@expo/vector-icons/AntDesign";
+import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -13,7 +13,7 @@ const ScreenHeader = ({
     <View className={`flex-row justify-between items-center ${className}`}>
       <View className="flex-row items-center gap-2.5">
         <TouchableOpacity onPress={onPressBack}>
-          <AntDesign name="arrowleft" size={24} color="black" />
+          <Feather name="arrow-left" size={24} color="black" />
         </TouchableOpacity>
 
         <Text className="font-bold text-2xl">{title}</Text>

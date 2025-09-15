@@ -2,6 +2,7 @@ import BusinessProfile from "@/components/layout/BusinessProfile";
 import FindNewJob from "@/components/layout/FindNewJob";
 import HomeHeader from "@/components/layout/HomeHeader";
 import JoinCollegue from "@/components/layout/JoinCollegue";
+import ProfileProgress from "@/components/layout/ProfileProgress";
 import WelcomeHeader from "@/components/layout/WelcomeHeader";
 import React from "react";
 import { ScrollView, StatusBar } from "react-native";
@@ -21,6 +22,9 @@ const UserHome = () => {
 
       {/* main content */}
       <ScrollView>
+        {/* profile progress */}
+        <ProfileProgress className="mt-7" />
+
         {/* join your collegues */}
         <JoinCollegue className="mt-7" />
 

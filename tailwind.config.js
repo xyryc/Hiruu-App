@@ -4,7 +4,17 @@ module.exports = {
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
-    extend: { 
+    extend: {
+      fontFamily: {
+        'proximanova-thin' : ['ProximaNova-Thin'],
+        'proximanova-light' : ['ProximaNova-Light'],
+        'proximanova-regular' : ['ProximaNova-Regular'],
+        'proximanova-medium' : ['ProximaNova-Medium'],
+        'proximanova-semibold' : ['ProximaNova-Semibold'],
+        'proximanova-bold' : ['ProximaNova-Bold'],
+        'proximanova-black' : ['ProximaNova-Black'],
+      },
+
       colors: {
         primary:"#111111",
         secondary: "#7A7A7A",

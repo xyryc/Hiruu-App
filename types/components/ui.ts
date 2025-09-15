@@ -93,3 +93,7 @@ export interface ActionCardProps {
 export interface BusinessProfileProps {
   className?: string;
 }
+
+export interface ProfileProgressProps {
+  className?: string;
+}
