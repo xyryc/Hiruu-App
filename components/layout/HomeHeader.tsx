@@ -16,7 +16,7 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
 
       <View className="flex-row items-center gap-1.5">
         {/* messages */}
-        <View className="bg-[#EEEEEE] border-[0.5px] border-[#B2B1B1] rounded-full p-2">
+        <View className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
           <Image
             source={require("@/assets/images/messages.svg")}
             style={{
@@ -28,7 +28,7 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
         </View>
 
         {/* notification */}
-        <View className="bg-[#EEEEEE] border-[0.5px] border-[#B2B1B1] rounded-full p-2">
+        <View className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
           <Image
             source={require("@/assets/images/bell.svg")}
             style={{
@@ -43,7 +43,7 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
         </View>
 
         {/* scanner */}
-        <View className="bg-[#F5F5F5] border-[0.5px] border-[#B2B1B1] rounded-full p-2">
+        <View className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
           <Image
             source={require("@/assets/images/scan.svg")}
             style={{

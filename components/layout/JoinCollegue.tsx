@@ -9,7 +9,7 @@ const JoinCollegue = ({ className }: JoinCollegueProps) => {
       <Text className="text-xl font-semibold mb-4">Join Your Colleagues</Text>
 
       <View className="flex-row items-center gap-3">
-        <TouchableOpacity className="flex-row items-center gap-5 border border-[#EEEEEE] rounded-xl p-4">
+        <TouchableOpacity className="flex-row flex-1 max-w-56 justify-between items-center border border-[#EEEEEE] rounded-xl p-4">
           <Text className="text-sm font-semibold">Scan QR</Text>
 
           <Image
@@ -22,7 +22,7 @@ const JoinCollegue = ({ className }: JoinCollegueProps) => {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity className="flex-row items-center gap-5 border border-[#EEEEEE] rounded-xl p-4">
+        <TouchableOpacity className="flex-row flex-1 max-w-56 justify-between items-center border border-[#EEEEEE] rounded-xl p-4">
           <Text className="text-sm font-semibold">Enter Code</Text>
 
           <Image
