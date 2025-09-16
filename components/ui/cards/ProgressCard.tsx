@@ -1,13 +1,69 @@
-import React from "react";
-import { Text, View } from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { AnimatedCircularProgress } from "react-native-circular-progress";
 import PrimaryButton from "../buttons/PrimaryButton";
 
 const ProgressCard = () => {
+  const [progress, setProgress] = useState(70);
+
+  // Simulate dynamic update (e.g., from API or state)
+  // const progress = 50; // Replace with your actual data
+  // Color mapping based on progress
+  const getTintColor = (fill: number) => {
+    if (fill < 30) return "#F3DA4F"; // Yellow
+    if (fill < 70) return "#FE714E"; // Orange
+    return "#10B981"; // Green
+  };
+
+  const tintColor = getTintColor(progress);
+
   return (
-    <View className="flex-row">
+    <View className="flex-row justify-between bg-[#4FB2F326] p-5 rounded-[14px]">
       {/* left */}
       <View>
-        <Text>50%</Text>
+        <Text className="font-proximanova-semibold text-[10px] text-center text-white bg-[#FE714E] py-1.5 px-2.5 rounded-[20px] mb-2">
+          50% Ready
+        </Text>
+
+        {/* Progress Arc (Semi-Circle) */}
+        <AnimatedCircularProgress
+          size={100}
+          width={10}
+          fill={progress}
+          rotation={-90} // Start at top (like a gauge)
+          tintColor={tintColor}
+          backgroundColor="#E5E7EB"
+          arcSweepAngle={180} // Only half circle (top half)
+          lineCap="round"
+          style={styles.progressContainer}
+        >
+          {() => (
+            <View className="absolute inset-0 items-center justify-center">
+              {/* User Icon */}
+              <View className="border-[#4FB2F34D] border-8 rounded-full">
+                <View className="bg-white rounded-full w-14 h-14 justify-center items-center">
+                  <FontAwesome name="user" size={26} color="#4FB2F3" />
+                </View>
+              </View>
+            </View>
+          )}
+        </AnimatedCircularProgress>
+
+        {/* Label: 0% - Left End */}
+        <Text className="absolute bottom-8 text-[10px] text-secondary font-proximanova-semibold">
+          0
+        </Text>
+
+        {/* Label: 100% - Right End */}
+        <Text className="absolute bottom-8 right-0 text-[10px] text-secondary font-proximanova-semibold">
+          100
+        </Text>
+
+        {/* Bottom Label */}
+        <Text className="absolute bottom-0 right-10 text-[10px] font-proximanova-semibold text-center ">
+          Profile
+        </Text>
       </View>
 
       {/* right */}
@@ -22,10 +78,20 @@ const ProgressCard = () => {
           5 Tokens
         </Text>
 
-        <PrimaryButton title="Complete Profile" />
+        <PrimaryButton className="mt-2.5" title="Complete Profile" />
       </View>
     </View>
   );
 };
 
 export default ProgressCard;
+
+const styles = StyleSheet.create({
+  progressContainer: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+});

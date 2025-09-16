@@ -10,10 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserHome = () => {
   return (
-    <SafeAreaView
-      className="flex-1 bg-white"
-      edges={["top", "left", "right", "bottom"]}
-    >
+    <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
       <StatusBar barStyle="dark-content" backgroundColor="#BDE4F9" />
 
       <HomeHeader className="mt-2.5 mb-5" />
