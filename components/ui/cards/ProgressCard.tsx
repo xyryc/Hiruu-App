@@ -1,18 +1,20 @@
 import { FontAwesome } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import PrimaryButton from "../buttons/PrimaryButton";
 
 const ProgressCard = () => {
-  const [progress, setProgress] = useState(70);
+  const [progress, setProgress] = useState(60);
 
   // Simulate dynamic update (e.g., from API or state)
   // const progress = 50; // Replace with your actual data
   // Color mapping based on progress
   const getTintColor = (fill: number) => {
-    if (fill < 30) return "#F3DA4F"; // Yellow
-    if (fill < 70) return "#FE714E"; // Orange
+    if (fill < 25) return "#F3DA4F"; // Yellow
+    if (fill < 50) return "#FE714E"; // Orange
+    if (fill < 75) return "#fc6603"; // Orange
     return "#10B981"; // Green
   };
 
@@ -23,7 +25,7 @@ const ProgressCard = () => {
       {/* left */}
       <View>
         <Text className="font-proximanova-semibold text-[10px] text-center text-white bg-[#FE714E] py-1.5 px-2.5 rounded-[20px] mb-2">
-          50% Ready
+          {progress}% Ready
         </Text>
 
         {/* Progress Arc (Semi-Circle) */}
@@ -66,8 +68,19 @@ const ProgressCard = () => {
         </Text>
       </View>
 
+      {/* center */}
+      <View className="justify-center">
+        <Image
+          source={require("@/assets/images/vertical-line.svg")}
+          style={{
+            height: 84,
+            width: 1,
+          }}
+        />
+      </View>
+
       {/* right */}
-      <View>
+      <View className="justify-center">
         <Text className="font-proximanova-semibold mb-1">
           Your Profile is 50% Ready
         </Text>
@@ -78,7 +91,7 @@ const ProgressCard = () => {
           5 Tokens
         </Text>
 
-        <PrimaryButton className="mt-2.5" title="Complete Profile" />
+        <PrimaryButton className="mt-2.5 w-full" title="Complete Profile" />
       </View>
     </View>
   );
