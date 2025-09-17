@@ -1,0 +1,100 @@
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+
+type StatusType = "upcoming" | "completed" | "missed" | "ongoing";
+
+interface StatusBadgeProps {
+  status: StatusType;
+  size?: "small" | "medium" | "large";
+  className?: string;
+}
+
+const StatusBadge: React.FC<StatusBadgeProps> = ({
+  status,
+  size = "medium",
+  className = "",
+}) => {
+  const getStatusClasses = () => {
+    switch (status) {
+      case "upcoming":
+        return {
+          containerClasses: "bg-yellow-50 border-[#EAC3244D]",
+          textClasses: "text-[#EAC324]",
+          dotClasses: "bg-[#EAC324]",
+          label: "Upcoming",
+        };
+      case "completed":
+        return {
+          containerClasses: "bg-[#EAFFEF] border-[#3EBF5A4D]",
+          textClasses: "text-[#3EBF5A]",
+          dotClasses: "bg-[#3EBF5A]",
+          label: "Completed",
+        };
+      case "missed":
+        return {
+          containerClasses: "bg-red-100",
+          textClasses: "text-red-600",
+          dotClasses: "bg-red-600",
+          label: "Missed",
+        };
+      case "ongoing":
+        return {
+          containerClasses: "bg-orange-100",
+          textClasses: "text-orange-600",
+          dotClasses: "bg-orange-600",
+          label: "Ongoing",
+        };
+      default:
+        return {
+          containerClasses: "bg-gray-100",
+          textClasses: "text-gray-600",
+          dotClasses: "bg-gray-600",
+          label: "Unknown",
+        };
+    }
+  };
+
+  const getSizeClasses = () => {
+    switch (size) {
+      case "small":
+        return {
+          containerClasses: "px-2 py-1 rounded-xl",
+          textClasses: "text-xs",
+          dotClasses: "w-1.5 h-1.5",
+        };
+      case "large":
+        return {
+          containerClasses: "px-4 py-2 rounded-2xl",
+          textClasses: "text-base",
+          dotClasses: "w-2 h-2",
+        };
+      default: // medium
+        return {
+          containerClasses: "px-3 py-1.5 rounded-2xl",
+          textClasses: "text-sm font-proximanova-medium",
+          dotClasses: "w-1.5 h-1.5",
+        };
+    }
+  };
+
+  const statusConfig = getStatusClasses();
+  const sizeConfig = getSizeClasses();
+
+  return (
+    <TouchableOpacity
+      className={`flex-row items-center border-hairline ${statusConfig.containerClasses} ${sizeConfig.containerClasses} ${className}`}
+    >
+      {/* Status Dot */}
+      <View
+        className={`${statusConfig.dotClasses} ${sizeConfig.dotClasses} rounded-full mr-1.5`}
+      />
+
+      {/* Status Text */}
+      <Text className={`${statusConfig.textClasses} ${sizeConfig.textClasses}`}>
+        {statusConfig.label}
+      </Text>
+    </TouchableOpacity>
+  );
+};
+
+export default StatusBadge;

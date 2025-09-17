@@ -16,11 +16,12 @@ const UserHome = () => {
 
       <HomeHeader className="mt-2.5 mb-5" />
 
-      <WelcomeHeader className="pb-7" />
+      <WelcomeHeader className="pb-5" />
 
       {/* main content */}
       <ScrollView
         contentContainerStyle={{
+          paddingTop: 8,
           paddingBottom: 140,
         }}
       >

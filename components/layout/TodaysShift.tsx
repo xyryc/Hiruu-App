@@ -76,10 +76,10 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
           shiftImage="https://media.architecturaldigest.com/photos/66c8923688f5dc5cc31e1e35/1:1/w_3283,h_3283,c_limit/CH_BAD_ROMAN_NYC_ROUND_1_020323952A.jpg" // Replace with your image
           teamMembers={["John", "Jane", "Mike", "Sarah", "Tom"]}
           totalMembers={30}
-          address="136 Avenue Street"
-          city="Madezine, New York, NY"
+          address="230 Aaron Bushnell St"
+          city="Madezine, Palestine, PL"
           onLoginPress={handleLogin}
-          status="ongoing"
+          status="upcoming"
         />
       </View>
     </View>
