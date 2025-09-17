@@ -6,7 +6,7 @@ import { AnimatedCircularProgress } from "react-native-circular-progress";
 import PrimaryButton from "../buttons/PrimaryButton";
 
 const ProgressCard = () => {
-  const [progress, setProgress] = useState(60);
+  const [progress, setProgress] = useState(80);
 
   // Simulate dynamic update (e.g., from API or state)
   // const progress = 50; // Replace with your actual data
@@ -24,7 +24,9 @@ const ProgressCard = () => {
     <View className="flex-row justify-between bg-[#4FB2F326] p-5 rounded-[14px]">
       {/* left */}
       <View>
-        <Text className="font-proximanova-semibold text-[10px] text-center text-white bg-[#FE714E] py-1.5 px-2.5 rounded-[20px] mb-2">
+        <Text
+          className={`bg-[${tintColor}] font-proximanova-semibold text-[10px] text-center text-white py-1.5 px-2.5 rounded-[20px] mb-2`}
+        >
           {progress}% Ready
         </Text>
 

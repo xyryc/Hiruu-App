@@ -97,3 +97,21 @@ export interface BusinessProfileProps {
 export interface ProfileProgressProps {
   className?: string;
 }
+
+export interface TodaysShiftProps {
+  className?: string;
+}
+
+interface Business {
+  id: string;
+  name: string;
+  imageUrl: string;
+}
+
+export interface BusinessSelectionModalProps {
+  visible: boolean;
+  onClose: () => void;
+  businesses: Business[];
+  selectedBusinesses: string[];
+  onSelectionChange: (selectedIds: string[]) => void;
+}

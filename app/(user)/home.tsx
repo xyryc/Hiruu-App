@@ -3,6 +3,7 @@ import FindNewJob from "@/components/layout/FindNewJob";
 import HomeHeader from "@/components/layout/HomeHeader";
 import JoinCollegue from "@/components/layout/JoinCollegue";
 import ProfileProgress from "@/components/layout/ProfileProgress";
+import TodaysShift from "@/components/layout/TodaysShift";
 import WelcomeHeader from "@/components/layout/WelcomeHeader";
 import React from "react";
 import { ScrollView, StatusBar } from "react-native";
@@ -15,12 +16,16 @@ const UserHome = () => {
 
       <HomeHeader className="mt-2.5 mb-5" />
 
-      <WelcomeHeader />
+      <WelcomeHeader className="pb-7" />
 
       {/* main content */}
-      <ScrollView>
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: 140,
+        }}
+      >
         {/* profile progress */}
-        <ProfileProgress className="mt-7" />
+        <ProfileProgress className="" />
 
         {/* join your collegues */}
         <JoinCollegue className="mt-7" />
@@ -30,6 +35,9 @@ const UserHome = () => {
 
         {/* do you  manage a business */}
         <BusinessProfile className="mt-7" />
+
+        {/* your todays shift */}
+        <TodaysShift className="mt-7" />
       </ScrollView>
     </SafeAreaView>
   );
