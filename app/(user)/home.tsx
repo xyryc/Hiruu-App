@@ -3,6 +3,7 @@ import FindNewJob from "@/components/layout/FindNewJob";
 import HomeHeader from "@/components/layout/HomeHeader";
 import JoinCollegue from "@/components/layout/JoinCollegue";
 import ProfileProgress from "@/components/layout/ProfileProgress";
+import QuickAction from "@/components/layout/QuickAction";
 import TodaysShift from "@/components/layout/TodaysShift";
 import WelcomeHeader from "@/components/layout/WelcomeHeader";
 import React from "react";
@@ -39,6 +40,8 @@ const UserHome = () => {
 
         {/* your todays shift */}
         <TodaysShift className="mt-7" />
+
+        <QuickAction className="mt-7" />
       </ScrollView>
     </SafeAreaView>
   );

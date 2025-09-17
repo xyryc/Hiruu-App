@@ -51,11 +51,13 @@ const Welcome = () => {
             onPress={() => router.push("/(auth)/signup")}
           />
 
-          <View className="flex-row mx-auto gap-1">
+          <View className="flex-row mx-auto">
             <Text className="text-sm">Already have an account?</Text>
 
             <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-              <Text className="text-sm font-semibold underline">Log in</Text>
+              <Text className="text-sm font-semibold underline px-2">
+                Log in
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

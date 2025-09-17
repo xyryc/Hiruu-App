@@ -230,11 +230,13 @@ const Login = () => {
           </View>
 
           {/* Already have account */}
-          <View className="flex-row mx-auto gap-1">
+          <View className="flex-row mx-auto">
             <Text className="text-sm">Don't have an account?</Text>
 
             <TouchableOpacity onPress={() => router.push("/(auth)/signup")}>
-              <Text className="text-sm font-semibold underline">Sign Up</Text>
+              <Text className="text-sm font-semibold underline px-2">
+                Sign Up
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

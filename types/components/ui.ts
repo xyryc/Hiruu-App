@@ -1,4 +1,5 @@
 import { ImageSource } from "expo-image";
+import { ReactElement } from "react";
 import { GestureResponderEvent } from "react-native";
 
 export interface PrimaryButtonProps {
@@ -117,4 +118,14 @@ export interface BusinessSelectionModalProps {
   businesses: Business[];
   selectedBusinesses: string[];
   onSelectionChange: (selectedIds: string[]) => void;
+}
+
+export interface QuickActionProps {
+  className?: string;
+}
+
+export interface ActionIconCardProps {
+  icon: ReactElement<any, any>;
+  title: string;
+  count?: number;
 }
