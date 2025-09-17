@@ -12,7 +12,9 @@ const FindNewJob = ({ className }: FindNewJobProps) => {
       <ActionCard
         title="Explore All Job Listings"
         buttonTitle="Find Now"
-        rightIcon={require("@/assets/images/toolbox.svg")}
+        rightImage={require("@/assets/images/toolbox.svg")}
+        imageWidth={110}
+        imageHeight={80}
         background={require("@/assets/images/chessboard-bg.svg")}
       />
     </View>

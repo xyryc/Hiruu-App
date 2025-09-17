@@ -11,15 +11,15 @@ const SecondaryButton = ({
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`${className} p-0.5 bg-white rounded-full flex-row items-center justify-center w-36`}
+      className={`${className} py-2.5 px-5 bg-white rounded-full items-center justify-center max-w-[70%]`}
     >
-      <Text className="font-semibold text-sm pl-6 pr-4">{title}</Text>
+      <Text className="font-semibold text-sm mr-6">{title}</Text>
 
       <AntDesign
         name="arrow-right"
         size={18}
         color="#fff"
-        className="p-2 bg-primary rounded-full"
+        className="p-2 bg-primary rounded-full absolute right-0.5"
       />
     </TouchableOpacity>
   );

@@ -7,7 +7,10 @@ import SecondaryButton from "../buttons/SecondaryButton";
 const ActionCard = ({
   title,
   buttonTitle,
-  rightIcon,
+  rightImage,
+  imageClass,
+  imageWidth,
+  imageHeight,
   background,
 }: ActionCardProps) => {
   return (
@@ -18,14 +21,16 @@ const ActionCard = ({
         <SecondaryButton title={buttonTitle} />
       </View>
 
-      <Image
-        source={rightIcon}
-        style={{
-          width: 110,
-          height: 80,
-        }}
-        contentFit="scale-down"
-      />
+      <View className={imageClass}>
+        <Image
+          source={rightImage}
+          style={{
+            width: imageWidth,
+            height: imageHeight,
+          }}
+          contentFit="scale-down"
+        />
+      </View>
 
       {/* background */}
       <View className="absolute -right-6 top-0">

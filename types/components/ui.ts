@@ -86,7 +86,10 @@ export interface FindNewJobProps {
 export interface ActionCardProps {
   title: string;
   buttonTitle: string;
-  rightIcon: ImageSource;
+  rightImage: ImageSource;
+  imageClass?: string;
+  imageWidth: number;
+  imageHeight: number;
   background: ImageSource;
 }
 

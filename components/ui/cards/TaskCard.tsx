@@ -91,7 +91,7 @@ const TaskCard: React.FC<WorkShiftCardProps> = ({
 
   return (
     <View
-      className={`mx-4 rounded-3xl px-4 pb-4 bg-[#E5F4FD] border border-[#4fb1f333] ${status === "completed" && "pt-4"}`}
+      className={`flex-1 mr-4 rounded-[14px] px-4 pb-4 bg-[#E5F4FD] border border-[#4fb1f333] ${status === "completed" && "pt-4"}`}
     >
       {/* Status Timer */}
       {status !== "completed" && (
@@ -232,11 +232,17 @@ const TaskCard: React.FC<WorkShiftCardProps> = ({
             />
           </View>
 
-          <View className="flex-1">
-            <Text className="font-proximanova-regular text-sm text-primary">
+          <View className="w-36">
+            <Text
+              className="font-proximanova-regular text-sm text-primary"
+              numberOfLines={1}
+            >
               {address}
             </Text>
-            <Text className="font-proximanova-regular text-sm text-primary">
+            <Text
+              className="font-proximanova-regular text-sm text-primary"
+              numberOfLines={1}
+            >
               {city}
             </Text>
           </View>
