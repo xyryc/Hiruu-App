@@ -34,11 +34,11 @@ const Welcome = () => {
         {/* text content */}
         <View className="mt-[71px] items-center h-screen">
           <View className="w-4/5">
-            <Text className="text-2xl font-bold capitalize mb-4 text-center text-[#111111]">
+            <Text className="text-2xl font-proximanova-bold capitalize mb-4 text-center text-[#111111]">
               Welcome to Hiruu
             </Text>
 
-            <Text className="text-sm font-semibold text-center capitalize text-[#7A7A7A]">
+            <Text className="text-sm font-proximanova-semibold text-center capitalize text-[#7A7A7A]">
               Manage your team, track shifts, and grow your business — all in
               one place. Let’s get started!
             </Text>
@@ -55,7 +55,7 @@ const Welcome = () => {
             <Text className="text-sm">Already have an account?</Text>
 
             <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-              <Text className="text-sm font-semibold underline px-2">
+              <Text className="text-sm font-proximanova-semibold underline px-2">
                 Log in
               </Text>
             </TouchableOpacity>

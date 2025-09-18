@@ -18,7 +18,7 @@ const ConnectSocials = () => {
             contentFit="scale-down"
           />
 
-          <Text className="text-sm font-semibold">Facebook</Text>
+          <Text className="text-sm font-proximanova-semibold">Facebook</Text>
         </TouchableOpacity>
 
         <SmallButton title="Link" />
@@ -36,7 +36,7 @@ const ConnectSocials = () => {
             contentFit="scale-down"
           />
 
-          <Text className="text-sm font-semibold">Facebook</Text>
+          <Text className="text-sm font-proximanova-semibold">Facebook</Text>
         </TouchableOpacity>
 
         <SmallButton title="Link" />
@@ -54,7 +54,7 @@ const ConnectSocials = () => {
             contentFit="scale-down"
           />
 
-          <Text className="text-sm font-semibold">Facebook</Text>
+          <Text className="text-sm font-proximanova-semibold">Facebook</Text>
         </TouchableOpacity>
 
         <SmallButton title="Link" />
@@ -72,7 +72,7 @@ const ConnectSocials = () => {
             contentFit="scale-down"
           />
 
-          <Text className="text-sm font-semibold">Facebook</Text>
+          <Text className="text-sm font-proximanova-semibold">Facebook</Text>
         </TouchableOpacity>
 
         <SmallButton title="Link" />
@@ -90,7 +90,7 @@ const ConnectSocials = () => {
             contentFit="scale-down"
           />
 
-          <Text className="text-sm font-semibold">Facebook</Text>
+          <Text className="text-sm font-proximanova-semibold">Facebook</Text>
         </TouchableOpacity>
 
         <SmallButton title="Link" />
@@ -108,7 +108,7 @@ const ConnectSocials = () => {
             contentFit="scale-down"
           />
 
-          <Text className="text-sm font-semibold">Instagram</Text>
+          <Text className="text-sm font-proximanova-semibold">Instagram</Text>
         </TouchableOpacity>
 
         <SmallButton title="Link" />

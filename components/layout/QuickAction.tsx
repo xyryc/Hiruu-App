@@ -12,7 +12,9 @@ import ActionIconCard from "../ui/cards/ActionIconCard";
 const QuickAction = ({ className }: QuickActionProps) => {
   return (
     <View className={`${className} px-4`}>
-      <Text className="text-xl font-semibold mb-4">Join Your Colleagues</Text>
+      <Text className="text-xl font-proximanova-semibold mb-4">
+        Join Your Colleagues
+      </Text>
 
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
         <ActionIconCard

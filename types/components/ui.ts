@@ -129,3 +129,7 @@ export interface ActionIconCardProps {
   title: string;
   count?: number;
 }
+
+export interface WorkInsightsProps {
+  className?: string;
+}

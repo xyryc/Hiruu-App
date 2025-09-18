@@ -55,11 +55,11 @@ export default function Step1({
       {/* progress details */}
       <View className="my-7">
         <View className="flex-row items-center justify-between mb-6">
-          <Text className="text-sm font-semibold">
+          <Text className="text-sm font-proximanova-semibold">
             Your Progress: {currentStep * 20}%
           </Text>
 
-          <Text className="text-sm font-semibold">
+          <Text className="text-sm font-proximanova-semibold">
             {getStepName(currentStep)}
           </Text>
         </View>
@@ -87,7 +87,7 @@ export default function Step1({
       >
         {/* name */}
         <View>
-          <Text className="text-sm font-semibold mb-2.5">Name</Text>
+          <Text className="text-sm font-proximanova-semibold mb-2.5">Name</Text>
 
           <TextInput
             placeholder="Enter Email"
@@ -99,7 +99,9 @@ export default function Step1({
 
         {/* location*/}
         <View className="mt-7">
-          <Text className="text-sm font-semibold mb-2.5">Location</Text>
+          <Text className="text-sm font-proximanova-semibold mb-2.5">
+            Location
+          </Text>
 
           <Dropdown
             data={states}
@@ -118,14 +120,18 @@ export default function Step1({
 
         {/* date of birth */}
         <View className="mt-7">
-          <Text className="text-sm font-semibold mb-2.5">Date of Birth</Text>
+          <Text className="text-sm font-proximanova-semibold mb-2.5">
+            Date of Birth
+          </Text>
 
           <DateOfBirthInput value={dateOfBirth} onDateChange={setDateOfBirth} />
         </View>
 
         {/* gender */}
         <View className="mt-7">
-          <Text className="text-sm font-semibold mb-2.5">Date of Birth</Text>
+          <Text className="text-sm font-proximanova-semibold mb-2.5">
+            Date of Birth
+          </Text>
 
           <GenderSelection
             value={selectedGender}
@@ -135,7 +141,7 @@ export default function Step1({
 
         {/* socials */}
         <View className="mt-7">
-          <Text className="text-sm font-semibold mb-2.5">
+          <Text className="text-sm font-proximanova-semibold mb-2.5">
             Connect Your Socials
           </Text>
 

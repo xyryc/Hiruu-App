@@ -65,7 +65,7 @@ const SignUp = () => {
               }`}
             >
               <Text
-                className={`text-center text-sm font-semibold ${
+                className={`text-center text-sm font-proximanova-semibold ${
                   selectedTab === "Email" ? "text-white" : "text-gray-600"
                 }`}
               >
@@ -80,7 +80,7 @@ const SignUp = () => {
               }`}
             >
               <Text
-                className={`text-center text-sm font-semibold ${
+                className={`text-center text-sm font-proximanova-semibold ${
                   selectedTab === "Phone number"
                     ? "text-white"
                     : "text-gray-600"
@@ -157,7 +157,7 @@ const SignUp = () => {
                   </TouchableOpacity>
 
                   <TouchableOpacity>
-                    <Text className="text-xs font-semibold text-[#4FB2F3]">
+                    <Text className="text-xs font-proximanova-semibold text-[#4FB2F3]">
                       Forgot Password
                     </Text>
                   </TouchableOpacity>
@@ -234,7 +234,7 @@ const SignUp = () => {
             <Text className="text-sm">Already have an account?</Text>
 
             <TouchableOpacity onPress={() => router.push("/(auth)/login")}>
-              <Text className="text-sm font-semibold underline px-2">
+              <Text className="text-sm font-proximanova-semibold underline px-2">
                 Log in
               </Text>
             </TouchableOpacity>

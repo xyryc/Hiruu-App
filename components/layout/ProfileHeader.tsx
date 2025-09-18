@@ -16,11 +16,11 @@ const ScreenHeader = ({
           <Feather name="arrow-left" size={24} color="black" />
         </TouchableOpacity>
 
-        <Text className="font-bold text-2xl">{title}</Text>
+        <Text className="font-proximanova-bold text-2xl">{title}</Text>
       </View>
 
       <TouchableOpacity onPress={onPress}>
-        <Text className="font-semibold">{buttonTitle}</Text>
+        <Text className="font-proximanova-semibold">{buttonTitle}</Text>
       </TouchableOpacity>
     </View>
   );

@@ -13,7 +13,7 @@ const SecondaryButton = ({
       onPress={onPress}
       className={`${className} py-2.5 px-5 bg-white rounded-full items-center justify-center max-w-[70%]`}
     >
-      <Text className="font-semibold text-sm mr-6">{title}</Text>
+      <Text className="font-proximanova-semibold text-sm mr-6">{title}</Text>
 
       <AntDesign
         name="arrow-right"

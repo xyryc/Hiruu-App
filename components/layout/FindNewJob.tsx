@@ -6,7 +6,9 @@ import ActionCard from "../ui/cards/ActionCard";
 const FindNewJob = ({ className }: FindNewJobProps) => {
   return (
     <View className={`${className} px-4`}>
-      <Text className="text-xl font-semibold mb-4">Find New Job</Text>
+      <Text className="text-xl font-proximanova-semibold mb-4">
+        Find New Job
+      </Text>
 
       {/* job listing card */}
       <ActionCard

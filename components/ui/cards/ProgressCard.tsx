@@ -6,15 +6,13 @@ import { AnimatedCircularProgress } from "react-native-circular-progress";
 import PrimaryButton from "../buttons/PrimaryButton";
 
 const ProgressCard = () => {
-  const [progress, setProgress] = useState(80);
+  const [progress, setProgress] = useState(100);
 
-  // Simulate dynamic update (e.g., from API or state)
-  // const progress = 50; // Replace with your actual data
   // Color mapping based on progress
   const getTintColor = (fill: number) => {
-    if (fill < 25) return "#F3DA4F"; // Yellow
-    if (fill < 50) return "#FE714E"; // Orange
-    if (fill < 75) return "#fc6603"; // Orange
+    if (fill < 25) return "#FE714E"; // red
+    if (fill < 50) return "#e0c722"; // yellow
+    if (fill < 75) return "#a5c738"; // orange
     return "#10B981"; // Green
   };
 
@@ -25,7 +23,8 @@ const ProgressCard = () => {
       {/* left */}
       <View>
         <Text
-          className={`bg-[${tintColor}] font-proximanova-semibold text-[10px] text-center text-white py-1.5 px-2.5 rounded-[20px] mb-2`}
+          style={{ backgroundColor: tintColor }}
+          className={`font-proximanova-semibold text-[10px] text-center text-white py-1.5 px-2.5 rounded-[20px] mb-2`}
         >
           {progress}% Ready
         </Text>
@@ -84,10 +83,10 @@ const ProgressCard = () => {
       {/* right */}
       <View className="justify-center">
         <Text className="font-proximanova-semibold mb-1">
-          Your Profile is 50% Ready
+          Your Profile is {progress}% Ready
         </Text>
         <Text className="font-proximanova-regular text-secondary text-sm">
-          Your Profile is 50% Ready
+          Complete Your Profile To Get
         </Text>
         <Text className="font-proximanova-semibold text-[#4FB2F3] text-sm">
           5 Tokens

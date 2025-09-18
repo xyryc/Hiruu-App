@@ -82,7 +82,7 @@ const InterestsSelection: React.FC<InterestsSelectionProps> = ({
     <View>
       {/* Header */}
       <View className="mb-6">
-        <Text className="text-xl font-semibold text-gray-900 mb-2">
+        <Text className="text-xl font-proximanova-semibold text-gray-900 mb-2">
           What are your interests?
         </Text>
         <Text className="text-sm text-gray-600">
@@ -118,14 +118,16 @@ const InterestsSelection: React.FC<InterestsSelectionProps> = ({
                     {/* Checkmark */}
                     {selected && (
                       <View className="absolute -top-1 -right-1 w-6 h-6 bg-gray-800 rounded-full items-center justify-center border-2 border-white">
-                        <Text className="text-white text-xs font-bold">✓</Text>
+                        <Text className="text-white text-xs font-proximanova-bold">
+                          ✓
+                        </Text>
                       </View>
                     )}
                   </View>
 
                   {/* Label */}
                   <Text
-                    className={`text-xs text-center mt-2 font-medium ${
+                    className={`text-xs text-center mt-2 font-proximanova-medium ${
                       selected ? "text-gray-900" : "text-gray-600"
                     }`}
                   >

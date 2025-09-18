@@ -138,7 +138,7 @@ const MultiSelectCompanyDropdown = ({
         className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] flex-row justify-between items-center mb-6"
       >
         <Text
-          className={`text-sm  ${selectedCompanies.length > 0 ? "text-primary font-semibold" : "text-secondary"}`}
+          className={`text-sm  ${selectedCompanies.length > 0 ? "text-primary font-proximanova-semibold" : "text-secondary"}`}
         >
           {selectedCompanies.length > 0
             ? `${selectedCompanies.length} Company selected`
@@ -163,7 +163,7 @@ const MultiSelectCompanyDropdown = ({
               >
                 {/* Company Header */}
                 <View className="flex-row justify-between items-center mb-4">
-                  <Text className="text-base font-semibold text-gray-900">
+                  <Text className="text-base font-proximanova-semibold text-gray-900">
                     Company Name {selectedCompanies.length > 1 ? index + 1 : ""}
                   </Text>
                   <TouchableOpacity
@@ -176,7 +176,7 @@ const MultiSelectCompanyDropdown = ({
 
                 {/* Period Section */}
                 <View className="mb-4">
-                  <Text className="text-sm font-semibold text-gray-900 mb-3">
+                  <Text className="text-sm font-proximanova-semibold text-gray-900 mb-3">
                     Period
                   </Text>
 
@@ -213,7 +213,7 @@ const MultiSelectCompanyDropdown = ({
 
                 {/* Job Title */}
                 <View>
-                  <Text className="text-sm font-semibold text-gray-900 mb-3">
+                  <Text className="text-sm font-proximanova-semibold text-gray-900 mb-3">
                     Job Title
                   </Text>
                   <TextInput
@@ -244,7 +244,7 @@ const MultiSelectCompanyDropdown = ({
             <TouchableOpacity onPress={() => setIsModalOpen(false)}>
               <Text className="text-blue-500 text-lg">Done</Text>
             </TouchableOpacity>
-            <Text className="text-lg font-semibold text-gray-900">
+            <Text className="text-lg font-proximanova-semibold text-gray-900">
               Company/Employer
             </Text>
             <View className="w-16" />
@@ -273,7 +273,7 @@ const MultiSelectCompanyDropdown = ({
               >
                 {/* Company Avatar */}
                 <View className="w-10 h-10 bg-gray-800 rounded-full mr-4 justify-center items-center">
-                  <Text className="text-white text-sm font-medium">
+                  <Text className="text-white text-sm font-proximanova-medium">
                     {getCompanyInitials(company.name)}
                   </Text>
                 </View>
@@ -292,7 +292,9 @@ const MultiSelectCompanyDropdown = ({
                   } justify-center items-center`}
                 >
                   {isCompanySelected(company.id) && (
-                    <Text className="text-white text-xs font-bold">✓</Text>
+                    <Text className="text-white text-xs font-proximanova-bold">
+                      ✓
+                    </Text>
                   )}
                 </View>
               </TouchableOpacity>
@@ -304,7 +306,7 @@ const MultiSelectCompanyDropdown = ({
                 <View className="w-10 h-10 bg-gray-400 rounded-full mr-4 justify-center items-center">
                   <Text className="text-white text-lg">📷</Text>
                 </View>
-                <Text className="text-base text-gray-900 font-medium">
+                <Text className="text-base text-gray-900 font-proximanova-medium">
                   Add Company Manually
                 </Text>
               </TouchableOpacity>
@@ -325,7 +327,9 @@ const MultiSelectCompanyDropdown = ({
                     manualCompanyName.trim() ? "bg-blue-500" : "bg-gray-300"
                   }`}
                 >
-                  <Text className="text-white font-medium">Add</Text>
+                  <Text className="text-white font-proximanova-medium">
+                    Add
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>

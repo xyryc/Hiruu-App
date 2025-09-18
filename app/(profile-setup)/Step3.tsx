@@ -39,11 +39,11 @@ export default function Step3({
       {/* progress details */}
       <View className="mt-7">
         <View className="flex-row items-center justify-between mb-6">
-          <Text className="text-sm font-semibold">
+          <Text className="text-sm font-proximanova-semibold">
             Your Progress: {currentStep * 20}%
           </Text>
 
-          <Text className="text-sm font-semibold">
+          <Text className="text-sm font-proximanova-semibold">
             {getStepName(currentStep)}
           </Text>
         </View>
@@ -71,7 +71,9 @@ export default function Step3({
       >
         {/* company  */}
         <View className="mt-7">
-          <Text className="text-sm font-semibold mb-2.5">Company/Employer</Text>
+          <Text className="text-sm font-proximanova-semibold mb-2.5">
+            Company/Employer
+          </Text>
 
           <MultiSelectCompanyDropdown
             selectedCompanies={selectedCompanies}

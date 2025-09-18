@@ -6,6 +6,7 @@ import ProfileProgress from "@/components/layout/ProfileProgress";
 import QuickAction from "@/components/layout/QuickAction";
 import TodaysShift from "@/components/layout/TodaysShift";
 import WelcomeHeader from "@/components/layout/WelcomeHeader";
+import WorkInsights from "@/components/layout/WorkInsights";
 import React from "react";
 import { ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -27,7 +28,7 @@ const UserHome = () => {
         }}
       >
         {/* profile progress */}
-        <ProfileProgress className="" />
+        <ProfileProgress />
 
         {/* join your collegues */}
         <JoinCollegue className="mt-7" />
@@ -41,7 +42,11 @@ const UserHome = () => {
         {/* your todays shift */}
         <TodaysShift className="mt-7" />
 
+        {/* quick actions */}
         <QuickAction className="mt-7" />
+
+        {/* work insights */}
+        <WorkInsights className="mt-7" />
       </ScrollView>
     </SafeAreaView>
   );

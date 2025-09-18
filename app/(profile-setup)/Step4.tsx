@@ -37,11 +37,11 @@ export default function Step4({
       {/* progress details */}
       <View className="my-7">
         <View className="flex-row items-center justify-between mb-6">
-          <Text className="text-sm font-semibold">
+          <Text className="text-sm font-proximanova-semibold">
             Your Progress: {currentStep * 20}%
           </Text>
 
-          <Text className="text-sm font-semibold">
+          <Text className="text-sm font-proximanova-semibold">
             {getStepName(currentStep)}
           </Text>
         </View>

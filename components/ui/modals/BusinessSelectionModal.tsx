@@ -122,7 +122,7 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
 
                   {/* Business Name */}
                   <Text
-                    className={`flex-1 font-semibold ${
+                    className={`flex-1 font-proximanova-semibold ${
                       isSelected(business.id) ? "text-white" : "text-gray-900"
                     }`}
                   >

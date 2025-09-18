@@ -16,7 +16,9 @@ const ActionCard = ({
   return (
     <View className="flex-row justify-between p-4 bg-[#4FB2F3] rounded-[14px]">
       <View>
-        <Text className="text-lg font-bold mb-4 text-white">{title}</Text>
+        <Text className="text-lg font-proximanova-bold mb-4 text-white">
+          {title}
+        </Text>
 
         <SecondaryButton title={buttonTitle} />
       </View>

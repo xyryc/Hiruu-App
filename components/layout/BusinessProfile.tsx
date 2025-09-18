@@ -7,13 +7,15 @@ import SmallButton from "../ui/buttons/SmallButton";
 const BusinessProfile = ({ className }: BusinessProfileProps) => {
   return (
     <View className={`${className} px-4`}>
-      <Text className="text-xl font-semibold mb-4">
+      <Text className="text-xl font-proximanova-semibold mb-4">
         Do You Manage a Business?
       </Text>
 
       <View className="flex-row items-center bg-[#FCF7E4] border border-[#EEEEEE] p-4 rounded-xl">
         <View className="">
-          <Text className="font-semibold mb-2">Run Your Business Smarter </Text>
+          <Text className="font-proximanova-semibold mb-2">
+            Run Your Business Smarter{" "}
+          </Text>
 
           <View className="flex-row items-center gap-2.5">
             <View className="w-2 h-2 bg-primary rounded-full" />

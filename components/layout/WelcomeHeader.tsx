@@ -22,7 +22,9 @@ const WelcomeHeader = ({ className }: WelcomeHeaderProps) => {
           <Text className="text-sm text-[#7A7A7A] mb-1.5">
             👋 Hello, Julian Assange
           </Text>
-          <Text className="font-semibold">Ready for today's task?</Text>
+          <Text className="font-proximanova-semibold">
+            Ready for today's task?
+          </Text>
         </View>
       </View>
 
@@ -37,7 +39,7 @@ const WelcomeHeader = ({ className }: WelcomeHeaderProps) => {
           contentFit="scale-down"
         />
         <View className="px-5 py-2 bg-[#DDF1FF] -ml-4 -z-10 rounded-r-[40px]">
-          <Text className="text-sm font-semibold">05</Text>
+          <Text className="text-sm font-proximanova-semibold">05</Text>
         </View>
       </View>
     </View>

@@ -69,7 +69,9 @@ const GenderSelection: React.FC<GenderSelectionProps> = ({
               {/* Checkmark */}
               {cardStyle.checkmark && (
                 <View className="absolute top-3 right-3 z-10 w-6 h-6 bg-gray-800 rounded-full items-center justify-center">
-                  <Text className="text-white text-sm font-bold">✓</Text>
+                  <Text className="text-white text-sm font-proximanova-bold">
+                    ✓
+                  </Text>
                 </View>
               )}
 
@@ -116,7 +118,9 @@ const GenderSelection: React.FC<GenderSelectionProps> = ({
               </View>
 
               {/* Label */}
-              <Text className={`text-lg font-medium ${cardStyle.text}`}>
+              <Text
+                className={`text-lg font-proximanova-medium ${cardStyle.text}`}
+              >
                 {option.label}
               </Text>
             </View>

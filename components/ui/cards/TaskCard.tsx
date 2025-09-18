@@ -149,7 +149,7 @@ const TaskCard: React.FC<WorkShiftCardProps> = ({
         {/* Right Side - Content */}
         <View className="flex-1">
           {/* Shift Title */}
-          <Text className="font-semibold text-primary mb-2.5">
+          <Text className="font-proximanova-semibold text-primary mb-2.5">
             {shiftTitle}
           </Text>
 
@@ -176,7 +176,7 @@ const TaskCard: React.FC<WorkShiftCardProps> = ({
                       zIndex: 10 - index,
                     }}
                   >
-                    <Text className="text-xs font-medium text-gray-600">
+                    <Text className="text-xs font-proximanova-medium text-gray-600">
                       {member.charAt(0).toUpperCase()}
                     </Text>
                   </View>
@@ -187,7 +187,7 @@ const TaskCard: React.FC<WorkShiftCardProps> = ({
                     className="w-8 h-8 rounded-full border-2 border-white bg-blue-500 justify-center items-center"
                     style={{ marginLeft: -8, zIndex: 7 }}
                   >
-                    <Text className="text-xs font-bold text-white">
+                    <Text className="text-xs font-proximanova-bold text-white">
                       +{teamMembers.length - 3}
                     </Text>
                   </View>

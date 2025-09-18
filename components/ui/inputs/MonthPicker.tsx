@@ -1,10 +1,10 @@
-import { DateOfBirthInputProps } from "@/types";
+import { SimpleLineIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
 import { Modal, Platform, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const DateOfBirthInput = ({ value, onDateChange }: DateOfBirthInputProps) => {
+const MonthPicker = ({ value, onDateChange }) => {
   const [show, setShow] = useState(false);
   const [tempDate, setTempDate] = useState<Date>(value || new Date());
 
@@ -31,23 +31,21 @@ const DateOfBirthInput = ({ value, onDateChange }: DateOfBirthInputProps) => {
     }
   };
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return "dd/mm/yyyy";
+  const formatMonth = (date: Date | null) => {
+    if (!date) return "Month, Year";
 
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear().toString();
-
-    return `${day}/${month}/${year}`;
+    return date.toLocaleDateString("en-US", {
+      month: "long",
+      year: "2-digit",
+    });
   };
 
-  // In DateOfBirthInput component, you could make these configurable:
   const getMaxDate = () => {
-    return new Date(); // For work dates, allow up to today
+    return new Date(); // Allow up to current month
   };
 
   const getMinDate = () => {
-    return new Date(1950, 0, 1); // Reasonable work start date
+    return new Date(2000, 0, 1); // Start from January 2000
   };
 
   return (
@@ -55,13 +53,19 @@ const DateOfBirthInput = ({ value, onDateChange }: DateOfBirthInputProps) => {
       {/* Input Field */}
       <TouchableOpacity
         onPress={() => setShow(true)}
-        className="w-full px-3 py-4 bg-white rounded-[10px] border border-[#EEEEEE]"
+        className="flex-row items-center px-2.5 py-2 bg-[#F5F5F5] rounded-lg"
       >
         <Text
           className={`text-sm ${value ? "text-primary" : "text-secondary"}`}
         >
-          {formatDate(value)}
+          {formatMonth(value)}
         </Text>
+        <SimpleLineIcons
+          className="p-1.5"
+          name="arrow-down"
+          size={12}
+          color="#111111"
+        />
       </TouchableOpacity>
 
       {/* Android Native Picker */}
@@ -92,11 +96,11 @@ const DateOfBirthInput = ({ value, onDateChange }: DateOfBirthInputProps) => {
                   <TouchableOpacity onPress={handleCancel}>
                     <Text className="text-blue-500 text-lg">Cancel</Text>
                   </TouchableOpacity>
-                  <Text className="text-lg font-proximanova-semibold text-gray-900">
-                    Select Date of Birth
+                  <Text className="text-lg font-semibold text-gray-900">
+                    Select Month
                   </Text>
                   <TouchableOpacity onPress={handleConfirm}>
-                    <Text className="text-blue-500 text-lg font-proximanova-semibold">
+                    <Text className="text-blue-500 text-lg font-semibold">
                       Done
                     </Text>
                   </TouchableOpacity>
@@ -123,4 +127,4 @@ const DateOfBirthInput = ({ value, onDateChange }: DateOfBirthInputProps) => {
   );
 };
 
-export default DateOfBirthInput;
+export default MonthPicker;

@@ -43,11 +43,11 @@ export default function Step2({
       {/* progress details */}
       <View className="my-7">
         <View className="flex-row items-center justify-between mb-6">
-          <Text className="text-sm font-semibold">
+          <Text className="text-sm font-proximanova-semibold">
             Your Progress: {currentStep * 20}%
           </Text>
 
-          <Text className="text-sm font-semibold">
+          <Text className="text-sm font-proximanova-semibold">
             {getStepName(currentStep)}
           </Text>
         </View>
@@ -86,7 +86,7 @@ export default function Step2({
               onPress={() => setProfileImage(null)}
               className="mt-6 px-4 py-2 bg-red-500 rounded-lg"
             >
-              <Text className="text-white font-medium text-center">
+              <Text className="text-white font-proximanova-medium text-center">
                 Remove Photo
               </Text>
             </TouchableOpacity>
@@ -95,7 +95,7 @@ export default function Step2({
 
         {/* intro  */}
         <View className="mt-7">
-          <Text className="text-sm font-semibold mb-2.5">
+          <Text className="text-sm font-proximanova-semibold mb-2.5">
             Add a personal intro
           </Text>
 

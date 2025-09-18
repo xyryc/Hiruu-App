@@ -38,8 +38,10 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
 
   return (
     <View className={`${className} px-4`}>
-      <View className="flex-row justify-between items-center">
-        <Text className="text-xl font-semibold mb-4">Your Today's Shifts</Text>
+      <View className="flex-row justify-between items-center mb-4">
+        <Text className="text-xl font-proximanova-semibold">
+          Your Today's Shifts
+        </Text>
 
         <TouchableOpacity
           onPress={() => setShowModal(true)}
@@ -70,7 +72,7 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
 
       {/* cards */}
       <ScrollView
-        className="mt-4 mb-7"
+        className="mb-7"
         horizontal={true}
         showsHorizontalScrollIndicator={false}
       >
