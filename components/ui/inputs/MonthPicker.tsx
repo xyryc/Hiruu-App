@@ -1,10 +1,11 @@
+import { MonthPickerProps } from "@/types";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import React, { useState } from "react";
 import { Modal, Platform, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const MonthPicker = ({ value, onDateChange }) => {
+const MonthPicker = ({ value, onDateChange }: MonthPickerProps) => {
   const [show, setShow] = useState(false);
   const [tempDate, setTempDate] = useState<Date>(value || new Date());
 
@@ -53,10 +54,10 @@ const MonthPicker = ({ value, onDateChange }) => {
       {/* Input Field */}
       <TouchableOpacity
         onPress={() => setShow(true)}
-        className="flex-row items-center px-2.5 py-2 bg-[#F5F5F5] rounded-lg"
+        className="flex-row items-center px-2.5 py-2 bg-[#F5F5F5] rounded-full"
       >
         <Text
-          className={`text-sm ${value ? "text-primary" : "text-secondary"}`}
+          className={`font-proximanova-regular text-sm ${value ? "text-primary" : "text-secondary"}`}
         >
           {formatMonth(value)}
         </Text>

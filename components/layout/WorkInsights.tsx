@@ -1,10 +1,14 @@
 import { WorkInsightsProps } from "@/types";
+import { SimpleLineIcons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import React, { useState } from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import StatCardPrimary from "../ui/cards/StatCardPrimary";
 import MonthPicker from "../ui/inputs/MonthPicker";
 
 const WorkInsights = ({ className }: WorkInsightsProps) => {
   const [reportMonth, setReportMonth] = useState<Date | null>(new Date());
+  const [showModal, setShowModal] = useState(false);
 
   const handleReportMonthChange = (date: Date) => {
     setReportMonth(date);
@@ -13,13 +17,39 @@ const WorkInsights = ({ className }: WorkInsightsProps) => {
 
   return (
     <View className={`${className} px-4`}>
-      <View className="flex-row justify-between items-center border">
+      <View className="flex-row justify-between items-center mb-4">
         <Text className="text-xl font-proximanova-semibold">Work Insights</Text>
 
-        <MonthPicker
-          value={reportMonth}
-          onDateChange={handleReportMonthChange}
-        />
+        {/* picker */}
+        <View className="flex-row items-center gap-2">
+          <MonthPicker
+            value={reportMonth}
+            onDateChange={handleReportMonthChange}
+          />
+
+          <TouchableOpacity
+            onPress={() => setShowModal(true)}
+            className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
+          >
+            <Image
+              source="https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp"
+              style={{ width: 30, height: 30, borderRadius: 999 }}
+              contentFit="cover"
+            />
+            <SimpleLineIcons
+              className="p-1.5"
+              name="arrow-down"
+              size={12}
+              color="#111111"
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* stats*/}
+      <View className="flex-row gap-3">
+        <StatCardPrimary background={require("@/assets/images/stats-bg.svg")} />
+        <StatCardPrimary background={require("@/assets/images/stats-bg.svg")} />
       </View>
     </View>
   );

@@ -133,3 +133,8 @@ export interface ActionIconCardProps {
 export interface WorkInsightsProps {
   className?: string;
 }
+
+export interface MonthPickerProps {
+  value: Date | null;
+  onDateChange: (date: Date) => void;
+}
