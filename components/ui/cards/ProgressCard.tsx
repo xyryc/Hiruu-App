@@ -6,7 +6,7 @@ import { AnimatedCircularProgress } from "react-native-circular-progress";
 import PrimaryButton from "../buttons/PrimaryButton";
 
 const ProgressCard = () => {
-  const [progress, setProgress] = useState(100);
+  const [progress, setProgress] = useState(80);
 
   // Color mapping based on progress
   const getTintColor = (fill: number) => {

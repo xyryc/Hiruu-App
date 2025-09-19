@@ -1,8 +1,9 @@
+import { StatCardPrimaryProps } from "@/types";
 import { Image } from "expo-image";
 import React from "react";
 import { Text, View } from "react-native";
 
-const StatCardPrimary = ({ background }) => {
+const StatCardPrimary = ({ background }: StatCardPrimaryProps) => {
   return (
     <View className="flex-1 p-4 border border-[#EEEEEE] rounded-xl overflow-hidden">
       <Text className="text-sm font-proximanova-regular text-secondary">

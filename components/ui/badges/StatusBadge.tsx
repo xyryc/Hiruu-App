@@ -1,19 +1,12 @@
+import { StatusBadgeProps } from "@/types";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-type StatusType = "upcoming" | "completed" | "missed" | "ongoing";
-
-interface StatusBadgeProps {
-  status: StatusType;
-  size?: "small" | "medium" | "large";
-  className?: string;
-}
-
-const StatusBadge: React.FC<StatusBadgeProps> = ({
+const StatusBadge = ({
   status,
   size = "medium",
   className = "",
-}) => {
+}: StatusBadgeProps) => {
   const getStatusClasses = () => {
     switch (status) {
       case "upcoming":

@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import StatCardPrimary from "../ui/cards/StatCardPrimary";
+import StatCardSecondary from "../ui/cards/StatCardSecondary";
 import MonthPicker from "../ui/inputs/MonthPicker";
 
 const WorkInsights = ({ className }: WorkInsightsProps) => {
@@ -47,10 +48,14 @@ const WorkInsights = ({ className }: WorkInsightsProps) => {
       </View>
 
       {/* stats*/}
-      <View className="flex-row gap-3">
+      <View className="flex-row gap-3 mb-4">
         <StatCardPrimary background={require("@/assets/images/stats-bg.svg")} />
         <StatCardPrimary background={require("@/assets/images/stats-bg.svg")} />
       </View>
+
+      <StatCardSecondary
+        background={require("@/assets/images/stats-bg2.svg")}
+      />
     </View>
   );
 };

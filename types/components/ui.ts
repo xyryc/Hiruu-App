@@ -138,3 +138,26 @@ export interface MonthPickerProps {
   value: Date | null;
   onDateChange: (date: Date) => void;
 }
+
+export interface StatCardPrimaryProps {
+  background: string;
+}
+
+export interface StatCardSecondaryProps {
+  background: string;
+}
+
+type StatusType = "upcoming" | "completed" | "missed" | "ongoing";
+
+export interface StatusBadgeProps {
+  status: StatusType;
+  size?: "small" | "medium" | "large";
+  className?: string;
+}
+
+export interface SimpleStatusBadgeProps {
+  className?: string;
+  title: string;
+  textColor: string;
+  bgColor: string;
+}
