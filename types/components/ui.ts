@@ -10,8 +10,11 @@ export interface PrimaryButtonProps {
 
 export interface SecondaryButtonProps {
   className?: string;
+  textClass?: string;
   title: string;
   onPress?: (event: GestureResponderEvent) => void;
+  iconColor: string;
+  iconBackground?: string;
 }
 
 export interface SmallButtonProps {
@@ -166,5 +169,9 @@ export interface SimpleStatusBadgeProps {
 }
 
 export interface EngagementPerksProps {
+  className?: string;
+}
+
+export interface WidgetsProps {
   className?: string;
 }

@@ -7,6 +7,7 @@ import ProfileProgress from "@/components/layout/ProfileProgress";
 import QuickAction from "@/components/layout/QuickAction";
 import TodaysShift from "@/components/layout/TodaysShift";
 import WelcomeHeader from "@/components/layout/WelcomeHeader";
+import Widgets from "@/components/layout/Widgets";
 import WorkInsights from "@/components/layout/WorkInsights";
 import React from "react";
 import { ScrollView, StatusBar } from "react-native";
@@ -51,6 +52,9 @@ const UserHome = () => {
 
         {/* engagement & perks */}
         <EngagementPerks className="mt-7" />
+
+        {/* widgets */}
+        <Widgets className="mt-7" />
       </ScrollView>
     </SafeAreaView>
   );

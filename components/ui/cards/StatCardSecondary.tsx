@@ -51,7 +51,7 @@ const StatCardSecondary = ({ background }: StatCardSecondaryProps) => {
       </View>
 
       {/* background */}
-      <View className="absolute -top-0 inset-x-0 items-center">
+      <View className="absolute top-8 left-24 items-center">
         <Image
           source={background}
           style={{
