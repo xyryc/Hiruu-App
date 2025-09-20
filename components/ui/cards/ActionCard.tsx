@@ -12,10 +12,13 @@ const ActionCard = ({
   imageWidth,
   imageHeight,
   background,
+  backgroundClass,
+  backgroundWidth = 100,
+  backgroundHeight = 100,
 }: ActionCardProps) => {
   return (
-    <View className="flex-row justify-between p-4 bg-[#4FB2F3] rounded-[14px]">
-      <View>
+    <View className="flex-row justify-between items-center p-4 bg-[#4FB2F3] rounded-[14px]">
+      <View className="w-6/12">
         <Text className="text-lg font-proximanova-bold mb-4 text-white">
           {title}
         </Text>
@@ -35,12 +38,12 @@ const ActionCard = ({
       </View>
 
       {/* background */}
-      <View className="absolute -right-6 top-0">
+      <View className={`${backgroundClass} absolute -right-6 top-0`}>
         <Image
           source={background}
           style={{
-            width: 100,
-            height: 100,
+            width: backgroundWidth,
+            height: backgroundHeight,
           }}
           contentFit="scale-down"
         />

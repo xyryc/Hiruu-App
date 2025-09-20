@@ -1,4 +1,5 @@
 import BusinessProfile from "@/components/layout/BusinessProfile";
+import EngagementPerks from "@/components/layout/EngagementPerks";
 import FindNewJob from "@/components/layout/FindNewJob";
 import HomeHeader from "@/components/layout/HomeHeader";
 import JoinCollegue from "@/components/layout/JoinCollegue";
@@ -47,6 +48,9 @@ const UserHome = () => {
 
         {/* work insights */}
         <WorkInsights className="mt-7" />
+
+        {/* engagement & perks */}
+        <EngagementPerks className="mt-7" />
       </ScrollView>
     </SafeAreaView>
   );

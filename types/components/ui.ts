@@ -92,6 +92,9 @@ export interface ActionCardProps {
   imageWidth: number;
   imageHeight: number;
   background: ImageSource;
+  backgroundClass?: string;
+  backgroundWidth?: number;
+  backgroundHeight?: number;
 }
 
 export interface BusinessProfileProps {
@@ -160,4 +163,8 @@ export interface SimpleStatusBadgeProps {
   title: string;
   textColor: string;
   bgColor: string;
+}
+
+export interface EngagementPerksProps {
+  className?: string;
 }
