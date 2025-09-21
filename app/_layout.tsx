@@ -1,19 +1,13 @@
-import { useColorScheme } from "@/hooks/useColorScheme";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import "react-native-reanimated";
 import "./global.css";
 import SplashScreen from "./splash";
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+// Create a separate component that uses the theme
+const AppContent = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [fontsLoaded] = useFonts({
     "ProximaNova-Thin": require("../assets/fonts/ProximaNova-Thin.ttf"),
@@ -38,14 +32,20 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(auth)" />
-        <Stack.Screen name="(user)" />
-        <Stack.Screen name="(business)" />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="(auth)" />
+      <Stack.Screen name="(user)" />
+      <Stack.Screen name="(business)" />
+      <Stack.Screen name="+not-found" />
+    </Stack>
+  );
+};
+
+// Root layout only provides the theme context
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <AppContent />
     </ThemeProvider>
   );
 }
