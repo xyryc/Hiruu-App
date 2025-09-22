@@ -29,8 +29,8 @@ const UserHome = () => {
       <ScrollView
         contentContainerStyle={{
           paddingTop: 8,
-          paddingBottom: 140,
         }}
+        showsVerticalScrollIndicator={false}
       >
         {/* profile progress */}
         <ProfileProgress />

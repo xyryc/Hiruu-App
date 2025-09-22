@@ -7,7 +7,7 @@ const EngagementPerks = ({ className }: EngagementPerksProps) => {
   return (
     <View className={`${className} px-4`}>
       <Text className="text-xl font-proximanova-semibold mb-4">
-        Work Insights
+        Engagement & Perks
       </Text>
 
       {/* action card */}

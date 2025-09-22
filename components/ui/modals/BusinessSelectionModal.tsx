@@ -47,7 +47,7 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
   return (
     <Modal
       visible={visible}
-      animationType="none"
+      animationType="fade"
       transparent={true}
       onRequestClose={onClose}
     >
@@ -58,9 +58,9 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
       >
         <View className="bg-white rounded-t-3xl max-h-[45%]">
           {/* Close Button - Positioned at top */}
-          <View className="items-center pt-4 pb-2">
+          <View className="absolute -top-24 inset-x-0 items-center pt-4 pb-2">
             <TouchableOpacity onPress={onClose}>
-              <View className=" bg-gray-800 rounded-full p-2">
+              <View className=" bg-[#000] rounded-full p-2.5">
                 <Entypo name="cross" size={30} color="white" />
               </View>
             </TouchableOpacity>
@@ -68,14 +68,14 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
 
           <SafeAreaView edges={["bottom"]}>
             {/* Header */}
-            <View className="px-6 py-4">
+            <View className="px-6 py-7">
               <Text className="font-proximanova-bold text-xl text-center">
                 Select Your Business
               </Text>
             </View>
 
             {/* Select All Toggle */}
-            <View className="px-6 py-4">
+            <View className="px-6 pb-4">
               <TouchableOpacity
                 onPress={toggleSelectAll}
                 className="flex-row justify-between items-center"
