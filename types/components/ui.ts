@@ -175,3 +175,7 @@ export interface EngagementPerksProps {
 export interface WidgetsProps {
   className?: string;
 }
+
+export interface NoTaskCardProps {
+  className?: string;
+}

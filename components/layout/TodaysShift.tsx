@@ -4,6 +4,7 @@ import { Image } from "expo-image";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import ActionCard from "../ui/cards/ActionCard";
+import NoTaskCard from "../ui/cards/NoTaskCard";
 import TaskCard from "../ui/cards/TaskCard";
 import BusinessSelectionModal from "../ui/modals/BusinessSelectionModal";
 
@@ -115,6 +116,8 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
           status="completed"
         />
       </ScrollView>
+
+      <NoTaskCard className="mb-7" />
 
       {/* rank card */}
       <ActionCard
