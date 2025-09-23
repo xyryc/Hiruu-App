@@ -12,19 +12,21 @@ const ScreenHeader = ({
 }: any) => {
   return (
     <View className={`${className} flex-row justify-between items-center`}>
+      {/* left */}
       <View className="flex-row items-center gap-2.5">
-        <TouchableOpacity onPress={onPressBack}>
+        <TouchableOpacity onPress={onPressBack} className="p-1">
           <Feather name="arrow-left" size={24} color="black" />
         </TouchableOpacity>
 
         <Text className="font-proximanova-bold text-2xl">{title}</Text>
       </View>
 
+      {/* right */}
       <TouchableOpacity onPress={onPress}>
         <Text className="font-proximanova-semibold">{buttonTitle}</Text>
       </TouchableOpacity>
 
-      {components}
+      <View>{components}</View>
     </View>
   );
 };

@@ -12,7 +12,7 @@ const Welcome = () => {
 
   return (
     <SafeAreaView
-      className="h-screen bg-[#BDE4F9]"
+      className="flex-1 bg-[#BDE4F9]"
       edges={["top", "left", "right"]}
     >
       <StatusBar style="dark" backgroundColor="#BDE4F9" />
