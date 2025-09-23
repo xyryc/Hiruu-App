@@ -1,6 +1,8 @@
+import businesses from "@/assets/data/businesses.json";
 import { TodaysShiftProps } from "@/types";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import ActionCard from "../ui/cards/ActionCard";
@@ -11,27 +13,7 @@ import BusinessSelectionModal from "../ui/modals/BusinessSelectionModal";
 const TodaysShift = ({ className }: TodaysShiftProps) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
-
-  const businesses = [
-    {
-      id: "1",
-      name: "Space Hotel",
-      imageUrl:
-        "https://academicsforpalestine.org/wp-content/uploads/2025/07/afp_notext.png",
-    },
-    {
-      id: "2",
-      name: "Paradise Holiday",
-      imageUrl:
-        "https://logos-world.net/wp-content/uploads/2023/02/Ubisoft-Symbol.png",
-    },
-    {
-      id: "3",
-      name: "Farout Beach Club",
-      imageUrl:
-        "https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp",
-    },
-  ];
+  const router = useRouter();
 
   const handleLogin = () => {
     console.log("Login pressed");
@@ -123,6 +105,7 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
       <ActionCard
         title="See your rank on board"
         buttonTitle="View"
+        onPress={() => router.push("/(user)/leaderboard")}
         rightImage={require("@/assets/images/rank.svg")}
         imageClass="absolute bottom-0 right-2.5"
         imageWidth={144}

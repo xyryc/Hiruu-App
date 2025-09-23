@@ -8,9 +8,10 @@ const ScreenHeader = ({
   buttonTitle,
   onPress,
   className,
+  components,
 }: any) => {
   return (
-    <View className={`flex-row justify-between items-center ${className}`}>
+    <View className={`${className} flex-row justify-between items-center`}>
       <View className="flex-row items-center gap-2.5">
         <TouchableOpacity onPress={onPressBack}>
           <Feather name="arrow-left" size={24} color="black" />
@@ -22,6 +23,8 @@ const ScreenHeader = ({
       <TouchableOpacity onPress={onPress}>
         <Text className="font-proximanova-semibold">{buttonTitle}</Text>
       </TouchableOpacity>
+
+      {components}
     </View>
   );
 };

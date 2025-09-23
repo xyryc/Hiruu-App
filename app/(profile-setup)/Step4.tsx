@@ -1,4 +1,4 @@
-import ScreenHeader from "@/components/layout/ProfileHeader";
+import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import InterestSelection from "@/components/ui/inputs/InterestSelection";
 import { useRouter } from "expo-router";

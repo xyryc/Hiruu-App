@@ -54,7 +54,7 @@ const MonthPicker = ({ value, onDateChange }: MonthPickerProps) => {
       {/* Input Field */}
       <TouchableOpacity
         onPress={() => setShow(true)}
-        className="flex-row items-center px-2.5 py-2 bg-[#F5F5F5] rounded-full"
+        className="flex-row items-center pl-2.5 pr-1.5 py-2 bg-[#F5F5F5] rounded-full"
       >
         <Text
           className={`font-proximanova-regular text-sm ${value ? "text-primary" : "text-secondary"}`}

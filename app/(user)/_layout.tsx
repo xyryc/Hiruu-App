@@ -1,40 +1,127 @@
-import { HapticTab } from "@/components/HapticTab";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import Feather from "@expo/vector-icons/Feather";
-import Octicons from "@expo/vector-icons/Octicons";
-import { Tabs } from "expo-router";
+import { useTheme } from "@/contexts/ThemeContext";
+import { Stack, useRouter } from "expo-router";
 import React from "react";
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function UserLayout() {
+  const router = useRouter();
+  const { isDark } = useTheme();
 
   return (
-    <Tabs
+    <Stack
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
+        // Default options for ALL buyer screens
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: isDark ? "#111827" : "#ffffff",
+        },
+        headerTintColor: isDark ? "#ffffff" : "#111111",
+        headerTitleStyle: {
+          fontFamily: "ProximaNova-Semibold",
+          fontSize: 18,
+        },
+        headerShadowVisible: true,
+
+        headerBackTitle: "Back",
+        animation: "slide_from_right",
       }}
     >
-      <Tabs.Screen
-        name="index"
+      {/* TABS - This is the nested (tabs)/_layout.tsx */}
+      <Stack.Screen
+        name="(tabs)"
         options={{
-          title: "Home",
-          tabBarIcon: ({ color }) => (
-            <Octicons name="home" size={28} color={color} />
+          headerShown: false,
+        }}
+      />
+
+      {/* Individual Screens (outside tabs) */}
+      <Stack.Screen
+        name="leaderboard/index"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      {/*
+      <Stack.Screen
+        name="service/[id]/reviews"
+        options={{
+          title: "Reviews & Ratings",
+          presentation: "modal", // Shows as modal
+        }}
+      />
+
+      <Stack.Screen
+        name="service/checkout"
+        options={{
+          title: "Checkout",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons
+                name="close"
+                size={24}
+                color={isDark ? "#fff" : "#111"}
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      /> */}
+
+      {/* Creator Profile Screens */}
+      {/* <Stack.Screen
+        name="creator/[id]"
+        options={{
+          title: "Creator Profile",
+        }}
+      />
+
+      <Stack.Screen
+        name="creator/[id]/portfolio"
+        options={{
+          title: "Portfolio",
+          presentation: "card",
+        }}
+      /> */}
+
+      {/* Order Management Screens */}
+      {/* <Stack.Screen
+        name="order/[id]"
+        options={{
+          title: "Order Details",
+          headerRight: () => (
+            <TouchableOpacity>
+              <Ionicons
+                name="ellipsis-vertical"
+                size={20}
+                color={isDark ? "#fff" : "#111"}
+              />
+            </TouchableOpacity>
           ),
         }}
       />
-      <Tabs.Screen
-        name="rewards"
+
+      <Stack.Screen
+        name="order/[id]/chat"
         options={{
-          title: "Rewards",
-          tabBarIcon: ({ color }) => (
-            <Feather name="gift" size={28} color={color} />
-          ),
+          title: "Chat",
         }}
       />
-    </Tabs>
+
+      <Stack.Screen
+        name="order/[id]/review"
+        options={{
+          title: "Leave a Review",
+          presentation: "modal",
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.back()}>
+              <Ionicons
+                name="close"
+                size={24}
+                color={isDark ? "#fff" : "#111"}
+              />
+            </TouchableOpacity>
+          ),
+        }}
+      /> */}
+    </Stack>
   );
 }

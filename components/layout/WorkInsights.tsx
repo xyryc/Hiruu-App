@@ -1,3 +1,4 @@
+import businesses from "@/assets/data/businesses.json";
 import { WorkInsightsProps } from "@/types";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -12,27 +13,6 @@ const WorkInsights = ({ className }: WorkInsightsProps) => {
   const [reportMonth, setReportMonth] = useState<Date | null>(new Date());
   const [showModal, setShowModal] = useState(false);
   const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
-
-  const businesses = [
-    {
-      id: "1",
-      name: "Space Hotel",
-      imageUrl:
-        "https://academicsforpalestine.org/wp-content/uploads/2025/07/afp_notext.png",
-    },
-    {
-      id: "2",
-      name: "Paradise Holiday",
-      imageUrl:
-        "https://logos-world.net/wp-content/uploads/2023/02/Ubisoft-Symbol.png",
-    },
-    {
-      id: "3",
-      name: "Farout Beach Club",
-      imageUrl:
-        "https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp",
-    },
-  ];
 
   const handleReportMonthChange = (date: Date) => {
     setReportMonth(date);

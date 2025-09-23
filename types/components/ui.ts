@@ -13,7 +13,7 @@ export interface SecondaryButtonProps {
   textClass?: string;
   title: string;
   onPress?: (event: GestureResponderEvent) => void;
-  iconColor: string;
+  iconColor?: string;
   iconBackground?: string;
 }
 
@@ -98,6 +98,7 @@ export interface ActionCardProps {
   backgroundClass?: string;
   backgroundWidth?: number;
   backgroundHeight?: number;
+  onPress: (event: GestureResponderEvent) => void;
 }
 
 export interface BusinessProfileProps {

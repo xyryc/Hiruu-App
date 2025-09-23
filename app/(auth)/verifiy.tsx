@@ -1,4 +1,4 @@
-import TitleHeader from "@/components/layout/TitleHeader";
+import TitleHeader from "@/components/header/TitleHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";

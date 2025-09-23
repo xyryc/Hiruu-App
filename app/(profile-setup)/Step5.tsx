@@ -1,4 +1,4 @@
-import ScreenHeader from "@/components/layout/ProfileHeader";
+import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import OTPInput from "@/components/ui/inputs/OTPInput";
 import PhoneNumberInput from "@/components/ui/inputs/PhoneNumberInput";

@@ -12,27 +12,25 @@ const Welcome = () => {
 
   return (
     <SafeAreaView
-      className="flex-1 bg-[#BDE4F9]"
-      edges={["top", "left", "right", "bottom"]}
+      className="h-screen bg-[#BDE4F9]"
+      edges={["top", "left", "right"]}
     >
       <StatusBar style="dark" backgroundColor="#BDE4F9" />
 
-      <LinearGradient
-        colors={["#BDE4F9", "#F7F7F7"]}
-        locations={[0, 0.38]}
-        className="flex-1 justify-center items-center"
-      >
-        <Image
-          source={require("@/assets/images/welcome-image.svg")}
-          style={{
-            width: "100%",
-            height: "30%",
-          }}
-          contentFit="cover"
-        />
+      <LinearGradient colors={["#BDE4F9", "#F7F7F7"]} locations={[0, 0.38]}>
+        <View className="h-[60%]">
+          <Image
+            source={require("@/assets/images/welcome-image.svg")}
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+            contentFit="contain"
+          />
+        </View>
 
         {/* text content */}
-        <View className="mt-[71px] items-center h-screen">
+        <View className="h-[40%] justify-center items-center">
           <View className="w-4/5">
             <Text className="text-2xl font-proximanova-bold capitalize mb-4 text-center text-[#111111]">
               Welcome to Hiruu

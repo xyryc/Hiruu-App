@@ -1,5 +1,5 @@
+import TitleHeader from "@/components/header/TitleHeader";
 import SocialAuth from "@/components/layout/SocialAuth";
-import TitleHeader from "@/components/layout/TitleHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
@@ -212,7 +212,7 @@ const Login = () => {
           <PrimaryButton
             className="w-full mb-7"
             title="Log in"
-            onPress={() => router.push("/(user)/home")}
+            onPress={() => router.push("/(user)/(tabs)/home")}
           />
 
           {/* OR Divider */}

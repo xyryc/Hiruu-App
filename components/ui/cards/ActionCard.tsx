@@ -15,6 +15,7 @@ const ActionCard = ({
   backgroundClass,
   backgroundWidth = 100,
   backgroundHeight = 100,
+  onPress,
 }: ActionCardProps) => {
   return (
     <View className="flex-row justify-between items-center p-4 bg-[#4FB2F3] rounded-[14px]">
@@ -23,7 +24,7 @@ const ActionCard = ({
           {title}
         </Text>
 
-        <SecondaryButton title={buttonTitle} />
+        <SecondaryButton title={buttonTitle} onPress={onPress} />
       </View>
 
       <View className={imageClass}>
