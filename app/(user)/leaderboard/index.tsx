@@ -123,14 +123,31 @@ export default function LeaderboardScreen() {
         className="px-4"
         title="Leaderboard"
         components={
-          <BusinessSelectionModal
-            visible={showModal}
-            onClose={() => setShowModal(false)}
-            businesses={businesses}
-            selectedBusinesses={selectedBusinesses}
-            onSelectionChange={setSelectedBusinesses}
-          />
+          <TouchableOpacity
+            onPress={() => setShowModal(true)}
+            className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
+          >
+            <Image
+              source="https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp"
+              style={{ width: 30, height: 30, borderRadius: 999 }}
+              contentFit="cover"
+            />
+            <SimpleLineIcons
+              className="p-1.5"
+              name="arrow-down"
+              size={12}
+              color="#111111"
+            />
+          </TouchableOpacity>
         }
+      />
+
+      <BusinessSelectionModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        businesses={businesses}
+        selectedBusinesses={selectedBusinesses}
+        onSelectionChange={setSelectedBusinesses}
       />
 
       <LinearGradient
@@ -213,7 +230,10 @@ export default function LeaderboardScreen() {
               <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
                 Top 3 Performer
               </Text>
-              <TouchableOpacity className="p-2">
+              <TouchableOpacity
+                onPress={() => router.push("/(user)/leaderboard/info")}
+                className="p-2"
+              >
                 <SimpleLineIcons name="info" size={18} color="#282930" />
               </TouchableOpacity>
             </View>
@@ -255,7 +275,7 @@ export default function LeaderboardScreen() {
                   />
 
                   {/* Name & Verified */}
-                  <View className="flex-1">
+                  <View className="flex-1 ml-2">
                     <View className="flex-row items-center">
                       <Text className="text-base font-proximanova-semibold text-primary dark:text-dark-primary mr-2">
                         {performer.name}

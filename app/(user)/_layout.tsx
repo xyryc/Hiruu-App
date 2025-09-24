@@ -41,6 +41,13 @@ export default function UserLayout() {
         }}
       />
 
+      <Stack.Screen
+        name="leaderboard/info"
+        options={{
+          headerShown: false,
+        }}
+      />
+
       {/*
       <Stack.Screen
         name="service/[id]/reviews"
