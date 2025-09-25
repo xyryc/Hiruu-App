@@ -18,7 +18,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
@@ -30,6 +30,16 @@ export default function TabLayout() {
         name="rewards"
         options={{
           title: "Rewards",
+          tabBarIcon: ({ color }) => (
+            <Feather name="gift" size={28} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="schedule"
+        options={{
+          title: "Schedule",
           tabBarIcon: ({ color }) => (
             <Feather name="gift" size={28} color={color} />
           ),
