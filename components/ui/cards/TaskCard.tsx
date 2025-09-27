@@ -1,3 +1,4 @@
+import { WorkShiftCardProps } from "@/types";
 import {
   AntDesign,
   FontAwesome5,
@@ -9,20 +10,7 @@ import { Text, View } from "react-native";
 import StatusBadge from "../badges/StatusBadge";
 import SmallButton from "../buttons/SmallButton";
 
-interface WorkShiftCardProps {
-  shiftTitle: string;
-  startTime: string;
-  endTime: string;
-  shiftImage: any;
-  teamMembers: string[];
-  totalMembers: number;
-  address: string;
-  city: string;
-  onLoginPress: () => void;
-  status?: "ongoing" | "upcoming" | "completed";
-}
-
-const TaskCard: React.FC<WorkShiftCardProps> = ({
+const TaskCard = ({
   shiftTitle,
   startTime,
   endTime,
@@ -33,7 +21,7 @@ const TaskCard: React.FC<WorkShiftCardProps> = ({
   city,
   onLoginPress,
   status = "ongoing",
-}) => {
+}: WorkShiftCardProps) => {
   const [elapsedTime, setElapsedTime] = useState("00:00:05");
 
   // Timer effect for ongoing shifts

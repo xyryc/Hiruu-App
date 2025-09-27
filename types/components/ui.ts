@@ -1,5 +1,5 @@
 import { ImageSource } from "expo-image";
-import { ReactElement } from "react";
+import { Dispatch, ReactElement, SetStateAction } from "react";
 import { GestureResponderEvent } from "react-native";
 
 export interface PrimaryButtonProps {
@@ -179,4 +179,21 @@ export interface WidgetsProps {
 
 export interface NoTaskCardProps {
   className?: string;
+}
+
+export interface ShiftHeaderProps {
+  setShowModal: Dispatch<SetStateAction<boolean>>;
+}
+
+export interface WorkShiftCardProps {
+  shiftTitle: string;
+  startTime: string;
+  endTime: string;
+  shiftImage: any;
+  teamMembers: string[];
+  totalMembers: number;
+  address: string;
+  city: string;
+  onLoginPress: () => void;
+  status?: "ongoing" | "upcoming" | "completed";
 }

@@ -32,7 +32,7 @@ const StatusBadge = ({
         };
       case "ongoing":
         return {
-          containerClasses: "bg-orange-100",
+          containerClasses: "bg-orange-100 border-[#F3934F4D]",
           textClasses: "text-orange-600",
           dotClasses: "bg-orange-600",
           label: "Ongoing",
@@ -64,7 +64,7 @@ const StatusBadge = ({
       default: // medium
         return {
           containerClasses: "px-3 py-1.5 rounded-2xl",
-          textClasses: "text-sm font-proximanova-medium",
+          textClasses: "text-sm",
           dotClasses: "w-1.5 h-1.5",
         };
     }

@@ -1,169 +1,12 @@
 import businesses from "@/assets/data/businesses.json";
+import ShiftHeader from "@/components/header/ShiftHeader";
+import RegularShiftCard from "@/components/ui/cards/RegularShiftCard";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
-import {
-  Feather,
-  Ionicons,
-  MaterialIcons,
-  SimpleLineIcons,
-} from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React, { useState } from "react";
-import {
-  ScrollView,
-  StatusBar,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StatusBar, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-// Header Component
-const ShiftHeader = ({ setShowModal }) => (
-  <View className="px-5 pb-4">
-    <View className="flex-row justify-between items-center mb-2">
-      <View>
-        <Text className="font-proximanova-regular text-primary dark:text-dark-primary">
-          All Shift
-        </Text>
-        <View className="flex-row items-center">
-          <Text className="text-xl font-proximanova-bold text-primary dark:text-dark-primary">
-            12 June, 2025
-          </Text>
-          <Ionicons
-            name="chevron-down"
-            size={18}
-            color="#666"
-            className="ml-2.5"
-          />
-        </View>
-      </View>
-
-      <View className="flex-row items-center gap-1.5">
-        <TouchableOpacity className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
-          <Ionicons name="calendar-outline" size={24} color="#111111" />
-        </TouchableOpacity>
-
-        {/* notification */}
-        <TouchableOpacity className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
-          <Image
-            source={require("@/assets/images/bell.svg")}
-            style={{
-              width: 24,
-              height: 24,
-            }}
-            contentFit="scale-down"
-          />
-          <View className="bg-[#4FB2F3] absolute top-1.5 right-2 w-3.5 h-3.5 items-center rounded-full">
-            <Text className="text-[10px] text-white">1</Text>
-          </View>
-        </TouchableOpacity>
-      </View>
-    </View>
-
-    <View className="flex-row justify-between items-center mt-4">
-      <Text className="text-lg font-semibold text-black">
-        Friday, 16 June, 2025
-      </Text>
-
-      <TouchableOpacity
-        onPress={() => setShowModal(true)}
-        className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
-      >
-        <Image
-          source="https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp"
-          style={{ width: 30, height: 30, borderRadius: 999 }}
-          contentFit="cover"
-        />
-        <SimpleLineIcons
-          className="p-1.5"
-          name="arrow-down"
-          size={12}
-          color="#111111"
-        />
-      </TouchableOpacity>
-    </View>
-  </View>
-);
-
-// Company Avatar Component
-const CompanyAvatar = ({ company }) => (
-  <View
-    className={`w-8 h-8 rounded-full items-center justify-center mr-3 ${
-      company === "Space Hotel"
-        ? "bg-black"
-        : company === "Hotel Paradise"
-          ? "bg-green-600"
-          : company === "Farout Beach..."
-            ? "bg-pink-500"
-            : company === "Palm Beach"
-              ? "bg-gray-700"
-              : "bg-black"
-    }`}
-  >
-    <Text className="text-white text-xs font-semibold">
-      {company === "Space Hotel"
-        ? "SH"
-        : company === "Hotel Paradise"
-          ? "HP"
-          : company === "Farout Beach..."
-            ? "FB"
-            : company === "Palm Beach"
-              ? "PB"
-              : "SH"}
-    </Text>
-  </View>
-);
-
-// Status Badge Component
-const StatusBadge = ({ type, status }) => (
-  <View className="flex-row items-center">
-    <View
-      className={`w-2 h-2 rounded-full mr-2 ${
-        type === "completed"
-          ? "bg-gray-500"
-          : type === "leave"
-            ? "bg-green-500"
-            : type === "ongoing"
-              ? "bg-orange-500"
-              : type === "upcoming"
-                ? "bg-blue-500"
-                : "bg-gray-500"
-      }`}
-    />
-    <Text className="text-sm text-gray-600">{status}</Text>
-    <TouchableOpacity className="ml-2">
-      <Ionicons name="chatbubble-outline" size={16} color="#666" />
-    </TouchableOpacity>
-  </View>
-);
-
-// Shift Details Component
-const ShiftDetails = ({ shift }) => (
-  <View className="space-y-2 mb-4">
-    <View className="flex-row justify-between">
-      <Text className="text-sm text-gray-500">Time:</Text>
-      <Text className="text-sm text-gray-700 font-medium">
-        {shift.workTime}
-      </Text>
-    </View>
-    {shift.breakTime && (
-      <View className="flex-row justify-between">
-        <Text className="text-sm text-gray-500">Break:</Text>
-        <Text className="text-sm text-gray-700 font-medium">
-          {shift.breakTime}
-        </Text>
-      </View>
-    )}
-    {shift.location && (
-      <View className="flex-row justify-between">
-        <Text className="text-sm text-gray-500">Location:</Text>
-        <Text className="text-sm text-gray-700 font-medium">
-          {shift.location}
-        </Text>
-      </View>
-    )}
-  </View>
-);
 
 // Leave Card Component
 const LeaveCard = ({ shift }) => (
@@ -183,48 +26,22 @@ const LeaveCard = ({ shift }) => (
     </View>
 
     <View className="flex-row items-center justify-between">
-      <View className="flex-row items-center">
-        <CompanyAvatar company={shift.company} />
-        <Text className="text-sm text-gray-600">{shift.company}</Text>
+      <View className="flex-row items-center gap-2">
+        <Image
+          source="https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp"
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 999,
+          }}
+        />
+
+        <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+          {shift.company}
+        </Text>
       </View>
       <Text className="text-sm text-gray-500">{shift.workTime}</Text>
     </View>
-  </View>
-);
-
-// Regular Shift Card Component
-const RegularShiftCard = ({ shift }) => (
-  <View>
-    <Text className="font-semibold text-gray-900 text-base mb-3">
-      {shift.title}
-    </Text>
-
-    <ShiftDetails shift={shift} />
-
-    <View className="flex-row items-center justify-between">
-      <View className="flex-row items-center">
-        <CompanyAvatar company={shift.company} />
-        <Text className="text-sm text-gray-600">{shift.company}</Text>
-      </View>
-      <StatusBadge type={shift.type} status={shift.status} />
-    </View>
-  </View>
-);
-
-// Timeline Component
-const Timeline = ({ index, shiftsLength }) => (
-  <View className="absolute top-0 left-5 items-center">
-    {index < shiftsLength - 1 && (
-      <View className="">
-        <Image
-          source={require("@/assets/images/vertical-dotted-line.svg")}
-          style={{
-            width: 1,
-            height: 175,
-          }}
-        />
-      </View>
-    )}
   </View>
 );
 
@@ -247,44 +64,66 @@ const Countdown = ({ shift }) =>
 
 // Shift Item Component
 const ShiftItem = ({ shift, index, shiftsLength }) => (
-  <View className="flex-row mb-6 relative">
+  <View className="flex-row mb-4 overflow-hidden relative">
     {/* Time Column */}
-    <View className="w-16 mr-4 relative">
+    <View className="mr-5 relative">
       <Text className="font-proximanova-regular text-secondary dark:text-dark-secondary w-10 text-center">
         {shift.time}
       </Text>
-      <Timeline index={index} shiftsLength={shiftsLength} />
+
+      <View className="absolute top-12 left-5 items-center">
+        {index < shiftsLength - 1 && (
+          <Image
+            source={require("@/assets/images/vertical-dotted-line.svg")}
+            style={{
+              width: 1,
+              height: 175,
+            }}
+          />
+        )}
+      </View>
     </View>
 
     {/* Content Column */}
-    <View className="flex-1">
-      {shift.type === "completed" && (
-        <View className="mb-2">
-          <Text className="text-sm text-gray-600">{shift.message}</Text>
-        </View>
-      )}
+    <View className="flex-1 relative">
+      {/* shift status */}
+      <View className=" absolute top-0 inset-x-0 items-center">
+        {shift.type === "completed" && (
+          <View className="py-2">
+            <Text className="text-sm text-gray-600">{shift.message}</Text>
+          </View>
+        )}
+        <Countdown shift={shift} />
 
-      <View
-        className={`p-4 rounded-2xl ${
-          shift.type === "completed"
-            ? "bg-gray-100"
-            : shift.type === "leave"
-              ? "bg-green-50"
-              : shift.type === "ongoing"
-                ? "bg-orange-50"
-                : shift.type === "upcoming"
-                  ? "bg-blue-50"
-                  : "bg-gray-50"
-        }`}
-      >
+        <View className="absolute top-0 inset-x-0 items-center">
+          {shift.status === "completed" && (
+            <Image
+              source={require("@/assets/images/shift-completed-bg.svg")}
+              style={{
+                width: 244,
+                height: 34,
+              }}
+            />
+          )}
+          {shift.status === "missed" && (
+            <Image
+              source={require("@/assets/images/shift-missed-bg.svg")}
+              style={{
+                width: 244,
+                height: 34,
+              }}
+            />
+          )}
+        </View>
+      </View>
+
+      <View className="px-4 pb-4 pt-12 rounded-2xl dark:bg-dark-surface border border-[#EEEEEE]">
         {shift.type === "leave" ? (
           <LeaveCard shift={shift} />
         ) : (
           <RegularShiftCard shift={shift} />
         )}
       </View>
-
-      <Countdown shift={shift} />
     </View>
   </View>
 );
@@ -301,21 +140,33 @@ const ShiftSchedule = () => {
       breakTime: "4:30 PM - 5:00 PM",
       location: "136 Avenue-Maclezine, Ne...",
       company: "Space Hotel",
-      status: "Completed",
+      status: "completed",
       message: "You finished your 2:00 PM shift.",
     },
     {
       id: 2,
+      type: "missed",
+      time: "2:00 PM",
+      title: "Maintenance Staff",
+      workTime: "2:00 PM - 9:00 PM",
+      breakTime: "4:30 PM - 5:00 PM",
+      location: "136 Avenue-Maclezine, Ne...",
+      company: "Hotel Paradise",
+      status: "missed",
+      message: "Missed your 9:00 PM shift.",
+    },
+    {
+      id: 3,
       type: "leave",
       time: "9:00 PM",
       title: "Leave Approved",
       subtitle: "You're on leave for this shift",
       workTime: "9:00 PM - 2:00 AM",
       company: "Hotel Paradise",
-      status: "Leave Approved",
+      status: "leave approved",
     },
     {
-      id: 3,
+      id: 4,
       type: "ongoing",
       time: "2:00 AM",
       title: "Inventory Associate",
@@ -323,11 +174,11 @@ const ShiftSchedule = () => {
       breakTime: "4:30 AM - 5:00 AM",
       location: "136 Avenue-Maclezine, Ne...",
       company: "Farout Beach...",
-      status: "Ongoing",
+      status: "ongoing",
       countdown: "00:59:21",
     },
     {
-      id: 4,
+      id: 5,
       type: "upcoming",
       time: "8:00 AM",
       title: "Kitchen Helper / Dishwasher",
@@ -335,7 +186,7 @@ const ShiftSchedule = () => {
       breakTime: "11:30 AM - 12:00 AM",
       location: "136 Avenue-Maclezine, Ne...",
       company: "Palm Beach",
-      status: "Upcoming",
+      status: "upcoming",
       countdown: "03:30:60",
     },
   ];
