@@ -20,15 +20,7 @@ const AppContent = () => {
   });
 
   if (!fontsLoaded) {
-    return null;
-  }
-
-  const handleSplashFinish = () => {
-    setShowSplash(false);
-  };
-
-  if (showSplash) {
-    return <SplashScreen onFinish={handleSplashFinish} />;
+    return <SplashScreen />;
   }
 
   return (

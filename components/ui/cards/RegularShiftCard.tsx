@@ -74,7 +74,7 @@ const RegularShiftCard = ({ shift }) => {
         <View className="flex-row gap-1.5 items-center">
           <StatusBadge status={shift.status} />
           <TouchableOpacity
-            className={`p-2   rounded-full
+            className={`p-2 rounded-full
               ${shift.status === "ongoing" || shift.status === "upcoming" ? "bg-[#4FB2F3]" : "bg-[#4fb1f365]"}`}
           >
             <Feather name="repeat" size={14} color="#fff" />

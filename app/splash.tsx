@@ -1,31 +1,28 @@
-import { SplashScreenProps } from "@/types";
-import React, { useEffect, useState } from "react";
-import { Animated, Image } from "react-native";
+import { Image } from "expo-image";
+import React from "react";
+import { Dimensions, View } from "react-native";
 
-const SplashScreen = ({ onFinish }: SplashScreenProps) => {
-  const [fadeAnim] = useState(new Animated.Value(1));
+const { width, height } = Dimensions.get("window");
 
-  useEffect(() => {
-    setTimeout(() => {
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }).start(() => onFinish());
-    }, 1500);
-  }, []);
-
+const SplashScreen = () => {
   return (
-    <Animated.View style={{ opacity: fadeAnim }}>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#fff",
+      }}
+    >
       <Image
         style={{
-          width: 1000,
-          height: 720,
+          width: width,
+          height: height,
         }}
-        source={require("@/assets/images/splash.svg")}
-        resizeMode="contain"
+        source={require("@/assets/images/splash.png")}
+        contentFit="contain"
       />
-    </Animated.View>
+    </View>
   );
 };
 

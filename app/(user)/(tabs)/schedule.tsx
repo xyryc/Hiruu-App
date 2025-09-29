@@ -1,5 +1,6 @@
 import businesses from "@/assets/data/businesses.json";
 import ShiftHeader from "@/components/header/ShiftHeader";
+import HolidayCard from "@/components/ui/cards/HolidayCard";
 import RegularShiftCard from "@/components/ui/cards/RegularShiftCard";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
@@ -48,11 +49,11 @@ const LeaveCard = ({ shift }) => (
 // Countdown Component
 const Countdown = ({ shift }) =>
   shift.countdown && (
-    <View className="mt-2 px-4">
-      <Text className="text-sm text-gray-600">
+    <View className="px-4">
+      <Text className="text-sm font-proximanova-regular text-primary dark:text-dark-primary">
         {shift.type === "ongoing" ? "Shift ends in: " : "Shift starts in: "}
         <Text
-          className={`font-mono font-semibold ${
+          className={`font-proximanova-bold ${
             shift.type === "ongoing" ? "text-orange-600" : "text-blue-600"
           }`}
         >
@@ -87,38 +88,111 @@ const ShiftItem = ({ shift, index, shiftsLength }) => (
     {/* Content Column */}
     <View className="flex-1 relative">
       {/* shift status */}
-      <View className=" absolute top-0 inset-x-0 items-center">
+      <View className="absolute top-0 inset-x-0 items-center z-20">
         {shift.type === "completed" && (
           <View className="py-2">
-            <Text className="text-sm text-gray-600">{shift.message}</Text>
+            <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
+              {shift.message}
+            </Text>
           </View>
         )}
-        <Countdown shift={shift} />
 
-        <View className="absolute top-0 inset-x-0 items-center">
-          {shift.status === "completed" && (
-            <Image
-              source={require("@/assets/images/shift-completed-bg.svg")}
-              style={{
-                width: 244,
-                height: 34,
-              }}
-            />
-          )}
-          {shift.status === "missed" && (
-            <Image
-              source={require("@/assets/images/shift-missed-bg.svg")}
-              style={{
-                width: 244,
-                height: 34,
-              }}
-            />
-          )}
-        </View>
+        {shift.type === "missed" && (
+          <View className="py-2">
+            <Text className="text-sm font-proximanova-regular text-[#F34F4F]">
+              {shift.message}
+            </Text>
+          </View>
+        )}
+
+        {shift.type === "leave" && (
+          <View className="py-2">
+            <Text className="font-bold text-[#F1C400] capitalize">
+              {shift.title}
+            </Text>
+          </View>
+        )}
+
+        {shift.type === "holiday" && (
+          <View className="py-2">
+            <Text className="font-bold text-primary dark:text-dark-primary">
+              {shift.title}
+            </Text>
+          </View>
+        )}
+
+        {shift.type === "ongoing" && (
+          <View className="py-2">
+            <Countdown shift={shift} />
+          </View>
+        )}
+
+        {shift.type === "upcoming" && (
+          <View className="py-2">
+            <Countdown shift={shift} />
+          </View>
+        )}
+      </View>
+
+      {/* background */}
+      <View className="absolute top-0 inset-x-0 items-center z-10">
+        {shift.type === "completed" && (
+          <Image
+            source={require("@/assets/images/shift-completed-bg.svg")}
+            style={{
+              width: 244,
+              height: 34,
+            }}
+          />
+        )}
+        {shift.type === "missed" && (
+          <Image
+            source={require("@/assets/images/shift-missed-bg.svg")}
+            style={{
+              width: 244,
+              height: 34,
+            }}
+          />
+        )}
+        {shift.type === "ongoing" && (
+          <Image
+            source={require("@/assets/images/shift-ongoing-bg.svg")}
+            style={{
+              width: 244,
+              height: 34,
+            }}
+          />
+        )}
+        {(shift.type === "upcoming" || shift.type === "holiday") && (
+          <Image
+            source={require("@/assets/images/shift-upcoming-bg.svg")}
+            style={{ width: 244, height: 34 }}
+          />
+        )}
+        {shift.type === "leave" && shift.status === "pending" && (
+          <Image
+            source={require("@/assets/images/leave-pending-bg.svg")}
+            style={{
+              width: 244,
+              height: 34,
+            }}
+          />
+        )}
+        {shift.type === "leave" && shift.status === "approved" && (
+          <Image
+            source={require("@/assets/images/leave-approved-bg.svg")}
+            style={{
+              width: 244,
+              height: 34,
+            }}
+          />
+        )}
       </View>
 
       <View className="px-4 pb-4 pt-12 rounded-2xl dark:bg-dark-surface border border-[#EEEEEE]">
-        {shift.type === "leave" ? (
+        {shift.type === "holiday" ? (
+          <HolidayCard shift={shift} />
+        ) : shift.type === "leave" ? (
           <LeaveCard shift={shift} />
         ) : (
           <RegularShiftCard shift={shift} />
@@ -159,14 +233,24 @@ const ShiftSchedule = () => {
       id: 3,
       type: "leave",
       time: "9:00 PM",
+      title: "Leave Pending",
+      subtitle: "You're on leave for this shift",
+      workTime: "9:00 PM - 2:00 AM",
+      company: "Hotel Paradise",
+      status: "pending",
+    },
+    {
+      id: 4,
+      type: "leave",
+      time: "9:00 PM",
       title: "Leave Approved",
       subtitle: "You're on leave for this shift",
       workTime: "9:00 PM - 2:00 AM",
       company: "Hotel Paradise",
-      status: "leave approved",
+      status: "approved",
     },
     {
-      id: 4,
+      id: 5,
       type: "ongoing",
       time: "2:00 AM",
       title: "Inventory Associate",
@@ -178,7 +262,7 @@ const ShiftSchedule = () => {
       countdown: "00:59:21",
     },
     {
-      id: 5,
+      id: 6,
       type: "upcoming",
       time: "8:00 AM",
       title: "Kitchen Helper / Dishwasher",
@@ -188,6 +272,16 @@ const ShiftSchedule = () => {
       company: "Palm Beach",
       status: "upcoming",
       countdown: "03:30:60",
+    },
+    {
+      id: 7,
+      type: "holiday",
+      time: "Mon, 17 June -  10:00 AM",
+      title: "Today is a Holiday",
+      subtitle: "No Shifts - Rio Carnival Holiday",
+      workTime: "N/A",
+      company: "Hotel Paradise",
+      status: "holiday",
     },
   ];
 

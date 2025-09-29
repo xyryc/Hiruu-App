@@ -22,7 +22,7 @@ export default function Index() {
         switch (user?.role) {
           case "user":
           default:
-            router.replace("/(user)/home");
+            router.replace("/(user)/(tabs)/home");
             break;
 
           case "business":

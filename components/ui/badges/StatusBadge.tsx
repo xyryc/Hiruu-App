@@ -25,7 +25,7 @@ const StatusBadge = ({
         };
       case "missed":
         return {
-          containerClasses: "bg-red-100",
+          containerClasses: "bg-red-100 border-[#F34F4F4D]",
           textClasses: "text-red-600",
           dotClasses: "bg-red-600",
           label: "Missed",
