@@ -1,56 +1,19 @@
 import businesses from "@/assets/data/businesses.json";
 import ShiftHeader from "@/components/header/ShiftHeader";
 import HolidayCard from "@/components/ui/cards/HolidayCard";
+import LeaveCard from "@/components/ui/cards/LeaveCard";
 import RegularShiftCard from "@/components/ui/cards/RegularShiftCard";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React, { useState } from "react";
 import { ScrollView, StatusBar, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Leave Card Component
-const LeaveCard = ({ shift }) => (
-  <View>
-    <View className="flex-row items-center justify-between mb-3">
-      <View className="flex-row items-center">
-        <Feather name="check-circle" size={16} color="#10B981" />
-        <Text className="ml-2 font-semibold text-green-700">{shift.title}</Text>
-      </View>
-    </View>
-
-    <View className="flex-row items-center mb-4">
-      <View className="w-16 h-12 bg-green-100 rounded-lg mr-3 items-center justify-center">
-        <MaterialIcons name="beach-access" size={20} color="#10B981" />
-      </View>
-      <Text className="text-gray-700 font-medium">{shift.subtitle}</Text>
-    </View>
-
-    <View className="flex-row items-center justify-between">
-      <View className="flex-row items-center gap-2">
-        <Image
-          source="https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp"
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: 999,
-          }}
-        />
-
-        <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-          {shift.company}
-        </Text>
-      </View>
-      <Text className="text-sm text-gray-500">{shift.workTime}</Text>
-    </View>
-  </View>
-);
-
 // Countdown Component
 const Countdown = ({ shift }) =>
   shift.countdown && (
     <View className="px-4">
-      <Text className="text-sm font-proximanova-regular text-primary dark:text-dark-primary">
+      <Text className="text-sm font-proximanova-regular text-primary">
         {shift.type === "ongoing" ? "Shift ends in: " : "Shift starts in: "}
         <Text
           className={`font-proximanova-bold ${
@@ -107,7 +70,11 @@ const ShiftItem = ({ shift, index, shiftsLength }) => (
 
         {shift.type === "leave" && (
           <View className="py-2">
-            <Text className="font-bold text-[#F1C400] capitalize">
+            <Text
+              className={`font-bold capitalize ${
+                shift.status === "pending" ? "text-[#F1C400]" : "text-[#3EBF5A]"
+              }`}
+            >
               {shift.title}
             </Text>
           </View>
@@ -115,9 +82,7 @@ const ShiftItem = ({ shift, index, shiftsLength }) => (
 
         {shift.type === "holiday" && (
           <View className="py-2">
-            <Text className="font-bold text-primary dark:text-dark-primary">
-              {shift.title}
-            </Text>
+            <Text className="font-bold text-primary">{shift.title}</Text>
           </View>
         )}
 
@@ -189,7 +154,20 @@ const ShiftItem = ({ shift, index, shiftsLength }) => (
         )}
       </View>
 
-      <View className="px-4 pb-4 pt-12 rounded-2xl dark:bg-dark-surface border border-[#EEEEEE]">
+      <View
+        className={`px-4 pb-4 pt-12 rounded-2xl dark:bg-dark-surface border 
+                ${
+                  (shift.type === "leave" &&
+                    shift.status === "pending" &&
+                    "border-[#F1C400]") ||
+                  (shift.type === "leave" &&
+                    shift.status === "approved" &&
+                    "border-[#3EBF5A]") ||
+                  "border-[#EEEEEE]"
+                }
+
+        `}
+      >
         {shift.type === "holiday" ? (
           <HolidayCard shift={shift} />
         ) : shift.type === "leave" ? (
@@ -212,7 +190,7 @@ const ShiftSchedule = () => {
       title: "Maintenance Staff",
       workTime: "2:00 PM - 9:00 PM",
       breakTime: "4:30 PM - 5:00 PM",
-      location: "136 Avenue-Maclezine, Ne...",
+      location: "136 Avenue-Maclezine, New Zeland",
       company: "Space Hotel",
       status: "completed",
       message: "You finished your 2:00 PM shift.",
@@ -224,7 +202,7 @@ const ShiftSchedule = () => {
       title: "Maintenance Staff",
       workTime: "2:00 PM - 9:00 PM",
       breakTime: "4:30 PM - 5:00 PM",
-      location: "136 Avenue-Maclezine, Ne...",
+      location: "136 Avenue-Maclezine, New Zeland",
       company: "Hotel Paradise",
       status: "missed",
       message: "Missed your 9:00 PM shift.",
@@ -234,7 +212,7 @@ const ShiftSchedule = () => {
       type: "leave",
       time: "9:00 PM",
       title: "Leave Pending",
-      subtitle: "You're on leave for this shift",
+      subtitle: "Leave request pending for this shift",
       workTime: "9:00 PM - 2:00 AM",
       company: "Hotel Paradise",
       status: "pending",
@@ -244,7 +222,7 @@ const ShiftSchedule = () => {
       type: "leave",
       time: "9:00 PM",
       title: "Leave Approved",
-      subtitle: "You're on leave for this shift",
+      subtitle: "You’re on leave for this shift",
       workTime: "9:00 PM - 2:00 AM",
       company: "Hotel Paradise",
       status: "approved",
@@ -256,7 +234,7 @@ const ShiftSchedule = () => {
       title: "Inventory Associate",
       workTime: "2:00 AM - 8:00 AM",
       breakTime: "4:30 AM - 5:00 AM",
-      location: "136 Avenue-Maclezine, Ne...",
+      location: "136 Avenue-Maclezine, New Zeland",
       company: "Farout Beach...",
       status: "ongoing",
       countdown: "00:59:21",
@@ -268,7 +246,7 @@ const ShiftSchedule = () => {
       title: "Kitchen Helper / Dishwasher",
       workTime: "8:00 AM - 2:00 PM",
       breakTime: "11:30 AM - 12:00 AM",
-      location: "136 Avenue-Maclezine, Ne...",
+      location: "136 Avenue-Maclezine, New Zeland",
       company: "Palm Beach",
       status: "upcoming",
       countdown: "03:30:60",
@@ -276,10 +254,10 @@ const ShiftSchedule = () => {
     {
       id: 7,
       type: "holiday",
-      time: "Mon, 17 June -  10:00 AM",
+      time: "10:00 AM",
       title: "Today is a Holiday",
       subtitle: "No Shifts - Rio Carnival Holiday",
-      workTime: "N/A",
+      workTime: "Mon, 17 June -  10:00 AM",
       company: "Hotel Paradise",
       status: "holiday",
     },
