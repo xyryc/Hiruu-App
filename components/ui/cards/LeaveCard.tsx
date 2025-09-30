@@ -4,7 +4,7 @@ import { Text, View } from "react-native";
 
 const LeaveCard = ({ shift }) => (
   <View>
-    <View className="flex-row gap-9 items-center justify-center my-6">
+    <View className="flex-row gap-9 items-center justify-center py-4">
       {shift.status === "pending" ? (
         <Image
           source={require("@/assets/images/leave-pending.svg")}
@@ -19,7 +19,7 @@ const LeaveCard = ({ shift }) => (
           source={require("@/assets/images/leave-approved.svg")}
           style={{
             width: 95,
-            height: 83,
+            height: 88,
           }}
           contentFit="contain"
         />
