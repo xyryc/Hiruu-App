@@ -13,7 +13,7 @@ const QuickAction = ({ className }: QuickActionProps) => {
   return (
     <View className={`${className} px-4`}>
       <Text className="text-xl font-proximanova-semibold mb-4">
-        Join Your Colleagues
+        Quick Actions
       </Text>
 
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>

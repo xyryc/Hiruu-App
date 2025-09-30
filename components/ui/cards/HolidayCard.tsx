@@ -50,10 +50,10 @@ const HolidayCard = ({ shift }) => {
           />
 
           <View className="flex-row gap-1">
-            <Text className="text-xs font-proximanova-regular">
+            <Text className="text-xs font-proximanova-regular text-primary dark:text-dark-primary">
               Next shift:
             </Text>
-            <Text className="text-xs font-proximanova-semibold">
+            <Text className="text-xs font-proximanova-semibold text-primary dark:text-dark-primary">
               {shift.workTime}
             </Text>
           </View>

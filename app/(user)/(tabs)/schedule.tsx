@@ -11,6 +11,20 @@ const ShiftSchedule = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
 
+  // Get display content for header button
+  const getDisplayContent = () => {
+    if (selectedBusinesses.length === 0) {
+      return { type: "all", content: "All" };
+    } else if (selectedBusinesses.length === 1) {
+      const selectedBusiness = businesses.find(
+        (b) => b.id === selectedBusinesses[0]
+      );
+      return { type: "single", content: selectedBusiness };
+    }
+  };
+
+  const displayContent = getDisplayContent();
+
   return (
     <SafeAreaView
       className="flex-1 bg-white dark:bg-dark-background"
@@ -18,7 +32,10 @@ const ShiftSchedule = () => {
     >
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
-      <ShiftHeader setShowModal={setShowModal} />
+      <ShiftHeader
+        setShowModal={setShowModal}
+        displayContent={displayContent}
+      />
 
       <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
         {shifts.map((shift, index) => (

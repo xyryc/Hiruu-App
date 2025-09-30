@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { Text, View } from "react-native";
 import HolidayCard from "../ui/cards/HolidayCard";
@@ -66,15 +67,25 @@ const ShiftItem = ({ shift, index, shiftsLength }) => (
           </View>
         )}
 
-        {shift.type === "leave" && (
-          <View className="py-2">
-            <Text
-              className={`font-bold capitalize ${
-                shift.status === "pending" ? "text-[#F1C400]" : "text-[#3EBF5A]"
-              }`}
-            >
-              {shift.title}
+        {shift.type === "leave" && shift.status === "pending" && (
+          <View className="py-2 flex-row items-center gap-2">
+            <Text className="font-bold capitalize text-[#F1C400]">
+              {shift.title}{" "}
             </Text>
+            <MaterialCommunityIcons
+              name="timer-sand"
+              size={20}
+              color="#F1C400"
+            />
+          </View>
+        )}
+
+        {shift.type === "leave" && shift.status === "approved" && (
+          <View className="py-2 flex-row items-center gap-2">
+            <Text className="font-bold capitalize text-[#3EBF5A]">
+              {shift.title}{" "}
+            </Text>
+            <Octicons name="check-circle" size={20} color="#3EBF5A" />
           </View>
         )}
 
@@ -163,7 +174,6 @@ const ShiftItem = ({ shift, index, shiftsLength }) => (
                     "border-[#3EBF5A]") ||
                   "border-[#EEEEEE]"
                 }
-
         `}
       >
         {shift.type === "holiday" ? (

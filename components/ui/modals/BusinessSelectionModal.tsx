@@ -2,7 +2,7 @@ import { BusinessSelectionModalProps } from "@/types";
 import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -15,25 +15,33 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
 }) => {
   const [localSelection, setLocalSelection] =
     useState<string[]>(selectedBusinesses);
-  const [selectAll, setSelectAll] = useState(false);
+
+  // Determine if "All" is selected
+  const isAllSelected =
+    localSelection.length === 0 || localSelection.length === businesses.length;
+
+  useEffect(() => {
+    setLocalSelection(selectedBusinesses);
+  }, [selectedBusinesses]);
 
   const toggleSelectAll = () => {
-    if (selectAll) {
+    if (isAllSelected) {
+      // If all selected, do nothing or keep all selected
       setLocalSelection([]);
-      setSelectAll(false);
     } else {
-      setLocalSelection(businesses.map((b) => b.id));
-      setSelectAll(true);
+      // Select all
+      setLocalSelection([]);
     }
   };
 
   const toggleBusiness = (businessId: string) => {
-    const newSelection = localSelection.includes(businessId)
-      ? localSelection.filter((id) => id !== businessId)
-      : [...localSelection, businessId];
-
-    setLocalSelection(newSelection);
-    setSelectAll(newSelection.length === businesses.length);
+    // If clicking on already selected single business, switch to "All"
+    if (localSelection.length === 1 && localSelection[0] === businessId) {
+      setLocalSelection([]);
+    } else {
+      // Select only this business
+      setLocalSelection([businessId]);
+    }
   };
 
   const handleDone = () => {
@@ -41,8 +49,11 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
     onClose();
   };
 
-  const isSelected = (businessId: string) =>
-    localSelection.includes(businessId);
+  const isSelected = (businessId: string) => {
+    // If empty array, "All" is selected, so all businesses appear selected
+    if (localSelection.length === 0) return true;
+    return localSelection.includes(businessId);
+  };
 
   return (
     <Modal
@@ -51,16 +62,12 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
       transparent={true}
       onRequestClose={onClose}
     >
-      <BlurView
-        intensity={80} // Blur strength (0–100)
-        tint="dark" // Options: 'light', 'dark', 'extraDark'
-        className="flex-1 justify-end"
-      >
+      <BlurView intensity={80} tint="dark" className="flex-1 justify-end">
         <View className="bg-white rounded-t-3xl max-h-[45%]">
-          {/* Close Button - Positioned at top */}
+          {/* Close Button */}
           <View className="absolute -top-24 inset-x-0 items-center pt-4 pb-2">
-            <TouchableOpacity onPress={onClose}>
-              <View className=" bg-[#000] rounded-full p-2.5">
+            <TouchableOpacity onPress={handleDone}>
+              <View className="bg-[#000] rounded-full p-2.5">
                 <Entypo name="cross" size={30} color="white" />
               </View>
             </TouchableOpacity>
@@ -85,13 +92,15 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
                 </Text>
                 <View
                   className="w-12 h-6 rounded-full relative"
-                  style={{ backgroundColor: selectAll ? "#4FB2F3" : "#D1D5DB" }}
+                  style={{
+                    backgroundColor: isAllSelected ? "#4FB2F3" : "#D1D5DB",
+                  }}
                 >
                   <View
                     className="w-5 h-5 bg-white rounded-full absolute top-0.5"
                     style={{
-                      right: selectAll ? 2 : undefined,
-                      left: selectAll ? undefined : 2,
+                      right: isAllSelected ? 2 : undefined,
+                      left: isAllSelected ? undefined : 2,
                     }}
                   />
                 </View>
@@ -99,7 +108,7 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
             </View>
 
             {/* Business List */}
-            <ScrollView className=" px-6">
+            <ScrollView className="px-6">
               {businesses.map((business) => (
                 <TouchableOpacity
                   key={business.id}
