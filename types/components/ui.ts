@@ -135,6 +135,7 @@ export interface ActionIconCardProps {
   icon: ReactElement<any, any>;
   title: string;
   count?: number;
+  onPress?: (event: GestureResponderEvent) => void;
 }
 
 export interface WorkInsightsProps {
@@ -164,9 +165,9 @@ export interface StatusBadgeProps {
 
 export interface SimpleStatusBadgeProps {
   className?: string;
-  title: string;
-  textColor: string;
-  bgColor: string;
+  title?: string;
+  textColor?: string;
+  bgColor?: string;
 }
 
 export interface EngagementPerksProps {
