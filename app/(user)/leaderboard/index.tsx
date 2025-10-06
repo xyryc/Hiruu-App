@@ -2,6 +2,7 @@
 import businesses from "@/assets/data/businesses.json";
 import ScreenHeader from "@/components/header/ScreenHeader";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
+import CountdownTimer from "@/components/ui/timer/CountdownTimer";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -165,51 +166,11 @@ export default function LeaderboardScreen() {
               Next Top Performer Results in
             </Text>
 
-            <View className="flex-row justify-center items-center mb-20">
-              {/* Days */}
-              <View className="items-center">
-                <View className="bg-blue-100 dark:bg-blue-900/30 rounded-xl px-4 py-3 min-w-[70px]">
-                  <Text className="text-3xl font-proximanova-bold text-blue-500 dark:text-blue-400 text-center">
-                    {timeLeft.days.toString().padStart(2, "0")}
-                  </Text>
-                </View>
-                <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-proximanova-medium">
-                  Days
-                </Text>
-              </View>
-
-              <Text className="text-2xl font-proximanova-bold text-gray-400 mx-2">
-                :
-              </Text>
-
-              {/* Hours */}
-              <View className="items-center">
-                <View className="bg-blue-100 dark:bg-blue-900/30 rounded-xl px-4 py-3 min-w-[70px]">
-                  <Text className="text-3xl font-proximanova-bold text-blue-500 dark:text-blue-400 text-center">
-                    {timeLeft.hours.toString().padStart(2, "0")}
-                  </Text>
-                </View>
-                <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-proximanova-medium">
-                  Hours
-                </Text>
-              </View>
-
-              <Text className="text-2xl font-proximanova-bold text-gray-400 mx-2">
-                :
-              </Text>
-
-              {/* Minutes */}
-              <View className="items-center">
-                <View className="bg-blue-100 dark:bg-blue-900/30 rounded-xl px-4 py-3 min-w-[70px]">
-                  <Text className="text-3xl font-proximanova-bold text-blue-500 dark:text-blue-400 text-center">
-                    {timeLeft.minutes.toString().padStart(2, "0")}
-                  </Text>
-                </View>
-                <Text className="text-xs text-gray-500 dark:text-gray-400 mt-2 font-proximanova-medium">
-                  Minutes
-                </Text>
-              </View>
-            </View>
+            {/* countdown timer */}
+            <CountdownTimer
+              targetTime="2025-12-31T23:01:60"
+              className="mb-20"
+            />
 
             {/* bars */}
             <View className="absolute bottom-0 inset-x-0 items-center">
