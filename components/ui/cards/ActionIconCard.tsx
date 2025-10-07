@@ -22,7 +22,7 @@ const ActionIconCard = ({
         <View className="p-3 bg-[#F5F5F5] rounded-full mx-5">{icon}</View>
       </View>
 
-      <Text className="mt-2.5 text-primary text-sm font-proximanova-semibold">
+      <Text className="mt-2.5 text-primary dark:text-dark-primary text-sm font-proximanova-semibold">
         {title}
       </Text>
     </TouchableOpacity>

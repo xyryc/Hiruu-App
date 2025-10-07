@@ -1,3 +1,4 @@
+import { ScreenHeaderProps } from "@/types";
 import { Feather } from "@expo/vector-icons";
 import { useColorScheme } from "nativewind";
 import React from "react";
@@ -5,12 +6,14 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 const ScreenHeader = ({
   onPressBack,
+  iconColor,
   title,
+  titleClass,
   buttonTitle,
   onPress,
   className,
   components,
-}: any) => {
+}: ScreenHeaderProps) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -22,11 +25,13 @@ const ScreenHeader = ({
           <Feather
             name="arrow-left"
             size={24}
-            color={isDark ? "#FFFFFF" : "#000000"}
+            color={iconColor || (isDark ? "#FFFFFF" : "#000000")}
           />
         </TouchableOpacity>
 
-        <Text className="font-proximanova-bold text-2xl text-primary dark:text-dark-primary">
+        <Text
+          className={`${titleClass} font-proximanova-bold text-2xl text-primary dark:text-dark-primary`}
+        >
           {title}
         </Text>
       </View>

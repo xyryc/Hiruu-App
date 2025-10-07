@@ -165,7 +165,7 @@ export interface StatusBadgeProps {
 
 export interface SimpleStatusBadgeProps {
   className?: string;
-  title?: string;
+  title: string;
   textColor?: string;
   bgColor?: string;
 }
@@ -197,4 +197,15 @@ export interface WorkShiftCardProps {
   city: string;
   onLoginPress: () => void;
   status?: "ongoing" | "upcoming" | "completed";
+}
+
+export interface ScreenHeaderProps {
+  onPressBack?: () => void;
+  title: string;
+  iconColor?: string;
+  titleClass?: string;
+  buttonTitle?: string;
+  onPress?: () => void;
+  className?: string;
+  components?: React.ReactNode;
 }

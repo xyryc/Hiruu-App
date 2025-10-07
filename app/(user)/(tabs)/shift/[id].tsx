@@ -28,7 +28,7 @@ const ShiftDetails = () => {
   return (
     <SafeAreaView
       className="flex-1 bg-white dark:bg-dark-background"
-      edges={["top", "left", "right", "bottom"]}
+      edges={["top", "left", "right"]}
     >
       <StatusBar style="dark" backgroundColor="#BDE4F9" />
 
@@ -55,7 +55,13 @@ const ShiftDetails = () => {
         }
       />
 
-      <ScrollView className="mt-2.5 mx-5" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="mt-2.5 mx-5"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 40,
+        }}
+      >
         {/* timer */}
         {status !== "completed" && (
           <>
@@ -257,7 +263,7 @@ const ShiftDetails = () => {
 
         {/* important note */}
         <View className="p-4 rounded-[14px] bg-[#E5F4FD] mt-6">
-          <Text className="text-primary dark:text-dark-primary text-lg font-proximanova-semibold">
+          <Text className="text-primary text-lg font-proximanova-semibold">
             Important Notes
           </Text>
 
