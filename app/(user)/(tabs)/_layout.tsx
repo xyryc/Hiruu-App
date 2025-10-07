@@ -45,20 +45,6 @@ export default function TabLayout() {
           ),
         }}
       />
-
-      <Tabs.Screen
-        name="shift/[id]"
-        options={{
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="shift/swap"
-        options={{
-          href: null,
-        }}
-      />
     </Tabs>
   );
 }

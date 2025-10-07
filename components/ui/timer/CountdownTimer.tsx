@@ -1,20 +1,7 @@
+import { CountdownTimerProps, TimeLeft } from "@/types";
 import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-
-interface CountdownTimerProps {
-  className: string;
-  targetTime: Date | string;
-  onComplete?: () => void;
-}
-
-interface TimeLeft {
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
-  total: number;
-}
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({
   className,

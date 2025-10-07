@@ -48,6 +48,20 @@ export default function UserLayout() {
         }}
       />
 
+      <Stack.Screen
+        name="shift/[id]"
+        options={{
+          headerShown: false,
+        }}
+      />
+
+      <Stack.Screen
+        name="shift/swap"
+        options={{
+          headerShown: false,
+        }}
+      />
+
       {/*
       <Stack.Screen
         name="service/[id]/reviews"

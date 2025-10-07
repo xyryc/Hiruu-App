@@ -1,8 +1,9 @@
 import users from "@/assets/data/users.json";
 import ScreenHeader from "@/components/header/ScreenHeader";
 import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
+import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import SearchBar from "@/components/ui/inputs/SearchBar";
-import { Entypo } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -31,31 +32,26 @@ const SwapShifts = () => {
   };
 
   return (
-    <View>
-      <SafeAreaView
-        className="bg-[#E5F4FD] rounded-b-[20px]"
-        edges={["top", "left", "right", "bottom"]}
-      >
-        <StatusBar style="dark" backgroundColor="#E5F4FD" />
+    <SafeAreaView className="flex-1 bg-[#E5F4FD] dark:bg-background">
+      <StatusBar style="dark" backgroundColor="#E5F4FD" />
 
-        {/* Custom Header */}
-        <ScreenHeader
-          onPressBack={() => router.back()}
-          className="px-4"
-          title="Detail"
-          titleClass="dark:text-primary"
-          iconColor="#111111"
-          components={
-            <SimpleStatusBadge
-              title="All Cashiers"
-              className="border-[0.5px] border-[#F3934F4D]"
-              textColor="#F3934F"
-            />
-          }
-        />
-      </SafeAreaView>
+      {/* Custom Header */}
+      <ScreenHeader
+        onPressBack={() => router.back()}
+        className="px-4 pb-6 rounded-b-3xl"
+        title="Swap Shift"
+        titleClass="dark:text-primary"
+        iconColor="#111111"
+        components={
+          <SimpleStatusBadge
+            title="All Cashiers"
+            className="border-[0.5px] border-[#F3934F4D] !bg-white"
+            textColor="#F3934F"
+          />
+        }
+      />
 
-      <View className="p-5">
+      <View className="p-5 bg-white flex-1">
         <SearchBar />
 
         <View className="mt-4">
@@ -69,7 +65,7 @@ const SwapShifts = () => {
               <TouchableOpacity
                 key={user.id}
                 onPress={() => toggleUser(user.id)}
-                className="flex-row items-center pb-3 mb-3 rounded-xl border-b border-[#0B113C1A]"
+                className="flex-row items-center pb-3 mb-3 border-b border-[#0B113C1A]"
               >
                 {/* User Avatar */}
                 <View className="rounded-full mr-4 justify-center items-center">
@@ -85,23 +81,19 @@ const SwapShifts = () => {
                 </View>
 
                 {/* User Name */}
-                <Text className="flex-1 font-proximanova-semibold">
+                <Text className="flex-1 font-proximanova-regular">
                   {user.name}
                 </Text>
 
                 {/* Selection Indicator */}
-                <View
-                  className={`rounded-full border ${
-                    isSelected(user.id)
-                      ? "bg-[#4FB2F3] border-[#7A7A7A]"
-                      : "bg-white"
-                  } justify-center items-center`}
-                >
-                  {isSelected(user.id) && (
-                    <Entypo
-                      name="check"
+                <View>
+                  {isSelected(user.id) ? (
+                    <Feather name="circle" size={20} color="#7A7A7A" />
+                  ) : (
+                    <Ionicons
+                      name="checkmark-circle"
                       size={20}
-                      color={isSelected(user.id) ? "#fff" : "#4FB2F3"}
+                      color="#4FB2F3"
                     />
                   )}
                 </View>
@@ -110,7 +102,11 @@ const SwapShifts = () => {
           </ScrollView>
         </View>
       </View>
-    </View>
+
+      <View className="absolute bottom-0 left-0 right-0 py-5 items-center justify-end bg-[#E5F4FD] dark:bg-dark-background rounded-t-[20px]">
+        <PrimaryButton title="Send Request" />
+      </View>
+    </SafeAreaView>
   );
 };
 

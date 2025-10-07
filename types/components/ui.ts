@@ -209,3 +209,17 @@ export interface ScreenHeaderProps {
   className?: string;
   components?: React.ReactNode;
 }
+
+export interface CountdownTimerProps {
+  className: string;
+  targetTime: Date | string;
+  onComplete?: () => void;
+}
+
+export interface TimeLeft {
+  days: number;
+  hours: number;
+  minutes: number;
+  seconds: number;
+  total: number;
+}

@@ -1,6 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
 import StatusBadge from "@/components/ui/badges/StatusBadge";
+import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ActionIconCard from "@/components/ui/cards/ActionIconCard";
 import CountdownTimer from "@/components/ui/timer/CountdownTimer";
 import {
@@ -23,12 +24,12 @@ const ShiftDetails = () => {
   const router = useRouter();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-  const status = "upcoming";
+  const status = "missed";
 
   return (
     <SafeAreaView
       className="flex-1 bg-white dark:bg-dark-background"
-      edges={["top", "left", "right"]}
+      edges={["top", "left", "right", "bottom"]}
     >
       <StatusBar style="dark" backgroundColor="#BDE4F9" />
 
@@ -68,7 +69,7 @@ const ShiftDetails = () => {
             <Text className="text-center text-secondary dark:text-dark-secondary font-proximanova-regular mb-2.5">
               Shift starts in
             </Text>
-            <CountdownTimer targetTime="2025-12-31T23:01:60" className="mb-8" />
+            <CountdownTimer targetTime="2025-10-08T06:30:00" className="mb-8" />
           </>
         )}
 
@@ -280,6 +281,10 @@ const ShiftDetails = () => {
           </View>
         </View>
       </ScrollView>
+
+      <View className="absolute bottom-0 items-center left-0 right-0 py-5 bg-white dark:bg-dark-background">
+        <PrimaryButton title="Submit shift Summary" />
+      </View>
     </SafeAreaView>
   );
 };
