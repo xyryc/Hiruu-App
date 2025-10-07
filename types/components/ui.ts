@@ -127,6 +127,11 @@ export interface BusinessSelectionModalProps {
   onSelectionChange: (selectedIds: string[]) => void;
 }
 
+export interface SwapShiftModalProps {
+  visible: boolean;
+  onClose: () => void;
+}
+
 export interface QuickActionProps {
   className?: string;
 }

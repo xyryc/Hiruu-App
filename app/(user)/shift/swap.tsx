@@ -3,6 +3,7 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import SearchBar from "@/components/ui/inputs/SearchBar";
+import SwapRequestModal from "@/components/ui/modals/SwapRequestModal";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -13,6 +14,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const SwapShifts = () => {
   const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   const isSelected = (userId: string) => {
@@ -104,8 +106,16 @@ const SwapShifts = () => {
       </View>
 
       <View className="absolute bottom-0 left-0 right-0 py-5 items-center justify-end bg-[#E5F4FD] dark:bg-dark-background rounded-t-[20px]">
-        <PrimaryButton title="Send Request" />
+        <PrimaryButton
+          title="Send Request"
+          onPress={() => setShowModal(true)}
+        />
       </View>
+
+      <SwapRequestModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+      />
     </SafeAreaView>
   );
 };
