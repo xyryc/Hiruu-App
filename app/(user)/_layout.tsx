@@ -62,6 +62,13 @@ export default function UserLayout() {
         }}
       />
 
+      <Stack.Screen
+        name="shift/overtime"
+        options={{
+          headerShown: false,
+        }}
+      />
+
       {/*
       <Stack.Screen
         name="service/[id]/reviews"

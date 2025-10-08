@@ -171,19 +171,19 @@ const ShiftDetails = () => {
                 />
               }
               title="Overwork"
-              count={3}
+              onPress={() => router.push("/shift/overtime")}
             />
 
             <ActionIconCard
               icon={<Feather name="repeat" size={24} color="#4FB2F3" />}
               title="Swap Shift"
-              count={40}
               onPress={() => router.push("/shift/swap")}
             />
 
             <ActionIconCard
               icon={<Ionicons name="document-text" size={24} color="#4FB2F3" />}
               title="Report Issue"
+              onPress={() => router.push("/shift/report")}
             />
           </ScrollView>
         </View>
