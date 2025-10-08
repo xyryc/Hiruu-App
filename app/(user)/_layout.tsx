@@ -76,6 +76,13 @@ export default function UserLayout() {
         }}
       />
 
+      <Stack.Screen
+        name="shift/summary"
+        options={{
+          headerShown: false,
+        }}
+      />
+
       {/*
       <Stack.Screen
         name="service/[id]/reviews"

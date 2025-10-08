@@ -159,7 +159,6 @@ const ShiftDetails = () => {
                 <FontAwesome6 name="calendar-times" size={24} color="#4FB2F3" />
               }
               title="Sick Leave"
-              count={0}
             />
 
             <ActionIconCard
@@ -283,7 +282,10 @@ const ShiftDetails = () => {
       </ScrollView>
 
       <View className="absolute bottom-0 items-center left-0 right-0 py-5 bg-white dark:bg-dark-background">
-        <PrimaryButton title="Submit shift Summary" />
+        <PrimaryButton
+          title="Submit shift Summary"
+          onPress={() => router.push("/shift/summary")}
+        />
       </View>
     </SafeAreaView>
   );
