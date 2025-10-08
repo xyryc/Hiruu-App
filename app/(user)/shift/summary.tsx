@@ -24,7 +24,7 @@ const ShiftSummary = () => {
       <ScreenHeader
         onPressBack={() => router.back()}
         className="px-5 pb-6 rounded-b-3xl overflow-hidden"
-        title="Overtime Request"
+        title="Shift Summary"
         titleClass="text-primary dark:text-dark-primary"
         iconColor={isDark ? "#fff" : "#111111"}
       />
@@ -66,10 +66,7 @@ const ShiftSummary = () => {
       </ScrollView>
 
       <View className="absolute bottom-0 left-0 right-0 py-5 items-center justify-end bg-white dark:bg-dark-background rounded-t-[20px]">
-        <PrimaryButton
-          title="Send Request"
-          onPress={() => setShowModal(true)}
-        />
+        <PrimaryButton title="Send Request" />
       </View>
     </SafeAreaView>
   );

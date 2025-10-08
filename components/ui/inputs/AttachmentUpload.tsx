@@ -1,24 +1,23 @@
-import { Ionicons } from "@expo/vector-icons";
+import { AttachmentUploadProps } from "@/types/components/input";
+import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-const AttachmentUpload = ({ onPress }) => {
+const AttachmentUpload = ({ onPress }: AttachmentUploadProps) => {
   return (
-    <View className="mb-5">
-      <Text className="text-base font-proximanova-semibold text-primary dark:text-dark-primary mb-4">
+    <View>
+      <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
         Attachments
       </Text>
 
       <TouchableOpacity
         onPress={onPress}
-        className="items-center justify-center py-8 bg-white dark:bg-dark-surface rounded-xl border-2 border-dashed border-gray-300 dark:border-dark-border"
+        className="items-center justify-center py-8 bg-white dark:bg-dark-surface rounded-xl border border-dashed border-[#EEEEEE] dark:border-dark-border"
         activeOpacity={0.7}
       >
-        <View className="w-16 h-16 items-center justify-center bg-blue-100 dark:bg-blue-900/30 rounded-full mb-3">
-          <Ionicons name="add-circle-outline" size={32} color="#3B82F6" />
-        </View>
+        <Feather name="plus-circle" size={50} color="#4FB2F3" />
 
-        <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
+        <Text className="text-sm font-proximanova-medium text-secondary dark:text-dark-secondary mt-2.5">
           Upload Your File
         </Text>
       </TouchableOpacity>

@@ -69,7 +69,7 @@ const ShiftDetails = () => {
             <Text className="text-center text-secondary dark:text-dark-secondary font-proximanova-regular mb-2.5">
               Shift starts in
             </Text>
-            <CountdownTimer targetTime="2025-10-08T06:30:00" className="mb-8" />
+            <CountdownTimer targetTime="2025-10-09T01:30:00" className="mb-8" />
           </>
         )}
 
