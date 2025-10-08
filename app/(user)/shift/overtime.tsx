@@ -122,7 +122,7 @@ const OvertimeRequest = () => {
             </Text>
             <View className="bg-white dark:bg-dark-surface rounded-xl border border-[#EEEEEE] dark:border-dark-border overflow-hidden">
               <TextInput
-                className="px-4 py-3.5 text-sm font-proximanova-regular text-primary dark:text-dark-primary min-h-[120px]"
+                className="px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary min-h-[120px]"
                 placeholder="Mention any reason or notes for manager...."
                 placeholderTextColor="#7D7D7D"
                 multiline

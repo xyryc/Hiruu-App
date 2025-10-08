@@ -1,17 +1,10 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import Dropdown from "@/components/ui/dropdown/DropDown";
-import { Ionicons, Octicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import {
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ReportIssue = () => {
@@ -19,16 +12,18 @@ const ReportIssue = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const [showModal, setShowModal] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState("");
+  const [selectedIssue, setSelectedIssue] = useState("");
   const [startDate, setStartDate] = useState("");
   const [overtimeStart, setOvertimeStart] = useState("10:00Am");
   const [overtimeEnd, setOvertimeEnd] = useState("04:00pm");
 
   const [reason, setReason] = useState("");
-  const companies = [
-    { label: "Company A", value: "company-a" },
-    { label: "Company B", value: "company-b" },
-    { label: "Company C", value: "company-c" },
+  const issues = [
+    { label: "System not working", value: "issue-a" },
+    { label: "Overstaffed shift", value: "issue-b" },
+    { label: "Missing team members on shift", value: "issue-c" },
+    { label: "Wrong timezone display", value: "issue-d" },
+    { label: "Building access problems", value: "issue-e" },
   ];
 
   return (
@@ -56,74 +51,23 @@ const ReportIssue = () => {
           {/* Select Company */}
           <View className="mb-5">
             <Dropdown
-              label="Select Company"
-              placeholder="Select Company"
-              options={companies}
-              value={selectedCompany}
-              onSelect={setSelectedCompany}
+              label="Issue Types"
+              placeholder="Select an issue"
+              options={issues}
+              value={selectedIssue}
+              onSelect={setSelectedIssue}
             />
           </View>
 
-          {/* Select Dates */}
+          {/* description */}
           <View className="mb-5">
             <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
-              Select Dates
-            </Text>
-            <TouchableOpacity className="flex-row items-center justify-between px-4 py-3.5 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
-              <Text className="text-sm font-proximanova-regular text-placeholder dark:text-dark-placeholder">
-                Start Date
-              </Text>
-              <Ionicons name="calendar-outline" size={20} color="#4FB2F3" />
-            </TouchableOpacity>
-          </View>
-
-          {/* Overtime Start and End Time */}
-          <View className="flex-row mb-5 gap-3">
-            {/* Overtime Start */}
-            <View className="flex-1">
-              <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
-                Overtime Start
-              </Text>
-              <TouchableOpacity className="flex-row items-center justify-between px-4 py-3.5 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
-                <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
-                  {overtimeStart}
-                </Text>
-
-                <Octicons name="clock-fill" size={20} color="#4FB2F3" />
-              </TouchableOpacity>
-            </View>
-
-            {/* To Separator */}
-            <View className="items-center justify-end pb-3.5">
-              <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
-                To
-              </Text>
-            </View>
-
-            {/* Overtime End */}
-            <View className="flex-1">
-              <Text className="text-sm font-proximanova-medium text-primary dark:text-dark-primary mb-2.5">
-                Overtime End
-              </Text>
-              <TouchableOpacity className="flex-row items-center justify-between px-4 py-3.5 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
-                <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
-                  {overtimeEnd}
-                </Text>
-
-                <Octicons name="clock-fill" size={20} color="#4FB2F3" />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Reason (Optional) */}
-          <View className="mb-5">
-            <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
-              Reason (Optional)
+              Description
             </Text>
             <View className="bg-white dark:bg-dark-surface rounded-xl border border-[#EEEEEE] dark:border-dark-border overflow-hidden">
               <TextInput
-                className="px-4 py-3.5 text-sm font-proximanova-regular text-primary dark:text-dark-primary min-h-[120px]"
-                placeholder="Mention any reason or notes for manager...."
+                className="px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary min-h-[120px]"
+                placeholder="Mention any Issue or notes for manager....."
                 placeholderTextColor="#7D7D7D"
                 multiline
                 textAlignVertical="top"
