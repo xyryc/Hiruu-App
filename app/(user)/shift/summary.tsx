@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import AttachmentUpload from "@/components/ui/inputs/AttachmentUpload";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
@@ -10,20 +11,12 @@ const ShiftSummary = () => {
   const router = useRouter();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-  const [showModal, setShowModal] = useState(false);
-  const [selectedIssue, setSelectedIssue] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [overtimeStart, setOvertimeStart] = useState("10:00Am");
-  const [overtimeEnd, setOvertimeEnd] = useState("04:00pm");
-
   const [reason, setReason] = useState("");
-  const issues = [
-    { label: "System not working", value: "issue-a" },
-    { label: "Overstaffed shift", value: "issue-b" },
-    { label: "Missing team members on shift", value: "issue-c" },
-    { label: "Wrong timezone display", value: "issue-d" },
-    { label: "Building access problems", value: "issue-e" },
-  ];
+
+  const handleFileUpload = () => {
+    // Handle file upload logic here
+    console.log("Upload file");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#E5F4FD] dark:bg-dark-background">
@@ -63,6 +56,11 @@ const ShiftSummary = () => {
                 onChangeText={setReason}
               />
             </View>
+          </View>
+
+          {/* upload */}
+          <View>
+            <AttachmentUpload onPress={handleFileUpload} />
           </View>
         </View>
       </ScrollView>
