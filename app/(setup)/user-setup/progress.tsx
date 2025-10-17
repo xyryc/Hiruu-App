@@ -32,7 +32,7 @@ const ProgressFlow = () => {
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      router.push("/(profile-setup)/complete");
+      router.push("/(setup)/user-setup/complete");
     }
   };
 

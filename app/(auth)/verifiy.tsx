@@ -75,6 +75,7 @@ const Verify = () => {
             {otp.map((digit, index) => (
               <TextInput
                 key={index}
+                //@ts-ignore
                 ref={(ref) => (inputRefs.current[index] = ref)}
                 className={`w-14 h-14 border rounded-[10px] text-center text-lg place-items-center ${
                   digit
@@ -103,7 +104,7 @@ const Verify = () => {
           <PrimaryButton
             className="w-full"
             title="Verify"
-            onPress={() => router.push("/(profile-setup)/progress")}
+            onPress={() => router.push("/(setup)/user-setup/progress")}
           />
         </View>
 
