@@ -83,7 +83,7 @@ const LeaderboardInfo = () => {
             <Ionicons
               className="p-2 bg-[#E5F4FD] rounded-full border-[0.5px] border-[#b2b1b159]"
               name="calendar-outline"
-              size={24}
+              size={2}
               color="#4FB2F3"
             />
           </View>

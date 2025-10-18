@@ -73,7 +73,7 @@ const OvertimeRequest = () => {
               <Text className="text-sm font-proximanova-regular text-placeholder dark:text-dark-placeholder">
                 Start Date
               </Text>
-              <Ionicons name="calendar-outline" size={20} color="#4FB2F3" />
+              <Ionicons name="calendar-outline" size={20} color="#0000" />
             </TouchableOpacity>
           </View>
 

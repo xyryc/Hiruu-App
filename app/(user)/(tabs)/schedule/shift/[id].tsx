@@ -159,6 +159,7 @@ const ShiftDetails = () => {
                 <FontAwesome6 name="calendar-times" size={24} color="#4FB2F3" />
               }
               title="Sick Leave"
+              onPress={() => router.push("./leave")}
             />
 
             <ActionIconCard
@@ -170,19 +171,19 @@ const ShiftDetails = () => {
                 />
               }
               title="Overwork"
-              onPress={() => router.push("/shift/overtime")}
+              onPress={() => router.push("./overtime")}
             />
 
             <ActionIconCard
               icon={<Feather name="repeat" size={24} color="#4FB2F3" />}
               title="Swap Shift"
-              onPress={() => router.push("/shift/swap")}
+              onPress={() => router.push("./swap")}
             />
 
             <ActionIconCard
               icon={<Ionicons name="document-text" size={24} color="#4FB2F3" />}
               title="Report Issue"
-              onPress={() => router.push("/shift/report")}
+              onPress={() => router.push("./report")}
             />
           </ScrollView>
         </View>
@@ -284,7 +285,7 @@ const ShiftDetails = () => {
       <View className="absolute bottom-0 items-center left-0 right-0 py-5 bg-white dark:bg-dark-background">
         <PrimaryButton
           title="Submit shift Summary"
-          onPress={() => router.push("/shift/summary")}
+          onPress={() => router.push("./summary")}
         />
       </View>
     </SafeAreaView>

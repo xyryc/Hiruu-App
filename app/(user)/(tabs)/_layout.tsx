@@ -67,7 +67,7 @@ export default function TabLayout() {
         }}
       />
 
-      {/* hidden tab screens */}
+      {/* home screen hidden tabs */}
       <Tabs.Screen
         name="home/leaderboard/index"
         options={{
@@ -84,8 +84,9 @@ export default function TabLayout() {
         }}
       />
 
+      {/* schedule screen hidden tabs */}
       <Tabs.Screen
-        name="home/shift/[id]"
+        name="schedule/shift/[id]"
         options={{
           headerShown: false,
           href: null,
@@ -93,7 +94,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="home/shift/overtime"
+        name="schedule/shift/overtime"
         options={{
           headerShown: false,
           href: null,
@@ -101,7 +102,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="home/shift/report"
+        name="schedule/shift/report"
         options={{
           headerShown: false,
           href: null,
@@ -109,7 +110,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="home/shift/summary"
+        name="schedule/shift/summary"
         options={{
           headerShown: false,
           href: null,
@@ -117,7 +118,15 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="home/shift/swap"
+        name="schedule/shift/swap"
+        options={{
+          headerShown: false,
+          href: null,
+        }}
+      />
+
+      <Tabs.Screen
+        name="schedule/shift/leave"
         options={{
           headerShown: false,
           href: null,

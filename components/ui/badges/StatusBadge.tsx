@@ -37,6 +37,27 @@ const StatusBadge = ({
           dotClasses: "bg-orange-600",
           label: "Ongoing",
         };
+      case "pending":
+        return {
+          containerClasses: "bg-orange-100 border-[#F3934F4D]",
+          textClasses: "text-orange-600",
+          dotClasses: "bg-orange-600",
+          label: "Pending",
+        };
+      case "approved":
+        return {
+          containerClasses: "bg-[#ECF9EF] border-[#F3934F4D]",
+          textClasses: "text-[#3EBF5A]",
+          dotClasses: "bg-[#3EBF5A]",
+          label: "Approved",
+        };
+      case "rejected":
+        return {
+          containerClasses: "bg-[#FEEEEE] border-[#F3934F4D]",
+          textClasses: "text-[#F34F4F]",
+          dotClasses: "bg-[#F34F4F]",
+          label: "Rejected",
+        };
       default:
         return {
           containerClasses: "bg-gray-100",
