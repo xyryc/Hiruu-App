@@ -31,11 +31,14 @@ const RequestLeave = () => {
                 </View>
             </View>
 
-            {isOn && <DatePicker />}
-            <View className='flex-row justify-between'>
-                <TimePicker />
-                <TimePicker />
-            </View>
+            {isOn && <View>
+
+                <DatePicker />
+                <View className='flex-row justify-between gap-3 px-4 py-2 mt-0.5'>
+                    <TimePicker title='Start Time' />
+                    <TimePicker title='End Time' />
+                </View>
+            </View>}
 
 
 
