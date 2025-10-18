@@ -101,14 +101,14 @@ const SickLeave = () => {
         iconColor={isDark ? '#fff' : '#111'}
         components={
           <View className="flex-row items-center gap-2">
-            {['calendar-outline', 'message-square'].map((icon, i) => (
-              <TouchableOpacity
-                key={i}
-                className="bg-[#F5F5F5] rounded-full p-2"
-              >
-                <Ionicons name={icon as any} size={22} color="black" />
-              </TouchableOpacity>
-            ))}
+
+            <TouchableOpacity className="bg-[#F5F5F5] rounded-full p-2" >
+              <Ionicons name="calendar-outline" size={22} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity className="bg-[#F5F5F5] rounded-full p-2" >
+              <Ionicons name="calendar-outline" size={22} color="black" />
+            </TouchableOpacity>
+
           </View>
         }
       />
