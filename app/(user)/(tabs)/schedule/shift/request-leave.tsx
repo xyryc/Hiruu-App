@@ -1,17 +1,23 @@
 import ScreenHeader from '@/components/header/ScreenHeader'
 import DatePicker from '@/components/layout/DatePicker'
 import TimePicker from '@/components/layout/TimePicker'
+import SelectBusiness from '@/components/test/SelectBusiness'
+import SelectLeaveType from '@/components/test/SelectLeaveType'
 import { ToggleButton } from '@/components/ui/buttons/ToggleButton'
+import ActionCard from '@/components/ui/cards/ActionCard'
 import { router } from 'expo-router'
 import { useColorScheme } from 'nativewind'
 import React, { useState } from 'react'
-import { Text, View } from 'react-native'
+import { Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const RequestLeave = () => {
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === 'dark';
     const [isOn, setIsOn] = useState(false);
+    const [leaveText, setLeaveText] = useState('')
+    console.log(leaveText);
+
 
     return (
         <SafeAreaView className="flex-1 bg-white dark:bg-dark-background">
@@ -59,6 +65,45 @@ const RequestLeave = () => {
                 }
             </View>
             {/* 3 Day Leav End */}
+            {/* Select Leave Type start */}
+            <View className={`px-4 py-2 mt-2 ${isOn && 'mt-6'}`}>
+
+                <SelectLeaveType />
+            </View>
+            {/* Select Leave Type end */}
+            {/* Reason start */}
+            <View className='px-4 py-2 mt-2'>
+                <Text className='font-semibold'>Reason</Text>
+                <TextInput
+                    value={leaveText}
+                    onChangeText={setLeaveText}
+                    placeholder="Mention any reason or notes for manager....."
+                    multiline
+                    textAlignVertical="top"
+                    className="border border-[#EEEEEE] mt-2.5 h-[100px] rounded-xl px-4 py-3 bg-white text-gray-700"
+                    keyboardType="default"
+                    autoCapitalize="none"
+                />
+            </View>
+            {/* Reason End */}
+            {/* Select business start */}
+            <View className='px-4 py-2 mt-2'>
+                <SelectBusiness />
+            </View>
+            {/* Select business end */}
+
+            {/* Remaining shick leave start */}
+            <View className='px-4 py-2 mt-2'>
+                <ActionCard
+                    title="Explore All Job Listings"
+                    buttonTitle="Find Now"
+                    rightImage={require("@/assets/images/toolbox.svg")}
+                    imageWidth={110}
+                    imageHeight={80}
+                    background={require("@/assets/images/chessboard-bg.svg")}
+                />
+            </View>
+            {/* Remaining shick leave start */}
 
         </SafeAreaView>
     )
