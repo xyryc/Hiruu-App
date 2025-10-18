@@ -20,7 +20,7 @@ const JoinCollegue = ({ className }: JoinCollegueProps) => {
               width: 48,
               height: 48,
             }}
-            contentFit="scale-down"
+            contentFit="contain"
           />
         </TouchableOpacity>
 
@@ -33,7 +33,7 @@ const JoinCollegue = ({ className }: JoinCollegueProps) => {
               width: 48,
               height: 48,
             }}
-            contentFit="scale-down"
+            contentFit="contain"
           />
         </TouchableOpacity>
       </View>

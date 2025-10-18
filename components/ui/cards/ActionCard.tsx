@@ -34,7 +34,7 @@ const ActionCard = ({
             width: imageWidth,
             height: imageHeight,
           }}
-          contentFit="scale-down"
+          contentFit="contain"
         />
       </View>
 
@@ -46,7 +46,7 @@ const ActionCard = ({
             width: backgroundWidth,
             height: backgroundHeight,
           }}
-          contentFit="scale-down"
+          contentFit="contain"
         />
       </View>
     </View>

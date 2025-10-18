@@ -37,7 +37,7 @@ const ShiftHeader = ({ setShowModal, displayContent }: ShiftHeaderProps) => {
                 width: 24,
                 height: 24,
               }}
-              contentFit="scale-down"
+              contentFit="contain"
             />
             <View className="bg-[#4FB2F3] absolute top-1.5 right-2 w-3.5 h-3.5 items-center rounded-full">
               <Text className="text-[10px] text-white">1</Text>

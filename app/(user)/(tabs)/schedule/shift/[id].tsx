@@ -49,7 +49,7 @@ const ShiftDetails = () => {
                   width: 24,
                   height: 24,
                 }}
-                contentFit="scale-down"
+                contentFit="contain"
               />
             </TouchableOpacity>
           </View>

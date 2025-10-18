@@ -24,7 +24,7 @@ const StatCardPrimary = ({ background }: StatCardPrimaryProps) => {
             width: 100,
             height: 100,
           }}
-          contentFit="scale-down"
+          contentFit="contain"
         />
       </View>
     </View>

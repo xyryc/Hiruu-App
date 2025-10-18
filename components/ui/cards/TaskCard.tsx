@@ -216,7 +216,7 @@ const TaskCard = ({
                 width: 34,
                 height: 34,
               }}
-              contentFit="scale-down"
+              contentFit="contain"
             />
           </View>
 

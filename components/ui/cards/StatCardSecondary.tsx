@@ -58,7 +58,7 @@ const StatCardSecondary = ({ background }: StatCardSecondaryProps) => {
             width: 100,
             height: 120,
           }}
-          contentFit="scale-down"
+          contentFit="contain"
         />
       </View>
     </View>

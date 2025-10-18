@@ -85,7 +85,7 @@ const GenderSelection: React.FC<GenderSelectionProps> = ({
                         width: 56,
                       }}
                       source={require("@/assets/images/male.svg")}
-                      contentFit="scale-down"
+                      contentFit="contain"
                     />
                   </View>
                 )}
@@ -98,7 +98,7 @@ const GenderSelection: React.FC<GenderSelectionProps> = ({
                         width: 56,
                       }}
                       source={require("@/assets/images/female.svg")}
-                      contentFit="scale-down"
+                      contentFit="contain"
                     />
                   </View>
                 )}
@@ -111,7 +111,7 @@ const GenderSelection: React.FC<GenderSelectionProps> = ({
                         width: 56,
                       }}
                       source={require("@/assets/images/other.svg")}
-                      contentFit="scale-down"
+                      contentFit="contain"
                     />
                   </View>
                 )}

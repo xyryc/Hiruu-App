@@ -15,7 +15,7 @@ const ConnectSocials = () => {
               width: 36,
             }}
             source={require("@/assets/images/facebook2.svg")}
-            contentFit="scale-down"
+            contentFit="contain"
           />
 
           <Text className="text-sm font-proximanova-semibold">Facebook</Text>
@@ -33,7 +33,7 @@ const ConnectSocials = () => {
               width: 36,
             }}
             source={require("@/assets/images/linkedin.svg")}
-            contentFit="scale-down"
+            contentFit="contain"
           />
 
           <Text className="text-sm font-proximanova-semibold">Facebook</Text>
@@ -51,7 +51,7 @@ const ConnectSocials = () => {
               width: 36,
             }}
             source={require("@/assets/images/whatsapp.svg")}
-            contentFit="scale-down"
+            contentFit="contain"
           />
 
           <Text className="text-sm font-proximanova-semibold">Facebook</Text>
@@ -69,7 +69,7 @@ const ConnectSocials = () => {
               width: 36,
             }}
             source={require("@/assets/images/twitter.svg")}
-            contentFit="scale-down"
+            contentFit="contain"
           />
 
           <Text className="text-sm font-proximanova-semibold">Facebook</Text>
@@ -87,7 +87,7 @@ const ConnectSocials = () => {
               width: 36,
             }}
             source={require("@/assets/images/telegram.svg")}
-            contentFit="scale-down"
+            contentFit="contain"
           />
 
           <Text className="text-sm font-proximanova-semibold">Facebook</Text>
@@ -105,7 +105,7 @@ const ConnectSocials = () => {
               width: 36,
             }}
             source={require("@/assets/images/instagram.svg")}
-            contentFit="scale-down"
+            contentFit="contain"
           />
 
           <Text className="text-sm font-proximanova-semibold">Instagram</Text>

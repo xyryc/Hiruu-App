@@ -2,6 +2,7 @@ import img from '@/assets/images/location.png';
 import ScreenHeader from '@/components/header/ScreenHeader';
 import SickLeaveCard from '@/components/ui/cards/SickLeaveCard';
 import { Ionicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { useColorScheme } from 'nativewind';
 import React, { useState } from 'react';
@@ -103,10 +104,19 @@ const SickLeave = () => {
           <View className="flex-row items-center gap-2">
 
             <TouchableOpacity className="bg-[#F5F5F5] rounded-full p-2" >
-              <Ionicons name="calendar-outline" size={22} color="black" />
+              <Ionicons name="calendar-outline" size={22} color="#111111" />
             </TouchableOpacity>
-            <TouchableOpacity className="bg-[#F5F5F5] rounded-full p-2" >
-              <Ionicons name="calendar-outline" size={22} color="black" />
+            <TouchableOpacity onPress={() => router.push('/(user)/(tabs)/schedule/shift/request-leave')} className="bg-[#F5F5F5] rounded-full p-2" >
+              {/* <Ionicons name="calendar-outline" size={22} color="black" /> */}
+              <Image
+
+                source={require("@/assets/images/card-send.svg")}
+                style={{
+                  width: 24, height: 24
+
+                }}
+                contentFit='contain'
+              />
             </TouchableOpacity>
 
           </View>
