@@ -56,7 +56,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
     return (
         <View>
             {label && (
-                <Text className="text-sm font-semibold text-primary dark:text-dark-primary mb-2">
+                <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary mb-2">
                     {label}
                 </Text>
             )}
@@ -70,7 +70,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
                         <Image
                             source={selectedOption.avatar}
                             contentFit="contain"
-                            style={{ height: 40, width: 40 }}
+                            style={{ height: 35, width: 35 }}
                         />
                     )}
                     <Text

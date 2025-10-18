@@ -21,13 +21,13 @@ const TimePicker = ({ title }: { title: string }) => {
 
     return (
         <View className="flex-1">
-            <Text className='mb-2.5 ml-1 font-semibold text-[#111111]'>{title}</Text>
+            <Text className='mb-2.5 ml-1 font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>{title}</Text>
             <TouchableOpacity
                 onPress={() => setShow(true)}
                 activeOpacity={0.8}
                 className="flex-row items-center justify-between border border-gray-300 rounded-xl px-4 py-3 bg-white"
             >
-                <Text className="text-gray-700 text-base">{formattedTime ? formattedTime : title}</Text>
+                <Text className=" text-base text-primary">{formattedTime ? formattedTime : title}</Text>
                 <MaterialCommunityIcons name="clock" size={22} color="#4FB2F3" />
             </TouchableOpacity>
 

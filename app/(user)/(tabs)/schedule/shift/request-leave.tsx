@@ -3,12 +3,13 @@ import DatePicker from '@/components/layout/DatePicker'
 import TimePicker from '@/components/layout/TimePicker'
 import SelectBusiness from '@/components/test/SelectBusiness'
 import SelectLeaveType from '@/components/test/SelectLeaveType'
+import PrimaryButton from '@/components/ui/buttons/PrimaryButton'
 import { ToggleButton } from '@/components/ui/buttons/ToggleButton'
 import ActionCard from '@/components/ui/cards/ActionCard'
 import { router } from 'expo-router'
 import { useColorScheme } from 'nativewind'
 import React, { useState } from 'react'
-import { Text, TextInput, View } from 'react-native'
+import { ScrollView, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 const RequestLeave = () => {
@@ -20,7 +21,9 @@ const RequestLeave = () => {
 
 
     return (
-        <SafeAreaView className="flex-1 bg-white dark:bg-dark-background">
+        <SafeAreaView className="flex-1 bg-white dark:bg-dark-background"
+            edges={["top", "left", "right"]}
+        >
             {/* Header */}
             <ScreenHeader
                 className='mx-4'
@@ -30,81 +33,81 @@ const RequestLeave = () => {
                 iconColor={isDark ? '#fff' : '#111'}
             />
 
-            {/* Section title */}
-            <Text className='mx-5 mt-8 font-semibold text-[#111111]'>Select Dates</Text>
+            <ScrollView>
+                {/* Section title */}
+                <Text className='mx-5 mt-[30px] font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Select Dates</Text>
 
-            {/* Duration + toggle */}
-            <View className='mx-5 mt-3 flex-row justify-between items-center'>
-                <Text className='text-sm font-normal text-[#4FB2F3]'>
-                    Duration: {isOn ? '1' : '3'} Days
-                </Text>
-                <ToggleButton isOn={isOn} setIsOn={setIsOn} />
-            </View>
-            {/* Half Day Start */}
-            <View className='px-4 py-2 mt-2'>
-                {isOn ? <DatePicker /> : ''}
-            </View>
-            <View className='flex-row justify-between gap-3 px-4 py-2 mt-2'>
-                {isOn ? (
-                    <>
-                        <TimePicker title='Start Time' />
-                        <TimePicker title='End Time' />
-                    </>
-                ) : null}
-            </View>
-            {/* Half day end */}
-            {/* 3 Day Leav Start */}
-            <View className='flex-row justify-between gap-3  px-4 py-2 -mt-10'>
-                {
-                    isOn ? '' : (
+                {/* Duration + toggle */}
+                <View className='mx-5 mt-[10px] flex-row justify-between items-center'>
+                    <Text className='text-sm font-normal text-[#4FB2F3]'>
+                        Duration: {isOn ? '1' : '3'} Days
+                    </Text>
+                    <ToggleButton isOn={isOn} setIsOn={setIsOn} />
+                </View>
+                {/* Half Day Start */}
+                <View className='mx-5 mt-[10px]'>
+                    {isOn ? <DatePicker /> : ''}
+                </View>
+                <View className='flex-row justify-between gap-3 mx-5 mt-[15px] '>
+                    {isOn ? (
                         <>
-                            <DatePicker className='flex-1' title='Start Day' />
-                            <DatePicker className='flex-1' title='End Day' />
+                            <TimePicker title='Start Time' />
+                            <TimePicker title='End Time' />
                         </>
-                    )
-                }
-            </View>
-            {/* 3 Day Leav End */}
-            {/* Select Leave Type start */}
-            <View className={`px-4 py-2 mt-2 ${isOn && 'mt-6'}`}>
+                    ) : null}
+                </View>
+                {/* Half day end */}
+                {/* 3 Day Leav Start */}
+                <View className='flex-row justify-between gap-3 mx-5'>
+                    {
+                        isOn ? '' : (
+                            <>
+                                <DatePicker className='flex-1' title='Start Day' />
+                                <DatePicker className='flex-1' title='End Day' />
+                            </>
+                        )
+                    }
+                </View>
+                {/* 3 Day Leav End */}
+                {/* Select Leave Type start */}
+                <View className="mx-5  mt-8">
+                    <SelectLeaveType />
+                </View>
+                {/* Select Leave Type end */}
+                {/* Reason start */}
+                <View className='mx-5 py-2 mt-2'>
+                    <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Reason</Text>
+                    <TextInput
+                        value={leaveText}
+                        onChangeText={setLeaveText}
+                        placeholder="Mention any reason or notes for manager....."
+                        multiline
+                        textAlignVertical="top"
+                        className="border border-[#EEEEEE] mt-2.5 h-[100px] rounded-xl px-4 py-3 bg-white text-gray-700"
+                        keyboardType="default"
+                        autoCapitalize="none"
+                    />
+                </View>
+                {/* Reason End */}
+                {/* Select business start */}
+                <View className='mx-5 py-2 mt-2'>
+                    <SelectBusiness />
+                </View>
+                {/* Select business end */}
 
-                <SelectLeaveType />
-            </View>
-            {/* Select Leave Type end */}
-            {/* Reason start */}
-            <View className='px-4 py-2 mt-2'>
-                <Text className='font-semibold'>Reason</Text>
-                <TextInput
-                    value={leaveText}
-                    onChangeText={setLeaveText}
-                    placeholder="Mention any reason or notes for manager....."
-                    multiline
-                    textAlignVertical="top"
-                    className="border border-[#EEEEEE] mt-2.5 h-[100px] rounded-xl px-4 py-3 bg-white text-gray-700"
-                    keyboardType="default"
-                    autoCapitalize="none"
-                />
-            </View>
-            {/* Reason End */}
-            {/* Select business start */}
-            <View className='px-4 py-2 mt-2'>
-                <SelectBusiness />
-            </View>
-            {/* Select business end */}
-
-            {/* Remaining shick leave start */}
-            <View className='px-4 py-2 mt-2'>
-                <ActionCard
-                    title="Explore All Job Listings"
-                    buttonTitle="Find Now"
-                    rightImage={require("@/assets/images/toolbox.svg")}
-                    imageWidth={110}
-                    imageHeight={80}
-                    background={require("@/assets/images/chessboard-bg.svg")}
-                />
-            </View>
-            {/* Remaining shick leave start */}
-
+                {/* Remaining shick leave start */}
+                <View className='mx-5 py-2 mt-2'>
+                    <ActionCard
+                        title="You have only 1 Sick Leave remaining this month"
+                        rightImage={require("@/assets/images/remaining-sick.png")}
+                        imageWidth={82}
+                        imageHeight={55}
+                        background={require("@/assets/images/chessboard-bg.svg")}
+                    />
+                </View>
+                {/* Remaining shick leave start */}
+                <PrimaryButton title='Submit Request' className='mx-5' />
+            </ScrollView>
         </SafeAreaView>
     )
 }

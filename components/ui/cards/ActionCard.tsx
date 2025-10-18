@@ -19,12 +19,18 @@ const ActionCard = ({
 }: ActionCardProps) => {
   return (
     <View className="flex-row justify-between items-center p-4 bg-[#4FB2F3] rounded-[14px]">
-      <View className="w-6/12">
-        <Text className="text-lg font-proximanova-bold mb-4 text-white">
+      <View className="w-8/12">
+        <Text className="text-lg font-proximanova-bold text-white">
           {title}
         </Text>
 
-        <SecondaryButton title={buttonTitle} onPress={onPress} />
+        {
+          buttonTitle && (
+            <View className="mt-4">
+              <SecondaryButton title={buttonTitle} onPress={onPress} />
+            </View>
+          )
+        }
       </View>
 
       <View className={imageClass}>

@@ -89,7 +89,7 @@ export interface FindNewJobProps {
 
 export interface ActionCardProps {
   title: string;
-  buttonTitle: string;
+  buttonTitle?: string;
   rightImage: ImageSource;
   imageClass?: string;
   imageWidth: number;
@@ -98,7 +98,7 @@ export interface ActionCardProps {
   backgroundClass?: string;
   backgroundWidth?: number;
   backgroundHeight?: number;
-  onPress: (event: GestureResponderEvent) => void;
+  onPress?: (event: GestureResponderEvent) => void;
 }
 
 export interface BusinessProfileProps {

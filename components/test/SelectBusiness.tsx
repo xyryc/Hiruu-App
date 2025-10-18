@@ -11,12 +11,11 @@ const leaveTypes = [
 ]
 
 const SelectBusiness = () => {
-
     const [selectedLeave, setSelectedLeave] = useState<string>("")
 
     return (
         <View>
-            <Text className="font-semibold text-lg mb-2">Select Business</Text>
+            <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mb-2">Select Business</Text>
             {/* Top bar showing selected profiles */}
             <View>
                 <BusinessDropdown
