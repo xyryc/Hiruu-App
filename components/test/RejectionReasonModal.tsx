@@ -1,6 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
-import { useState } from "react";
+import { Ionicons } from "@expo/vector-icons"
+import { Image } from "expo-image"
+import React, { useState } from "react"
 import {
     KeyboardAvoidingView,
     Modal,
@@ -8,13 +8,11 @@ import {
     Text,
     TouchableOpacity,
     View
-} from "react-native";
-import CalendarPicker from "react-native-calendar-picker";
-import StatusBadge from "../ui/badges/StatusBadge";
+} from "react-native"
+import StatusBadge from "../ui/badges/StatusBadge"
 
 const RejectionReasonModal = () => {
     const [isVisible, setIsVisible] = useState(false)
-    const [selectedDate, setSelectedDate] = useState(null);
 
     return (
         <View>
@@ -92,36 +90,7 @@ const RejectionReasonModal = () => {
                                 </View>
                                 <View className="flex-row justify-between mx-1 mt-8 ">
                                     <Text className="font-proximanova-regular text-sm">Rejected on apr 30, 2025</Text>
-
-
-
                                     <StatusBadge status='Rejected' />
-
-                                </View>
-                                <View className="flex-row justify-between mx-1 mt-8 ">
-                                    <Text className="font-proximanova-regular text-sm">Rejected on apr 30, 2025</Text>
-
-
-
-                                    <View className="flex-1 justify-center items-center">
-                                        <CalendarPicker
-                                            onDateChange={(date) => {
-                                                if (date) setSelectedDate(moment(date));
-                                            }}
-                                            weekdays={['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']}
-                                            months={[
-                                                'January', 'February', 'March', 'April', 'May', 'June',
-                                                'July', 'August', 'September', 'October', 'November', 'December'
-                                            ]}
-                                        />
-
-                                        {selectedDate && (
-                                            <Text className="mt-4 text-lg">
-                                                Selected: {selectedDate.format('DD/MM/YYYY')}
-                                            </Text>
-                                        )}
-                                    </View>
-
                                 </View>
                             </View>
                         </View>

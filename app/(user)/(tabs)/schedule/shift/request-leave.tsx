@@ -110,6 +110,7 @@ const RequestLeave = () => {
 
                     <LeaveRequestModal />
                 </View>
+
             </ScrollView>
         </SafeAreaView>
     )
