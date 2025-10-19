@@ -1,9 +1,9 @@
 import ScreenHeader from '@/components/header/ScreenHeader'
 import DatePicker from '@/components/layout/DatePicker'
 import TimePicker from '@/components/layout/TimePicker'
+import LeaveRequestModal from '@/components/test/LeaveRequestModal'
 import SelectBusiness from '@/components/test/SelectBusiness'
 import SelectLeaveType from '@/components/test/SelectLeaveType'
-import PrimaryButton from '@/components/ui/buttons/PrimaryButton'
 import { ToggleButton } from '@/components/ui/buttons/ToggleButton'
 import ActionCard from '@/components/ui/cards/ActionCard'
 import { router } from 'expo-router'
@@ -96,7 +96,7 @@ const RequestLeave = () => {
                 {/* Select business end */}
 
                 {/* Remaining shick leave start */}
-                <View className='mx-5 py-2 mt-2'>
+                <View className='mx-5 mt-8'>
                     <ActionCard
                         title="You have only 1 Sick Leave remaining this month"
                         rightImage={require("@/assets/images/remaining-sick.png")}
@@ -106,7 +106,7 @@ const RequestLeave = () => {
                     />
                 </View>
                 {/* Remaining shick leave start */}
-                <PrimaryButton title='Submit Request' className='mx-5' />
+                <LeaveRequestModal />
             </ScrollView>
         </SafeAreaView>
     )
