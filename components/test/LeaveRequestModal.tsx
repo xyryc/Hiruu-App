@@ -18,13 +18,11 @@ const LeaveRequestModal = () => {
         <View>
             {/* Button to open modal */}
             <TouchableOpacity
-                onPress={() => setIsVisible(true)}
-                className="flex-row items-center justify-between px-4 py-3 bg-white dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border"
+                className="flex-row items-center justify-between rounded-full  bg-white dark:bg-dark-surface"
             >
                 <View className="flex-row items-center">
-                    <PrimaryButton title='Submit Request' className='mt-8' />
+                    <PrimaryButton onPress={() => setIsVisible(true)} title='Submit Request' className='' />
                 </View>
-                <Ionicons name="chevron-down" size={18} color="#7D7D7D" />
             </TouchableOpacity>
 
             {/* Modal */}
@@ -37,23 +35,36 @@ const LeaveRequestModal = () => {
                 <TouchableOpacity
                     activeOpacity={1}
                     onPress={() => setIsVisible(false)}
-                    className="flex-1 bg-black/40 justify-end"
+                    className="flex-1 bg-black/80 justify-end "
                 >
                     <KeyboardAvoidingView
                         behavior={Platform.OS === "ios" ? "padding" : "height"}
                     >
                         <View className="bg-white dark:bg-dark-surface rounded-t-3xl py-8 items-center">
+                            <TouchableOpacity
+                                onPress={() => setIsVisible(false)}
+                                className="absolute top-3 -mt-20 p-3 rounded-full bg-[#00000080] dark:bg-dark-border"
+                            >
+                                <Ionicons name="close" size={28} color="#ffffff" />
+                            </TouchableOpacity>
                             {/* Image */}
                             <Image
                                 source={require('@/assets/images/success.svg')}
                                 contentFit="contain"
                                 style={{ width: 120, height: 120 }}
                             />
-
                             {/* Text */}
-                            <Text className="text-lg font-p text-primary dark:text-dark-primary mt-4">
-                                Leave Request Submitted!
-                            </Text>
+                            <View className="px-4">
+                                <Text className="text-2xl text-center font-proximanova-semibold text-primary dark:text-dark-primary mt-2.5">
+                                    Your leave request has been submitted
+                                </Text>
+                                <Text className="font-proximanova-regular text-center  text-primary dark:text-dark-primary mt-2.5">
+                                    You’ll be notified once your manager reviews and updates the request status.
+                                </Text>
+                                <View className="flex-row items-center mt-5">
+                                    <PrimaryButton onPress={() => setIsVisible(false)} title='Done' className=' dark:bg-dark-border' />
+                                </View>
+                            </View>
                         </View>
                     </KeyboardAvoidingView>
                 </TouchableOpacity>

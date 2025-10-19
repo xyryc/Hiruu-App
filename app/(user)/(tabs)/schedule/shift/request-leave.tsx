@@ -48,7 +48,7 @@ const RequestLeave = () => {
                 <View className='mx-5 mt-[10px]'>
                     {isOn ? <DatePicker /> : ''}
                 </View>
-                <View className='flex-row justify-between gap-3 mx-5 mt-[15px] '>
+                <View className={`flex-row justify-between gap-3 mx-5 ${isOn && 'mt-[15px]'}`}>
                     {isOn ? (
                         <>
                             <TimePicker title='Start Time' />
@@ -70,7 +70,7 @@ const RequestLeave = () => {
                 </View>
                 {/* 3 Day Leav End */}
                 {/* Select Leave Type start */}
-                <View className="mx-5  mt-8">
+                <View className="mx-5  mt-7">
                     <SelectLeaveType />
                 </View>
                 {/* Select Leave Type end */}
@@ -96,7 +96,7 @@ const RequestLeave = () => {
                 {/* Select business end */}
 
                 {/* Remaining shick leave start */}
-                <View className='mx-5 mt-8'>
+                <View className='mx-5  mt-8'>
                     <ActionCard
                         title="You have only 1 Sick Leave remaining this month"
                         rightImage={require("@/assets/images/remaining-sick.png")}
@@ -106,7 +106,10 @@ const RequestLeave = () => {
                     />
                 </View>
                 {/* Remaining shick leave start */}
-                <LeaveRequestModal />
+                <View className='mx-5 mt-5'>
+
+                    <LeaveRequestModal />
+                </View>
             </ScrollView>
         </SafeAreaView>
     )

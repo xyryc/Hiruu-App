@@ -1,4 +1,3 @@
-import img from '@/assets/images/location.png';
 import ScreenHeader from '@/components/header/ScreenHeader';
 import SickLeaveCard from '@/components/ui/cards/SickLeaveCard';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,7 +8,7 @@ import React, { useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-type LeaveItem = {
+export type LeaveItem = {
   id: string;
   img?: string;
   name: string;
@@ -24,7 +23,7 @@ type LeaveItem = {
 const DATA: LeaveItem[] = [
   {
     id: '1',
-    img,
+    img: require('@/assets/images/location.png'),
     name: 'John Doe',
     status: 'Approved',
     date: 'Apr 20–23, 2025',
@@ -35,7 +34,7 @@ const DATA: LeaveItem[] = [
   },
   {
     id: '2',
-    img,
+    img: require('@/assets/images/location.png'),
     name: 'Emma Watson',
     status: 'Pending',
     date: 'May 12–14, 2025',
@@ -45,7 +44,7 @@ const DATA: LeaveItem[] = [
   },
   {
     id: '3',
-    img,
+    img: require('@/assets/images/location.png'),
     name: 'David Smith',
     status: 'Rejected',
     date: 'Jun 1–2, 2025',
@@ -56,7 +55,7 @@ const DATA: LeaveItem[] = [
   },
   {
     id: '4',
-    img,
+    img: require('@/assets/images/location.png'),
     name: 'Sarah Khan',
     status: 'Approved',
     date: 'May 18–19, 2025',
@@ -92,7 +91,9 @@ const SickLeave = () => {
 
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-dark-background">
+    <SafeAreaView className="flex-1 bg-white dark:bg-dark-background"
+      edges={["top", "left", "right"]}
+    >
       {/* Header */}
       <ScreenHeader
         className='mx-5'
@@ -125,7 +126,7 @@ const SickLeave = () => {
 
       {/* Month */}
       <View className="flex-row items-center mt-5 mx-5">
-        <Text className="text-xl font-proximanova-bold text-primary dark:text-dark-primary">
+        <Text className="text-xl w-32 font-proximanova-bold text-primary dark:text-dark-primary">
           April, 2025
         </Text>
         <Ionicons name="chevron-down" size={18} color="#666" />
@@ -174,7 +175,7 @@ const SickLeave = () => {
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingBottom: 40 }}
         renderItem={({ item }) => (
-          <SickLeaveCard item={item} />
+          <SickLeaveCard item={item} selectedCategory={selectedCategory} />
         )}
       />
     </SafeAreaView>

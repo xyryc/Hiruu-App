@@ -1,3 +1,5 @@
+import { LeaveItem } from '@/app/(user)/(tabs)/schedule/shift/leave';
+import RejectionReasonModal from '@/components/test/RejectionReasonModal';
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import React from 'react';
@@ -5,18 +7,9 @@ import { Text, View } from 'react-native';
 import StatusBadge from '../badges/StatusBadge';
 
 // Render badge group dynamically
-const renderBadges = (status: string) => (
-    <View className="flex-row gap-3 items-center">
-        {(status === 'Pending' || status === 'Rejected') && (
-            <View className="h-[30px] w-[30px] rounded-full bg-[#add5f0] justify-center items-center">
-                <Feather name="message-circle" size={20} color="#4FB2F3" />
-            </View>
-        )}
-        <StatusBadge status={status.toLowerCase()} />
-    </View>
-);
 
-const SickLeaveCard = ({ item }) => {
+
+const SickLeaveCard = ({ item, selectedCategory }: { item: LeaveItem, selectedCategory: any }) => {
     return (
         <View className="p-4 mx-5 mb-3 border border-gray-200 rounded-xl bg-gray-50">
             <View className="flex-row justify-between items-center">
@@ -28,7 +21,17 @@ const SickLeaveCard = ({ item }) => {
                     />
                     <Text className="text-[#7A7A7A]">{item.name}</Text>
                 </View>
-                {renderBadges(item.status)}
+                {selectedCategory === 'All' && (
+                    <View className="flex-row gap-3 items-center">
+                        {['Pending', 'Rejected'].includes(item.status) && (
+                            <View className="h-[30px] w-[30px] rounded-full bg-[#add5f0] justify-center items-center">
+                                <Feather name="message-circle" size={20} color="#4FB2F3" />
+                            </View>
+                        )}
+                        <StatusBadge status={item.status} />
+                    </View>
+                )}
+
             </View>
 
             <View className="border-b-2 border-dashed border-gray-300/30 mt-4" />
@@ -41,13 +44,18 @@ const SickLeaveCard = ({ item }) => {
                     )}
                 </View>
                 <Text className="px-3 py-1 bg-[#E5F4FD] rounded-3xl text-black">
-                    {item.category}
+                    {item.coses}
                 </Text>
             </View>
 
             <Text className="mt-3 text-[#7A7A7A] leading-5">
                 {item.details}
             </Text>
+            {item.status === 'Rejected' && (
+                <View className='flex-row gap-1 mt-2.5'>
+                    <RejectionReasonModal />
+                </View>
+            )}
         </View>
     )
 }
