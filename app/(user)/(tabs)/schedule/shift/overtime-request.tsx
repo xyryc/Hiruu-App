@@ -105,51 +105,74 @@ const OverTimeRequest = () => {
     };
 
     const renderItem = ({ item }: any) => (
-        <View key={item.date} className=" border-gray-300 mx-5">
-            <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary">{item.name}</Text>
+        <View key={item.date} className="mx-5 border border-[#EEEEEE] mb-3 rounded-3xl p-4">
+            {/* Name */}
+            <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary">
+                {item.name}
+            </Text>
+
+            {/* Date */}
             <View className='flex-row justify-between'>
-                <Text>Date:</Text>
-                <Text>{item.date}</Text>
+                <Text className="text-primary dark:text-dark-primary">Date:</Text>
+                <Text className="text-primary dark:text-dark-primary">{item.date}</Text>
             </View>
+
+            {/* Overtime Start */}
             <View className='flex-row justify-between'>
-                <Text>Overtime Start:</Text>
-                <Text>{item.start}</Text>
+                <Text className="text-primary dark:text-dark-primary">Overtime Start:</Text>
+                <Text className="text-primary dark:text-dark-primary">{item.start}</Text>
             </View>
+
+            {/* Overtime End */}
             <View className='flex-row justify-between'>
-                <Text>Overtime End:</Text>
-                <Text>{item.end}</Text>
+                <Text className="text-primary dark:text-dark-primary">Overtime End:</Text>
+                <Text className="text-primary dark:text-dark-primary">{item.end}</Text>
             </View>
+
+            {/* Reason */}
             <View className='flex-row justify-between'>
-                <Text>Reason:</Text>
-                <Text>{item.reason}</Text>
+                <Text className="text-primary dark:text-dark-primary">Reason:</Text>
+                <Text className="text-primary dark:text-dark-primary">{item.reason}</Text>
             </View>
+
+            {/* Hotel */}
             <View className='flex-row justify-between'>
-                <Text>Reason:</Text>
-                <Text>{item.reason}</Text>
+                <Text className="text-primary dark:text-dark-primary">Hotel:</Text>
+                <Text className="text-primary dark:text-dark-primary">{item.hotel}</Text>
             </View>
+
+            {/* Divider */}
             <View className='border-dashed border-b-2 my-4'></View>
+
+            {/* Status & Actions */}
             <View className='flex-row justify-between'>
                 <View className='flex-row gap-4'>
-                    <Image source={require('@/assets/images/hapinessBar.png')} contentFit='contain' style={{ height: 30, width: 30 }} />
-                    <Text className="mt-2">{item.hotel}</Text>
+                    {/* Hotel Image */}
+                    <Image
+                        source={require('@/assets/images/hapinessBar.png')}
+                        contentFit='contain'
+                        style={{ height: 30, width: 30 }}
+                    />
+                    <Text className="mt-2 text-primary dark:text-dark-primary">{item.hotel}</Text>
                 </View>
                 <View>
-                    {item.status === 'Pending' ? <View className='flex-row gap-2'>
-                        <TouchableOpacity>
-                            <View className='bg-[#F34F4F] px-3 py-2 rounded-3xl'>
-                                <Text className='text-white'>Reject</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity>
-                            <View className='bg-[#11293A] px-3 py-2 rounded-3xl'>
-                                <Text className='text-white'>Accept</Text>
-                            </View>
-                        </TouchableOpacity>
-
-                    </View> : <>
-
+                    {/* Conditional Rendering of Accept/Reject Buttons */}
+                    {item.status === 'Pending' ? (
+                        <View className='flex-row gap-2'>
+                            <TouchableOpacity>
+                                <View className='bg-[#F34F4F] px-3 py-2 rounded-3xl'>
+                                    <Text className='text-white'>Reject</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <View className='bg-[#11293A] px-3 py-2 rounded-3xl'>
+                                    <Text className='text-white'>Accept</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>
+                    ) : (
                         <StatusBadge status={item.status} />
-                    </>}
+                    )}
                 </View>
             </View>
         </View>
@@ -167,21 +190,21 @@ const OverTimeRequest = () => {
             />
 
             {/* Tabs */}
-            <View className="flex-row mx-5 mt-4">
+            <View className="flex-row mx-5 mt-4 dark:bg-dark-background">
                 {['Send Request', 'Received'].map(tab => (
                     <TouchableOpacity
                         className={`w-1/2 ${selectedTab === tab ? 'border-b-2 border-[#11293A] pb-5' : ''}`}
                         key={tab}
                         onPress={() => setSelectedTab(tab)}
                     >
-                        <Text className={`text-center ${selectedTab === tab ? 'font-proximanova-semibold' : 'font-proximanova-regular'}`}>
+                        <Text className={`text-center dark:text-dark-primary ${selectedTab === tab ? 'font-proximanova-semibold' : 'font-proximanova-regular'}`}>
                             {tab}
                         </Text>
                     </TouchableOpacity>
                 ))}
             </View>
 
-            <View className='bg-white flex-1'>
+            <View className=' flex-1 bg-white dark:bg-dark-background'>
                 {/* Search Bar */}
                 <View className="flex-row items-center border border-b mt-5 rounded-xl pl-3 p-1 border-[#EEEEEE] mx-5">
                     <EvilIcons name="search" size={24} color="black" />
@@ -204,9 +227,9 @@ const OverTimeRequest = () => {
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 onPress={() => setFilter(item.toLowerCase())}
-                                className={`py-2 px-4 border-1 border-[#EEEEEE] text-white rounded-full ${filter == item.toLowerCase() ? 'bg-[#11293A]' : ''}`}
+                                className={`py-2 px-4 border-1 border-[#EEEEEE] text-white rounded-full ${filter == item.toLowerCase() ? ' bg-[#11293A]' : ''}`}
                             >
-                                <Text className={`text-center ${filter == item.toLowerCase() ? 'text-white' : 'text-black'}`}>{item} ( {getFilterCount(item.toLowerCase())} )</Text>
+                                <Text className={`text-center ${filter == item.toLowerCase() ? 'text-white dark:text-dark-primary' : 'dark:text-dark-primary text-primary'}`}>{item} ( {getFilterCount(item.toLowerCase())} )</Text>
                             </TouchableOpacity>
                         )}
                     />
