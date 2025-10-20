@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     View
 } from "react-native"
-import StatusBadge from "../ui/badges/StatusBadge"
+import StatusBadge from "../badges/StatusBadge"
 
 const RejectionReasonModal = () => {
     const [isVisible, setIsVisible] = useState(false)

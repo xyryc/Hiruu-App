@@ -9,7 +9,7 @@ import React, { useState } from 'react';
 import { FlatList, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const OverTimeRequest = () => {
+const SwapRequest = () => {
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === 'dark';
     const [selectedTab, setSelectedTab] = useState('Send Request');
@@ -91,17 +91,20 @@ const OverTimeRequest = () => {
         }
     ];
 
+
+
     const [modalVisible, setModalVisible] = useState(false);
     const [data, setData] = useState({
-        img: '', title: '', subtitle: ''
+        img: "", title: "", subtitle: ""
     })
+
     const success = require('@/assets/images/success.svg');
     const reject = require('@/assets/images/reject.png');
 
     const toggleModalAccepet = (e: any) => {
         setModalVisible(!modalVisible);
         setData({
-            img: success,  // Pass the actual image here
+            img: success,  // Success icon
             title: "Request Accepted",  // Title
             subtitle: "Your request has been accepted successfully."  // Subtitle
         })
@@ -109,10 +112,10 @@ const OverTimeRequest = () => {
     const toggleModalReject = () => {
         setModalVisible(!modalVisible);
         setData({
-            img: reject,  // Pass the actual image here
+            img: reject,  // Reject icon
             title: "Request Rejected",  // Title
             subtitle: "Your request has been rejected."  // Subtitle
-        })
+        });
     }
 
     const filteredRequests = requests.filter(request => {
@@ -196,7 +199,7 @@ const OverTimeRequest = () => {
             <ScreenHeader
                 className="mx-5 rounded-3xl"
                 onPressBack={() => router.back()}
-                title="Overtime Request"
+                title="Swap Request"
                 titleClass="text-primary dark:text-dark-primary"
                 iconColor={isDark ? '#fff' : '#111'}
                 components={<></>}
@@ -239,7 +242,7 @@ const OverTimeRequest = () => {
                 </View>
 
                 {/* Filter Buttons */}
-                <View>
+                {selectedTab === 'Send Request' && (<View>
                     <FlatList
                         data={filterOptions}
                         keyExtractor={(item) => item}
@@ -249,13 +252,13 @@ const OverTimeRequest = () => {
                         renderItem={({ item }) => (
                             <TouchableOpacity
                                 onPress={() => setFilter(item.toLowerCase())}
-                                className={`py-2 px-4 border-1 border-[#EEEEEE] text-white rounded-full ${filter == item.toLowerCase() ? ' bg-[#11293A]' : ''}`}
+                                className={`py-2 px-4 border-1 border-[#EEEEEE] text-white rounded-full ${filter == item.toLowerCase() ? ' bg-[#11293A]' : ''} `}
                             >
                                 <Text className={`text-center ${filter == item.toLowerCase() ? 'text-white dark:text-dark-primary' : 'dark:text-dark-primary text-primary'}`}>{item} ( {getFilterCount(item.toLowerCase())} )</Text>
                             </TouchableOpacity>
                         )}
                     />
-                </View>
+                </View>)}
 
                 {/* FlatList to display requests */}
                 <FlatList
@@ -263,6 +266,7 @@ const OverTimeRequest = () => {
                     renderItem={renderItem}
                     keyExtractor={(item, index) => item.date + index}
                     contentContainerStyle={{ paddingBottom: 20 }}
+                    className={`${selectedTab === 'Received' && 'mt-3'}`}
                 />
             </View>
 
@@ -273,4 +277,4 @@ const OverTimeRequest = () => {
     );
 };
 
-export default OverTimeRequest;
+export default SwapRequest;

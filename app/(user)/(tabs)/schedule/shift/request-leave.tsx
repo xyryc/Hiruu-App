@@ -1,11 +1,11 @@
 import ScreenHeader from '@/components/header/ScreenHeader'
 import DatePicker from '@/components/layout/DatePicker'
 import TimePicker from '@/components/layout/TimePicker'
-import LeaveRequestModal from '@/components/test/LeaveRequestModal'
-import SelectBusiness from '@/components/test/SelectBusiness'
-import SelectLeaveType from '@/components/test/SelectLeaveType'
 import { ToggleButton } from '@/components/ui/buttons/ToggleButton'
 import ActionCard from '@/components/ui/cards/ActionCard'
+import LeaveRequestModal from '@/components/ui/modals/LeaveRequestModal'
+import SelectBusiness from '@/components/ui/modals/SelectBusiness'
+import SelectLeaveType from '@/components/ui/modals/SelectLeaveType'
 import { router } from 'expo-router'
 import { useColorScheme } from 'nativewind'
 import React, { useState } from 'react'
@@ -17,7 +17,6 @@ const RequestLeave = () => {
     const isDark = colorScheme === 'dark';
     const [isOn, setIsOn] = useState(false);
     const [leaveText, setLeaveText] = useState('')
-    console.log(leaveText);
 
 
     return (

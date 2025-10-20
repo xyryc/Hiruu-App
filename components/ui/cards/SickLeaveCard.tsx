@@ -1,5 +1,5 @@
 import { LeaveItem } from '@/app/(user)/(tabs)/schedule/shift/leave';
-import RejectionReasonModal from '@/components/test/RejectionReasonModal';
+import RejectionReasonModal from '@/components/ui/modals/RejectionReasonModal';
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import React from 'react';

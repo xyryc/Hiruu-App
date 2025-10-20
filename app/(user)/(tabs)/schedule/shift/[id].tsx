@@ -282,7 +282,7 @@ const ShiftDetails = () => {
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-0 items-center left-0 right-0 py-5 bg-white dark:bg-dark-background">
+      <View className="absolute bottom-0 items-center left-0 right-0 mx-5 py-5 bg-white dark:bg-dark-background">
         <PrimaryButton
           title="Submit shift Summary"
           onPress={() => router.push("./summary")}
