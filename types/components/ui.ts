@@ -160,11 +160,12 @@ export interface StatCardSecondaryProps {
   background: string;
 }
 
-type StatusType = "upcoming" | "completed" | "missed" | "ongoing" |'Pending' | "Approved" | 'Rejected' |'Accepted';
+type StatusType = "upcoming" | "completed" | "missed" | "ongoing" |'pending' | "approved" | 'rejected' |'accepted';
 
 export interface StatusBadgeProps {
+  label?:string
   status: StatusType;
-  size?: "small" | "medium" | "large"|'Pending' | "Approved" | 'Rejected' |'Accepted';
+  size?: "small" | "medium" | "large";
   className?: string;
 }
 
@@ -201,7 +202,7 @@ export interface WorkShiftCardProps {
   address: string;
   city: string;
   onLoginPress: () => void;
-  status?: "ongoing" | "upcoming" | "completed" |'Pending' | "Approved" | 'Rejected'|'Accepted';
+  status?: "ongoing" | "upcoming" | "completed" |'pending' | "approved" | 'rejected'|'accepted';
 }
 
 export interface ScreenHeaderProps {

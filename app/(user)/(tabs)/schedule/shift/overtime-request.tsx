@@ -14,7 +14,7 @@ const OverTimeRequest = () => {
     const isDark = colorScheme === 'dark';
     const [selectedTab, setSelectedTab] = useState('Send Request');
     const [filter, setFilter] = useState<string>('all');
-    const filterOptions = ['All', 'Accepted', 'Rejected', 'Pending'];
+    const filterOptions = ['All', 'accepted', 'rejected', 'pending'];
     const [searchQuery, setSearchQuery] = useState('');
 
     // Expanded requests array with type (send/receive)
@@ -26,7 +26,7 @@ const OverTimeRequest = () => {
             end: "12:00 PM",
             reason: "Helped close the store",
             hotel: "Hotel Paradise",
-            status: "Accepted",
+            status: "accepted",
             type: "send", // 'send' means Send Request
         },
         {
@@ -36,7 +36,7 @@ const OverTimeRequest = () => {
             end: "12:00 PM",
             reason: "Extended work due to staff shortage",
             hotel: "Space Hotel",
-            status: "Rejected",
+            status: "rejected",
             type: "send", // 'receive' means Received
         },
         {
@@ -46,7 +46,7 @@ const OverTimeRequest = () => {
             end: "12:00 PM",
             reason: "Completed closing tasks",
             hotel: "Hotel Paradise",
-            status: "Accepted",
+            status: "accepted",
             type: "send",
         },
         {
@@ -56,7 +56,7 @@ const OverTimeRequest = () => {
             end: "1:00 AM",
             reason: "Extra shift due to safety concerns",
             hotel: "City View Hotel",
-            status: "Pending",
+            status: "pending",
             type: "receive",
         },
         {
@@ -66,7 +66,7 @@ const OverTimeRequest = () => {
             end: "11:00 PM",
             reason: "Overtime to prepare extra meals",
             hotel: "Gourmet Inn",
-            status: "Accepted",
+            status: "accepted",
             type: "send",
         },
         {
@@ -76,7 +76,7 @@ const OverTimeRequest = () => {
             end: "10:00 PM",
             reason: "Assisted during peak hours",
             hotel: "Blue Lagoon",
-            status: "Pending",
+            status: "pending",
             type: "receive",
         },
         {
@@ -86,7 +86,7 @@ const OverTimeRequest = () => {
             end: "12:00 AM",
             reason: "Handled emergency customer requests",
             hotel: "Skyline Resort",
-            status: "Pending",
+            status: "pending",
             type: "receive",
         }
     ];
@@ -168,16 +168,16 @@ const OverTimeRequest = () => {
                     <Text className="mt-2 font-proximanova-regular text-placeholder dark:text-dark-placeholder">{item.hotel}</Text>
                 </View>
                 <View>
-                    {item.status === 'Pending' ? (
+                    {item.status === 'pending' ? (
                         <View className='flex-row gap-2'>
                             <TouchableOpacity onPress={toggleModalReject}>
                                 <View className='bg-[#F34F4F] px-3 py-2 rounded-3xl' >
-                                    <Text className='text-white'>Reject</Text>
+                                    <Text className='text-white font-proximanova-semibold text-sm'>Reject</Text>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={toggleModalAccepet}>
                                 <View className='bg-[#11293A] px-3 py-2 rounded-3xl'>
-                                    <Text className='text-white'>Accept</Text>
+                                    <Text className='text-white font-proximanova-semibold text-sm'>Accept</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -188,7 +188,7 @@ const OverTimeRequest = () => {
             </View>
         </View>
     );
-    const pendingData = requests.filter((item) => item.status === "Pending").length
+    const pendingData = requests.filter((item) => item.status === "pending").length
 
     return (
         <SafeAreaView className="flex-1 bg-[#E5F4FD] dark:bg-dark-background" edges={["top", "left", "right"]}>
@@ -251,7 +251,7 @@ const OverTimeRequest = () => {
                                 onPress={() => setFilter(item.toLowerCase())}
                                 className={`py-2 px-4 border-1 border-[#EEEEEE] text-white rounded-full ${filter == item.toLowerCase() ? ' bg-[#11293A]' : ''}`}
                             >
-                                <Text className={`text-center ${filter == item.toLowerCase() ? 'text-white dark:text-dark-primary' : 'dark:text-dark-primary text-primary'}`}>{item} ( {getFilterCount(item.toLowerCase())} )</Text>
+                                <Text className={`text-center  ${filter == item.toLowerCase() ? 'text-white dark:text-dark-primary' : 'dark:text-dark-primary text-primary'}`}><Text className='capitalize'>{item}</Text> ( {getFilterCount(item.toLowerCase())} )</Text>
                             </TouchableOpacity>
                         )}
                     />
