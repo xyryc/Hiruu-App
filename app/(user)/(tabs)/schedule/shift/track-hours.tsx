@@ -1,7 +1,9 @@
 import ScreenHeader from '@/components/header/ScreenHeader'
 import StatusBadge from '@/components/ui/badges/StatusBadge'
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
-import { Image } from 'expo-image'
+import PrimaryButton from '@/components/ui/buttons/PrimaryButton'
+import ActionCard from '@/components/ui/cards/ActionCard'
+import ShiftLogCard from '@/components/ui/cards/ShiftLogCard'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { router } from 'expo-router'
 import { useColorScheme } from 'nativewind'
 import React from 'react'
@@ -29,26 +31,44 @@ const TrackHours = () => {
                     <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>
                         This Month’s Overview
                     </Text>
-                    <View className='mt-2 bg-[#E5F4FD] dark:bg-dark-background rounded-3xl'  >
+                    <View className='mt-2 bg-[#E5F4FD] dark:bg-dark-background rounded-2xl  border-hairline border-[#4FB2F3]'  >
                         <View className='flex-row justify-between flex-wrap pr-4'>
-                            <View className="flex-row items-center">
+                            <View className="flex-row items-center justify-between border-b-hairline border-[#4FB2F3]  ">
                                 {/* {line && <Image source={line} contentFit="contain" style={{ height: 110, width: 1 }} />} */}
 
-                                <View className="m-2.5 border ">
+                                <View className="m-2.5 ml-4 border-r-hairline mb-0 pb-3 border-[#4FB2F3] pr-14  ">
                                     {/* Icon Circle */}
                                     <View className="h-8 w-8 rounded-full bg-[#FFFFFF] overflow-hidden items-center justify-center">
                                         <MaterialCommunityIcons name="clock" size={16} color="#4FB2F3" />
                                     </View>
 
                                     {/* Text Labels */}
-                                    <Text className="mt-1.5 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary"></Text>
-                                    <Text className="mt-2.5 font-proximanova-semibold text-lg text-primary dark:text-dark-primary"></Text>
+                                    <Text className="mt-1.5 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary"> Total Hours</Text>
+                                    <Text className="mt-2.5 font-proximanova-semibold text-lg text-primary dark:text-dark-primary"> 32h 45m</Text>
+                                </View>
+                                <View className="m-2.5  mb-0 pb-3 border-r-hairline border-[#4FB2F3] pr-14  ">
+                                    {/* Icon Circle */}
+                                    <View className="h-8 w-8 rounded-full bg-[#FFFFFF] overflow-hidden items-center justify-center">
+                                        <MaterialCommunityIcons name="clock" size={16} color="#4FB2F3" />
+                                    </View>
+
+                                    {/* Text Labels */}
+                                    <Text className="mt-1.5 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary"> Total Hours</Text>
+                                    <Text className="mt-2.5 font-proximanova-semibold text-lg text-primary dark:text-dark-primary"> 32h 45m</Text>
+                                </View>
+                                <View className="m-2.5 mb-0 pb-0 border-[#4FB2F3] pr-10  ">
+                                    {/* Icon Circle */}
+                                    <View className="h-8 w-8 rounded-full bg-[#FFFFFF] overflow-hidden items-center justify-center  border-[#4FB2F3]">
+                                        <MaterialCommunityIcons name="clock" size={16} color="#4FB2F3" />
+                                    </View>
+
+                                    {/* Text Labels */}
+                                    <Text className="mt-1.5 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary"> Total Hours</Text>
+                                    <Text className="mt-2.5 font-proximanova-semibold text-lg text-primary dark:text-dark-primary"> 32h 45m</Text>
                                 </View>
                             </View>
                         </View>
                         <View>
-
-                            <Image source={linevartical} contentFit='contain' style={{ height: 3, width: 325 }} />
                             <View className='flex-row gap-2 items-center mx-4 my-6 '>
                                 <Text className='font-proximanova-regular text-sm text-secondary dark:text-dark-secondary'>Status:</Text>
                                 <StatusBadge status='accepted' label='On Track' />
@@ -57,13 +77,25 @@ const TrackHours = () => {
                         </View>
                     </View>
                 </View>
+
+
                 <View className='mt-8 mx-5'>
                     <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>Daily shift Log</Text>
-                    <View>
-                        <View className='flex-row'>
-                            <Ionicons name="calendar" size={22} color="#4FB2F3" />
-                            <Text className='font-proximanova-semibold text-base text-primary dark:text-dark-primary'>Mon, 10 june 2025(today)</Text>
-                        </View>
+                    <ShiftLogCard />
+                    <PrimaryButton title='View Attendance log' className='mt-4' />
+                    <View className='mt-8'>
+                        <ActionCard
+                            title="Shows  Earned  Tokens  This  Week !"
+                            buttonTitle="View"
+                            rightImage={require("@/assets/images/engagement.svg")}
+                            imageClass="right-4.5 -bottom-5"
+                            imageWidth={131}
+                            imageHeight={117}
+                            background={require("@/assets/images/engagement-bg.svg")}
+                            backgroundClass="right-9"
+                            backgroundWidth={103}
+                            backgroundHeight={80}
+                        />
                     </View>
                 </View>
             </View>
