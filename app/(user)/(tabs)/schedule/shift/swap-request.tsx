@@ -220,7 +220,7 @@ const SwapRequest = () => {
                                 {tab}
                             </Text>
                             {selectedTab === tab &&
-                                <View className='bg-[#4FB2F3] px-2 rounded-full'>
+                                <View className='bg-[#4FB2F3] px-2 py-1 rounded-full'>
                                     <Text className='text-white'>
                                         {pendingData}
                                     </Text>
