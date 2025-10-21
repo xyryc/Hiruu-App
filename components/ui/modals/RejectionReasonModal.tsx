@@ -58,8 +58,8 @@ const RejectionReasonModal = () => {
                                         <Image source={require('@/assets/images/hapinessBar.png')} contentFit="contain" style={{ height: 35, width: 35 }} />
                                         <Text className="font-proximanova-regular text-base dark:text-white">Hapiness Bar</Text>
                                     </View>
-                                    <View className="">
-                                        <Image source={require('@/assets/images/message.png')} contentFit="contain" style={{ height: 35, width: 35 }} />
+                                    <View className=" bg-[#E5F4FD] p-3 rounded-full ">
+                                        <Image source={require('@/assets/images/messages-fill.svg')} contentFit="contain" style={{ height: 24, width: 24, tintColor: '' }} />
                                     </View>
                                 </View>
                                 <View className="flex-row justify-between gap-4 mx-1 mt-8">
@@ -90,7 +90,7 @@ const RejectionReasonModal = () => {
                                 </View>
                                 <View className="flex-row justify-between mx-1 mt-8 ">
                                     <Text className="font-proximanova-regular text-sm">Rejected on apr 30, 2025</Text>
-                                    <StatusBadge status='Rejected' />
+                                    <StatusBadge status='rejected' />
                                 </View>
                             </View>
                         </View>

@@ -14,7 +14,7 @@ const OverTimeRequest = () => {
     const isDark = colorScheme === 'dark';
     const [selectedTab, setSelectedTab] = useState('Send Request');
     const [filter, setFilter] = useState<string>('all');
-    const filterOptions = ['All', 'accepted', 'rejected', 'pending'];
+    const filterOptions = ['all', 'accepted', 'rejected', 'pending'];
     const [searchQuery, setSearchQuery] = useState('');
 
     // Expanded requests array with type (send/receive)

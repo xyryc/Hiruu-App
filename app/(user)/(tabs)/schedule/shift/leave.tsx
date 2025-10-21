@@ -12,7 +12,7 @@ export type LeaveItem = {
   id: string;
   img?: string;
   name: string;
-  status: 'Approved' | 'Pending' | 'Rejected';
+  status: 'approved' | 'pending' | 'rejected';
   date: string;
   coses: string;
   details: string;
@@ -25,7 +25,7 @@ const DATA: LeaveItem[] = [
     id: '1',
     img: require('@/assets/images/location.png'),
     name: 'John Doe',
-    status: 'Approved',
+    status: 'approved',
     date: 'Apr 20–23, 2025',
     coses: 'Sick Leave',
     details: 'Fever and body ache Medical checkup and recovery at home.',
@@ -36,7 +36,7 @@ const DATA: LeaveItem[] = [
     id: '2',
     img: require('@/assets/images/location.png'),
     name: 'Emma Watson',
-    status: 'Pending',
+    status: 'pending',
     date: 'May 12–14, 2025',
     coses: 'Personal Leave',
     details: 'Fever and body ache Medical checkup and recovery at home.',
@@ -46,7 +46,7 @@ const DATA: LeaveItem[] = [
     id: '3',
     img: require('@/assets/images/location.png'),
     name: 'David Smith',
-    status: 'Rejected',
+    status: 'rejected',
     date: 'Jun 1–2, 2025',
     coses: 'Casual Leave',
     details: 'Fever and body ache Medical checkup and recovery at home.',
@@ -57,7 +57,7 @@ const DATA: LeaveItem[] = [
     id: '4',
     img: require('@/assets/images/location.png'),
     name: 'Sarah Khan',
-    status: 'Approved',
+    status: 'approved',
     date: 'May 18–19, 2025',
     coses: 'Sick Leave',
     details: 'Fever and body ache Medical checkup and recovery at home.',
@@ -65,7 +65,7 @@ const DATA: LeaveItem[] = [
   },
 ];
 
-const CATEGORIES = ['All', 'Approved', 'Pending', 'Rejected'];
+const CATEGORIES = ['all', 'approved', 'pending', 'rejected'];
 
 const SickLeave = () => {
   const router = useRouter();
@@ -75,14 +75,14 @@ const SickLeave = () => {
 
   // Filtered data
   const filteredData =
-    selectedCategory === 'All'
+    selectedCategory === 'all'
       ? DATA
       : DATA.filter((item) => item.status === selectedCategory);
 
   // Count per category
   const categoryCounts = CATEGORIES.reduce((acc, cat) => {
     acc[cat] =
-      cat === 'All'
+      cat === 'all'
         ? DATA.length
         : DATA.filter((item) => item.status === cat).length;
     return acc;
@@ -151,12 +151,13 @@ const SickLeave = () => {
                   }`}>
 
                   <Text
-                    className={`${selected
+                    className={` ${selected
                       ? 'text-white font-semibold'
                       : 'text-[#111] font-medium'
                       }`}
                   >
-                    {item} ({categoryCounts[item] ?? 0})
+                    <Text className='capitalize'>{item}</Text>
+                    {` ( ${categoryCounts[item]} ) `}
                   </Text>
                 </View>
               </TouchableOpacity>

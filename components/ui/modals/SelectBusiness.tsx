@@ -4,10 +4,10 @@ import BusinessDropdown from './BusinessDropdownModal'
 
 // Sample data
 const leaveTypes = [
-    { label: "Sick Leave", value: "sick", avatar: require('@/assets/images/drop-down.png') },
-    { label: "Personal Leave", value: "personal", avatar: require('@/assets/images/drop-down.png') },
-    { label: "Work From Home", value: "wfh", avatar: require('@/assets/images/drop-down.png') },
-    { label: "Emergency Leave", value: "emergency", avatar: require('@/assets/images/drop-down.png') },
+    { label: "Sick Leave", value: "sick", avatar: require('@/assets/images/hapinessBar.png') },
+    { label: "Personal Leave", value: "personal", avatar: require('@/assets/images/hapinessBar.png') },
+    { label: "Work From Home", value: "wfh", avatar: require('@/assets/images/hapinessBar.png') },
+    { label: "Emergency Leave", value: "emergency", avatar: require('@/assets/images/hapinessBar.png') },
 ]
 
 const SelectBusiness = () => {

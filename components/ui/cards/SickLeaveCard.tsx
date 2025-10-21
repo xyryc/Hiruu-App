@@ -51,7 +51,7 @@ const SickLeaveCard = ({ item, selectedCategory }: { item: LeaveItem, selectedCa
             <Text className="mt-3 text-[#7A7A7A] leading-5">
                 {item.details}
             </Text>
-            {item.status === 'Rejected' && (
+            {item.status === 'rejected' && (
                 <View className='flex-row gap-1 mt-2.5'>
                     <RejectionReasonModal />
                 </View>

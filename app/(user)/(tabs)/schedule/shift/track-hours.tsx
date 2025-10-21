@@ -47,7 +47,6 @@ const TrackHours = () => {
                                 <Text className='font-proximanova-regular text-sm text-secondary dark:text-dark-secondary'>Status:</Text>
                                 <StatusBadge status='accepted' label='On Track' />
                                 <StatusBadge status='upcoming' label='Below Target' />
-
                             </View>
                         </View>
                     </View>
