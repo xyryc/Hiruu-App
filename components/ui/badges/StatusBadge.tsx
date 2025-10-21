@@ -43,7 +43,7 @@ const StatusBadge = ({
           containerClasses: "bg-orange-100 border-[#F3934F4D]",
           textClasses: "text-orange-600",
           dotClasses: "bg-orange-600",
-          label: "Pending",
+          label: label || "Pending",
         };
       case "approved":
         return {

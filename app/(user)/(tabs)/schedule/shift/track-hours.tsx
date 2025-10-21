@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 
 const TrackHours = () => {
-    const linevartical = require('@/assets/images/trackhours/tracklinevarticl.png')
+
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === 'dark';
     return (
