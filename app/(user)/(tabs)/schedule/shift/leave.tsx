@@ -71,7 +71,7 @@ const SickLeave = () => {
   const router = useRouter();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === 'dark';
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedCategory, setSelectedCategory] = useState('all'); // Set default to 'all'
 
   // Filtered data
   const filteredData =
@@ -88,8 +88,6 @@ const SickLeave = () => {
     return acc;
   }, {} as Record<string, number>);
 
-
-
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-dark-background"
       edges={["top", "left", "right"]}
@@ -103,23 +101,18 @@ const SickLeave = () => {
         iconColor={isDark ? '#fff' : '#111'}
         components={
           <View className="flex-row items-center gap-2">
-
             <TouchableOpacity className="bg-[#F5F5F5] rounded-full p-2" >
               <Ionicons name="calendar-outline" size={22} color="#111111" />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => router.push('/(user)/(tabs)/schedule/shift/request-leave')} className="bg-[#F5F5F5] rounded-full p-2" >
-              {/* <Ionicons name="calendar-outline" size={22} color="black" /> */}
               <Image
-
                 source={require("@/assets/images/card-send.svg")}
                 style={{
                   width: 24, height: 24
-
                 }}
                 contentFit='contain'
               />
             </TouchableOpacity>
-
           </View>
         }
       />
@@ -145,17 +138,9 @@ const SickLeave = () => {
             return (
               <TouchableOpacity
                 onPress={() => setSelectedCategory(item)}
-
               >
-                <View className={`px-4 py-3 border rounded-3xl mr-2 my-4 border-[#d8d7d7] ${selected ? 'bg-[#11293A]' : 'bg-white'
-                  }`}>
-
-                  <Text
-                    className={` ${selected
-                      ? 'text-white font-semibold'
-                      : 'text-[#111] font-medium'
-                      }`}
-                  >
+                <View className={`px-4 py-3 border rounded-3xl mr-2 my-4 border-[#d8d7d7] ${selected ? 'bg-[#11293A]' : 'bg-white'}`}>
+                  <Text className={`${selected ? 'text-white font-semibold' : 'text-[#111] font-medium'}`}>
                     <Text className='capitalize'>{item}</Text>
                     {` ( ${categoryCounts[item]} ) `}
                   </Text>

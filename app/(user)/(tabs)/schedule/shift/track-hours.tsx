@@ -1,7 +1,6 @@
 import ScreenHeader from '@/components/header/ScreenHeader'
-import MonthHoursTrack from '@/components/test/MonthHoursTrack'
 import StatusBadge from '@/components/ui/badges/StatusBadge'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { useColorScheme } from 'nativewind'
@@ -11,10 +10,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 
 const TrackHours = () => {
-    const clock = require('@/assets/images/trackhours/clock.svg')
-    const tik = require('@/assets/images/trackhours/tik.svg')
-    const plus = require('@/assets/images/trackhours/plus.svg')
-    const line = require('@/assets/images/trackhours/trackline.png')
     const linevartical = require('@/assets/images/trackhours/tracklinevarticl.png')
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === 'dark';
@@ -36,9 +31,20 @@ const TrackHours = () => {
                     </Text>
                     <View className='mt-2 bg-[#E5F4FD] dark:bg-dark-background rounded-3xl'  >
                         <View className='flex-row justify-between flex-wrap pr-4'>
-                            <MonthHoursTrack img={clock} text={'Total Hours'} time={'32h 45m'} />
-                            <MonthHoursTrack img={tik} text={'Completed Shift'} time={'05'} line={line} />
-                            <MonthHoursTrack img={plus} text={'Over Hours'} time={'15h'} line={line} />
+                            <View className="flex-row items-center">
+                                {/* {line && <Image source={line} contentFit="contain" style={{ height: 110, width: 1 }} />} */}
+
+                                <View className="m-2.5 border ">
+                                    {/* Icon Circle */}
+                                    <View className="h-8 w-8 rounded-full bg-[#FFFFFF] overflow-hidden items-center justify-center">
+                                        <MaterialCommunityIcons name="clock" size={16} color="#4FB2F3" />
+                                    </View>
+
+                                    {/* Text Labels */}
+                                    <Text className="mt-1.5 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary"></Text>
+                                    <Text className="mt-2.5 font-proximanova-semibold text-lg text-primary dark:text-dark-primary"></Text>
+                                </View>
+                            </View>
                         </View>
                         <View>
 
