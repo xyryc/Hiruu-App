@@ -16,12 +16,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const UserJobs = () => {
   return (
     <SafeAreaView
-      className="flex-1 bg-white dark:bg-dark-background px-5"
+      className="flex-1 bg-white dark:bg-dark-background"
       edges={["top", "left", "right"]}
     >
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       <ScreenHeader
+        className="px-5"
         title="Find Job"
         components={
           <View className="flex-row items-center gap-2.5">
@@ -52,18 +53,57 @@ const UserJobs = () => {
       />
 
       {/* search box */}
-      <View className="flex-row items-center gap-1.5 mr-12 mt-3.5">
+      <View className="flex-row items-center gap-1.5 mr-12 mt-3.5 px-5">
         <SearchBar />
         <Ionicons name="filter-circle" size={44} color="black" />
       </View>
 
       {/* featured job */}
-      <ScrollView horizontal={true}>
-        <JobCard />
-        <JobCard />
-        <JobCard />
-        <JobCard />
-      </ScrollView>
+      <View className="mt-7">
+        <View className="flex-row justify-between items-center mb-4 px-5">
+          <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
+            Featured Job
+          </Text>
+
+          <TouchableOpacity>
+            <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
+              See All
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          className="pl-5"
+        >
+          <JobCard className="mr-2.5" />
+          <JobCard className="mr-2.5" />
+          <JobCard className="mr-2.5" />
+          <JobCard className="mr-2.5" />
+        </ScrollView>
+      </View>
+
+      <View className="mt-7 px-5">
+        <View className="flex-row justify-between items-center mb-4">
+          <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
+            Suggested Job
+          </Text>
+
+          <TouchableOpacity>
+            <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
+              See All
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
+          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
+          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
+          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };
