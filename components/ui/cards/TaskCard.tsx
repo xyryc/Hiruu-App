@@ -21,6 +21,7 @@ const TaskCard = ({
   city,
   onLoginPress,
   status = "ongoing",
+  requestLog = false,
 }: WorkShiftCardProps) => {
   const [elapsedTime, setElapsedTime] = useState("00:00:05");
 
@@ -239,7 +240,12 @@ const TaskCard = ({
         {/* Login Button */}
         {status === "upcoming" && <StatusBadge status={status} />}
         {status === "ongoing" && <SmallButton title="Login" className="px-8" />}
-        {status === "completed" && <StatusBadge status={status} />}
+        {/* {status === "completed" && <StatusBadge status={status} />} */}
+        {requestLog ? (
+          <SmallButton title="Request Log" />
+        ) : (
+          <StatusBadge status={status} />
+        )}
       </View>
     </View>
   );

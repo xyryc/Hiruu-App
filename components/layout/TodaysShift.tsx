@@ -90,7 +90,8 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
           address="230 Aaron Bushnell St"
           city="Palestine, PL"
           onLoginPress={handleLogin}
-          status="upcoming"
+          status="completed"
+          requestLog="true"
         />
 
         <TaskCard
