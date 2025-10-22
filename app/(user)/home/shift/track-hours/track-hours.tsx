@@ -13,7 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const TrackHours = () => {
   const handleLogin = () => {
-    console.log("Login pressed");
+    router.push('./correction-request')
   };
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";

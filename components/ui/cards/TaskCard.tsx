@@ -239,7 +239,7 @@ const TaskCard = ({
 
         {/* Button */}
         {requestLog ? (
-          <SmallButton title="Request Log" />
+          <SmallButton title="Request Log" onPress={onLoginPress} />
         ) : (
           <>
             {status === "upcoming" && <StatusBadge status={status} />}
