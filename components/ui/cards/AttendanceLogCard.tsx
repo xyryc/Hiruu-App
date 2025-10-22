@@ -1,7 +1,7 @@
-import { Image } from 'expo-image'
-import React from 'react'
-import { Text, View } from 'react-native'
-import StatusBadge from '../badges/StatusBadge'
+import { Image } from "expo-image";
+import React from "react";
+import { Text, View } from "react-native";
+import StatusBadge from "../badges/StatusBadge";
 
 const AttendanceLogCard = ({
   startTime,
@@ -49,7 +49,7 @@ const AttendanceLogCard = ({
       <View className="mt-2 flex-row justify-between items-center">
         <View className="flex-row gap-2 items-center">
           <Image
-            source={require('@/assets/images/hapinessBar.png')}
+            source="https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg"
             contentFit="contain"
             style={{ height: 30, width: 30 }}
           />
@@ -61,7 +61,7 @@ const AttendanceLogCard = ({
         {status && <StatusBadge status={status} label={statusLabel} />}
       </View>
     </View>
-  )
-}
+  );
+};
 
-export default AttendanceLogCard
+export default AttendanceLogCard;
