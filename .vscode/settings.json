@@ -4,5 +4,17 @@
     "source.organizeImports": "explicit",
     "source.sortMembers": "explicit"
   },
-  "files.autoSave": "off"
+  "files.autoSave": "off",
+  "editor.defaultFormatter": "dsznajder.es7-react-js-snippets",
+  "[javascript]": {
+    "editor.formatOnSave": true
+  },
+
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

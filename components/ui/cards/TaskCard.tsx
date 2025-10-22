@@ -207,7 +207,7 @@ const TaskCard = ({
       </View>
 
       {/* Location & Login */}
-      <View className="flex-row justify-between items-center">
+      <View className="flex-row justify-between items-center gap-4">
         {/* Location */}
         <View className="flex-row items-center flex-1">
           <View className="mr-2 bg-white rounded-md">
@@ -237,15 +237,17 @@ const TaskCard = ({
           </View>
         </View>
 
-        {/* Login Button */}
-        {status === "upcoming" && <StatusBadge status={status} />}
-        {status === "ongoing" && <SmallButton title="Login" className="px-8" />}
-        {/* {status === "completed" && <StatusBadge status={status} />} */}
+        {/* Button */}
         {requestLog ? (
           <SmallButton title="Request Log" />
         ) : (
-          <StatusBadge status={status} />
+          <>
+            {status === "upcoming" && <StatusBadge status={status} />}
+            {status === "ongoing" && <SmallButton title="Login" className="px-8" />}
+            {status === "completed" && <StatusBadge status={status} />}
+          </>
         )}
+
       </View>
     </View>
   );
