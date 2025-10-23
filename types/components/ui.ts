@@ -21,6 +21,7 @@ export interface SmallButtonProps {
   className?: string;
   title: string;
   onPress?: (event: GestureResponderEvent) => void;
+  textClass?: string;
 }
 
 export interface TitleHeaderProps {
@@ -244,4 +245,8 @@ export interface TimeLeft {
   minutes: number;
   seconds: number;
   total: number;
+}
+
+export interface JobCardProps {
+  className: string;
 }
