@@ -183,6 +183,7 @@ export interface SimpleStatusBadgeProps {
   title: string;
   textColor?: string;
   bgColor?: string;
+  onPress?: () => void;
 }
 
 export interface EngagementPerksProps {

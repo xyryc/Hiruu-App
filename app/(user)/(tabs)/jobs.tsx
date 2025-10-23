@@ -3,6 +3,7 @@ import JobCard from "@/components/ui/cards/JobCard";
 import SearchBar from "@/components/ui/inputs/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import React from "react";
 import {
   ScrollView,
@@ -14,6 +15,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserJobs = () => {
+  const router = useRouter();
+
   return (
     <SafeAreaView
       className="flex-1 bg-white dark:bg-dark-background"
@@ -55,7 +58,10 @@ const UserJobs = () => {
       {/* search box */}
       <View className="flex-row items-center gap-1.5 mr-12 mt-3.5 px-5">
         <SearchBar />
-        <Ionicons name="filter-circle" size={44} color="black" />
+
+        <TouchableOpacity onPress={() => router.push("/(user)/jobs/filter")}>
+          <Ionicons name="filter-circle" size={44} color="black" />
+        </TouchableOpacity>
       </View>
 
       {/* featured job */}
