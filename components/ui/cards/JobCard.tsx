@@ -5,15 +5,21 @@ import {
   SimpleLineIcons,
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import SmallButton from "../buttons/SmallButton";
 
 const JobCard = ({ className }) => {
+  const router = useRouter();
+
   return (
     <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>
-      {/* name */}
-      <View className="flex-row gap-2.5">
+      {/* company name */}
+      <TouchableOpacity
+        onPress={() => router.push("/(user)/jobs/profile")}
+        className="flex-row gap-2.5"
+      >
         <Image
           source="https://img.freepik.com/free-vector/elegant-luxury-hotel-logo_23-2147534418.jpg?semt=ais_hybrid&w=740&q=80"
           style={{ width: 40, height: 40, borderRadius: 999 }}
@@ -30,7 +36,7 @@ const JobCard = ({ className }) => {
             Picko labs
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
 
       {/* location */}
       <View className="flex-row items-center justify-between gap-20">
