@@ -1,11 +1,8 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import {
-  AntDesign,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import ExperienceLevel from "@/components/ui/inputs/ExperienceLevel";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
@@ -287,53 +284,7 @@ const FindJobFilters = () => {
             Experience Level
           </Text>
 
-          {/* Cashier */}
-          <View className="flex-row justify-between items-center mb-4">
-            <Text className="font-proximanova-regular text-gray-600 flex-1">
-              Cashier
-            </Text>
-            <View className="flex-row items-center gap-3">
-              <Text className="font-proximanova-semibold text-primary w-8 text-center">
-                {experiences.cashier.toString().padStart(2, "0")}
-              </Text>
-              <TouchableOpacity
-                onPress={() => updateExperience("cashier", false)}
-                className="w-6 h-6 items-center justify-center"
-              >
-                <AntDesign name="minus" size={16} color="#666" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => updateExperience("cashier", true)}
-                className="w-6 h-6 rounded-full border-2 border-[#4FB2F3] items-center justify-center"
-              >
-                <AntDesign name="plus" size={14} color="#4FB2F3" />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Receptionist */}
-          <View className="flex-row justify-between items-center">
-            <Text className="font-proximanova-regular text-gray-600 flex-1">
-              Receptionist
-            </Text>
-            <View className="flex-row items-center gap-3">
-              <Text className="font-proximanova-semibold text-primary w-8 text-center">
-                {experiences.receptionist.toString().padStart(2, "0")}
-              </Text>
-              <TouchableOpacity
-                onPress={() => updateExperience("receptionist", false)}
-                className="w-6 h-6 rounded-full border-2 border-red-400 items-center justify-center"
-              >
-                <AntDesign name="minus" size={14} color="#F87171" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => updateExperience("receptionist", true)}
-                className="w-6 h-6 items-center justify-center"
-              >
-                <AntDesign name="plus" size={16} color="#666" />
-              </TouchableOpacity>
-            </View>
-          </View>
+          <ExperienceLevel />
         </View>
       </ScrollView>
 
