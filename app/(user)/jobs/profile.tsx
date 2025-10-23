@@ -1,6 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import JobApplyModal from "@/components/ui/modals/JobApplyModal";
 import {
   Fontisto,
   Ionicons,
@@ -71,7 +72,7 @@ const JobProfile = () => {
               </Text>
             </View>
 
-            <Text>
+            <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
               4.8/5 <Fontisto name="star" size={14} color="#F1C400" />
             </Text>
           </View>
@@ -297,6 +298,8 @@ const JobProfile = () => {
           />
         </ScrollView>
       </View>
+
+      <JobApplyModal visible={showModal} onClose={() => setShowModal(false)} />
     </SafeAreaView>
   );
 };
