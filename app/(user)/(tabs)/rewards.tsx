@@ -1,54 +1,138 @@
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import { FontAwesome6 } from "@expo/vector-icons";
+import { FontAwesome, FontAwesome6, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React from "react";
-import { Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserRewards = () => {
+  const cardData = [
+    { coin: '05', text1: 'Complate', text2: 'Profile', imageSource: require('@/assets/images/reward/complate-profile.svg') },
+    { coin: 20, text1: 'Refer A', text2: 'Friend', imageSource: require('@/assets/images/reward/refer-friend.svg') },
+    { coin: 30, text1: 'Refer A', text2: 'Business', imageSource: require('@/assets/images/reward/refer-business.svg') }
+  ]
   return (
     <SafeAreaView
-      className="flex-1 bg-[#E5F4FD] dark:bg-dark-background"
-      edges={["top", "left", "right", 'bottom']}
+      className="flex-1 bg-[#d9dde0] dark:bg-dark-background"
+      edges={["top", "left", "right",]}
     >
-      <View className="mx-5">
-        <Text className="font-proximanova-regular text-base text-secondary dark:text-dark-secondary text-center mt-2.5">Total Tokens</Text>
-        <FontAwesome6 className='justify-end p-2.5 bg-[#ffffff] rounded-full absolute top-4 right-0' name="clock-rotate-left" size={20} color="black" />
-        <View className="flex-row items-center justify-center mt-1 gap-2.5">
-          <View>
-            <Image source={require('@/assets/images/hiruu-coin.svg')} contentFit="contain" style={{ height: 44, width: 40 }} />
-          </View>
-          <Text className="font-proximanova-bold text-[40px] text-[#4FB2F3]">5,405</Text>
-        </View>
-        <PrimaryButton title="Redeem" className="w-44 justify-center items-center mx-auto mt-4" />
-        <Text className="font-proximanova-regular text-sm text-center text-primary dark:text-dark-primary mt-2.5">Earn tokens as you unlock and level up badges!</Text>
-        <View className="bg-[#4FB2F3] p-4 rounded-2xl mt-8">
-          <Text className="font-proximanova-semibold text-lg text-[#FFFFFF] text-center">You've Completed 3 Shifts In A Raw!</Text>
-          <View className="flex-row gap-2 mt-3">
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+      >
+        <View className="mx-5">
+          <Text className="font-proximanova-regular text-base text-secondary dark:text-dark-secondary text-center mt-2.5">Total Tokens</Text>
+          <FontAwesome6 className='justify-end p-2.5 bg-[#ffffff] rounded-full absolute top-4 right-0' name="clock-rotate-left" size={20} color="black" />
+          <View className="flex-row items-center justify-center mt-1 gap-2.5">
             <View>
-              <Image source={require('@/assets/images/reward/reward-complite-spark.svg')} contentFit="contain" style={{ width: 44, height: 44 }} />
+              <Image source={require('@/assets/images/hiruu-coin.svg')} contentFit="contain" style={{ height: 44, width: 40 }} />
             </View>
-            <View>
-              <View className="flex-row justify-between">
-                <Text className="font-proximanova-regular text-sm text-[#ffffff]"><Text className="text-[#ffffff]/70">Completed:</Text> 3/5 Shifts</Text>
-                <Text className="font-proximanova-semibold text-sm text-[#ffffff]">20 Tokens</Text>
+            <Text className="font-proximanova-bold text-[40px] text-[#4FB2F3]">5,405</Text>
+          </View>
+          <PrimaryButton title="Redeem" className="w-44 justify-center items-center mx-auto mt-4" />
+          <Text className="font-proximanova-regular text-sm text-center text-primary dark:text-dark-primary mt-2.5">Earn tokens as you unlock and level up badges!</Text>
+          <View className="bg-[#4FB2F3] p-4 rounded-2xl mt-8">
+            <Text className="font-proximanova-semibold text-lg text-[#FFFFFF] text-center">You've Completed 3 Shifts In A Raw!</Text>
+            <View className="flex-row gap-2 mt-3">
+              <View>
+                <Image source={require('@/assets/images/reward/reward-complite-spark.svg')} contentFit="contain" style={{ width: 44, height: 44 }} />
               </View>
               <View>
-                <Image source={require('@/assets/images/reward/reward-complite-slider.svg')} contentFit="contain" style={{ height: 24, width: 250 }} />
+                <View className="flex-row justify-between">
+                  <Text className="font-proximanova-regular text-sm text-[#ffffff]"><Text className="text-[#ffffff]/70">Completed:</Text> 3/5 Shifts</Text>
+                  <Text className="font-proximanova-semibold text-sm text-[#ffffff]">20 Tokens</Text>
+                </View>
+                <View>
+                  <Image source={require('@/assets/images/reward/reward-complite-slider.svg')} contentFit="contain" style={{ height: 24, width: 250 }} />
+                </View>
               </View>
             </View>
+
+          </View>
+          <View>
+            <Image source={require('@/assets/images/shift-ongoing-bg.svg')} contentFit="contain" style={{ height: 34, width: 250, marginHorizontal: 'auto' }} />
+            <View className="flex-row items-center justify-center">
+              <Text className="text-center -top-8 font-proximanova-regular text-sm text-primary dark:text-dark-primary">Your Time Remaining: </Text>
+              <Image source={require('@/assets/images/reward/timer.svg')} contentFit="contain" style={{ height: 20, width: 20, marginVertical: 'auto', top: -26 }} />
+              <Text className="text-center -top-7 font-proximanova-bold text-[#F3934F]"> 00:59:21</Text>
+            </View>
+          </View>
+        </View>
+
+        <View className="mt-8 mx-5 ">
+          <View className="flex-row justify-between items-center">
+            <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">Standard Challenges</Text>
+            <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">See All</Text>
+          </View>
+
+          <View className="flex-row gap-2 justify-between items-center mt-4">
+            {cardData.map((card, index) => (
+              <View key={index} className="border-gray-500 border-hairline p-6 rounded-xl">
+                <Image source={card.imageSource} contentFit="contain" style={{ height: 72, width: 61 }} />
+                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-2.5 text-center ">{card.text1}</Text>
+                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center ">{card.text2}</Text>
+                <View className="flex-row justify-between items-center">
+                </View>
+                <View className="flex-row items-center justify-between mt-2">
+                  <Image
+                    source={require("@/assets/images/hiruu-coin.svg")}
+                    style={{
+                      width: 22,
+                      height: 22,
+                    }}
+                    contentFit="contain"
+                  />
+                  <View className="px-2.5 py-0.5 bg-[#DDF1FF]  -ml-2.5 -z-10 rounded-r-[40px]">{/*bg-[#DDF1FF]*/}
+                    <Text className="text-xs font-proximanova-semibold">{card.coin}</Text>
+                  </View>
+                  <FontAwesome6 name="crown" className='ml-0.5' size={15} color="#4FB2F3" />
+                </View>
+              </View>
+            ))}
+          </View>
+          <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary mt-6">Redeem Rewards</Text>
+
+          <View className="bg-[#a6cde7] dark:bg-[#19282c] flex-row justify-between items-center p-4 rounded-xl mt-4 ">
+            <View className="flex-row  gap-1.5">
+              <FontAwesome6 name="crown" size={15} color="#4FB2F3" />
+              <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">Premium for a month</Text>
+            </View>
+            <MaterialIcons name="arrow-forward-ios" size={10} color="black" />
+          </View>
+
+          <View className="bg-[#a6cde7] dark:bg-[#19282c] flex-row justify-between items-center p-4 rounded-xl">
+            <View className="flex-row  gap-1.5">
+              <MaterialCommunityIcons name="gift" size={15} color="#4FB2F3" />
+              <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">Gift Premium for a month</Text>
+            </View>
+            <MaterialIcons name="arrow-forward-ios" size={10} color="black" />
+          </View>
+
+          <View className="bg-[#a6cde7] dark:bg-[#19282c] flex-row justify-between items-center p-4 rounded-xl">
+            <View className="flex-row  gap-1.5">
+              <Ionicons name="person" size={15} color="#4FB2F3" />
+              <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">Be feature profile as user</Text>
+            </View>
+            <MaterialIcons name="arrow-forward-ios" size={10} color="black" />
+          </View>
+
+          <View className="bg-[#a6cde7] dark:bg-[#19282c] flex-row justify-between items-center p-4 rounded-xl">
+            <View className="flex-row  gap-1.5">
+              <Ionicons name="person-circle-outline" size={15} color="#4FB2F3" />
+              <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">Be feature profile as business</Text>
+            </View>
+            <MaterialIcons name="arrow-forward-ios" size={10} color="black" />
+          </View>
+
+          <View className="bg-[#a6cde7] dark:bg-[#19282c] flex-row justify-between items-center p-4 rounded-xl mb-2">
+            <View className="flex-row  gap-1.5">
+              <FontAwesome name="map-signs" size={15} color="#4FB2F3" />
+              <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">Featured profile nameplate</Text>
+            </View>
+            <MaterialIcons name="arrow-forward-ios" size={10} color="black" />
           </View>
 
         </View>
-        <View>
-          <Image source={require('@/assets/images/shift-ongoing-bg.svg')} contentFit="contain" style={{ height: 34, width: 250, marginHorizontal: 'auto' }} />
-          <View className="flex-row items-center justify-center">
-            <Text className="text-center -top-8 font-proximanova-regular text-sm text-primary dark:text-dark-primary">Your Time Remaining: </Text>
-            <Image source={require('@/assets/images/reward/timer.svg')} contentFit="contain" style={{ height: 20, width: 20, marginVertical: 'auto', top: -26 }} />
-            <Text className="text-center -top-7 font-proximanova-bold text-[#F3934F]"> 00:59:21</Text>
-          </View>
-        </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
