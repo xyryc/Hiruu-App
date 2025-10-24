@@ -21,6 +21,7 @@ const TaskCard = ({
   city,
   onLoginPress,
   status = "ongoing",
+  requestLog = false,
 }: WorkShiftCardProps) => {
   const [elapsedTime, setElapsedTime] = useState("00:00:05");
 
@@ -206,7 +207,7 @@ const TaskCard = ({
       </View>
 
       {/* Location & Login */}
-      <View className="flex-row justify-between items-center">
+      <View className="flex-row justify-between items-center gap-4">
         {/* Location */}
         <View className="flex-row items-center flex-1">
           <View className="mr-2 bg-white rounded-md">
@@ -216,7 +217,7 @@ const TaskCard = ({
                 width: 34,
                 height: 34,
               }}
-              contentFit="scale-down"
+              contentFit="contain"
             />
           </View>
 
@@ -236,10 +237,17 @@ const TaskCard = ({
           </View>
         </View>
 
-        {/* Login Button */}
-        {status === "upcoming" && <StatusBadge status={status} />}
-        {status === "ongoing" && <SmallButton title="Login" className="px-8" />}
-        {status === "completed" && <StatusBadge status={status} />}
+        {/* Button */}
+        {requestLog ? (
+          <SmallButton title="Request Log" onPress={onLoginPress} />
+        ) : (
+          <>
+            {status === "upcoming" && <StatusBadge status={status} />}
+            {status === "ongoing" && <SmallButton title="Login" className="px-8" />}
+            {status === "completed" && <StatusBadge status={status} />}
+          </>
+        )}
+
       </View>
     </View>
   );

@@ -44,7 +44,7 @@ const Welcome = () => {
 
           {/* button */}
           <PrimaryButton
-            className="my-[30px]"
+            className="my-[30px] mx-5"
             title="Get Started"
             onPress={() => router.push("/(auth)/signup")}
           />

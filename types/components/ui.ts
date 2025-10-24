@@ -89,7 +89,7 @@ export interface FindNewJobProps {
 
 export interface ActionCardProps {
   title: string;
-  buttonTitle: string;
+  buttonTitle?: string;
   rightImage: ImageSource;
   imageClass?: string;
   imageWidth: number;
@@ -98,7 +98,7 @@ export interface ActionCardProps {
   backgroundClass?: string;
   backgroundWidth?: number;
   backgroundHeight?: number;
-  onPress: (event: GestureResponderEvent) => void;
+  onPress?: (event: GestureResponderEvent) => void;
 }
 
 export interface BusinessProfileProps {
@@ -160,9 +160,18 @@ export interface StatCardSecondaryProps {
   background: string;
 }
 
-type StatusType = "upcoming" | "completed" | "missed" | "ongoing";
+type StatusType =
+  | "upcoming"
+  | "completed"
+  | "missed"
+  | "ongoing"
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "accepted";
 
 export interface StatusBadgeProps {
+  label?: string;
   status: StatusType;
   size?: "small" | "medium" | "large";
   className?: string;
@@ -201,7 +210,15 @@ export interface WorkShiftCardProps {
   address: string;
   city: string;
   onLoginPress: () => void;
-  status?: "ongoing" | "upcoming" | "completed";
+  requestLog?: boolean;
+  status?:
+    | "ongoing"
+    | "upcoming"
+    | "completed"
+    | "pending"
+    | "approved"
+    | "rejected"
+    | "accepted";
 }
 
 export interface ScreenHeaderProps {

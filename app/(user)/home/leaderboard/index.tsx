@@ -192,7 +192,7 @@ export default function LeaderboardScreen() {
                 Top 3 Performer
               </Text>
               <TouchableOpacity
-                onPress={() => router.push("/(user)/leaderboard/info")}
+                onPress={() => router.push("/(user)/home/leaderboard/info")}
                 className="p-2"
               >
                 <SimpleLineIcons name="info" size={18} color="#282930" />

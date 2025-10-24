@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const SwapShifts = () => {
+const SwapShiftsRequest = () => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -107,6 +107,7 @@ const SwapShifts = () => {
 
       <View className="absolute bottom-0 left-0 right-0 py-5 items-center justify-end bg-[#E5F4FD] dark:bg-dark-background rounded-t-[20px]">
         <PrimaryButton
+          className="mx-5"
           title="Send Request"
           onPress={() => setShowModal(true)}
         />
@@ -120,4 +121,4 @@ const SwapShifts = () => {
   );
 };
 
-export default SwapShifts;
+export default SwapShiftsRequest;

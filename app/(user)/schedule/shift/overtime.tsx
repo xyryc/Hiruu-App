@@ -73,7 +73,7 @@ const OvertimeRequest = () => {
               <Text className="text-sm font-proximanova-regular text-placeholder dark:text-dark-placeholder">
                 Start Date
               </Text>
-              <Ionicons name="calendar-outline" size={20} color="#4FB2F3" />
+              <Ionicons name="calendar-outline" size={20} color="#0000" />
             </TouchableOpacity>
           </View>
 
@@ -135,7 +135,7 @@ const OvertimeRequest = () => {
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 py-5 items-center justify-end bg-white dark:bg-dark-background rounded-t-[20px]">
+      <View className="mx-5 absolute bottom-0 left-0 right-0 py-5 items-center justify-end bg-white dark:bg-dark-background rounded-t-[20px]">
         <PrimaryButton
           title="Send Request"
           onPress={() => setShowModal(true)}

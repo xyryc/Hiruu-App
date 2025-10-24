@@ -65,7 +65,7 @@ const ShiftSummary = () => {
         </View>
       </ScrollView>
 
-      <View className="absolute bottom-0 left-0 right-0 py-5 items-center justify-end bg-white dark:bg-dark-background rounded-t-[20px]">
+      <View className="mx-5 absolute bottom-0 left-0 right-0 py-5 items-center justify-end bg-white dark:bg-dark-background rounded-t-[20px]">
         <PrimaryButton title="Send Request" />
       </View>
     </SafeAreaView>

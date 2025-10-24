@@ -3,6 +3,7 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const StatusBadge = ({
+  label,
   status,
   size = "medium",
   className = "",
@@ -14,7 +15,7 @@ const StatusBadge = ({
           containerClasses: "bg-yellow-50 border-[#EAC3244D]",
           textClasses: "text-[#EAC324]",
           dotClasses: "bg-[#EAC324]",
-          label: "Upcoming",
+          label: label || "Upcoming",
         };
       case "completed":
         return {
@@ -36,6 +37,34 @@ const StatusBadge = ({
           textClasses: "text-orange-600",
           dotClasses: "bg-orange-600",
           label: "Ongoing",
+        };
+      case "pending":
+        return {
+          containerClasses: "bg-orange-100 border-[#F3934F4D]",
+          textClasses: "text-orange-600",
+          dotClasses: "bg-orange-600",
+          label: label || "Pending",
+        };
+      case "approved":
+        return {
+          containerClasses: "bg-[#ECF9EF] border-[#F3934F4D]",
+          textClasses: "text-[#3EBF5A]",
+          dotClasses: "bg-[#3EBF5A]",
+          label: "Approved",
+        };
+      case "accepted":
+        return {
+          containerClasses: "bg-[#ECF9EF] border-[#F3934F4D]",
+          textClasses: "text-[#3EBF5A]",
+          dotClasses: "bg-[#3EBF5A]",
+          label: label || "Accepted",
+        };
+      case "rejected":
+        return {
+          containerClasses: "bg-[#FEEEEE] border-[#F3934F4D]",
+          textClasses: "text-[#F34F4F]",
+          dotClasses: "bg-[#F34F4F]",
+          label: "Rejected",
         };
       default:
         return {

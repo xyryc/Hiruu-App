@@ -18,7 +18,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="home/index"
+        name="home"
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => (
@@ -28,7 +28,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="rewards/index"
+        name="rewards"
         options={{
           title: "Rewards",
           tabBarIcon: ({ color }) => (
@@ -38,7 +38,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="schedule/index"
+        name="schedule"
         options={{
           title: "Schedule",
           tabBarIcon: ({ color }) => (
@@ -48,7 +48,7 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="jobs/index"
+        name="jobs"
         options={{
           title: "Jobs",
           tabBarIcon: ({ color }) => (
@@ -58,69 +58,12 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
-        name="profile/index"
+        name="profile"
         options={{
           title: "Profile",
           tabBarIcon: ({ color }) => (
             <Feather name="gift" size={28} color={color} />
           ),
-        }}
-      />
-
-      {/* hidden tab screens */}
-      <Tabs.Screen
-        name="home/leaderboard/index"
-        options={{
-          headerShown: false,
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="home/leaderboard/info"
-        options={{
-          headerShown: false,
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="home/shift/[id]"
-        options={{
-          headerShown: false,
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="home/shift/overtime"
-        options={{
-          headerShown: false,
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="home/shift/report"
-        options={{
-          headerShown: false,
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="home/shift/summary"
-        options={{
-          headerShown: false,
-          href: null,
-        }}
-      />
-
-      <Tabs.Screen
-        name="home/shift/swap"
-        options={{
-          headerShown: false,
-          href: null,
         }}
       />
     </Tabs>

@@ -28,7 +28,7 @@ const ShiftItem = ({ shift, index, shiftsLength }) => {
 
   return (
     <TouchableOpacity
-      onPress={() => router.push("/shift/[id]")}
+      onPress={() => router.push("/schedule/shift/[id]")}
       className="flex-row mb-4 overflow-hidden relative"
     >
       {/* Time Column */}
