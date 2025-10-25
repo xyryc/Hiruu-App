@@ -1,8 +1,9 @@
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { FontAwesome, FontAwesome6, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { Link } from "expo-router";
 import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserRewards = () => {
@@ -61,7 +62,12 @@ const UserRewards = () => {
         <View className="mt-8 mx-5 ">
           <View className="flex-row justify-between items-center">
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">Standard Challenges</Text>
-            <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">See All</Text>
+            <TouchableOpacity>
+              <Link href='/(user)/rewards/challenges'>
+                <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">See All</Text>
+
+              </Link>
+            </TouchableOpacity>
           </View>
 
           <View className="flex-row gap-2 justify-between items-center mt-4">
