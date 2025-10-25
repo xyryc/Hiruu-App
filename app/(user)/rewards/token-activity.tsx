@@ -45,7 +45,10 @@ const TokenActivity = () => {
 
                 </View>}
             />
+
+
             <ScrollView>
+
                 <View className='flex-row justify-between mx-5'>
                     <View className='flex-row gap-2'>
                         {
@@ -64,9 +67,14 @@ const TokenActivity = () => {
                         onDateChange={handleReportMonthChange}
                     />
                 </View>
+
+
+
                 {/* january 2 */}
                 <View className='mx-5'>
+
                     <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary mt-4'>January, 2025</Text>
+
                     <View className='flex-row justify-between mt-3'>
                         <View className='flex-row gap-2.5 items-center'>
                             <Image source={require('@/assets/images/reward/profile.svg')} contentFit='contain' style={{ width: 40, height: 40, }} />
@@ -87,6 +95,7 @@ const TokenActivity = () => {
                             />
                         </View>
                     </View>
+
                     <View className='flex-row justify-between mt-5'>
                         <View className='flex-row gap-2.5 items-center'>
                             <Image source={require('@/assets/images/reward/profile.svg')} contentFit='contain' style={{ width: 40, height: 40, }} />
@@ -107,6 +116,7 @@ const TokenActivity = () => {
                             />
                         </View>
                     </View>
+
                     <View className='flex-row justify-between mt-5'>
                         <View className='flex-row gap-2.5 items-center'>
                             <Image source={require('@/assets/images/reward/profile.svg')} contentFit='contain' style={{ width: 40, height: 40, }} />
@@ -128,9 +138,11 @@ const TokenActivity = () => {
                         </View>
                     </View>
                 </View>
+
                 <View className='mt-5 border-b-4 border-[#F5F5F5]' />
                 {/*  December, 2024 */}
                 <View className='mx-5'>
+
                     <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary mt-4'>December, 2024</Text>
                     <View className='flex-row justify-between mt-5'>
                         <View className='flex-row gap-2.5 items-center'>
@@ -152,6 +164,7 @@ const TokenActivity = () => {
                             />
                         </View>
                     </View>
+
                     <View className='flex-row justify-between mt-5'>
                         <View className='flex-row gap-2.5 items-center'>
                             <Image source={require('@/assets/images/reward/profile.svg')} contentFit='contain' style={{ width: 40, height: 40, }} />
@@ -172,10 +185,13 @@ const TokenActivity = () => {
                             />
                         </View>
                     </View>
+
                 </View>
+
                 <View className='mt-5 border-b-4 border-[#F5F5F5]' />
                 {/*  November, 2024 */}
                 <View className='mx-5'>
+
                     <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary mt-4'>November, 2024</Text>
                     <View className='flex-row justify-between mt-3'>
                         <View className='flex-row gap-2.5 items-center'>
@@ -197,6 +213,7 @@ const TokenActivity = () => {
                             />
                         </View>
                     </View>
+
                     <View className='flex-row justify-between mt-5'>
                         <View className='flex-row gap-2.5 items-center'>
                             <Image source={require('@/assets/images/reward/profile.svg')} contentFit='contain' style={{ width: 40, height: 40, }} />
@@ -217,6 +234,7 @@ const TokenActivity = () => {
                             />
                         </View>
                     </View>
+
                     <View className='flex-row justify-between mt-5'>
                         <View className='flex-row gap-2.5 items-center'>
                             <Image source={require('@/assets/images/reward/profile.svg')} contentFit='contain' style={{ width: 40, height: 40, }} />
@@ -237,6 +255,7 @@ const TokenActivity = () => {
                             />
                         </View>
                     </View>
+
                     <View className='flex-row justify-between mt-5'>
                         <View className='flex-row gap-2.5 items-center'>
                             <Image source={require('@/assets/images/reward/profile.svg')} contentFit='contain' style={{ width: 40, height: 40, }} />
@@ -257,6 +276,7 @@ const TokenActivity = () => {
                             />
                         </View>
                     </View>
+
                     <View className='flex-row justify-between mt-5'>
                         <View className='flex-row gap-2.5 items-center'>
                             <Image source={require('@/assets/images/reward/profile.svg')} contentFit='contain' style={{ width: 40, height: 40, }} />
@@ -277,6 +297,7 @@ const TokenActivity = () => {
                             />
                         </View>
                     </View>
+
                 </View>
             </ScrollView>
 
