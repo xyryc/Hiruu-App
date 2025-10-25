@@ -14,7 +14,8 @@ const challenges = () => {
     const [isActive, setIsActive] = useState('One-Time')
 
     const navigator = () => {
-        router.push('/rewards/token-activity')
+        // router.push('/rewards/token-activity')
+        router.push('/rewards/redeem-tokens')
     }
 
     return (
@@ -27,7 +28,9 @@ const challenges = () => {
                 titleClass="text-primary dark:text-dark-primary"
                 iconColor={isDark ? "#fff" : "#111111"}
             />
-            <ScrollView>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+            >
                 <TouchableOpacity onPress={navigator}>
                     <View className='bg-[#aed7f1] mx-4 rounded-xl flex-row'>
                         <View className='mt-3 mb-2'>

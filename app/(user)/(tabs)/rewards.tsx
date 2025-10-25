@@ -1,7 +1,7 @@
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { FontAwesome, FontAwesome6, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -19,6 +19,7 @@ const UserRewards = () => {
     >
       <ScrollView
         showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
       >
         <View className="mx-5">
           <Text className="font-proximanova-regular text-base text-secondary dark:text-dark-secondary text-center mt-2.5">Total Tokens</Text>
@@ -29,7 +30,7 @@ const UserRewards = () => {
             </View>
             <Text className="font-proximanova-bold text-[40px] text-[#4FB2F3]">5,405</Text>
           </View>
-          <PrimaryButton title="Redeem" className="w-44 justify-center items-center mx-auto mt-4" />
+          <PrimaryButton title="Redeem" onPress={() => router.push('/(user)/rewards/token-activity')} className="w-44 justify-center items-center mx-auto mt-4" />
           <Text className="font-proximanova-regular text-sm text-center text-primary dark:text-dark-primary mt-2.5">Earn tokens as you unlock and level up badges!</Text>
           <View className="bg-[#4FB2F3] p-4 rounded-2xl mt-8">
             <Text className="font-proximanova-semibold text-lg text-[#FFFFFF] text-center">You've Completed 3 Shifts In A Raw!</Text>
