@@ -13,6 +13,10 @@ const challenges = () => {
     const tabs = ['One-Time', 'Repeatable']
     const [isActive, setIsActive] = useState('One-Time')
 
+    const navigator = () => {
+        router.push('/rewards/token-activity')
+    }
+
     return (
         <SafeAreaView className="flex-1 bg-white dark:bg-dark-background">
             {/* Header */}
@@ -24,24 +28,25 @@ const challenges = () => {
                 iconColor={isDark ? "#fff" : "#111111"}
             />
             <ScrollView>
-                <View className='bg-[#aed7f1] mx-4 rounded-xl flex-row'>
-                    <View className='mt-3 mb-2'>
-
-                        <Image source={require('@/assets/images/engagement.svg')} contentFit='contain' style={{ width: 80, height: 80, marginLeft: -7, transform: [{ rotate: '90deg' }] }} />
-                    </View>
-                    <View className="flex-1 flex-row mt-2 justify-between">
-                        <View>
-                            <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary">Redeem Your Tokens</Text>
-                            <Text className='font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-1.5'>Redeem for perks & premium features</Text>
-                            <TouchableOpacity className="mt-1.5 bg-[#11293A] rounded-full px-2 py-1.5 justify-center items-center w-[92px]" >
-                                <Text className="font-proximanova-bold text-sm text-white text-center">
-                                    50% Extra
-                                </Text>
-                            </TouchableOpacity>
+                <TouchableOpacity onPress={navigator}>
+                    <View className='bg-[#aed7f1] mx-4 rounded-xl flex-row'>
+                        <View className='mt-3 mb-2'>
+                            <Image source={require('@/assets/images/engagement.svg')} contentFit='contain' style={{ width: 80, height: 80, marginLeft: -7, transform: [{ rotate: '90deg' }] }} />
                         </View>
-                        <MaterialIcons name="arrow-forward-ios" className='right-5 top-2' size={15} color="black" />
+                        <View className="flex-1 flex-row mt-2 justify-between">
+                            <View>
+                                <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary">Redeem Your Tokens</Text>
+                                <Text className='font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-1.5'>Redeem for perks & premium features</Text>
+                                <TouchableOpacity className="mt-1.5 bg-[#11293A] rounded-full px-2 py-1.5 justify-center items-center w-[92px]" >
+                                    <Text className="font-proximanova-bold text-sm text-white text-center">
+                                        50% Extra
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                            <MaterialIcons name="arrow-forward-ios" className='right-5 top-2' size={15} color="black" />
+                        </View>
                     </View>
-                </View>
+                </TouchableOpacity>
                 <View className='mt-5 flex-row mx-5'>
                     {
                         tabs.map((tab, index) => (
