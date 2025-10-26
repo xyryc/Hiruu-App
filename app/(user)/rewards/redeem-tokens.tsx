@@ -65,25 +65,11 @@ const RedeemTokens = () => {
         list2: "Be feature profile as user",
         tag: 'me'
     }
-    // const job = {
-    //     img,
-    //     title: 'Buy 1 Month Premium',
-    //     subtitle: 'Unlock premium features for yourself',
-    //     coin: "200"
-    // }
-    // const nameplate = {
-    //     img,
-    //     title: 'Buy 1 Month Premium',
-    //     subtitle: 'Unlock premium features for yourself',
-    //     coin: "200"
-    // }
-    console.log(data);
 
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === "dark";
 
     const handleModal = (key: string) => {
-        console.log('key', key);
         if (key === 'premium') {
             setData(premium)
         } else if (key === 'gift') {

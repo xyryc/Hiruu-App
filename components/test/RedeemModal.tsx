@@ -1,4 +1,4 @@
-import { Entypo, FontAwesome6 } from "@expo/vector-icons";
+import { AntDesign, Entypo, FontAwesome6 } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import React, { useState } from "react";
@@ -122,9 +122,6 @@ const ReddemModal = ({ visible, onClose, data }: any) => {
                                 onSelect={(value: any) => setSelectedLeave(value)}
                             />
                         </View>}
-
-
-
                         <View className="flex-row gap-1.5 items-center">
                             <FontAwesome6 name="crown" className='top-1' size={15} color="#4FB2F3" />
                             <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary mt-4">{data.listitle}</Text>
@@ -167,12 +164,17 @@ const ReddemModal = ({ visible, onClose, data }: any) => {
                                 ))
                             }
                         </View>}
+                        <View className="flex-row gap-4 items-center">
+                            {data.tag === 'gift' && <>
+                                <AntDesign name="warning" className="top-2" size={20} color="red" />
+                                <Text className="font-proximanova-regular text-sm text-[#F34F4F] mt-5">Please select a friend before sending the gift</Text>
 
-
-
-
-                        <View>
-                            <Text className="font-proximanova-regular text-sm text-[#F34F4F] mt-5">Please select a friend before sending the gift</Text>
+                            </>
+                            }
+                            {data.tag === 'me' && <>
+                                <AntDesign name="warning" className="top-2" size={20} color="red" />
+                                <Text className="font-proximanova-regular text-sm text-[#F34F4F] mt-5">You don’t have enough tokens to redeem this reward</Text>
+                            </>}
                         </View>
                         <PrimaryButton title="Confirm & Apply" className="mt-5" />
                     </SafeAreaView>
