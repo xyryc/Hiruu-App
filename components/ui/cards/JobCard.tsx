@@ -1,3 +1,4 @@
+import { JobCardProps } from "@/types";
 import {
   FontAwesome,
   MaterialCommunityIcons,
@@ -6,12 +7,14 @@ import {
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import SmallButton from "../buttons/SmallButton";
+import JobApplyModal from "../modals/JobApplyModal";
 
-const JobCard = ({ className }) => {
+const JobCard = ({ className }: JobCardProps) => {
   const router = useRouter();
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>
@@ -125,8 +128,10 @@ const JobCard = ({ className }) => {
           }}
         />
 
-        <SmallButton title="Apply Now" />
+        <SmallButton title="Apply Now" onPress={() => setShowModal(true)} />
       </View>
+
+      <JobApplyModal visible={showModal} onClose={() => setShowModal(false)} />
     </View>
   );
 };

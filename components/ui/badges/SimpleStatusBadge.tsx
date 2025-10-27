@@ -1,19 +1,22 @@
 import { SimpleStatusBadgeProps } from "@/types";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 
 const SimpleStatusBadge = ({
   className,
   title,
   textColor,
   bgColor,
+  onPress,
 }: SimpleStatusBadgeProps) => {
   return (
-    <View
+    <TouchableOpacity
       className={`${className} py-1.5 px-4 rounded-full`}
       style={{
         backgroundColor: bgColor,
       }}
+      onPress={onPress}
+      activeOpacity={0.7}
     >
       <Text
         className="font-proximanova-regular text-sm"
@@ -23,7 +26,7 @@ const SimpleStatusBadge = ({
       >
         {title}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 };
 
