@@ -19,17 +19,6 @@ const RedeemTokens = () => {
         subtitle: "",
         coin: '',
     });
-
-    {/*
-        
-        Gift Premium for a month:
-        Current Token Balance: 540 Tokens
-        Token Cost: 300 Tokens
-        Send 1 month of premium access to another user. They’ll receive all premium benefits instantly
-
-        
-        */}
-
     const premium = {
         img,
         title: 'Buy 1 Month Premium',
@@ -72,16 +61,20 @@ const RedeemTokens = () => {
     const handleModal = (key: string) => {
         if (key === 'premium') {
             setData(premium)
+            setModalVisible(true)
         } else if (key === 'gift') {
             setData(gift)
+            setModalVisible(true)
         } else if (key === 'job') {
             setData(premium)
+            setModalVisible(true)
         } else if (key === 'me') {
             setData(me)
+            setModalVisible(true)
         } else if (key === 'nameplate') {
-            setData(premium)
+            router.push('/(user)/rewards/nameplate')
         }
-        setModalVisible(true)
+
 
     }
 
