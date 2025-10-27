@@ -94,7 +94,7 @@ const Nameplate = () => {
                                         size={16}
                                         color="#A4928E"
                                     />
-                                    <Text className=' font-proximanova-semibold text-[#A4928E]'>1d, 10h  </Text>
+                                    <Text className=' font-proximanova-bold text-[#A4928E]'>1d, 10h  </Text>
                                 </View>
                             </View>
 

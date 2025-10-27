@@ -12,6 +12,9 @@ const UserRewards = () => {
     { coin: 20, text1: 'Refer A', text2: 'Friend', imageSource: require('@/assets/images/reward/refer-friend.svg') },
     { coin: 30, text1: 'Refer A', text2: 'Business', imageSource: require('@/assets/images/reward/refer-business.svg') }
   ]
+  const handleIcon = () => {
+    router.push('/(user)/rewards/preview')
+  }
   return (
     <SafeAreaView
       className="flex-1 bg-[#d9dde0] dark:bg-dark-background"
@@ -23,7 +26,11 @@ const UserRewards = () => {
       >
         <View className="mx-5">
           <Text className="font-proximanova-regular text-base text-secondary dark:text-dark-secondary text-center mt-2.5">Total Tokens</Text>
-          <FontAwesome6 className='justify-end p-2.5 bg-[#ffffff] rounded-full absolute top-4 right-0' name="clock-rotate-left" size={20} color="black" />
+          <TouchableOpacity
+            onPress={handleIcon}
+          >
+            <FontAwesome6 className='justify-end p-2.5 bg-[#ffffff] rounded-full absolute top-4 right-0' name="clock-rotate-left" size={20} color="black" />
+          </TouchableOpacity>
           <View className="flex-row items-center justify-center mt-1 gap-2.5">
             <View>
               <Image source={require('@/assets/images/hiruu-coin.svg')} contentFit="contain" style={{ height: 44, width: 40 }} />
