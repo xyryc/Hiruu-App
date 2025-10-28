@@ -242,11 +242,9 @@ const RedeemTokens = () => {
                 </View>
             </TouchableOpacity>
             <ReddemModal
-
                 visible={modalVisible}
                 onClose={() => setModalVisible(false)}
                 data={data}
-
             />
 
         </SafeAreaView>
