@@ -1,7 +1,7 @@
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { FontAwesome, FontAwesome6, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,6 +12,9 @@ const UserRewards = () => {
     { coin: 20, text1: 'Refer A', text2: 'Friend', imageSource: require('@/assets/images/reward/refer-friend.svg') },
     { coin: 30, text1: 'Refer A', text2: 'Business', imageSource: require('@/assets/images/reward/refer-business.svg') }
   ]
+  const handleIcon = () => {
+    router.push('/(user)/rewards/preview')
+  }
   return (
     <SafeAreaView
       className="flex-1 bg-[#d9dde0] dark:bg-dark-background"
@@ -19,17 +22,22 @@ const UserRewards = () => {
     >
       <ScrollView
         showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
       >
         <View className="mx-5">
           <Text className="font-proximanova-regular text-base text-secondary dark:text-dark-secondary text-center mt-2.5">Total Tokens</Text>
-          <FontAwesome6 className='justify-end p-2.5 bg-[#ffffff] rounded-full absolute top-4 right-0' name="clock-rotate-left" size={20} color="black" />
+          <TouchableOpacity
+            onPress={handleIcon}
+          >
+            <FontAwesome6 className='justify-end p-2.5 bg-[#ffffff] rounded-full absolute top-4 right-0' name="clock-rotate-left" size={20} color="black" />
+          </TouchableOpacity>
           <View className="flex-row items-center justify-center mt-1 gap-2.5">
             <View>
               <Image source={require('@/assets/images/hiruu-coin.svg')} contentFit="contain" style={{ height: 44, width: 40 }} />
             </View>
             <Text className="font-proximanova-bold text-[40px] text-[#4FB2F3]">5,405</Text>
           </View>
-          <PrimaryButton title="Redeem" className="w-44 justify-center items-center mx-auto mt-4" />
+          <PrimaryButton title="Redeem" onPress={() => router.push('/(user)/rewards/token-activity')} className="w-44 justify-center items-center mx-auto mt-4" />
           <Text className="font-proximanova-regular text-sm text-center text-primary dark:text-dark-primary mt-2.5">Earn tokens as you unlock and level up badges!</Text>
           <View className="bg-[#4FB2F3] p-4 rounded-2xl mt-8">
             <Text className="font-proximanova-semibold text-lg text-[#FFFFFF] text-center">You've Completed 3 Shifts In A Raw!</Text>

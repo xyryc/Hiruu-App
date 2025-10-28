@@ -47,7 +47,9 @@ const TokenActivity = () => {
             />
 
 
-            <ScrollView>
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+            >
 
                 <View className='flex-row justify-between mx-5'>
                     <View className='flex-row gap-2'>

@@ -8,3 +8,7 @@ export interface SearchBarProps {
 export interface AttachmentUploadProps {
   onPress?: (event: GestureResponderEvent) => void;
 }
+
+export interface NamePlateCardProps {
+  variant: string;
+}
