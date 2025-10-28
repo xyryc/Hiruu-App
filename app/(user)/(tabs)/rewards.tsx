@@ -116,7 +116,7 @@ const UserRewards = () => {
                     style={{ width: 44, height: 44 }}
                   />
                 </View>
-                <View>
+                <View className="flex-1">
                   <View className="flex-row justify-between">
                     <Text className="font-proximanova-regular text-sm text-[#ffffff]">
                       <Text className="text-[#ffffff]/70">Completed:</Text> 3/5
@@ -126,16 +126,16 @@ const UserRewards = () => {
                       20 Tokens
                     </Text>
                   </View>
-                  <View>
-                    <Image
-                      source={require("@/assets/images/reward/reward-complite-slider.svg")}
-                      contentFit="contain"
-                      style={{ height: 24, width: 250 }}
-                    />
-                  </View>
+
+                  <Image
+                    source={require("@/assets/images/reward/reward-complite-slider.svg")}
+                    contentFit="fill"
+                    style={{ height: 24, width: "100%" }}
+                  />
                 </View>
               </View>
             </View>
+
             <View>
               <Image
                 source={require("@/assets/images/shift-ongoing-bg.svg")}
