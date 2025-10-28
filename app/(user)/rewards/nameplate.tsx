@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import NameplateCard from "@/components/test/NameplateCard";
-import ReddemModal from "@/components/test/RedeemModal";
+import NameplateBlankCard from "@/components/test/NameplateCard";
+import RedeemModal from "@/components/test/RedeemModal";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
 import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -149,62 +149,62 @@ const Nameplate = () => {
             </View>
           </TouchableOpacity>
 
-          <NameplateCard
+          <NameplateBlankCard
             title="Checkout Champion"
             color="#A4DBAF"
             bgColor="#C0FFCE"
             className="mt-5"
           />
-          <NameplateCard
+          <NameplateBlankCard
             title="Style advisor"
             color="#4FB2F3"
             bgColor="#99D7FF"
             className="mt-5"
           />
-          <NameplateCard
+          <NameplateBlankCard
             title="Fryer Fiend"
             color="#EEC285"
             bgColor="#F7EDC0"
             className="mt-5"
           />
-          <NameplateCard
+          <NameplateBlankCard
             title="Returns Specialist"
             color="#7B7B7B"
             bgColor="#D2D2D2"
             className="mt-5"
           />
-          <NameplateCard
+          <NameplateBlankCard
             title="Literary Legend"
             color="#867470"
             bgColor="#E3CEB9"
             className="mt-5"
           />
-          <NameplateCard
+          <NameplateBlankCard
             title="Gadget guru"
             color="#94C3C8"
             bgColor="#C5EDF2"
             className="mt-5"
           />
-          <NameplateCard
+          <NameplateBlankCard
             title="Pill Pusher Pro"
             color="#B0C4DE"
             bgColor="#C3DDFF"
             className="mt-5"
           />
-          <NameplateCard
+          <NameplateBlankCard
             title="Flash Delivery"
             color="#FEABB6"
             bgColor="#FFCECD47"
             className="mt-5"
           />
 
-          <NameplateCard
+          <NameplateBlankCard
             title="Flash Delivery"
             color="#FEABB6"
             bgColor="#FFCECD47"
             className="mt-5"
           />
-          <NameplateCard
+          <NameplateBlankCard
             title="Forklift Fury"
             color="#CEA694"
             bgColor="#F6CEBC"
@@ -213,8 +213,8 @@ const Nameplate = () => {
         </View>
       </ScrollView>
 
-      <ReddemModal
-        namePlate={<NamePlateCard variant="variant10" />}
+      <RedeemModal
+        namePlate={<NamePlateCard variant="variant4" />}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         data={data}

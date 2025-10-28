@@ -1,9 +1,10 @@
+import { NamePlateCardProps } from "@/types/components/input";
 import { MaterialIcons, Octicons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text, View } from "react-native";
 
-const NamePlateCard = ({ variant }) => {
+const NamePlateCard = ({ variant }: NamePlateCardProps) => {
   const getGradientColors = () => {
     switch (variant) {
       case "variant1":
@@ -59,7 +60,17 @@ const NamePlateCard = ({ variant }) => {
   };
 
   return (
-    <View className="rounded-xl overflow-hidden">
+    <View
+      className="overflow-hidden"
+      style={{
+        borderRadius: 12,
+        borderTopWidth: 1,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        borderBottomWidth: 3,
+        borderColor: getColors(),
+      }}
+    >
       {/* backgrounds */}
       {variant === "variant1" ? (
         <>
@@ -85,7 +96,7 @@ const NamePlateCard = ({ variant }) => {
           </View>
         </>
       ) : (
-        <View className="absolute bottom-0 right-0 z-10">
+        <View className="absolute top-0 -right-44 z-10">
           <Image
             source={require("@/assets/images/nameplates/honeycomb.svg")}
             style={{
@@ -121,7 +132,7 @@ const NamePlateCard = ({ variant }) => {
         </View>
       )}
       {variant === "variant4" && (
-        <View className="absolute top-0 right-0 z-10 border">
+        <View className="absolute top-0 right-0 z-10">
           <Image
             source={require("@/assets/images/nameplates/cloths.svg")}
             style={{
@@ -206,21 +217,12 @@ const NamePlateCard = ({ variant }) => {
       )}
 
       <LinearGradient
+        //@ts-ignore
         colors={getGradientColors()}
         start={variant === "variant1" ? { x: 0, y: 0 } : { x: 1, y: 1 }}
         end={variant === "variant1" ? { x: 1, y: 1 } : { x: 0, y: 0 }}
-        className="flex-1"
       >
-        <View
-          className={`p-3.5 flex-row items-center gap-2 rounded-2xl`}
-          style={{
-            borderTopWidth: 1,
-            borderLeftWidth: 1,
-            borderRightWidth: 1,
-            borderBottomWidth: 3,
-            borderColor: getColors(),
-          }}
-        >
+        <View className={`p-3.5 flex-row items-center gap-2 rounded-2xl`}>
           {/* profile image */}
           <View
             className={`border-2 p-0.5 rounded-full`}

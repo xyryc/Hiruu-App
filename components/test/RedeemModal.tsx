@@ -12,7 +12,7 @@ interface Option {
   value: string;
 }
 
-const ReddemModal = ({ visible, onClose, data, namePlate }: any) => {
+const RedeemModal = ({ visible, onClose, data, namePlate }: any) => {
   const leaveTypes = [
     {
       label: "Sick Leave",
@@ -250,4 +250,4 @@ const ReddemModal = ({ visible, onClose, data, namePlate }: any) => {
   );
 };
 
-export default ReddemModal;
+export default RedeemModal;
