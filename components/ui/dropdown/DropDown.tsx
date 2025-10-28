@@ -24,8 +24,8 @@ const Dropdown = ({ label, placeholder, options, value, onSelect }: any) => {
       >
         <Text
           className={`text-sm font-proximanova-regular ${value
-              ? "text-primary dark:text-dark-primary"
-              : "text-placeholder dark:text-dark-placeholder"
+            ? "text-primary dark:text-dark-primary"
+            : "text-placeholder dark:text-dark-placeholder"
             }`}
         >
           {value || placeholder}

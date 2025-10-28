@@ -1,6 +1,8 @@
 import BandageCard from '@/components/test/BandageCard';
+import { ToggleButton } from '@/components/ui/buttons/ToggleButton';
 import ExperienceCard from '@/components/ui/cards/ExperienceCard';
 import StatCardPrimary from '@/components/ui/cards/StatCardPrimary';
+import Dropdown from '@/components/ui/dropdown/DropDown';
 import { Feather, Foundation, MaterialCommunityIcons, Octicons } from '@expo/vector-icons';
 import { useColorScheme } from 'nativewind';
 import React, { useState } from 'react';
@@ -53,11 +55,18 @@ const profile = () => {
     { id: "crochet", name: "Crochet", icon: "🧶", color: "bg-red-100" },
     { id: "lifestyles", name: "Lifestyles", icon: "🍄", color: "bg-pink-300" },
   ];
-
-
+  const [selectedIssue, setSelectedIssue] = useState("");
+  const issues = [
+    { label: "Missed Punch", value: "Missed Punch" },
+    { label: "Late arrival", value: "Late arrival" },
+    { label: "Early Departure", value: "Early Departure" },
+    { label: "Forget to Tap", value: "Forget to Tap" },
+    { label: "Network Issues", value: "Network Issues" },
+  ];
+  const [isOn, setIsOn] = useState(false)
   return (
     <View
-      className='bg-white mb-36'>
+      className='bg-white mb-[106px] dark:bg-dark-background'>
       <View className='bg-[#E5F4FD] rounded-b-xl'>
         <SafeAreaView>
           <View className={`flex-row justify-between items-center mt-5 mx-5`}>
@@ -208,10 +217,21 @@ const profile = () => {
             </View>
             <Text className='text-center text-xs  mt-2 font-proximanova-medium'>Art</Text>
           </View>
-
         </View>
 
-
+        <View className='mx-5 mt-8 flex-row justify-between items-center'>
+          <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>Options for export</Text>
+          <ToggleButton isOn={isOn} setIsOn={setIsOn} title='Keep colors' />
+        </View>
+        <View className='mx-5 mt-4'>
+          <Dropdown
+            // label="Select Style"
+            placeholder="Select Style"
+            options={issues}
+            value={selectedIssue}
+            onSelect={setSelectedIssue}
+          />
+        </View>
 
       </ScrollView>
     </View>
