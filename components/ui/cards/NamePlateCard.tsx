@@ -61,7 +61,7 @@ const NamePlateCard = ({ variant }) => {
   return (
     <View className="rounded-xl overflow-hidden">
       {/* backgrounds */}
-      {variant === "variant1" && (
+      {variant === "variant1" ? (
         <>
           <View className="absolute bottom-0 right-0">
             <Image
@@ -84,30 +84,125 @@ const NamePlateCard = ({ variant }) => {
             />
           </View>
         </>
+      ) : (
+        <View className="absolute bottom-0 right-0 z-10">
+          <Image
+            source={require("@/assets/images/nameplates/honeycomb.svg")}
+            style={{
+              width: 193,
+              height: 210,
+            }}
+            contentFit="contain"
+          />
+        </View>
       )}
       {variant === "variant2" && (
-        <>
-          <View className="absolute bottom-0 right-0 z-10">
-            <Image
-              source={require("@/assets/images/nameplates/coffee.svg")}
-              style={{
-                width: 92,
-                height: 120,
-              }}
-              contentFit="contain"
-            />
-          </View>
-          <View className="absolute bottom-0 right-0 z-10">
-            <Image
-              source={require("@/assets/images/nameplates/honeycomb.svg")}
-              style={{
-                width: 193,
-                height: 210,
-              }}
-              contentFit="contain"
-            />
-          </View>
-        </>
+        <View className="absolute bottom-0 right-0 z-10">
+          <Image
+            source={require("@/assets/images/nameplates/coffee.svg")}
+            style={{
+              width: 92,
+              height: 120,
+            }}
+            contentFit="contain"
+          />
+        </View>
+      )}
+      {variant === "variant3" && (
+        <View className="absolute top-5 -right-5 z-10">
+          <Image
+            source={require("@/assets/images/nameplates/cart.svg")}
+            style={{
+              width: 81,
+              height: 81,
+            }}
+            contentFit="contain"
+          />
+        </View>
+      )}
+      {variant === "variant4" && (
+        <View className="absolute top-0 right-0 z-10 border">
+          <Image
+            source={require("@/assets/images/nameplates/cloths.svg")}
+            style={{
+              width: 95,
+              height: 115,
+            }}
+            contentFit="contain"
+          />
+        </View>
+      )}
+      {variant === "variant5" && (
+        <View className="absolute top-1.5 -right-3 z-10">
+          <Image
+            source={require("@/assets/images/nameplates/fast-food.svg")}
+            style={{
+              width: 80,
+              height: 104,
+            }}
+            contentFit="contain"
+          />
+        </View>
+      )}
+      {variant === "variant6" && (
+        <View className="absolute top-6 -right-1 z-10">
+          <Image
+            source={require("@/assets/images/nameplates/cash-register.svg")}
+            style={{
+              width: 66,
+              height: 70,
+            }}
+            contentFit="contain"
+          />
+        </View>
+      )}
+      {variant === "variant7" && (
+        <View className="absolute bottom-3 right-0 z-10">
+          <Image
+            source={require("@/assets/images/nameplates/book.svg")}
+            style={{
+              width: 85,
+              height: 115,
+            }}
+            contentFit="contain"
+          />
+        </View>
+      )}
+      {variant === "variant8" && (
+        <View className="absolute top-2 -right-8 z-10">
+          <Image
+            source={require("@/assets/images/nameplates/laptop.svg")}
+            style={{
+              width: 82,
+              height: 94,
+            }}
+            contentFit="contain"
+          />
+        </View>
+      )}
+      {variant === "variant9" && (
+        <View className="absolute top-6 -right-3 z-10">
+          <Image
+            source={require("@/assets/images/nameplates/med.svg")}
+            style={{
+              width: 69,
+              height: 69,
+            }}
+            contentFit="contain"
+          />
+        </View>
+      )}
+      {variant === "variant10" && (
+        <View className="absolute -top-2 -right-7 z-10">
+          <Image
+            source={require("@/assets/images/nameplates/bolt.svg")}
+            style={{
+              width: 91,
+              height: 114,
+            }}
+            contentFit="contain"
+          />
+        </View>
       )}
 
       <LinearGradient
