@@ -84,7 +84,7 @@ const challenges = () => {
       {/* challenges list */}
       <ScrollView showsVerticalScrollIndicator={false} className="mx-5">
         {/* 1 */}
-        <View className="flex-row gap-4 mt-4 border">
+        <View className="flex-row gap-4 mt-4">
           <View>
             <Image
               source={require("@/assets/images/reward/complate-profile.svg")}

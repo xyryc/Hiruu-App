@@ -90,19 +90,17 @@ const RedeemTokens = () => {
         titleClass="text-primary "
         iconColor={isDark ? "#fff" : "#111111"}
         components={
-          <View className="mx-5">
-            <View className="flex-row items-center ">
-              <Image
-                source={require("@/assets/images/hiruu-coin.svg")}
-                style={{
-                  width: 22,
-                  height: 22,
-                }}
-                contentFit="contain"
-              />
-              <View className="px-4 py-1 bg-[#DDF1FF] -ml-3 -z-10 rounded-r-[40px]">
-                <Text className="text-xs font-proximanova-semibold">540</Text>
-              </View>
+          <View className="flex-row items-center">
+            <Image
+              source={require("@/assets/images/hiruu-coin.svg")}
+              style={{
+                width: 32,
+                height: 32,
+              }}
+              contentFit="contain"
+            />
+            <View className="px-4 py-2 bg-[#DDF1FF] -ml-3 -z-10 rounded-r-[40px]">
+              <Text className="text-sm font-proximanova-semibold">540</Text>
             </View>
           </View>
         }
@@ -110,7 +108,7 @@ const RedeemTokens = () => {
 
       <View className="flex-row gap-5 justify-between mx-5 mt-5">
         <TouchableOpacity
-          className=" items-center bg-[#EFF9FF] -z-30 p-4 rounded-xl mx-auto w-[46%]"
+          className="items-center bg-[#EFF9FF] -z-30 p-4 rounded-xl mx-auto w-[46%] border border-[#4FB2F330]"
           onPress={() => handleModal("premium")}
         >
           <Image
@@ -118,18 +116,14 @@ const RedeemTokens = () => {
             contentFit="contain"
             style={{ width: 60, height: 60 }}
           />
-          <Text className="font-proximanova-semibold text-primary  mt-2.5">
-            Buy 1 Month
+          <Text className="font-proximanova-semibold text-primary mt-2.5 w-2/3 text-center">
+            Buy 1 Month Premium
           </Text>
-          <Text className="font-proximanova-semibold text-primary ">
-            Premium
+
+          <Text className="font-proximanova-regular text-secondary text-center text-sm mt-2 w-4/5">
+            Unlock premium features for yourself
           </Text>
-          <Text className="font-proximanova-regular text-secondary  text-center text-sm mt-2">
-            Unlock premium
-          </Text>
-          <Text className="font-proximanova-regular text-secondary  text-center text-sm ">
-            features for yourself
-          </Text>
+
           <View className="flex-row items-center gap-1.5 mt-2.5">
             <View className="flex-row -z-20 items-center justify-between">
               <Image
@@ -157,25 +151,21 @@ const RedeemTokens = () => {
 
         <TouchableOpacity
           onPress={() => handleModal("gift")}
-          className=" items-center bg-[#FEEFE5] -z-30 p-4 rounded-xl mx-auto w-[46%]"
+          className="items-center bg-[#FEEFE5] -z-30 p-4 rounded-xl mx-auto w-[46%] border border-[#F68A2630]"
         >
           <Image
-            source={require("@/assets/images/reward/premium.svg")}
+            source={require("@/assets/images/reward/giftbox.svg")}
             contentFit="contain"
             style={{ width: 60, height: 60 }}
           />
-          <Text className="font-proximanova-semibold text-primary  mt-2.5">
-            Gift 1 Month
+          <Text className="font-proximanova-semibold text-primary  mt-2.5 w-2/3 text-center">
+            Gift 1 Month Premium
           </Text>
-          <Text className="font-proximanova-semibold text-primary ">
-            Premium
+
+          <Text className="font-proximanova-regular text-secondary  text-center text-sm mt-2 w-4/5">
+            Send premium access to a friend
           </Text>
-          <Text className="font-proximanova-regular text-secondary  text-center text-sm mt-2">
-            Send premium
-          </Text>
-          <Text className="font-proximanova-regular text-secondary  text-center text-sm ">
-            access to a friend
-          </Text>
+
           <View className="flex-row items-center gap-1.5 mt-2.5">
             <View className="flex-row -z-20 items-center">
               <Image
@@ -201,26 +191,25 @@ const RedeemTokens = () => {
           </View>
         </TouchableOpacity>
       </View>
+
       <View className="flex-row gap-5 justify-between mx-5 mt-5">
         <TouchableOpacity
           onPress={() => handleModal("me")}
-          className=" items-center bg-[#E3F6E7] -z-30 p-4 rounded-xl mx-auto w-[46%]"
+          className="items-center bg-[#E3F6E7] -z-30 p-4 rounded-xl mx-auto w-[46%] border border-[#3EBF5A30]"
         >
           <Image
-            source={require("@/assets/images/reward/premium.svg")}
+            source={require("@/assets/images/reward/finder.svg")}
             contentFit="contain"
             style={{ width: 60, height: 60 }}
           />
-          <Text className="font-proximanova-semibold text-primary  mt-2.5">
-            Feature
+          <Text className="font-proximanova-semibold text-primary mt-2.5 w-2/3 text-center">
+            Feature Me
           </Text>
-          <Text className="font-proximanova-semibold text-primary ">Me</Text>
-          <Text className="font-proximanova-regular text-secondary  text-center text-sm mt-2">
-            Get noticed by top
+
+          <Text className="font-proximanova-regular text-secondary  text-center text-sm mt-2 w-4/5">
+            Get noticed by top companies faster
           </Text>
-          <Text className="font-proximanova-regular text-secondary  text-center text-sm ">
-            companies faster.{" "}
-          </Text>
+
           <View className="flex-row items-center gap-1.5 mt-2.5">
             <View className="flex-row -z-20 items-center justify-between">
               <Image
@@ -245,25 +234,24 @@ const RedeemTokens = () => {
             />
           </View>
         </TouchableOpacity>
+
         <TouchableOpacity
           onPress={() => handleModal("job")}
-          className=" items-center bg-[#F7EEFF] mx-auto -z-30 p-4 rounded-xl w-[46%]"
+          className="items-center bg-[#F7EEFF] mx-auto -z-30 p-4 rounded-xl w-[46%] border border-[#C583FF30]"
         >
           <Image
-            source={require("@/assets/images/reward/premium.svg")}
+            source={require("@/assets/images/reward/purple-toolbox.svg")}
             contentFit="contain"
             style={{ width: 60, height: 60 }}
           />
-          <Text className="font-proximanova-semibold text-primary  mt-2.5">
-            Feature
+          <Text className="font-proximanova-semibold text-primary mt-2.5 w-2/3 text-center">
+            Feature Job
           </Text>
-          <Text className="font-proximanova-semibold text-primary ">Job</Text>
-          <Text className="font-proximanova-regular text-secondary  text-center text-sm mt-2">
-            Get noticed by top
+
+          <Text className="font-proximanova-regular text-secondary  text-center text-sm mt-2 w-4/5">
+            Get noticed by top Employees faster
           </Text>
-          <Text className="font-proximanova-regular text-secondary  text-center text-sm ">
-            Employees faster.
-          </Text>
+
           <View className="flex-row items-center gap-1.5 mt-2.5">
             <View className="flex-row -z-20 items-center">
               <Image
@@ -292,10 +280,10 @@ const RedeemTokens = () => {
 
       <TouchableOpacity
         onPress={() => handleModal("nameplate")}
-        className="bg-[#FFFCEE] mx-5 items-center -z-30 mt-3 rounded-xl"
+        className="bg-[#FFFCEE] mx-5 items-center -z-30 mt-3 rounded-xl border border-[#EEDA8130] p-4"
       >
         <Image
-          source={require("@/assets/images/reward/premium.svg")}
+          source={require("@/assets/images/reward/designs.svg")}
           contentFit="contain"
           style={{ width: 60, height: 60 }}
         />
@@ -305,7 +293,7 @@ const RedeemTokens = () => {
         <Text className="font-proximanova-regular text-secondary  text-center text-sm mt-2">
           Choose profile nameplate styles
         </Text>
-        <View className="flex-row items-center gap-1.5 mt-2.5 mb-4">
+        <View className="flex-row items-center gap-1.5 mt-2.5">
           <View className="flex-row -z-20 items-center">
             <Image
               source={require("@/assets/images/hiruu-coin.svg")}
