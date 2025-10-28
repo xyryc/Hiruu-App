@@ -13,7 +13,6 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
           width: 97,
           height: 34,
         }}
-
       />
 
       <View className="flex-row items-center gap-1.5">
