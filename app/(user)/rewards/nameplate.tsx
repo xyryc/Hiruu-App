@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import NameplateBlankCard from "@/components/test/NameplateCard";
-import RedeemModal from "@/components/test/RedeemModal";
+import NameplateBlankCard from "@/components/ui/cards/NameplateBlankCard";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
+import RedeemModal from "@/components/ui/modals/RedeemModal";
 import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -15,19 +15,20 @@ const Nameplate = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState({
-    img: "",
-    title: "",
-    subtitle: "",
-    coin: "",
+    listitle: "",
+    list1: "",
+    list2: "",
+    list3: "",
   });
 
   const modalHandle = () => {
     setModalVisible(true);
     setData({
-      img,
-      title: "lsdkfa",
-      subtitle: "kdfjkd",
-      coin: "200",
+      listitle: "Gift Premium for a month:",
+      list1:
+        "Send 1 month of premium access to another user. They’ll receive all premium benefits instantly",
+      list2: "Token Cost: 300 Tokens",
+      list3: "Current Token Balance: 540 Tokens",
     });
   };
 
@@ -154,35 +155,41 @@ const Nameplate = () => {
             color="#A4DBAF"
             bgColor="#C0FFCE"
             className="mt-5"
+            modalHandle={modalHandle}
           />
           <NameplateBlankCard
             title="Style advisor"
             color="#4FB2F3"
             bgColor="#99D7FF"
             className="mt-5"
+            modalHandle={modalHandle}
           />
           <NameplateBlankCard
             title="Fryer Fiend"
             color="#EEC285"
             bgColor="#F7EDC0"
             className="mt-5"
+            modalHandle={modalHandle}
           />
           <NameplateBlankCard
             title="Returns Specialist"
             color="#7B7B7B"
             bgColor="#D2D2D2"
             className="mt-5"
+            modalHandle={modalHandle}
           />
           <NameplateBlankCard
             title="Literary Legend"
             color="#867470"
             bgColor="#E3CEB9"
             className="mt-5"
+            modalHandle={modalHandle}
           />
           <NameplateBlankCard
             title="Gadget guru"
             color="#94C3C8"
             bgColor="#C5EDF2"
+            modalHandle={modalHandle}
             className="mt-5"
           />
           <NameplateBlankCard
@@ -190,12 +197,14 @@ const Nameplate = () => {
             color="#B0C4DE"
             bgColor="#C3DDFF"
             className="mt-5"
+            modalHandle={modalHandle}
           />
           <NameplateBlankCard
             title="Flash Delivery"
             color="#FEABB6"
             bgColor="#FFCECD47"
             className="mt-5"
+            modalHandle={modalHandle}
           />
 
           <NameplateBlankCard
@@ -203,12 +212,14 @@ const Nameplate = () => {
             color="#FEABB6"
             bgColor="#FFCECD47"
             className="mt-5"
+            modalHandle={modalHandle}
           />
           <NameplateBlankCard
             title="Forklift Fury"
             color="#CEA694"
             bgColor="#F6CEBC"
             className="mt-5"
+            modalHandle={modalHandle}
           />
         </View>
       </ScrollView>

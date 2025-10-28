@@ -1,6 +1,7 @@
-import BandageCard from '@/components/test/BandageCard';
 import { ToggleButton } from '@/components/ui/buttons/ToggleButton';
+import BandageCard from '@/components/ui/cards/BandageCard';
 import ExperienceCard from '@/components/ui/cards/ExperienceCard';
+import NamePlateCard from '@/components/ui/cards/NamePlateCard';
 import StatCardPrimary from '@/components/ui/cards/StatCardPrimary';
 import Dropdown from '@/components/ui/dropdown/DropDown';
 import { Feather, Foundation, Ionicons, MaterialCommunityIcons, Octicons } from '@expo/vector-icons';
@@ -67,7 +68,7 @@ const profile = () => {
   const [isOn, setIsOn] = useState(false)
   return (
     <View
-      className='bg-white pb-36 dark:bg-dark-background'>
+      className='bg-white pb-32 dark:bg-dark-background'>
       <View className='bg-[#E5F4FD] rounded-b-xl'>
         <SafeAreaView>
           <View className={`flex-row justify-between items-center mt-5 mx-5`}>
@@ -102,6 +103,9 @@ const profile = () => {
 
         showsVerticalScrollIndicator={false}
       >
+        <View className='mx-5 mt-3.5'>
+          <NamePlateCard variant='variant4' />
+        </View>
         {/* Bandage item */}
         <View className='mx-5 flex-row justify-between mt-5 items-center'>
           <View className='flex-row gap-2.5 items-center'>
@@ -290,7 +294,7 @@ const profile = () => {
           </View>
           <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'> +1(125) 256 25612 </Text>
         </View>
-        <View className='flex-row justify-between items-center mx-5 mt-4 p-2.5  rounded-xl'>
+        <View className='flex-row justify-between items-center mx-5 mt-4 p-2.5 mb-2 rounded-xl'>
           <View className='flex-row items-center gap-2.5'>
             <View>
               <Image source={require('@/assets/images/twitter.svg')} contentFit='contain' style={{ height: 40, width: 40 }} />
