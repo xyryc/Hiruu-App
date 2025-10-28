@@ -214,7 +214,7 @@ const Nameplate = () => {
       </ScrollView>
 
       <ReddemModal
-        namePlate={<NamePlateCard variant="variant6" />}
+        namePlate={<NamePlateCard variant="variant10" />}
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         data={data}

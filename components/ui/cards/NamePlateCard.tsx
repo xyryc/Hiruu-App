@@ -20,6 +20,12 @@ const NamePlateCard = ({ variant }) => {
         return ["#FFFFFF", "#D2D2D2"];
       case "variant7":
         return ["#FFF7EF", "#E3CEB9"];
+      case "variant8":
+        return ["#EFFEFF", "#C5EDF2"];
+      case "variant9":
+        return ["#EFF8FF", "#C3DDFF"];
+      case "variant10":
+        return ["#F4FBFF", "#C7CBE0"];
       default:
         return ["#fff3fd", "#FE383861"];
     }
@@ -39,6 +45,14 @@ const NamePlateCard = ({ variant }) => {
         return "#C7A474";
       case "variant6":
         return "#7B7B7B";
+      case "variant7":
+        return "#867470";
+      case "variant8":
+        return "#79A8AD";
+      case "variant9":
+        return "#8294AC";
+      case "variant10":
+        return "#8F7467";
       default:
         return "#E74C69";
     }
