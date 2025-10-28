@@ -3,7 +3,8 @@ import { ToggleButton } from '@/components/ui/buttons/ToggleButton';
 import ExperienceCard from '@/components/ui/cards/ExperienceCard';
 import StatCardPrimary from '@/components/ui/cards/StatCardPrimary';
 import Dropdown from '@/components/ui/dropdown/DropDown';
-import { Feather, Foundation, MaterialCommunityIcons, Octicons } from '@expo/vector-icons';
+import { Feather, Foundation, Ionicons, MaterialCommunityIcons, Octicons } from '@expo/vector-icons';
+import { Image } from 'expo-image';
 import { useColorScheme } from 'nativewind';
 import React, { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
@@ -66,7 +67,7 @@ const profile = () => {
   const [isOn, setIsOn] = useState(false)
   return (
     <View
-      className='bg-white mb-[106px] dark:bg-dark-background'>
+      className='bg-white pb-36 dark:bg-dark-background'>
       <View className='bg-[#E5F4FD] rounded-b-xl'>
         <SafeAreaView>
           <View className={`flex-row justify-between items-center mt-5 mx-5`}>
@@ -232,6 +233,74 @@ const profile = () => {
             onSelect={setSelectedIssue}
           />
         </View>
+
+        {/* Employee Info */}
+        <View className='flex-row items-center gap-2.5 mt-8 mx-5'>
+          <View className='h-8 w-8 bg-[#E5F4FD] rounded-full flex-row justify-center items-center'>
+            <Ionicons name="person" size={16} color="black" />
+          </View>
+          <Text className='font-proximanova-semibold text-lg text-primary dark:text-dark-primary'>Employee Info</Text>
+        </View>
+        <View className='flex-row justify-between items-center mx-5 mt-4 p-2.5 bg-[#4FB2F3] rounded-xl'>
+          <View className='flex-row items-center gap-2.5'>
+            <View>
+              <Image source={require('@/assets/images/reward/nameplate-profile.png')} contentFit='contain' style={{ height: 40, width: 40 }} />
+            </View>
+            <Text className='font-proximanova-bold text-white'>Rohan Mehta</Text>
+          </View>
+          <View className='h-10 w-10 bg-white rounded-full flex-row items-center justify-center'>
+            <Image source={require('@/assets/images/messages-fill.svg')} contentFit='contain' style={{ height: 22, width: 22 }} />
+          </View>
+        </View>
+
+        {/* Contact Us On */}
+
+        <View className='flex-row items-center gap-2.5 mt-8 mx-5'>
+          <View className='h-8 w-8 bg-[#E5F4FD] rounded-full flex-row justify-center items-center'>
+            <Ionicons name="call-outline" size={16} color="black" />
+          </View>
+          <Text className='font-proximanova-semibold text-lg text-primary dark:text-dark-primary'>Contact Us On</Text>
+        </View>
+
+
+        <View className='flex-row justify-between items-center mx-5 mt-4 p-2.5  rounded-xl'>
+          <View className='flex-row items-center gap-2.5'>
+            <View>
+              <Image source={require('@/assets/images/facebook2.svg')} contentFit='contain' style={{ height: 40, width: 40 }} />
+            </View>
+            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Facebook</Text>
+          </View>
+          <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>@alvber_f </Text>
+        </View>
+        <View className='flex-row justify-between items-center mx-5 mt-4 p-2.5  rounded-xl'>
+          <View className='flex-row items-center gap-2.5'>
+            <View>
+              <Image source={require('@/assets/images/linkedin.svg')} contentFit='contain' style={{ height: 40, width: 40 }} />
+            </View>
+            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Linkdin</Text>
+          </View>
+          <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'> in/albert-flore-12562f25 </Text>
+        </View>
+        <View className='flex-row justify-between items-center mx-5 mt-4 p-2.5  rounded-xl'>
+          <View className='flex-row items-center gap-2.5'>
+            <View>
+              <Image source={require('@/assets/images/whatsapp.svg')} contentFit='contain' style={{ height: 40, width: 40 }} />
+            </View>
+            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Whats App</Text>
+          </View>
+          <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'> +1(125) 256 25612 </Text>
+        </View>
+        <View className='flex-row justify-between items-center mx-5 mt-4 p-2.5  rounded-xl'>
+          <View className='flex-row items-center gap-2.5'>
+            <View>
+              <Image source={require('@/assets/images/twitter.svg')} contentFit='contain' style={{ height: 40, width: 40 }} />
+            </View>
+            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Twitter</Text>
+          </View>
+          <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'> @alber256 </Text>
+        </View>
+
+
 
       </ScrollView>
     </View>
