@@ -45,10 +45,6 @@ const UserRewards = () => {
     },
   ];
 
-  const handleIcon = () => {
-    router.push("/(user)/rewards/preview");
-  };
-
   return (
     <SafeAreaView
       className="flex-1 bg-[#BDE4F9]"
@@ -73,7 +69,9 @@ const UserRewards = () => {
               Total Tokens
             </Text>
 
-            <TouchableOpacity onPress={handleIcon}>
+            <TouchableOpacity
+              onPress={() => router.push("/(user)/rewards/token-activity")}
+            >
               <AntDesign
                 className="justify-end p-2.5 bg-[#ffffff] rounded-full absolute top-4 right-0"
                 name="history"
@@ -97,7 +95,7 @@ const UserRewards = () => {
 
             <PrimaryButton
               title="Redeem"
-              onPress={() => router.push("/(user)/rewards/token-activity")}
+              onPress={() => router.push("/(user)/rewards/redeem-tokens")}
               className="w-44 justify-center items-center mx-auto mt-4"
             />
 
