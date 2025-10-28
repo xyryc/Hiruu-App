@@ -1,5 +1,6 @@
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import {
+  AntDesign,
   FontAwesome,
   FontAwesome6,
   Ionicons,
@@ -8,13 +9,21 @@ import {
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserRewards = () => {
+  const screenWidth = Dimensions.get("window").width;
+
   const cardData = [
     {
       coin: "05",
@@ -55,19 +64,24 @@ const UserRewards = () => {
         <ScrollView
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingBottom: 100,
+          }}
         >
           <View className="mx-5">
             <Text className="font-proximanova-regular text-base text-secondary dark:text-dark-secondary text-center mt-2.5">
               Total Tokens
             </Text>
+
             <TouchableOpacity onPress={handleIcon}>
-              <FontAwesome6
+              <AntDesign
                 className="justify-end p-2.5 bg-[#ffffff] rounded-full absolute top-4 right-0"
-                name="clock-rotate-left"
+                name="history"
                 size={20}
                 color="black"
               />
             </TouchableOpacity>
+
             <View className="flex-row items-center justify-center mt-1 gap-2.5">
               <View>
                 <Image
@@ -80,18 +94,22 @@ const UserRewards = () => {
                 5,405
               </Text>
             </View>
+
             <PrimaryButton
               title="Redeem"
               onPress={() => router.push("/(user)/rewards/token-activity")}
               className="w-44 justify-center items-center mx-auto mt-4"
             />
+
             <Text className="font-proximanova-regular text-sm text-center text-primary dark:text-dark-primary mt-2.5">
               Earn tokens as you unlock and level up badges!
             </Text>
+
             <View className="bg-[#4FB2F3] p-4 rounded-2xl mt-8">
-              <Text className="font-proximanova-semibold text-lg text-[#FFFFFF] text-center">
+              <Text className="font-proximanova-semibold text-lg text-[#FFFFFF]">
                 You've Completed 3 Shifts In A Raw!
               </Text>
+
               <View className="flex-row gap-2 mt-3">
                 <View>
                   <Image
@@ -148,25 +166,26 @@ const UserRewards = () => {
             </View>
           </View>
 
-          <View className="mt-8 mx-5 ">
+          <View className="mt-8 mx-5">
             <View className="flex-row justify-between items-center">
               <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
                 Standard Challenges
               </Text>
-              <TouchableOpacity>
-                <Link href="/(user)/rewards/challenges">
-                  <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">
-                    See All
-                  </Text>
-                </Link>
+              <TouchableOpacity
+                onPress={() => router.push("/(user)/rewards/challenges")}
+              >
+                <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">
+                  See All
+                </Text>
               </TouchableOpacity>
             </View>
 
-            <View className="flex-row gap-2 justify-between items-center mt-4">
+            {/* standard challenges */}
+            <View className="flex-row flex-wrap gap-2 items-center mt-4">
               {cardData.map((card, index) => (
                 <View
                   key={index}
-                  className="border-gray-500 border-hairline p-6 rounded-xl"
+                  className="border-[#EEEEEE] border p-6 rounded-xl"
                 >
                   <Image
                     source={card.imageSource}
@@ -205,62 +224,103 @@ const UserRewards = () => {
                 </View>
               ))}
             </View>
+
+            {/* redeem rewards */}
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary mt-6">
               Redeem Rewards
             </Text>
 
-            <View className="bg-[#a6cde7] dark:bg-[#19282c] flex-row justify-between items-center p-4 rounded-xl mt-4 ">
-              <View className="flex-row  gap-1.5">
-                <FontAwesome6 name="crown" size={15} color="#4FB2F3" />
-                <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                  Premium for a month
-                </Text>
-              </View>
-              <MaterialIcons name="arrow-forward-ios" size={10} color="black" />
-            </View>
+            <View className="relative mt-4">
+              {/* background */}
+              <Image
+                source={require("@/assets/images/reward/subtract.svg")}
+                style={{
+                  width: screenWidth * 0.9,
+                  height: 230,
+                }}
+                contentFit="contain"
+              />
 
-            <View className="bg-[#a6cde7] dark:bg-[#19282c] flex-row justify-between items-center p-4 rounded-xl">
-              <View className="flex-row  gap-1.5">
-                <MaterialCommunityIcons name="gift" size={15} color="#4FB2F3" />
-                <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                  Gift Premium for a month
-                </Text>
-              </View>
-              <MaterialIcons name="arrow-forward-ios" size={10} color="black" />
-            </View>
+              {/* content */}
+              <View className="absolute top-0 left-0 w-full">
+                <TouchableOpacity className="flex-row justify-between items-center p-4">
+                  <View className="flex-row  gap-1.5">
+                    <FontAwesome6 name="crown" size={15} color="#4FB2F3" />
+                    <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                      Premium for a month
+                    </Text>
+                  </View>
+                  <MaterialIcons
+                    name="arrow-forward-ios"
+                    size={10}
+                    color="black"
+                  />
+                </TouchableOpacity>
 
-            <View className="bg-[#a6cde7] dark:bg-[#19282c] flex-row justify-between items-center p-4 rounded-xl">
-              <View className="flex-row  gap-1.5">
-                <Ionicons name="person" size={15} color="#4FB2F3" />
-                <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                  Be feature profile as user
-                </Text>
-              </View>
-              <MaterialIcons name="arrow-forward-ios" size={10} color="black" />
-            </View>
+                <TouchableOpacity className="flex-row justify-between items-center p-4">
+                  <View className="flex-row  gap-1.5">
+                    <MaterialCommunityIcons
+                      name="gift"
+                      size={15}
+                      color="#4FB2F3"
+                    />
+                    <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                      Gift Premium for a month
+                    </Text>
+                  </View>
+                  <MaterialIcons
+                    name="arrow-forward-ios"
+                    size={10}
+                    color="black"
+                  />
+                </TouchableOpacity>
 
-            <View className="bg-[#a6cde7] dark:bg-[#19282c] flex-row justify-between items-center p-4 rounded-xl">
-              <View className="flex-row  gap-1.5">
-                <Ionicons
-                  name="person-circle-outline"
-                  size={15}
-                  color="#4FB2F3"
-                />
-                <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                  Be feature profile as business
-                </Text>
-              </View>
-              <MaterialIcons name="arrow-forward-ios" size={10} color="black" />
-            </View>
+                <TouchableOpacity className="flex-row justify-between items-center p-4">
+                  <View className="flex-row  gap-1.5">
+                    <Ionicons name="person" size={15} color="#4FB2F3" />
+                    <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                      Be feature profile as user
+                    </Text>
+                  </View>
+                  <MaterialIcons
+                    name="arrow-forward-ios"
+                    size={10}
+                    color="black"
+                  />
+                </TouchableOpacity>
 
-            <View className="bg-[#a6cde7] dark:bg-[#19282c] flex-row justify-between items-center p-4 rounded-xl mb-2">
-              <View className="flex-row  gap-1.5">
-                <FontAwesome name="map-signs" size={15} color="#4FB2F3" />
-                <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                  Featured profile nameplate
-                </Text>
+                <TouchableOpacity className="flex-row justify-between items-center p-4">
+                  <View className="flex-row  gap-1.5">
+                    <Ionicons
+                      name="person-circle-outline"
+                      size={15}
+                      color="#4FB2F3"
+                    />
+                    <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                      Be feature profile as business
+                    </Text>
+                  </View>
+                  <MaterialIcons
+                    name="arrow-forward-ios"
+                    size={10}
+                    color="black"
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity className="flex-row justify-between items-center p-4">
+                  <View className="flex-row  gap-1.5">
+                    <FontAwesome name="map-signs" size={15} color="#4FB2F3" />
+                    <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                      Featured profile nameplate
+                    </Text>
+                  </View>
+                  <MaterialIcons
+                    name="arrow-forward-ios"
+                    size={10}
+                    color="black"
+                  />
+                </TouchableOpacity>
               </View>
-              <MaterialIcons name="arrow-forward-ios" size={10} color="black" />
             </View>
           </View>
         </ScrollView>
