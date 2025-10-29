@@ -42,7 +42,7 @@ const Nameplate = () => {
       {/* Header */}
       <ScreenHeader
         onPressBack={() => router.back()}
-        className="px-5 pb-6 rounded-b-3xl bg-[#E5F4FD] overflow-hidden"
+        className="px-5 pb-4 pt-2.5 rounded-b-3xl bg-[#E5F4FD] overflow-hidden"
         title="Buy Nameplate"
         titleClass="text-primary dark:text-dark-primary"
         iconColor={isDark ? "#fff" : "#111111"}
@@ -63,7 +63,7 @@ const Nameplate = () => {
         }
       />
 
-      <View className="mt-5 flex-row mx-5">
+      <View className=" flex-row mx-5">
         {tabs.map((tab, index) => (
           <TouchableOpacity
             key={index}
@@ -93,80 +93,80 @@ const Nameplate = () => {
             Caffeine Commander
           </Text>
 
+          <LimitedNamePlateCard variant="variant1" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={modalHandle} className="mt-5">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+            Checkout Champion
+          </Text>
+
+          <LimitedNamePlateCard variant="variant2" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={modalHandle} className="mt-5">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+            Checkout Champion
+          </Text>
+
+          <LimitedNamePlateCard variant="variant3" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={modalHandle} className="mt-5">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+            Style advisor
+          </Text>
+
+          <LimitedNamePlateCard variant="variant4" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={modalHandle} className="mt-5">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+            Fryer Fiend
+          </Text>
+
           <LimitedNamePlateCard variant="variant5" />
         </TouchableOpacity>
 
-        <NameplateBlankCard
-          title="Checkout Champion"
-          color="#A4DBAF"
-          bgColor="#C0FFCE"
-          className="mt-5"
-          modalHandle={modalHandle}
-        />
-        <NameplateBlankCard
-          title="Style advisor"
-          color="#4FB2F3"
-          bgColor="#99D7FF"
-          className="mt-5"
-          modalHandle={modalHandle}
-        />
-        <NameplateBlankCard
-          title="Fryer Fiend"
-          color="#EEC285"
-          bgColor="#F7EDC0"
-          className="mt-5"
-          modalHandle={modalHandle}
-        />
-        <NameplateBlankCard
-          title="Returns Specialist"
-          color="#7B7B7B"
-          bgColor="#D2D2D2"
-          className="mt-5"
-          modalHandle={modalHandle}
-        />
-        <NameplateBlankCard
-          title="Literary Legend"
-          color="#867470"
-          bgColor="#E3CEB9"
-          className="mt-5"
-          modalHandle={modalHandle}
-        />
-        <NameplateBlankCard
-          title="Gadget guru"
-          color="#94C3C8"
-          bgColor="#C5EDF2"
-          modalHandle={modalHandle}
-          className="mt-5"
-        />
-        <NameplateBlankCard
-          title="Pill Pusher Pro"
-          color="#B0C4DE"
-          bgColor="#C3DDFF"
-          className="mt-5"
-          modalHandle={modalHandle}
-        />
-        <NameplateBlankCard
-          title="Flash Delivery"
-          color="#FEABB6"
-          bgColor="#FFCECD47"
-          className="mt-5"
-          modalHandle={modalHandle}
-        />
+        <TouchableOpacity onPress={modalHandle} className="mt-5">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+            Returns Specialist
+          </Text>
 
-        <NameplateBlankCard
-          title="Flash Delivery"
-          color="#FEABB6"
-          bgColor="#FFCECD47"
-          className="mt-5"
-          modalHandle={modalHandle}
-        />
-        <NameplateBlankCard
-          title="Forklift Fury"
-          color="#CEA694"
-          bgColor="#F6CEBC"
-          className="mt-5"
-          modalHandle={modalHandle}
-        />
+          <LimitedNamePlateCard variant="variant6" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={modalHandle} className="mt-5">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+            Literary Legend
+          </Text>
+
+          <LimitedNamePlateCard variant="variant7" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={modalHandle} className="mt-5">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+            Gadget guru
+          </Text>
+
+          <LimitedNamePlateCard variant="variant8" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={modalHandle} className="mt-5">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+            Pill Pusher Pro
+          </Text>
+
+          <LimitedNamePlateCard variant="variant9" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={modalHandle} className="mt-5">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+            Flash Delivery
+          </Text>
+
+          <LimitedNamePlateCard variant="variant10" />
+        </TouchableOpacity>
       </ScrollView>
 
       <RedeemModal
