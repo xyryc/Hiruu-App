@@ -93,7 +93,7 @@ const Nameplate = () => {
             Caffeine Commander
           </Text>
 
-          <LimitedNamePlateCard variant="variant2" />
+          <LimitedNamePlateCard variant="variant5" />
         </TouchableOpacity>
 
         <NameplateBlankCard

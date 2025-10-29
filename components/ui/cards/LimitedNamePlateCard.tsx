@@ -1,7 +1,8 @@
 import { LimitedNamePlateCardProps } from "@/types/components/input";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 
 const LimitedNamePlateCard = ({ variant }: LimitedNamePlateCardProps) => {
   const getGradientColors = () => {
@@ -70,6 +71,42 @@ const LimitedNamePlateCard = ({ variant }: LimitedNamePlateCardProps) => {
         borderColor: getColors(),
       }}
     >
+      {/* timer */}
+      <View className="absolute top-0 inset-x-0 items-center z-30">
+        <Image
+          className="absolute top-0 inset-x-0 items-center"
+          source={require("@/assets/images/timer-bg.svg")}
+          style={{
+            width: 227,
+            height: 34,
+          }}
+          contentFit="contain"
+        />
+
+        <View className="absolute top-0 inset-x-0 items-center">
+          <View className="flex-row items-center gap-1.5 py-2">
+            <Text className="text-sm font-proximanova-regular">
+              Available for
+            </Text>
+
+            <View className="flex-row items-center">
+              <MaterialCommunityIcons
+                name="timer-sand"
+                size={16}
+                color={getColors()}
+              />
+
+              <Text
+                className="font-proximanova-bold text-[#4FB2F3]"
+                style={{ color: getColors() }}
+              >
+                1d, 10h
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
       {/* backgrounds */}
       {variant === "variant1" ? (
         <>
@@ -221,7 +258,9 @@ const LimitedNamePlateCard = ({ variant }: LimitedNamePlateCardProps) => {
         start={variant === "variant1" ? { x: 0, y: 0 } : { x: 1, y: 1 }}
         end={variant === "variant1" ? { x: 1, y: 1 } : { x: 0, y: 0 }}
       >
-        <View className={`p-3.5 flex-row items-center gap-2 rounded-2xl`}>
+        <View
+          className={`px-4 pb-4 pt-11 flex-row items-center gap-2 rounded-2xl`}
+        >
           {/* profile image */}
           <Image
             source={require("@/assets/images/reward/user.svg")}
@@ -234,11 +273,38 @@ const LimitedNamePlateCard = ({ variant }: LimitedNamePlateCardProps) => {
           />
 
           {/* name, location, rating */}
-          <View>
+          <View className="flex-row items-center justify-center gap-6">
             {/* skeleton */}
-            <View className="h-3.5 w-36 bg-[#867470] rounded-[30px]" />
+            <View
+              className="h-3.5 w-36 rounded-[30px]"
+              style={{
+                backgroundColor: getColors(),
+              }}
+            />
 
-            <View></View>
+            <View className="flex-row gap-1.5 items-center">
+              <MaterialIcons
+                className="bg-white/40 p-1.5 rounded-full"
+                name="lock"
+                size={14}
+                color="black"
+              />
+
+              <View className="flex-row items-center">
+                <Image
+                  source={require("@/assets/images/hiruu-coin.svg")}
+                  style={{
+                    width: 24,
+                    height: 24,
+                    zIndex: 20,
+                  }}
+                  contentFit="contain"
+                />
+                <View className="px-5 py-1 bg-white -ml-4 z-10 rounded-r-[40px]">
+                  <Text className="text-xs font-proximanova-semibold">05</Text>
+                </View>
+              </View>
+            </View>
           </View>
         </View>
       </LinearGradient>
