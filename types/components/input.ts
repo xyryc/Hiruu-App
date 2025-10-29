@@ -12,3 +12,7 @@ export interface AttachmentUploadProps {
 export interface NamePlateCardProps {
   variant: string;
 }
+
+export interface LimitedNamePlateCardProps {
+  variant: string;
+}
