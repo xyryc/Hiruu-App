@@ -1,8 +1,9 @@
 import ScreenHeader from '@/components/header/ScreenHeader'
+import PrimaryButton from '@/components/ui/buttons/PrimaryButton'
 import RatingCard from '@/components/ui/cards/RatingCard'
 import RatingStar from '@/components/ui/cards/RatingStar'
 import RatingBar from '@/components/ui/inputs/RatingBar'
-import { AntDesign } from '@expo/vector-icons'
+import RatingStarModal from '@/components/ui/modals/RatingStarModal'
 import { Image } from 'expo-image'
 import { router } from 'expo-router'
 import { useColorScheme } from 'nativewind'
@@ -18,7 +19,7 @@ const Rating = () => {
         { label: 'Work Environment', value: 3.5, max: 5 },
         { label: 'Communication', value: 4.5, max: 5 }
     ]);
-
+    const [isVisible, setIsVisible] = useState(false)
 
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === "dark";
@@ -60,24 +61,6 @@ const Rating = () => {
                         />
                     ))}
                 </View>
-
-                {/* rating prifile */}
-                {/* <View className='mx-5 mt-8'>
-                    <View className='flex-row justify-between'>
-                        <View className='flex-row items-center gap-4'>
-                            <Image source={require('@/assets/images/reward/nameplate-profile.png')} contentFit='contain' style={{ height: 50, width: 50 }} />
-                            <View>
-                                <Text className='font-proximanova-semibold text-primary dark:text-dark-primary' > Jessica R</Text>
-                                <View className='flex-row gap-3 items-center'>
-                                    <RatingStar rating={4} />
-                                    <Text>( 4.0 )</Text>
-                                </View>
-
-                            </View>
-                        </View>
-                        <Text className='font-proximanova-regular text-sm text-secondary dark:text-dark-secondary'>2 Days ago</Text>
-                    </View>
-                </View> */}
                 <View className='mx-5'>
                     <RatingCard className='mt-8' name='Jessica R' time='2 Days ago' rating={5} />
                     <RatingCard className='mt-8' name='Maria Gosh' time='4 Week ago' rating={4} />
@@ -86,9 +69,16 @@ const Rating = () => {
                     <RatingCard className='mt-8' name='Maria Gosh' time='1 Month ago' rating={4} />
                 </View>
 
-
-
+                <RatingStarModal
+                    visible={isVisible}
+                    onClose={() => setIsVisible(false)}
+                />
             </ScrollView>
+            <PrimaryButton
+                title='Add Rating'
+                className='mx-5'
+                onPress={() => setIsVisible(true)}
+            />
 
         </SafeAreaView>
     )
