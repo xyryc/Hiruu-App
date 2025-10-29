@@ -1,5 +1,5 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import RedeemModal from "@/components/test/RedeemModal";
+import RedeemModal from "@/components/ui/modals/RedeemModal";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";

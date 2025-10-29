@@ -4,8 +4,8 @@ import { Image } from "expo-image";
 import React, { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import PrimaryButton from "../ui/buttons/PrimaryButton";
-import BusinessDropdown from "../ui/modals/BusinessDropdownModal";
+import PrimaryButton from "../buttons/PrimaryButton";
+import BusinessDropdown from "./BusinessDropdownModal";
 
 interface Option {
   label: string;

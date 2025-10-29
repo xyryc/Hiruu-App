@@ -1,11 +1,11 @@
 import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
-const NameplateBlankCard = ({ title, color, bgColor, className }: any) => {
+const NameplateBlankCard = ({ title, color, bgColor, className, modalHandle }: any) => {
   return (
-    <View className={`mx-5 ${className}`}>
+    <TouchableOpacity onPress={modalHandle} className={`mx-5 ${className}`}>
       <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
         {title}
       </Text>
@@ -76,7 +76,7 @@ const NameplateBlankCard = ({ title, color, bgColor, className }: any) => {
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
