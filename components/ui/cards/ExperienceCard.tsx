@@ -4,7 +4,7 @@ import { Text, View } from 'react-native'
 
 const ExperienceCard = ({ focus, className }: any) => {
     return (
-        <View className={`mx-5 p-2.5  ${className} ${focus ? 'border rounded-2xl' : 'border-hairline rounded-2xl'} `}>
+        <View className={` p-2.5  ${className} ${focus ? 'border rounded-2xl' : 'border border-[#0000000D] rounded-2xl'} `}>
             {focus && <View className='absolute -top-9 right-2'>
                 <Image source={require('@/assets/images/experience.svg')} contentFit='contain' style={{ height: 30, width: 150 }} />
                 <Text className='-top-6 text-center font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Current Working</Text>

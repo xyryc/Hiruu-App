@@ -2,7 +2,7 @@ import { Image } from 'expo-image'
 import React from 'react'
 import { Text, View } from 'react-native'
 
-const BandageCard = ({ className }: any) => {
+const BadgeCard = ({ className }: any) => {
     return (
         <View className={`flex-row justify-between px-4 border-hairline rounded-2xl ${className} `}>
             <View className=' pb-4 items-center'>
@@ -23,4 +23,4 @@ const BandageCard = ({ className }: any) => {
     )
 }
 
-export default BandageCard
+export default BadgeCard

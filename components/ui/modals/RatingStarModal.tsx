@@ -58,7 +58,7 @@ const RatingStarModal = ({ visible, onClose }: any) => {
                     size={50}
                     color={paySelect === star ? '#4FB2F3' : "#EEEEEE"}
                   />
-                  <Text className="text-center mt-1 font-semibold -top-12">
+                  <Text className={`text-center mt-1 font-semibold -top-12 ${paySelect === star && 'text-white'} `}>
                     {star}
                   </Text>
                   <Text className="text-center -mt-6 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -82,7 +82,7 @@ const RatingStarModal = ({ visible, onClose }: any) => {
                     size={50}
                     color={workSelect === star ? '#4FB2F3' : "#EEEEEE"}
                   />
-                  <Text className="text-center mt-1 font-semibold -top-12">
+                  <Text className={`text-center mt-1 font-semibold -top-12 ${workSelect === star && 'text-white'} `}>
                     {star}
                   </Text>
                   <Text className="text-center -mt-6 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -108,7 +108,7 @@ const RatingStarModal = ({ visible, onClose }: any) => {
                     size={50}
                     color={commonSelect === star ? '#4FB2F3' : "#EEEEEE"}
                   />
-                  <Text className="text-center mt-1 font-semibold -top-12">
+                  <Text className={`text-center mt-1 font-semibold -top-12 ${commonSelect === star && 'text-white'} `}>
                     {star}
                   </Text>
                   <Text className="text-center -mt-6 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">

@@ -1,25 +1,22 @@
-import { View, Text, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native'
+import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ScreenHeader from '@/components/header/ScreenHeader'
 import { router } from 'expo-router'
 import { useColorScheme } from 'nativewind'
 import NamePlateCard from '@/components/ui/cards/NamePlateCard'
-import { Foundation, MaterialCommunityIcons } from '@expo/vector-icons'
-import BandageCard from '@/components/ui/cards/BandageCard'
+import { Foundation, Ionicons, MaterialCommunityIcons, SimpleLineIcons } from '@expo/vector-icons'
+import BadgeCard from '@/components/ui/cards/BadgeCard'
 import Dropdown from '@/components/ui/dropdown/DropDown'
+import ExperienceCard from '@/components/ui/cards/ExperienceCard'
+import DatePicker from '@/components/ui/inputs/DatePicker'
+import { Image } from 'expo-image'
+import SmallButton from '@/components/ui/buttons/SmallButton'
+import PrimaryButton from '@/components/ui/buttons/PrimaryButton'
 
 const Edit = () => {
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === "dark";
-    const [selectedIssue, setSelectedIssue] = useState("");
-    const issues = [
-        { label: "Missed Punch", value: "Missed Punch" },
-        { label: "Late arrival", value: "Late arrival" },
-        { label: "Early Departure", value: "Early Departure" },
-        { label: "Forget to Tap", value: "Forget to Tap" },
-        { label: "Network Issues", value: "Network Issues" },
-    ];
     return (
         <SafeAreaView
             className="flex-1 bg-[#E5F4FD] dark:bg-dark-background"
@@ -33,7 +30,7 @@ const Edit = () => {
                 titleClass="text-primary dark:text-dark-primary"
                 iconColor={isDark ? "#fff" : "#111"}
             />
-            <View className='bg-white'>
+            <ScrollView className='bg-white'>
                 <View className='mx-5'>
                     <View className='flex-row justify-between items-center'>
                         <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>Your Nameplate</Text>
@@ -45,12 +42,11 @@ const Edit = () => {
                 </View>
 
 
-                {/* Bandage item */}
+                {/* Badge item */}
                 <View>
                     <View className='mx-5 flex-row justify-between mt-8 items-center'>
                         <View className='flex-row gap-2.5 items-center'>
                             <View className='h-8 w-8 rounded-full bg-[#E5F4FD] flex-row items-center justify-center '>
-
                                 <MaterialCommunityIcons
                                     className='rotate-180'
                                     name="medal-outline"
@@ -58,11 +54,11 @@ const Edit = () => {
                                     color="black"
                                 />
                             </View>
-                            <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>Bandage</Text>
+                            <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>Badge</Text>
                         </View>
                         <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>Edit</Text>
                     </View>
-                    <BandageCard className='mx-5 mt-3.5' />
+                    <BadgeCard className='mx-5 mt-3.5' />
                 </View>
                 {/* short intro */}
                 <View>
@@ -78,7 +74,7 @@ const Edit = () => {
                     <View className='mx-5 mt-4'>
 
                         <Text
-                            className='font-proximanova-regular text-sm text-secondary dark:text-dark-secondary border-hairline rounded-xl p-3'
+                            className='font-proximanova-regular text-sm text-secondary dark:text-dark-secondary border border-[#0000000D] rounded-xl p-3'
                         >
                             Join the core team at Space Hotel, a unique dining experience known for its space-themed interiors and premium service.
                             Join the core team at Space Hotel, a unique dining experien
@@ -105,9 +101,226 @@ const Edit = () => {
                     // value={selectedIssue}
                     // onSelect={setSelectedIssue}
                     />
+                    <View className='p-5 mt-5 border border-[#0000000D] rounded-xl'>
+
+                        <View className='flex-row justify-between items-center mt-3'>
+                            <Text className='font-proximanova-semibold text-lg text-primary dark:text-dark-primary'>Verified HIRUU Experience</Text>
+                            <Ionicons name="close-circle" size={24} color="black" />
+                        </View>
+                        <Text className='font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-4'>auto-tracked</Text>
+                        <ExperienceCard className='mt-8' />
+                        <ExperienceCard className='mt-2.5' />
+                        <View className='border border-[#0000000D] my-4' />
+                        {/* apply new job and roll */}
+                        <View className='flex-row gap-3 items-center'>
+                            <View className='h-9 w-9 bg-[#11293A] rounded-full flex-row justify-center items-center'>
+                                <SimpleLineIcons name="camera" size={18} color="white" />
+                            </View>
+                            <TextInput
+                                placeholder="Enter Company Name"
+                                className="flex-1 text-base border border-[#0000000D] p-2 rounded-xl"
+                            />
+                            <Ionicons name="close-circle" size={24} color="black" />
+                        </View>
+                        <View>
+                            <Text className='mt-2.5 font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Period</Text>
+                            <View className='flex-row gap-2.5 mt-1.5'>
+
+                                <DatePicker title='Start Date' className='flex-1' />
+                                <DatePicker title='End Date' className='flex-1' />
+                            </View>
+                            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-2.5'>Job Title</Text>
+                            <TextInput
+                                placeholder="Enter your Role"
+                                className="flex-1 text-base border border-[#0000000D] p-2 rounded-xl mt-2.5"
+                            />
+                        </View>
+                        <View className='border border-[#0000000D] my-4' />
+
+                        {/* 2nd new job apply */}
+                        <View className='flex-row gap-3 items-center'>
+                            <View className='h-9 w-9 bg-[#11293A] rounded-full flex-row justify-center items-center'>
+                                <SimpleLineIcons name="camera" size={18} color="white" />
+                            </View>
+                            <TextInput
+                                placeholder="Enter Company Name"
+                                className="flex-1 text-base border border-[#0000000D] p-2 rounded-xl"
+                            />
+                            <Ionicons name="close-circle" size={24} color="black" />
+                        </View>
+                        <View>
+                            <Text className='mt-2.5 font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Period</Text>
+                            <View className='flex-row gap-2.5 mt-1.5'>
+
+                                <DatePicker title='Start Date' className='flex-1' />
+                                <DatePicker title='End Date' className='flex-1' />
+                            </View>
+                            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-2.5'>Job Title</Text>
+                            <TextInput
+                                placeholder="Enter your Role"
+                                className="flex-1 text-base border border-[#0000000D] p-2 rounded-xl mt-2.5"
+                            />
+                        </View>
+
+
+                    </View>
+                </View>
+                {/*  Interests */}
+                <View>
+                    <View className='flex-row justify-between items-center mx-5 mt-8 '>
+                        <View className='flex-row gap-2.5'>
+                            <View className='h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center'>
+                                <Foundation name="clipboard" size={16} color="black" />
+                            </View>
+                            <Text className='font-proximanova-semibold text-lg text-primary dark:text-dark-primary'>Experience</Text>
+                        </View>
+                        <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>Edit</Text>
+                    </View>
+
+                    <View className='flex-row justify-between mx-5 mt-4'>
+                        <View>
+
+                            <View className='w-16 h-16 rounded-full items-center justify-center bg-gray-200 p-2.5'>
+                                <Text className="text-2xl">⚽</Text>
+                            </View>
+                            <Text className='text-center text-xs  mt-2 font-proximanova-medium'>Sports</Text>
+                        </View>
+                        <View>
+
+                            <View className='w-16 h-16 rounded-full items-center justify-center bg-green-100 p-2.5'>
+                                <Text className="text-2xl">🎵</Text>
+                            </View>
+                            <Text className='text-center text-xs  mt-2 font-proximanova-medium'>Music</Text>
+                        </View>
+                        <View>
+
+                            <View className='w-16 h-16 rounded-full items-center justify-center bg-yellow-100 p-2.5'>
+                                <Text className="text-2xl">📷</Text>
+                            </View>
+                            <Text className='text-center text-xs  mt-2 font-proximanova-medium'>Photography</Text>
+                        </View>
+                        <View>
+
+                            <View className='w-16 h-16 rounded-full items-center justify-center bg-orange-100 p-2.5'>
+                                <Text className="text-2xl">🎨</Text>
+                            </View>
+                            <Text className='text-center text-xs  mt-2 font-proximanova-medium'>Art</Text>
+                        </View>
+                    </View>
                 </View>
 
-            </View>
+
+                {/* Contact Us On */}
+
+
+                <View className='flex-row justify-between items-center mx-5 mt-8 '>
+                    <View className='flex-row gap-2.5'>
+                        <View className='h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center'>
+                            <Ionicons name="call-outline" size={16} color="black" />
+                        </View>
+                        <Text className='font-proximanova-semibold text-lg text-primary dark:text-dark-primary'>Contact Us On</Text>
+                    </View>
+                    <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>Edit</Text>
+                </View>
+
+
+                <View className='border border-[#EEEEEE] rounded-xl m-5'>
+                    <View className='flex-row justify-between items-center  p-2.5 border border-[#EEEEEE] rounded-t-xl '>
+                        <View className='flex-row items-center gap-2.5'>
+                            <View>
+                                <Image source={require('@/assets/images/facebook2.svg')} contentFit='contain' style={{ height: 40, width: 40 }} />
+                            </View>
+                            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Facebook</Text>
+                        </View>
+                        <View className='flex-row items-center'>
+                            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>@alvber_f </Text>
+                            <TouchableOpacity>
+                                <MaterialCommunityIcons name="close" size={24} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View className='flex-row justify-between items-center  p-2.5  border border-[#EEEEEE]'>
+                        <View className='flex-row items-center gap-2.5'>
+                            <View>
+                                <Image source={require('@/assets/images/linkedin.svg')} contentFit='contain' style={{ height: 40, width: 40 }} />
+                            </View>
+                            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Linkdin</Text>
+                        </View>
+                        <View className='flex-row items-center'>
+                            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'> in/albert-flore-12562f25 </Text>
+                            <TouchableOpacity>
+                                <MaterialCommunityIcons name="close" size={24} color="black" />
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+                    <View className='flex-row justify-between items-center  p-2.5 border border-[#EEEEEE] '>
+                        <View className='flex-row items-center gap-2.5'>
+                            <View>
+                                <Image source={require('@/assets/images/whatsapp.svg')} contentFit='contain' style={{ height: 40, width: 40 }} />
+                            </View>
+                            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Whats App</Text>
+                        </View>
+                        <View className='flex-row items-center'>
+                            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'> +1(125) 256 25612 </Text>
+                            <TouchableOpacity>
+                                <MaterialCommunityIcons name="close" size={24} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View className='flex-row justify-between items-center p-2.5  border border-[#EEEEEE] '>
+                        <View className='flex-row items-center gap-2.5'>
+                            <View>
+                                <Image source={require('@/assets/images/twitter.svg')} contentFit='contain' style={{ height: 40, width: 40 }} />
+                            </View>
+                            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'>Twitter</Text>
+                        </View>
+                        <View className='flex-row items-center'>
+                            <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary'> @alber256 </Text>
+                            <TouchableOpacity>
+                                <MaterialCommunityIcons name="close" size={24} color="black" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    {/* instagram */}
+                    <View className="flex-row justify-between items-center bg-white p-3  border border-[#EEEEEE]">
+                        <TouchableOpacity className="flex-row items-center gap-1.5">
+                            <Image
+                                style={{
+                                    height: 36,
+                                    width: 36,
+                                }}
+                                source={require("@/assets/images/instagram.svg")}
+                                contentFit="contain"
+                            />
+
+                            <Text className="text-sm font-proximanova-semibold">Instagram</Text>
+                        </TouchableOpacity>
+
+                        <SmallButton title="Link" />
+                    </View>
+
+                    {/* telegram */}
+                    <View className="flex-row justify-between items-center bg-white p-3 rounded-b-[10px] border border-[#EEEEEE]">
+                        <TouchableOpacity className="flex-row items-center gap-1.5">
+                            <Image
+                                style={{
+                                    height: 36,
+                                    width: 36,
+                                }}
+                                source={require("@/assets/images/telegram.svg")}
+                                contentFit="contain"
+                            />
+
+                            <Text className="text-sm font-proximanova-semibold">Facebook</Text>
+                        </TouchableOpacity>
+
+                        <SmallButton title="Link" />
+                    </View>
+                </View>
+
+                <PrimaryButton title='Save Change' className='mx-5 mt-6' />
+            </ScrollView>
         </SafeAreaView>
     )
 }
