@@ -24,6 +24,13 @@ const StatusBadge = ({
           dotClasses: "bg-[#3EBF5A]",
           label: "Completed",
         };
+      case "submitted":
+        return {
+          containerClasses: "bg-[#EAFFEF] border-[#3EBF5A4D]",
+          textClasses: "text-[#3EBF5A]",
+          dotClasses: "bg-[#3EBF5A]",
+          label: "Submitted",
+        };
       case "missed":
         return {
           containerClasses: "bg-red-100 border-[#F34F4F4D]",

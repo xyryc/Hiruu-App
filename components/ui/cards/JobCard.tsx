@@ -1,6 +1,8 @@
 import { JobCardProps } from "@/types";
 import {
+  Entypo,
   FontAwesome,
+  Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
   SimpleLineIcons,
@@ -11,10 +13,14 @@ import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import SmallButton from "../buttons/SmallButton";
 import JobApplyModal from "../modals/JobApplyModal";
+import SimpleStatusBadge from "../badges/SimpleStatusBadge";
+import StatusBadge from "../badges/StatusBadge";
+import SecondaryButton from "../buttons/SecondaryButton";
 
-const JobCard = ({ className }: JobCardProps) => {
+const JobCard = ({ className, status }: JobCardProps) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
+  console.log("job card", status);
 
   return (
     <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>
@@ -93,43 +99,70 @@ const JobCard = ({ className }: JobCardProps) => {
       />
 
       {/* stats button footer */}
-      <View className="flex-row items-center justify-between">
-        <View className="flex-row gap-1 items-center">
-          <MaterialCommunityIcons
-            name="note-text-outline"
-            size={18}
-            color="#7A7A7A"
+      {status === "received" ? (
+        <View className="flex-row items-center justify-between">
+          {/* left */}
+          <SecondaryButton
+            title="View Details"
+            textClass="text-[#4FB2F3]"
+            iconBackground="bg-white"
+            iconColor="#4FB2F3"
           />
-          <Text className="text-sm font-proximanova-regular text-secondary">
-            305
-          </Text>
+
+          {/* right */}
+          <View className="flex-row items-center gap-1.5">
+            <View className="bg-[#E5F4FD] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
+              <Ionicons name="chatbubbles" size={22} color="#4FB2F3" />
+            </View>
+
+            <Entypo name="circle-with-cross" size={40} color="#F34F4F" />
+
+            <Ionicons name="checkmark-circle" size={40} color="#292D32" />
+          </View>
         </View>
+      ) : (
+        <View className="flex-row items-center justify-between">
+          <View className="flex-row gap-1 items-center">
+            <MaterialCommunityIcons
+              name="note-text-outline"
+              size={18}
+              color="#7A7A7A"
+            />
+            <Text className="text-sm font-proximanova-regular text-secondary">
+              305
+            </Text>
+          </View>
 
-        <Image
-          source={require("@/assets/images/line-small.svg")}
-          style={{
-            width: 1,
-            height: 18,
-          }}
-        />
+          <Image
+            source={require("@/assets/images/line-small.svg")}
+            style={{
+              width: 1,
+              height: 18,
+            }}
+          />
 
-        <View className="flex-row gap-1 items-center">
-          <SimpleLineIcons name="share-alt" size={14} color="#7A7A7A" />
-          <Text className="text-sm font-proximanova-regular text-secondary">
-            209
-          </Text>
+          <View className="flex-row gap-1 items-center">
+            <SimpleLineIcons name="share-alt" size={14} color="#7A7A7A" />
+            <Text className="text-sm font-proximanova-regular text-secondary">
+              209
+            </Text>
+          </View>
+
+          <Image
+            source={require("@/assets/images/line-small.svg")}
+            style={{
+              width: 1,
+              height: 18,
+            }}
+          />
+
+          {status === "send request" ? (
+            <StatusBadge status="submitted" />
+          ) : (
+            <SmallButton title="Apply Now" onPress={() => setShowModal(true)} />
+          )}
         </View>
-
-        <Image
-          source={require("@/assets/images/line-small.svg")}
-          style={{
-            width: 1,
-            height: 18,
-          }}
-        />
-
-        <SmallButton title="Apply Now" onPress={() => setShowModal(true)} />
-      </View>
+      )}
 
       <JobApplyModal visible={showModal} onClose={() => setShowModal(false)} />
     </View>

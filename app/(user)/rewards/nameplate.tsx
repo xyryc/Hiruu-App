@@ -1,9 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import LimitedNamePlateCard from "@/components/ui/cards/LimitedNamePlateCard";
-import NameplateBlankCard from "@/components/ui/cards/NameplateBlankCard";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
 import RedeemModal from "@/components/ui/modals/RedeemModal";
-import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -37,6 +35,7 @@ const Nameplate = () => {
   const isDark = colorScheme === "dark";
   const tabs = ["limited time", "featured", "all"];
   const [isActive, setIsActive] = useState("limited time");
+
   return (
     <SafeAreaView className="flex-1 bg-[#E5F4FD] dark:bg-dark-background">
       {/* Header */}
@@ -96,7 +95,7 @@ const Nameplate = () => {
           <LimitedNamePlateCard variant="variant1" />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={modalHandle} className="mt-5">
+        <TouchableOpacity onPress={modalHandle} className="mt-5 border">
           <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
             Checkout Champion
           </Text>

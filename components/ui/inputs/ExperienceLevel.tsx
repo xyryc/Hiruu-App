@@ -1,6 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 const ExperienceLevel = () => {
   const [experiences, setExperiences] = useState([
@@ -39,10 +39,17 @@ const ExperienceLevel = () => {
       {experiences.map((exp) => (
         <View key={exp.id} className="flex-row items-center mb-3 gap-3">
           {/* Role Input */}
-          <View className="flex-1 bg-[#F5F5F5] rounded-xl px-4 py-3">
-            <Text className="font-proximanova-regular text-gray-600">
+          <View className="flex-1">
+            {/* <Text className="font-proximanova-regular text-gray-600">
               {exp.role}
-            </Text>
+            </Text> */}
+            <TextInput
+              placeholder={exp?.role}
+              value={exp?.role}
+              className="border border-[#EEEEEE] px-2.5 py-2.5 rounded-lg font-proximanova-regular text-sm"
+              // keyboardType="twitter"
+              autoCapitalize="none"
+            />
           </View>
 
           {/* Value Display */}
