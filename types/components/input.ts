@@ -13,3 +13,7 @@ export interface NamePlateCardProps {
   variant: string;
   className?:string
 }
+
+export interface LimitedNamePlateCardProps {
+  variant: string;
+}
