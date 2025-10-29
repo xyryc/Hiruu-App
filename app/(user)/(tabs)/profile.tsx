@@ -76,7 +76,9 @@ const profile = () => {
             </View>
             <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>Badge</Text>
           </View>
-          <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>View all Badge</Text>
+          <TouchableOpacity onPress={() => router.push('/profile/badge')} >
+            <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>View all Badge</Text>
+          </TouchableOpacity>
         </View>
         <BadgeCard className='mx-5 mt-3.5' />
 
