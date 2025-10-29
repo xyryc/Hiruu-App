@@ -1,8 +1,7 @@
 import { LimitedNamePlateCardProps } from "@/types/components/input";
-import { MaterialIcons, Octicons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 const LimitedNamePlateCard = ({ variant }: LimitedNamePlateCardProps) => {
   const getGradientColors = () => {
@@ -224,78 +223,22 @@ const LimitedNamePlateCard = ({ variant }: LimitedNamePlateCardProps) => {
       >
         <View className={`p-3.5 flex-row items-center gap-2 rounded-2xl`}>
           {/* profile image */}
-          <View
-            className={`border-2 p-0.5 rounded-full`}
+          <Image
+            source={require("@/assets/images/reward/user.svg")}
             style={{
-              borderWidth: 1,
-              borderColor: getColors(),
+              width: 50,
+              height: 50,
+              borderRadius: 999,
             }}
-          >
-            <Image
-              source={require("@/assets/images/reward/user.svg")}
-              style={{
-                width: 75,
-                height: 75,
-                borderRadius: 999,
-              }}
-              contentFit="cover"
-            />
-          </View>
+            contentFit="cover"
+          />
 
           {/* name, location, rating */}
-          <View className="items-start">
-            <View className="flex-row gap-1.5 items-center mb-1.5">
-              <Text className="font-proximanova-semibold text-sm text-primary">
-                Mohammad Anik
-              </Text>
-              <MaterialIcons name="verified" size={18} color="#4F83F3" />
-            </View>
+          <View>
+            {/* skeleton */}
+            <View className="h-3.5 w-36 bg-[#867470] rounded-[30px]" />
 
-            <View className="flex-row items-center gap-1 mb-1.5">
-              <SimpleLineIcons name="location-pin" size={14} color="black" />
-              <Text className="font-proximanova-regular text-xs text-primary">
-                New york, North Bergen
-              </Text>
-            </View>
-
-            <View className="flex-row items-center justify-between gap-7">
-              {/* rating */}
-              <View className="flex-row items-center gap-1 p-2 bg-white/40 rounded-md">
-                <Octicons name="star-fill" size={14} color="#F1C400" />
-                <Octicons name="star-fill" size={14} color="#F1C400" />
-                <Octicons name="star-fill" size={14} color="#F1C400" />
-                <Octicons name="star-fill" size={14} color="#F1C400" />
-                <Text className="font-proximanova-semibold text-xs">4.8/5</Text>
-              </View>
-
-              {/* coin */}
-              {variant === "variant1" && (
-                <View className="flex-row gap-1.5 items-center">
-                  <MaterialIcons
-                    className="bg-white/40 p-1.5 rounded-full"
-                    name="lock"
-                    size={18}
-                    color="black"
-                  />
-
-                  <View className="flex-row items-center">
-                    <Image
-                      source={require("@/assets/images/hiruu-coin.svg")}
-                      style={{
-                        width: 24,
-                        height: 24,
-                      }}
-                      contentFit="contain"
-                    />
-                    <View className="px-5 py-1 bg-[#DDF1FF] -ml-4 -z-10 rounded-r-[40px]">
-                      <Text className="text-xs font-proximanova-semibold">
-                        05
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              )}
-            </View>
+            <View></View>
           </View>
         </View>
       </LinearGradient>
