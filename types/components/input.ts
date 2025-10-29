@@ -11,4 +11,5 @@ export interface AttachmentUploadProps {
 
 export interface NamePlateCardProps {
   variant: string;
+  className?:string
 }

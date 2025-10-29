@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text, View } from "react-native";
 
-const NamePlateCard = ({ variant }: NamePlateCardProps) => {
+const NamePlateCard = ({ variant, className }: NamePlateCardProps) => {
   const getGradientColors = () => {
     switch (variant) {
       case "variant1":
@@ -61,7 +61,7 @@ const NamePlateCard = ({ variant }: NamePlateCardProps) => {
 
   return (
     <View
-      className="overflow-hidden"
+      className={` ${className}  overflow-hidden`}
       style={{
         borderRadius: 12,
         borderTopWidth: 1,

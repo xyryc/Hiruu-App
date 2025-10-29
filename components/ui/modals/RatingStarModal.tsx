@@ -120,7 +120,7 @@ const RatingStarModal = ({ visible, onClose }: any) => {
 
 
 
-            <PrimaryButton title="Submit" className="mt-5" />
+            <PrimaryButton title="Submit" className="" />
           </SafeAreaView>
         </View>
       </BlurView>
