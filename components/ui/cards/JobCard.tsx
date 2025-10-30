@@ -20,7 +20,6 @@ import SecondaryButton from "../buttons/SecondaryButton";
 const JobCard = ({ className, status }: JobCardProps) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-  console.log("job card", status);
 
   return (
     <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>

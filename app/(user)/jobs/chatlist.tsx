@@ -1,25 +1,18 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-} from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import React, { useState } from "react";
-import { Image } from "expo-image";
-import ScreenHeader from "@/components/header/ScreenHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ScreenHeader from "@/components/header/ScreenHeader";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import SearchBar from "@/components/ui/inputs/SearchBar";
-import JobCard from "@/components/ui/cards/JobCard";
 
-const JobRequest = () => {
+const ChatList = () => {
   const router = useRouter();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-  const tabs = ["send request", "received"];
-  const [isActive, setIsActive] = useState("send request");
+  const tabs = ["group", "chat"];
+  const [isActive, setIsActive] = useState("group");
 
   return (
     <SafeAreaView className="flex-1 bg-[#E5F4FD] dark:bg-dark-background">
@@ -27,7 +20,7 @@ const JobRequest = () => {
       <ScreenHeader
         onPressBack={() => router.back()}
         className="px-5 pb-4 pt-2.5 rounded-b-3xl bg-[#E5F4FD] overflow-hidden"
-        title="Job Request"
+        title="Messages"
         titleClass="text-primary dark:text-dark-primary"
         iconColor={isDark ? "#fff" : "#111111"}
         components={
@@ -47,6 +40,7 @@ const JobRequest = () => {
         }
       />
 
+      {/* tabs */}
       <View className="flex-row justify-center mx-5">
         {tabs.map((tab, index) => (
           <TouchableOpacity
@@ -63,29 +57,15 @@ const JobRequest = () => {
         ))}
       </View>
 
+      {/* content */}
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="bg-white px-5"
       >
         <SearchBar className="mt-5 mb-4" />
-
-        <JobCard
-          className="bg-white border border-[#EEEEEE] mb-4"
-          status={isActive}
-        />
-
-        <JobCard
-          className="bg-white border border-[#EEEEEE] mb-4"
-          status={isActive}
-        />
-
-        <JobCard
-          className="bg-white border border-[#EEEEEE] mb-4"
-          status={isActive}
-        />
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default JobRequest;
+export default ChatList;
