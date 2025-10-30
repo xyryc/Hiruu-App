@@ -1,5 +1,5 @@
 import { ToggleButton } from '@/components/ui/buttons/ToggleButton';
-import BandageCard from '@/components/ui/cards/BandageCard';
+import BadgeCard from '@/components/ui/cards/BadgeCard';
 import ExperienceCard from '@/components/ui/cards/ExperienceCard';
 import NamePlateCard from '@/components/ui/cards/NamePlateCard';
 import StatCardPrimary from '@/components/ui/cards/StatCardPrimary';
@@ -62,7 +62,7 @@ const profile = () => {
         <TouchableOpacity onPress={() => router.push('/profile/rating')} className='mx-5 mt-3.5'>
           <NamePlateCard variant='variant4' />
         </TouchableOpacity>
-        {/* Bandage item */}
+        {/* Badge item */}
         <View className='mx-5 flex-row justify-between mt-5 items-center'>
           <View className='flex-row gap-2.5 items-center'>
             <View className='h-8 w-8 rounded-full bg-[#E5F4FD] flex-row items-center justify-center '>
@@ -74,11 +74,13 @@ const profile = () => {
                 color="black"
               />
             </View>
-            <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>Bandage</Text>
+            <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>Badge</Text>
           </View>
-          <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>View all bandage</Text>
+          <TouchableOpacity onPress={() => router.push('/profile/badge')} >
+            <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>View all Badge</Text>
+          </TouchableOpacity>
         </View>
-        <BandageCard className='mx-5 mt-3.5' />
+        <BadgeCard className='mx-5 mt-3.5' />
 
 
         {/* short intro */}
@@ -111,9 +113,9 @@ const profile = () => {
           </View>
           <Text className='font-proximanova-semibold text-lg text-primary dark:text-dark-primary'>Experience</Text>
         </View>
-        <ExperienceCard focus className='mt-8' />
-        <ExperienceCard className='mt-2.5' />
-        <ExperienceCard className='mt-2.5' />
+        <ExperienceCard focus className='mt-8 mx-5' />
+        <ExperienceCard className='mt-2.5 mx-5' />
+        <ExperienceCard className='mt-2.5 mx-5' />
 
 
 
