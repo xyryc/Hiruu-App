@@ -50,16 +50,16 @@ const ChatList = () => {
       >
         <SearchBar className="mt-5 mb-4" />
 
-        <ChatListItem />
-        <ChatListItem />
-        <ChatListItem />
-        <ChatListItem />
-        <ChatListItem />
-        <ChatListItem />
-        <ChatListItem />
-        <ChatListItem />
-        <ChatListItem />
-        <ChatListItem />
+        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,10 +1,13 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { Image } from "expo-image";
 
-const ChatListItem = () => {
+const ChatListItem = ({ onPress }) => {
   return (
-    <View className="flex-row items-center gap-2.5 py-4 border-b border-[#EEEEEE]">
+    <TouchableOpacity
+      onPress={onPress}
+      className="flex-row items-center gap-2.5 py-4 border-b border-[#EEEEEE]"
+    >
       {/* left */}
       <Image
         source="https://images-platform.99static.com//XA86QPjmKC7CdDnzMsNPiEH5O-Y=/63x55:1588x1580/fit-in/500x500/projects-files/66/6611/661127/3fcadb3b-493d-4b86-8b30-3d38007c3a79.png"
@@ -44,7 +47,7 @@ const ChatListItem = () => {
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
