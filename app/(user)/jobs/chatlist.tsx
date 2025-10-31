@@ -6,6 +6,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import SearchBar from "@/components/ui/inputs/SearchBar";
+import ChatListItem from "@/components/ui/cards/ChatListItem";
 
 const ChatList = () => {
   const router = useRouter();
@@ -23,21 +24,6 @@ const ChatList = () => {
         title="Messages"
         titleClass="text-primary dark:text-dark-primary"
         iconColor={isDark ? "#fff" : "#111111"}
-        components={
-          <View className="flex-row items-center">
-            <Image
-              source={require("@/assets/images/hiruu-coin.svg")}
-              style={{
-                width: 32,
-                height: 32,
-              }}
-              contentFit="contain"
-            />
-            <View className="px-4 py-2 bg-white -ml-3 -z-10 rounded-r-[40px]">
-              <Text className="text-sm font-proximanova-semibold">540</Text>
-            </View>
-          </View>
-        }
       />
 
       {/* tabs */}
@@ -63,6 +49,17 @@ const ChatList = () => {
         className="bg-white px-5"
       >
         <SearchBar className="mt-5 mb-4" />
+
+        <ChatListItem />
+        <ChatListItem />
+        <ChatListItem />
+        <ChatListItem />
+        <ChatListItem />
+        <ChatListItem />
+        <ChatListItem />
+        <ChatListItem />
+        <ChatListItem />
+        <ChatListItem />
       </ScrollView>
     </SafeAreaView>
   );

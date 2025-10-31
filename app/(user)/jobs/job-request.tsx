@@ -51,14 +51,20 @@ const JobRequest = () => {
         {tabs.map((tab, index) => (
           <TouchableOpacity
             key={index}
-            className={`w-1/2 border-b  pb-2 ${isActive === tab && "border-[#11293A] border-b-2"}`}
+            className={`w-1/2 flex-row items-center justify-center gap-2 border-b  pb-2 ${isActive === tab && "border-[#11293A] border-b-2"}`}
             onPress={() => setIsActive(tab)}
           >
             <Text
-              className={`text-center ${isActive === tab ? "font-proximanova-semibold text-base text-primary dark:text-dark-primary" : "font-proximanova-regular text-secondary dark:text-dark-secondary"} `}
+              className={`text-center capitalize ${isActive === tab ? "font-proximanova-semibold text-primary dark:text-dark-primary" : "font-proximanova-regular text-secondary dark:text-dark-secondary"} `}
             >
-              <Text className="capitalize">{tab}</Text>
+              {tab}
             </Text>
+
+            <View className="w-6 h-6 bg-[#4FB2F3] rounded-full items-center justify-center">
+              <Text className="font-proximanova-semibold text-sm text-white">
+                3
+              </Text>
+            </View>
           </TouchableOpacity>
         ))}
       </View>
