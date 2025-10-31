@@ -6,12 +6,13 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-na
 interface CoinProgressSliderProps {
     achieved: number;
     max: number;
-    showLabels?: boolean;
+    className?: string;
 }
 
 export default function CoinProgressSlider({
     achieved,
     max,
+    className
 }: CoinProgressSliderProps) {
 
     const percentage = Math.min((achieved / max) * 100, 100);
@@ -33,7 +34,7 @@ export default function CoinProgressSlider({
     }));
 
     return (
-        <View>
+        <View className={`${className}`}>
             <View className="relative">
                 {/* Background Track */}
                 <View className="w-full h-5 bg-[#DDF1FF] rounded-full">
@@ -46,7 +47,7 @@ export default function CoinProgressSlider({
 
                 {/* Coin Icon */}
                 <Animated.View
-                    className="absolute -top-[3px] -ml-3"
+                    className="absolute -top-[3px] -ml-4"
                     style={coinStyle}
                 >
                     <Image
