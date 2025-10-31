@@ -16,7 +16,7 @@ const BadgeCard = ({ className }: any) => {
             </View>
             <Image source={require('@/assets/images/vertical-dotted-line.svg')} contentFit='contain' style={{ height: 60, width: 2, marginTop: 20 }} />
             <View className=' pb-4 items-center'>
-                <Image source={require('@/assets/images/reward/yellow-bands.svg')} contentFit='cover' style={{ height: 75, width: 50 }} />
+                <Image source={require('@/assets/images/reward/gold-bands.svg')} contentFit='cover' style={{ height: 75, width: 50 }} />
                 <Text className='font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center'>Hard worker</Text>
             </View>
         </View>
