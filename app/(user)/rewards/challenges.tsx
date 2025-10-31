@@ -1,4 +1,5 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
+import CoinProgressSlider from "@/components/ui/inputs/CoinProgressSlider";
 import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -265,25 +266,12 @@ const challenges = () => {
 
             {/*  rank bord line --  */}
 
-            <View className="flex-row justify-center items-center gap-4 mt-2.5">
-              <View className="relative">
-                <View className="w-[220px] bg-[#DDF1FF] rounded-[40px] relative ">
-                  <Image
-                    source={require("@/assets/images/hiruu-coin.svg")}
-                    style={{
-                      width: 22,
-                      height: 22,
-                      left: 100,
-                      zIndex: 1,
-                    }}
-                    contentFit="contain"
-                  />
-                </View>
-                <View className="bg-[#4FB2F3] py-3 w-[120px] bottom-8 rounded-full  mt-2" />
+            <View className="mt-3.5 flex-1 gap-1">
+              <View>
+                <CoinProgressSlider achieved={1} max={5} />
               </View>
-
-              <Text className="font-proximanova-regular text-sm -mt-9 text-primary dark:text-dark-primary">
-                <Text className="text-[#4FB2F3]">3</Text>/6
+              <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary">
+                <Text className="text-[#4FB2F3]">4</Text>/6
               </Text>
             </View>
 

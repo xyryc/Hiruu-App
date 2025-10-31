@@ -12,7 +12,6 @@ interface CoinProgressSliderProps {
 export default function CoinProgressSlider({
     achieved,
     max,
-    showLabels = true
 }: CoinProgressSliderProps) {
 
     const percentage = Math.min((achieved / max) * 100, 100);
@@ -37,7 +36,7 @@ export default function CoinProgressSlider({
         <View>
             <View className="relative">
                 {/* Background Track */}
-                <View className="w-full h-4 bg-[#DDF1FF] rounded-full">
+                <View className="w-full h-5 bg-[#DDF1FF] rounded-full">
                     {/* Progress Fill */}
                     <Animated.View
                         className="h-full bg-[#4FB2F3] rounded-full"
@@ -47,7 +46,7 @@ export default function CoinProgressSlider({
 
                 {/* Coin Icon */}
                 <Animated.View
-                    className="absolute -top-1.5 -ml-3"
+                    className="absolute -top-[3px] -ml-3"
                     style={coinStyle}
                 >
                     <Image
