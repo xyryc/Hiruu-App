@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity, ScrollView, TextInput } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ScreenHeader from '@/components/header/ScreenHeader'
 import { router } from 'expo-router'
@@ -13,8 +13,10 @@ import DatePicker from '@/components/ui/inputs/DatePicker'
 import { Image } from 'expo-image'
 import SmallButton from '@/components/ui/buttons/SmallButton'
 import PrimaryButton from '@/components/ui/buttons/PrimaryButton'
+import InterestModal from '@/components/ui/modals/InterestModal'
 
 const Edit = () => {
+    const [visible, setVisible] = useState(false)
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === "dark";
     return (
@@ -32,13 +34,13 @@ const Edit = () => {
             />
             <ScrollView className='bg-white'>
                 <View className='mx-5'>
-                    <View className='flex-row justify-between items-center'>
+                    <View className='flex-row justify-between items-center mb-2.5'>
                         <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>Your Nameplate</Text>
                         <TouchableOpacity>
                             <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline'>Edit</Text>
                         </TouchableOpacity>
                     </View>
-                    <NamePlateCard variant='variant5' className='mt-2.5' />
+                    <NamePlateCard variant='variant5' />
                 </View>
 
 
@@ -172,9 +174,13 @@ const Edit = () => {
                             <View className='h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center'>
                                 <Foundation name="clipboard" size={16} color="black" />
                             </View>
-                            <Text className='font-proximanova-semibold text-lg text-primary dark:text-dark-primary'>Experience</Text>
+                            <Text className='font-proximanova-semibold text-lg text-primary dark:text-dark-primary'>Interests</Text>
                         </View>
-                        <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>Edit</Text>
+                        <TouchableOpacity
+                            onPress={() => setVisible(true)}
+                        >
+                            <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>Edit</Text>
+                        </TouchableOpacity>
                     </View>
 
                     <View className='flex-row justify-between mx-5 mt-4'>
@@ -209,7 +215,7 @@ const Edit = () => {
                     </View>
                 </View>
 
-
+                <InterestModal visible={visible} onClose={() => setVisible(false)} />
                 {/* Contact Us On */}
 
 
