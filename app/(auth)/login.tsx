@@ -43,11 +43,7 @@ const Login = () => {
     >
       <StatusBar style="dark" backgroundColor="#BDE4F9" />
 
-      <LinearGradient
-        colors={["#BDE4F9", "#F7F7F7"]}
-        locations={[0, 0.38]}
-        className="flex-1 justify-center items-center"
-      >
+      <LinearGradient colors={["#BDE4F9", "#F7F7F7"]} locations={[0, 0.38]}>
         <ScrollView className="px-5 h-screen" contentContainerClassName="pb-10">
           {/* Header */}
           <TitleHeader
@@ -210,7 +206,7 @@ const Login = () => {
 
           {/* login Button */}
           <PrimaryButton
-            className="w-full mb-7"
+            className="mb-7"
             title="Log in"
             onPress={() => router.push("/(user)/(tabs)/home")}
           />

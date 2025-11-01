@@ -1,11 +1,10 @@
-import { Entypo, } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import React, { useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../buttons/PrimaryButton";
-
 
 interface InterestModalProps {
   visible: boolean;
@@ -69,7 +68,7 @@ const InterestModal = ({
     { id: "lifestyles", name: "Lifestyles", icon: "🍄", color: "bg-pink-300" },
   ];
 
-  const maxSelections = 8
+  const maxSelections = 8;
   const toggleInterest = (interestId: string) => {
     const isSelected = selectedInterests.includes(interestId);
 
@@ -94,8 +93,6 @@ const InterestModal = ({
 
   const isSelected = (interestId: string) =>
     selectedInterests.includes(interestId);
-
-
 
   const handleDone = () => {
     // Pass final selection back to parent before closing
@@ -127,11 +124,15 @@ const InterestModal = ({
           {/* Modal Content */}
           <SafeAreaView edges={["bottom"]} className="px-5 py-7">
             <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center">
-              Change Your Interest            </Text>
+              Change Your Interest{" "}
+            </Text>
 
-            <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
-              paddingBottom: 80
-            }}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingBottom: 80,
+              }}
+            >
               <View className="flex-row flex-wrap justify-between mt-10">
                 {interests.map((interest) => {
                   const selected = isSelected(interest.id);
@@ -166,8 +167,9 @@ const InterestModal = ({
 
                         {/* Label */}
                         <Text
-                          className={`text-xs text-center mt-2 font-proximanova-medium ${selected ? "text-gray-900" : "text-gray-600"
-                            }`}
+                          className={`text-xs text-center mt-2 font-proximanova-medium ${
+                            selected ? "text-gray-900" : "text-gray-600"
+                          }`}
                         >
                           {interest.name}
                         </Text>
@@ -178,19 +180,22 @@ const InterestModal = ({
               </View>
             </ScrollView>
 
-
             {/* warning */}
             <View className="absolute bottom-10 inset-x-0 items-center mx-5">
               {selectedInterests.length >= maxSelections && (
                 <View className="mt-4 p-3 bg-blue-50 rounded-lg">
                   <Text className="text-blue-700 text-sm text-center">
-                    Maximum selections reached. Deselect an interest to choose another.
+                    Maximum selections reached. Deselect an interest to choose
+                    another.
                   </Text>
                 </View>
               )}
-              <PrimaryButton title="Save" className="mt-2.5" onPress={handleDone} />
+              <PrimaryButton
+                title="Save"
+                className="mt-2.5"
+                onPress={handleDone}
+              />
             </View>
-
           </SafeAreaView>
         </View>
       </BlurView>

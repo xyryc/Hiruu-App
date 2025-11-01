@@ -243,11 +243,12 @@ const TaskCard = ({
         ) : (
           <>
             {status === "upcoming" && <StatusBadge status={status} />}
-            {status === "ongoing" && <SmallButton title="Login" className="px-8" />}
+            {status === "ongoing" && (
+              <SmallButton title="Login" className="px-8" />
+            )}
             {status === "completed" && <StatusBadge status={status} />}
           </>
         )}
-
       </View>
     </View>
   );

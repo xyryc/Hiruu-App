@@ -24,13 +24,11 @@ const ActionCard = ({
           {title}
         </Text>
 
-        {
-          buttonTitle && (
-            <View className="mt-4">
-              <SecondaryButton title={buttonTitle} onPress={onPress} />
-            </View>
-          )
-        }
+        {buttonTitle && (
+          <View className="mt-4">
+            <SecondaryButton title={buttonTitle} onPress={onPress} />
+          </View>
+        )}
       </View>
 
       <View className={imageClass}>

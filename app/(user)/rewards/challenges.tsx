@@ -267,7 +267,12 @@ const challenges = () => {
         <Image
           source={require("@/assets/images/dotted-line.svg")}
           contentFit="contain"
-          style={{ width: 320, height: 2, marginHorizontal: "auto", marginTop: 20 }}
+          style={{
+            width: 320,
+            height: 2,
+            marginHorizontal: "auto",
+            marginTop: 20,
+          }}
         />
 
         {/* 4 */}

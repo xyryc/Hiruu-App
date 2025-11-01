@@ -10,15 +10,35 @@ const EditBadgeModal = ({ visible, onClose }: any) => {
   const [selectedCards, setSelectedCards] = React.useState<number[]>([]);
 
   const badchcard = [
-    { img: require('@/assets/images/reward/red-bands.svg'), bgColor: '#F3934F26', color: '#F3934F', title: 'Hard worker' },
-    { img: require('@/assets/images/reward/black-bands.svg'), bgColor: '#80808026', color: '#808080', title: 'Night Owl' },
-    { img: require('@/assets/images/reward/gold-bands.svg'), bgColor: '#F1C40026', color: '#F1C400', title: 'Early Bird' },
-    { img: require('@/assets/images/reward/blue-bands.svg'), bgColor: '#4FB2F326', color: '#4FB2F3', title: 'Hard worker' },
+    {
+      img: require("@/assets/images/reward/red-bands.svg"),
+      bgColor: "#F3934F26",
+      color: "#F3934F",
+      title: "Hard worker",
+    },
+    {
+      img: require("@/assets/images/reward/black-bands.svg"),
+      bgColor: "#80808026",
+      color: "#808080",
+      title: "Night Owl",
+    },
+    {
+      img: require("@/assets/images/reward/gold-bands.svg"),
+      bgColor: "#F1C40026",
+      color: "#F1C400",
+      title: "Early Bird",
+    },
+    {
+      img: require("@/assets/images/reward/blue-bands.svg"),
+      bgColor: "#4FB2F326",
+      color: "#4FB2F3",
+      title: "Hard worker",
+    },
   ];
 
   const handleCardSelect = (index: number) => {
-    setSelectedCards(prev => {
-      if (prev.includes(index)) return prev.filter(i => i !== index);
+    setSelectedCards((prev) => {
+      if (prev.includes(index)) return prev.filter((i) => i !== index);
       if (prev.length < 3) return [...prev, index];
       return prev;
     });
@@ -37,16 +57,34 @@ const EditBadgeModal = ({ visible, onClose }: any) => {
         const isSelected = selectionNumber !== null;
 
         return (
-          <TouchableOpacity key={cardIndex} onPress={() => handleCardSelect(cardIndex)} className="items-center">
-            <View className="h-[74px] w-[54px] border-2 rounded-xl justify-center items-center" style={{ backgroundColor: item.bgColor, borderColor: item.color }}>
-              <Image source={item.img} contentFit="contain" style={{ height: 42, width: 29 }} />
+          <TouchableOpacity
+            key={cardIndex}
+            onPress={() => handleCardSelect(cardIndex)}
+            className="items-center"
+          >
+            <View
+              className="h-[74px] w-[54px] border-2 rounded-xl justify-center items-center"
+              style={{ backgroundColor: item.bgColor, borderColor: item.color }}
+            >
+              <Image
+                source={item.img}
+                contentFit="contain"
+                style={{ height: 42, width: 29 }}
+              />
               {isSelected && (
-                <View className="absolute -top-1 -right-1 rounded-full h-5 w-5 items-center justify-center" style={{ backgroundColor: item.color }}>
-                  <Text className="text-white font-proximanova-bold text-xs">{selectionNumber}</Text>
+                <View
+                  className="absolute -top-1 -right-1 rounded-full h-5 w-5 items-center justify-center"
+                  style={{ backgroundColor: item.color }}
+                >
+                  <Text className="text-white font-proximanova-bold text-xs">
+                    {selectionNumber}
+                  </Text>
                 </View>
               )}
             </View>
-            <Text className="font-proximanova-regular text-xs text-primary dark:text-dark-primary mt-2">{item.title}</Text>
+            <Text className="font-proximanova-regular text-xs text-primary dark:text-dark-primary mt-2">
+              {item.title}
+            </Text>
           </TouchableOpacity>
         );
       })}
@@ -54,7 +92,12 @@ const EditBadgeModal = ({ visible, onClose }: any) => {
   );
 
   return (
-    <Modal visible={visible} animationType="fade" transparent={true} onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent={true}
+      onRequestClose={onClose}
+    >
       <BlurView intensity={80} tint="dark" className="flex-1 justify-end">
         <View className="bg-white rounded-t-3xl">
           <View className="absolute -top-24 inset-x-0 items-center pt-4 pb-2">

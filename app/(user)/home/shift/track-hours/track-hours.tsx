@@ -13,14 +13,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const TrackHours = () => {
   const handleLogin = () => {
-    router.push('./correction-request')
+    router.push("./correction-request");
   };
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   return (
     <SafeAreaView
       className="flex-1  dark:bg-dark-background"
-      edges={["top", "left", "right", 'bottom']}
+      edges={["top", "left", "right", "bottom"]}
     >
       {/* Header */}
       <ScreenHeader
@@ -119,10 +119,16 @@ const TrackHours = () => {
             className="mt-4"
           />
 
-
           <View className="flex-row justify-between mt-8">
-            <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">Missing log Activities</Text>
-            <Link href='./missing-log' className="font-proximanova-semibold text-sm text-[#4FB2F3]">See All</Link>
+            <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
+              Missing log Activities
+            </Text>
+            <Link
+              href="./missing-log"
+              className="font-proximanova-semibold text-sm text-[#4FB2F3]"
+            >
+              See All
+            </Link>
           </View>
           <ScrollView
             className="mb-7 mt-4"
@@ -171,7 +177,6 @@ const TrackHours = () => {
               requestLog={true}
             />
           </ScrollView>
-
 
           <View className="mt-8">
             <ActionCard
