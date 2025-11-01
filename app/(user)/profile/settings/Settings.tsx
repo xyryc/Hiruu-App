@@ -1,0 +1,168 @@
+import ScreenHeader from "@/components/header/ScreenHeader";
+import NamePlateCard from "@/components/ui/cards/NamePlateCard";
+import SettingsCard from "@/components/ui/cards/SettingsCard";
+import {
+  AntDesign,
+  Entypo,
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { router } from "expo-router";
+import { useColorScheme } from "nativewind";
+import React from "react";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const Settings = () => {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+  return (
+    <SafeAreaView
+      className="flex-1 bg-[#FFFFFF]"
+      edges={["left", "right", "bottom"]}
+    >
+      <View className="bg-[#E5F4FD] rounded-b-2xl pt-10 px-5">
+        <ScreenHeader
+          className="my-4"
+          onPressBack={() => router.back()}
+          title="Settings"
+          titleClass="text-primary dark:text-dark-primary"
+          iconColor={isDark ? "#fff" : "#111"}
+        />
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View className="mx-5">
+          {/* Create Business Profile */}
+          <View className="bg-[#FCF7E4] px-3 py-4 mt-8 rounded-xl flex-row justify-between">
+            <View>
+              <Text className="text-lg font-proximanova-semibold text-[#11293A]">
+                Grow and Manage All Your
+              </Text>
+              <Text className="text-lg font-proximanova-semibold text-[#11293A]">
+                Businesses Effortlessly
+              </Text>
+              <TouchableOpacity className="bg-[#11293A] rounded-full py-1.5 px-4 mt-5">
+                <Text className="text-sm font-proximanova-semibold text-[#ffffff] text-center">
+                  Create Business Profile
+                </Text>
+              </TouchableOpacity>
+            </View>
+            <View>
+              <Image
+                source={require("@/assets/images/guy-in-chair.svg")}
+                contentFit="contain"
+                style={{ height: 110, width: 104 }}
+              />
+            </View>
+          </View>
+
+          {/* Name plate */}
+          <View className="mt-8">
+            <NamePlateCard variant="variant3" />
+          </View>
+
+          {/* settings card */}
+          {/* <View>
+          <View className="flex-row justify-between items-center mt-8">
+            <View className="flex-row items-center gap-4">
+              <View className="bg-[#EEEEEE] h-[50px] w-[50px] justify-center items-center rounded-2xl border border-[#11293A1A]">
+                <Ionicons name="language-outline" size={24} color="#11293A" />
+              </View>
+              <Text className="text-primary dark:text-dark-primary font-proximanova-bold">
+                App Preferences
+              </Text>
+            </View>
+            <Entypo name="chevron-thin-right" size={20} color="#111111" />
+          </View>
+          <View className="border-b-2 border-[#EEEEEE] mt-5" />
+        </View> */}
+
+          <SettingsCard
+            icon={
+              <Ionicons name="language-outline" size={24} color="#11293A" />
+            }
+            className="mt-8"
+            text="App Preferences"
+            aroIcon={
+              <Entypo name="chevron-thin-right" size={20} color="#111111" />
+            }
+          />
+
+          <SettingsCard
+            icon={
+              <MaterialCommunityIcons
+                name="crown-outline"
+                size={24}
+                color="black"
+              />
+            }
+            text="Subscription"
+            className="mt-5"
+            aroIcon={
+              <Entypo name="chevron-thin-right" size={20} color="#111111" />
+            }
+          />
+
+          <SettingsCard
+            icon={<Ionicons name="wallet-outline" size={24} color="#11293A" />}
+            text="Refer and Earn"
+            className="mt-5"
+            aroIcon={
+              <Entypo name="chevron-thin-right" size={20} color="#111111" />
+            }
+          />
+
+          <SettingsCard
+            icon={<SimpleLineIcons name="lock" size={24} color="black" />}
+            text="Privacy Policy"
+            className="mt-5"
+            aroIcon={
+              <Entypo name="chevron-thin-right" size={20} color="#111111" />
+            }
+          />
+
+          <SettingsCard
+            icon={<Ionicons name="calendar-outline" size={24} color="black" />}
+            text="Terms and Condition"
+            className="mt-5"
+            aroIcon={
+              <Entypo name="chevron-thin-right" size={20} color="#111111" />
+            }
+          />
+          <SettingsCard
+            icon={<FontAwesome5 name="handshake" size={24} color="black" />}
+            text="Help and Support"
+            className="mt-5"
+            aroIcon={
+              <Entypo name="chevron-thin-right" size={20} color="#111111" />
+            }
+          />
+          <SettingsCard
+            icon={<SimpleLineIcons name="info" size={22} color="black" />}
+            text="App Info"
+            className="mt-5"
+            aroIcon={
+              <Entypo name="chevron-thin-right" size={20} color="#111111" />
+            }
+          />
+          <TouchableOpacity>
+            <Text className="text-[#F34F4F] font-proximanova-bold mt-5">
+              Delete Account
+            </Text>
+          </TouchableOpacity>
+          <View className="border-b-2 border-[#EEEEEE] mt-5" />
+          <TouchableOpacity>
+            <Text className="text-[#4FB2F3] font-proximanova-bold mt-5">
+              Log Out
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+export default Settings;

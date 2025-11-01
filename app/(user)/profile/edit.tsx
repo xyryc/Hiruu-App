@@ -34,17 +34,18 @@ const Edit = () => {
   const isDark = colorScheme === "dark";
   return (
     <SafeAreaView
-      className="flex-1 bg-[#E5F4FD] dark:bg-dark-background"
-      edges={["top", "left", "right", "bottom"]}
+      className="flex-1 bg-white"
+      edges={["left", "right", "bottom"]}
     >
-      {/* Header */}
-      <ScreenHeader
-        className="mx-4 mb-6"
-        onPressBack={() => router.back()}
-        title="Edit Profile"
-        titleClass="text-primary dark:text-dark-primary"
-        iconColor={isDark ? "#fff" : "#111"}
-      />
+      <View className="bg-[#E5F4FD] rounded-b-2xl pt-10 px-4">
+        <ScreenHeader
+          className="my-4"
+          onPressBack={() => router.back()}
+          title="Edit Profile"
+          titleClass="text-primary dark:text-dark-primary"
+          iconColor={isDark ? "#fff" : "#111"}
+        />
+      </View>
       <ScrollView className="bg-white">
         <View className="mx-5">
           <View className="flex-row justify-between items-center mb-2.5">
