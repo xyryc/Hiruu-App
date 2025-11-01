@@ -37,7 +37,7 @@ const ScreenHeader = ({
       </View>
 
       {/* right */}
-      <TouchableOpacity onPress={onPress}>
+      <TouchableOpacity onPress={onPress} className="flex-1 items-end">
         <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
           {buttonTitle}
         </Text>

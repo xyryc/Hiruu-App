@@ -57,11 +57,7 @@ const Verify = () => {
     >
       <StatusBar style="dark" backgroundColor="#BDE4F9" />
 
-      <LinearGradient
-        colors={["#BDE4F9", "#F7F7F7"]}
-        locations={[0, 0.38]}
-        className="flex-1 justify-center items-center"
-      >
+      <LinearGradient colors={["#BDE4F9", "#F7F7F7"]} locations={[0, 0.38]}>
         <ScrollView className="px-5 h-screen">
           {/* Header */}
           <TitleHeader
