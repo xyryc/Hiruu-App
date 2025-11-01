@@ -5,6 +5,7 @@ import { useState } from "react";
 import "react-native-reanimated";
 import "./global.css";
 import SplashScreen from "./splash";
+import ErrorBoundary from "@/components/ui/error/ErrorBoundary";
 
 // Create a separate component that uses the theme
 const AppContent = () => {
@@ -36,8 +37,10 @@ const AppContent = () => {
 // Root layout only provides the theme context
 export default function RootLayout() {
   return (
-    <ThemeProvider>
-      <AppContent />
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AppContent />
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
