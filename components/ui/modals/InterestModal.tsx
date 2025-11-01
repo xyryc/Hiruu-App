@@ -7,9 +7,25 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../buttons/PrimaryButton";
 
 
-const InterestModal = ({ visible, onClose }: any) => {
+interface InterestModalProps {
+  visible: boolean;
+  /** initial selected interest ids when the modal opens */
+  initialInterests?: string[];
+  /** called whenever the selection changes */
+  onChange?: (selected: string[]) => void;
+  /** called when the modal closes; receives the final selection */
+  onClose: (selected: string[]) => void;
+}
 
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+const InterestModal = ({
+  visible,
+  initialInterests,
+  onChange,
+  onClose,
+}: InterestModalProps) => {
+  const [selectedInterests, setSelectedInterests] = useState<string[]>(
+    initialInterests ?? []
+  );
 
   const interests = [
     { id: "art", name: "Art", icon: "🎨", color: "bg-orange-100" },
@@ -32,7 +48,7 @@ const InterestModal = ({ visible, onClose }: any) => {
     { id: "poetry", name: "Poetry", icon: "📄", color: "bg-yellow-200" },
     { id: "drawing", name: "Drawing", icon: "✏️", color: "bg-pink-100" },
     { id: "climbing", name: "Climbing", icon: "🧗", color: "bg-brown-100" },
-    { id: "cooking", name: "Cooking", icon: "🔍", color: "bg-orange-200" },
+    { id: "cooking", name: "Cooking", icon: "🍳", color: "bg-orange-200" },
     { id: "nature", name: "Nature", icon: "🌳", color: "bg-green-300" },
     { id: "painting", name: "Painting", icon: "🖌️", color: "bg-blue-200" },
     { id: "acting", name: "Acting", icon: "🎭", color: "bg-cyan-100" },
@@ -57,15 +73,23 @@ const InterestModal = ({ visible, onClose }: any) => {
   const toggleInterest = (interestId: string) => {
     const isSelected = selectedInterests.includes(interestId);
 
+    let newSelected: string[];
     if (isSelected) {
       // Remove interest
-      setSelectedInterests(selectedInterests.filter((id) => id !== interestId));
+      newSelected = selectedInterests.filter((id) => id !== interestId);
     } else {
       // Add interest (if not at max limit)
       if (selectedInterests.length < maxSelections) {
-        setSelectedInterests([...selectedInterests, interestId]);
+        newSelected = [...selectedInterests, interestId];
+      } else {
+        // At max limit, ignore the add
+        newSelected = selectedInterests;
       }
     }
+
+    setSelectedInterests(newSelected);
+    // Notify parent of intermediate changes if provided
+    if (onChange) onChange(newSelected);
   };
 
   const isSelected = (interestId: string) =>
@@ -74,15 +98,20 @@ const InterestModal = ({ visible, onClose }: any) => {
 
 
   const handleDone = () => {
-    onClose();
+    // Pass final selection back to parent before closing
+    if (onClose) onClose(selectedInterests);
   };
+
+  // Note: we initialize selectedInterests from the optional `initialInterests`
+  // prop via the useState initializer above. If you need the modal to reset
+  // whenever it opens, we can reintroduce a useEffect to watch `visible`.
 
   return (
     <Modal
       visible={visible}
       animationType="fade"
       transparent={true}
-      onRequestClose={onClose}
+      onRequestClose={handleDone}
     >
       <BlurView intensity={80} tint="dark" className="flex-1 justify-end">
         <View className="bg-white rounded-t-3xl  max-h-[75%]">
@@ -98,8 +127,7 @@ const InterestModal = ({ visible, onClose }: any) => {
           {/* Modal Content */}
           <SafeAreaView edges={["bottom"]} className="px-5 py-7">
             <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center">
-              Change Your Intrest
-            </Text>
+              Change Your Interest            </Text>
 
             <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{
               paddingBottom: 80
@@ -160,7 +188,7 @@ const InterestModal = ({ visible, onClose }: any) => {
                   </Text>
                 </View>
               )}
-              <PrimaryButton title="Save" className="mt-2.5" />
+              <PrimaryButton title="Save" className="mt-2.5" onPress={handleDone} />
             </View>
 
           </SafeAreaView>

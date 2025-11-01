@@ -14,8 +14,10 @@ import { Image } from 'expo-image'
 import SmallButton from '@/components/ui/buttons/SmallButton'
 import PrimaryButton from '@/components/ui/buttons/PrimaryButton'
 import InterestModal from '@/components/ui/modals/InterestModal'
+import EditBadgeModal from '@/components/ui/modals/EditBadgeModal'
 
 const Edit = () => {
+    const [isBadgeVisible, setIsBadgeVisible] = useState(false)
     const [visible, setVisible] = useState(false)
     const { colorScheme } = useColorScheme();
     const isDark = colorScheme === "dark";
@@ -58,10 +60,15 @@ const Edit = () => {
                             </View>
                             <Text className='font-proximanova-semibold text-xl text-primary dark:text-dark-primary'>Badge</Text>
                         </View>
-                        <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>Edit</Text>
+                        <TouchableOpacity
+                            onPress={() => setIsBadgeVisible(true)}
+                        >
+                            <Text className='font-proximanova-semibold text-sm text-[#4FB2F3] underline '>Edit</Text>
+                        </TouchableOpacity>
                     </View>
                     <BadgeCard className='mx-5 mt-3.5' />
                 </View>
+                <EditBadgeModal visible={isBadgeVisible} onClose={() => setIsBadgeVisible(false)} />
                 {/* short intro */}
                 <View>
                     <View className='flex-row justify-between items-center mx-5 mt-8 '>
