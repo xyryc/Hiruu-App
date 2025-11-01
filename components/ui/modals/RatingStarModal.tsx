@@ -5,18 +5,16 @@ import PrimaryButton from "../buttons/PrimaryButton";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { useState } from "react";
 
-
 const RatingStarModal = ({ visible, onClose }: any) => {
   const handleDone = () => {
     onClose();
   };
-  const starLabels = ['', 'Bad', 'Average', 'Good', 'Great', 'Amazing'];
-  const [paySelect, setPaySelect] = useState<number>()
-  const [workSelect, setWorkSelect] = useState<number>()
-  const [commonSelect, setCommonSelect] = useState<number>()
+  const starLabels = ["", "Bad", "Average", "Good", "Great", "Amazing"];
+  const [paySelect, setPaySelect] = useState<number>();
+  const [workSelect, setWorkSelect] = useState<number>();
+  const [commonSelect, setCommonSelect] = useState<number>();
 
   console.log(paySelect);
-
 
   return (
     <Modal
@@ -42,10 +40,14 @@ const RatingStarModal = ({ visible, onClose }: any) => {
               {" "}
               Add your Rating{" "}
             </Text>
-            <Text className="text-center text-sm mt-2.5 font-proximanova-regular text-secondary dark:text-dark-secondary">Your rating helps improve workplace transparency</Text>
+            <Text className="text-center text-sm mt-2.5 font-proximanova-regular text-secondary dark:text-dark-secondary">
+              Your rating helps improve workplace transparency
+            </Text>
 
             {/*  Pay On Time  */}
-            <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary mt-8">Pay On Time</Text>
+            <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary mt-8">
+              Pay On Time
+            </Text>
             <View className="flex-row justify-between mt-4">
               {[1, 2, 3, 4, 5].map((star) => (
                 <TouchableOpacity
@@ -56,9 +58,11 @@ const RatingStarModal = ({ visible, onClose }: any) => {
                   <AntDesign
                     name="star"
                     size={50}
-                    color={paySelect === star ? '#4FB2F3' : "#EEEEEE"}
+                    color={paySelect === star ? "#4FB2F3" : "#EEEEEE"}
                   />
-                  <Text className="text-center mt-1 font-semibold -top-12">
+                  <Text
+                    className={`text-center mt-1 font-semibold -top-12 ${paySelect === star && "text-white"} `}
+                  >
                     {star}
                   </Text>
                   <Text className="text-center -mt-6 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -69,7 +73,9 @@ const RatingStarModal = ({ visible, onClose }: any) => {
             </View>
 
             {/*  work enviroment  */}
-            <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary mt-8">Work Enviroment</Text>
+            <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary mt-8">
+              Work Enviroment
+            </Text>
             <View className="flex-row justify-between mt-4">
               {[1, 2, 3, 4, 5].map((star) => (
                 <TouchableOpacity
@@ -80,9 +86,11 @@ const RatingStarModal = ({ visible, onClose }: any) => {
                   <AntDesign
                     name="star"
                     size={50}
-                    color={workSelect === star ? '#4FB2F3' : "#EEEEEE"}
+                    color={workSelect === star ? "#4FB2F3" : "#EEEEEE"}
                   />
-                  <Text className="text-center mt-1 font-semibold -top-12">
+                  <Text
+                    className={`text-center mt-1 font-semibold -top-12 ${workSelect === star && "text-white"} `}
+                  >
                     {star}
                   </Text>
                   <Text className="text-center -mt-6 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -92,10 +100,10 @@ const RatingStarModal = ({ visible, onClose }: any) => {
               ))}
             </View>
 
-
-
             {/*  communication  */}
-            <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary mt-8">Communication</Text>
+            <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary mt-8">
+              Communication
+            </Text>
             <View className="flex-row justify-between mt-4">
               {[1, 2, 3, 4, 5].map((star) => (
                 <TouchableOpacity
@@ -106,9 +114,11 @@ const RatingStarModal = ({ visible, onClose }: any) => {
                   <AntDesign
                     name="star"
                     size={50}
-                    color={commonSelect === star ? '#4FB2F3' : "#EEEEEE"}
+                    color={commonSelect === star ? "#4FB2F3" : "#EEEEEE"}
                   />
-                  <Text className="text-center mt-1 font-semibold -top-12">
+                  <Text
+                    className={`text-center mt-1 font-semibold -top-12 ${commonSelect === star && "text-white"} `}
+                  >
                     {star}
                   </Text>
                   <Text className="text-center -mt-6 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -118,9 +128,7 @@ const RatingStarModal = ({ visible, onClose }: any) => {
               ))}
             </View>
 
-
-
-            <PrimaryButton title="Submit" className="mt-5" />
+            <PrimaryButton title="Submit" className="" />
           </SafeAreaView>
         </View>
       </BlurView>

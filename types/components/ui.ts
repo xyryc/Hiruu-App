@@ -169,7 +169,8 @@ type StatusType =
   | "pending"
   | "approved"
   | "rejected"
-  | "accepted";
+  | "accepted"
+  | "submitted";
 
 export interface StatusBadgeProps {
   label?: string;
@@ -250,4 +251,5 @@ export interface TimeLeft {
 
 export interface JobCardProps {
   className: string;
+  status: string;
 }

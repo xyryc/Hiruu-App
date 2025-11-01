@@ -241,42 +241,54 @@ const SwapRequestAction = () => {
   ).length;
 
   return (
+    // <SafeAreaView
+    //   className="flex-1 bg-[#E5F4FD] dark:bg-dark-background"
+    //   edges={["top", "left", "right"]}
+    // >
+    //   {/* Header */}
+    //   <ScreenHeader
+    //     className="mx-5 rounded-3xl"
+    //     onPressBack={() => router.back()}
+    //     title="Swap Request"
+    //     titleClass="text-primary dark:text-dark-primary"
+    //     iconColor={isDark ? "#fff" : "#111"}
+    //     components={<></>}
+    //   />
     <SafeAreaView
-      className="flex-1 bg-[#E5F4FD] dark:bg-dark-background"
-      edges={["top", "left", "right"]}
+      className="flex-1 bg-white"
+      edges={["left", "right", "bottom"]}
     >
-      {/* Header */}
-      <ScreenHeader
-        className="mx-5 rounded-3xl"
-        onPressBack={() => router.back()}
-        title="Swap Request"
-        titleClass="text-primary dark:text-dark-primary"
-        iconColor={isDark ? "#fff" : "#111"}
-        components={<></>}
-      />
-
-      {/* Tabs */}
-      <View className="flex-row mx-5 mt-4 dark:bg-dark-background">
-        {["Send Request", "Received"].map((tab) => (
-          <TouchableOpacity
-            className={`w-1/2 ${selectedTab === tab ? "border-b-2 border-[#11293A] pb-2" : ""}`}
-            key={tab}
-            onPress={() => setSelectedTab(tab)}
-          >
-            <View className="flex-row justify-center gap-2">
-              <Text
-                className={`text-center dark:text-dark-primary ${selectedTab === tab ? "font-proximanova-semibold" : "font-proximanova-regular"}`}
-              >
-                {tab}
-              </Text>
-              {selectedTab === tab && (
-                <View className="bg-[#4FB2F3] px-2 py-1 rounded-full">
-                  <Text className="text-white">{pendingData}</Text>
-                </View>
-              )}
-            </View>
-          </TouchableOpacity>
-        ))}
+      <View className="bg-[#E5F4FD] rounded-b-2xl pt-10 px-5">
+        <ScreenHeader
+          className="my-4"
+          onPressBack={() => router.back()}
+          title="Badge"
+          titleClass="text-primary dark:text-dark-primary"
+          iconColor={isDark ? "#fff" : "#111"}
+        />
+        {/* Tabs */}
+        <View className="flex-row mx-5 mt-4 dark:bg-dark-background">
+          {["Send Request", "Received"].map((tab) => (
+            <TouchableOpacity
+              className={`w-1/2 ${selectedTab === tab ? "border-b-2 border-[#11293A] pb-2" : ""}`}
+              key={tab}
+              onPress={() => setSelectedTab(tab)}
+            >
+              <View className="flex-row justify-center gap-2">
+                <Text
+                  className={`text-center dark:text-dark-primary ${selectedTab === tab ? "font-proximanova-semibold" : "font-proximanova-regular"}`}
+                >
+                  {tab}
+                </Text>
+                {selectedTab === tab && (
+                  <View className="bg-[#4FB2F3] px-2 py-1 rounded-full">
+                    <Text className="text-white">{pendingData}</Text>
+                  </View>
+                )}
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
 
       <View className=" flex-1 bg-white dark:bg-dark-background">

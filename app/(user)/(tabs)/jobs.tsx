@@ -30,7 +30,10 @@ const UserJobs = () => {
         components={
           <View className="flex-row items-center gap-2.5">
             {/* left */}
-            <TouchableOpacity className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
+            <TouchableOpacity
+              onPress={() => router.push("/(user)/jobs/job-request")}
+              className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
+            >
               <Ionicons name="newspaper-outline" size={24} color="#4b5563" />
               <View className="bg-[#4FB2F3] absolute top-1.5 right-2 w-3.5 h-3.5 items-center rounded-full">
                 <Text className="text-[10px] text-white">1</Text>
@@ -38,7 +41,10 @@ const UserJobs = () => {
             </TouchableOpacity>
 
             {/* right */}
-            <TouchableOpacity className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
+            <TouchableOpacity
+              onPress={() => router.push("/(user)/jobs/chatlist")}
+              className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
+            >
               <Image
                 source={require("@/assets/images/messages.svg")}
                 style={{

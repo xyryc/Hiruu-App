@@ -21,7 +21,7 @@ const RequestLeave = () => {
   return (
     <SafeAreaView
       className="flex-1 bg-white dark:bg-dark-background"
-      edges={["top", "left", "right", 'bottom']}
+      edges={["top", "left", "right", "bottom"]}
     >
       {/* Header */}
       <ScreenHeader

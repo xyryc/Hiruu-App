@@ -49,7 +49,7 @@ const AttendanceLogCard = ({
       <View className="mt-2 flex-row justify-between items-center">
         <View className="flex-row gap-2 items-center">
           <Image
-            source={require('@/assets/images/reward/complate-profile.svg')}
+            source={require("@/assets/images/reward/complate-profile.svg")}
             contentFit="contain"
             style={{ height: 30, width: 30, borderRadius: 15 }}
           />
