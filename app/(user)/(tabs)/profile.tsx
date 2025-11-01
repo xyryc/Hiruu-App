@@ -52,12 +52,11 @@ const profile = () => {
               >
                 <Feather name="edit-2" size={18} color="black" />
               </TouchableOpacity>
-              <TouchableOpacity className="h-10 w-10 bg-white rounded-full items-center justify-center">
-                <MaterialCommunityIcons
-                  name="export-variant"
-                  size={22}
-                  color="black"
-                />
+              <TouchableOpacity
+                onPress={() => router.push("/(user)/profile/settings/Settings")}
+                className="h-10 w-10 bg-white rounded-full items-center justify-center"
+              >
+                <Ionicons name="settings-outline" size={20} color="black" />
               </TouchableOpacity>
             </View>
           </View>
