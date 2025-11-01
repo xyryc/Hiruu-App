@@ -53,7 +53,7 @@ const profile = () => {
                 <Feather name="edit-2" size={18} color="black" />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => router.push("/(user)/profile/settings/Settings")}
+                onPress={() => router.push("/(user)/profile/settings/settings")}
                 className="h-10 w-10 bg-white rounded-full items-center justify-center"
               >
                 <Ionicons name="settings-outline" size={20} color="black" />
