@@ -1,6 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
 import SettingsCard from "@/components/ui/cards/SettingsCard";
+import LogoutDeletModal from "@/components/ui/modals/LogoutDeletModal";
 import {
   Entypo,
   FontAwesome5,
@@ -11,13 +12,56 @@ import {
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Settings = () => {
+  const delImg = require("@/assets/images/trash.svg");
+  const logOutImg = require("@/assets/images/Logout.svg");
+  const [isModal, setIsModal] = useState(false);
+  const [data, setData] = useState<{
+    img: any;
+    title: string;
+    subtitle: string;
+    color?: string;
+    border?: string;
+    buttonName?: string;
+    buttonColor?: string;
+  }>();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const delData = {
+    title: "Are you sure you want to delete your account?",
+    subtitle:
+      "Once deleted, all your data including shifts, chats, and profile will be permanently removed.",
+    img: delImg,
+    color: "#F34F4F26",
+    border: "#F34F4F",
+    buttonName: "Delete",
+    buttonColor: "#F34F4F",
+  };
+  const logOutData = {
+    title: "Are you sure you want to Logout your account?",
+    subtitle:
+      "You will be signed out from your account. Your data will remain safe and intact.",
+    img: logOutImg,
+    color: "#E5F4FD",
+    border: "#4FB2F3",
+    buttonName: "Logour",
+    buttonColor: "#11293A",
+  };
+  console.log(data);
+
+  const handleClick = (e: string) => {
+    if (e === "delete") {
+      setData(delData);
+      setIsModal(true);
+    } else if (e === "logout") {
+      setData(logOutData);
+      setIsModal(true);
+    }
+  };
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -78,6 +122,9 @@ const Settings = () => {
           />
 
           <SettingsCard
+            click={() =>
+              router.push("/(user)/profile/settings/subscription/subscription")
+            }
             icon={
               <MaterialCommunityIcons
                 name="crown-outline"
@@ -131,6 +178,7 @@ const Settings = () => {
             }
           />
           <SettingsCard
+            click={() => router.push("/(user)/profile/settings/info")}
             icon={<SimpleLineIcons name="info" size={22} color="black" />}
             text="App Info"
             className="mt-5"
@@ -138,17 +186,22 @@ const Settings = () => {
               <Entypo name="chevron-thin-right" size={20} color="#111111" />
             }
           />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleClick("delete")}>
             <Text className="text-[#F34F4F] font-proximanova-bold mt-5">
               Delete Account
             </Text>
           </TouchableOpacity>
           <View className="border-b-2 border-[#EEEEEE] mt-5" />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => handleClick("logout")}>
             <Text className="text-[#4FB2F3] font-proximanova-bold mt-5">
               Log Out
             </Text>
           </TouchableOpacity>
+          <LogoutDeletModal
+            visible={isModal}
+            onClose={() => setIsModal(false)}
+            data={data}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>
