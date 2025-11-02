@@ -2,7 +2,6 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
 import SettingsCard from "@/components/ui/cards/SettingsCard";
 import {
-  AntDesign,
   Entypo,
   FontAwesome5,
   Ionicons,
@@ -21,10 +20,10 @@ const Settings = () => {
   const isDark = colorScheme === "dark";
   return (
     <SafeAreaView
-      className="flex-1 bg-[#FFFFFF]"
+      className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
       edges={["left", "right", "bottom"]}
     >
-      <View className="bg-[#E5F4FD] rounded-b-2xl pt-10 px-5">
+      <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-10 px-5">
         <ScreenHeader
           className="my-4"
           onPressBack={() => router.back()}
@@ -65,28 +64,15 @@ const Settings = () => {
           </View>
 
           {/* settings card */}
-          {/* <View>
-          <View className="flex-row justify-between items-center mt-8">
-            <View className="flex-row items-center gap-4">
-              <View className="bg-[#EEEEEE] h-[50px] w-[50px] justify-center items-center rounded-2xl border border-[#11293A1A]">
-                <Ionicons name="language-outline" size={24} color="#11293A" />
-              </View>
-              <Text className="text-primary dark:text-dark-primary font-proximanova-bold">
-                App Preferences
-              </Text>
-            </View>
-            <Entypo name="chevron-thin-right" size={20} color="#111111" />
-          </View>
-          <View className="border-b-2 border-[#EEEEEE] mt-5" />
-        </View> */}
 
           <SettingsCard
+            click={() => router.push("/(user)/profile/settings/preferences")}
             icon={
               <Ionicons name="language-outline" size={24} color="#11293A" />
             }
             className="mt-8"
             text="App Preferences"
-            aroIcon={
+            arrowIcon={
               <Entypo name="chevron-thin-right" size={20} color="#111111" />
             }
           />
@@ -101,7 +87,7 @@ const Settings = () => {
             }
             text="Subscription"
             className="mt-5"
-            aroIcon={
+            arrowIcon={
               <Entypo name="chevron-thin-right" size={20} color="#111111" />
             }
           />
@@ -110,33 +96,36 @@ const Settings = () => {
             icon={<Ionicons name="wallet-outline" size={24} color="#11293A" />}
             text="Refer and Earn"
             className="mt-5"
-            aroIcon={
+            arrowIcon={
               <Entypo name="chevron-thin-right" size={20} color="#111111" />
             }
           />
 
           <SettingsCard
+            click={() => router.push("/(user)/profile/settings/privacy")}
             icon={<SimpleLineIcons name="lock" size={24} color="black" />}
             text="Privacy Policy"
             className="mt-5"
-            aroIcon={
+            arrowIcon={
               <Entypo name="chevron-thin-right" size={20} color="#111111" />
             }
           />
 
           <SettingsCard
+            click={() => router.push("/(user)/profile/settings/terms")}
             icon={<Ionicons name="calendar-outline" size={24} color="black" />}
             text="Terms and Condition"
             className="mt-5"
-            aroIcon={
+            arrowIcon={
               <Entypo name="chevron-thin-right" size={20} color="#111111" />
             }
           />
           <SettingsCard
+            click={() => router.push("/(user)/profile/settings/support")}
             icon={<FontAwesome5 name="handshake" size={24} color="black" />}
             text="Help and Support"
             className="mt-5"
-            aroIcon={
+            arrowIcon={
               <Entypo name="chevron-thin-right" size={20} color="#111111" />
             }
           />
@@ -144,7 +133,7 @@ const Settings = () => {
             icon={<SimpleLineIcons name="info" size={22} color="black" />}
             text="App Info"
             className="mt-5"
-            aroIcon={
+            arrowIcon={
               <Entypo name="chevron-thin-right" size={20} color="#111111" />
             }
           />

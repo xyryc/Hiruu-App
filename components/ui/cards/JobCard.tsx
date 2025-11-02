@@ -48,10 +48,12 @@ const JobCard = ({ className, status }: JobCardProps) => {
 
       {/* location */}
       <View className="flex-row items-center justify-between gap-20">
-        <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
+        <View className="flex-row items-center gap-1.5">
           <SimpleLineIcons name="location-pin" size={12} color="black" />
-          New York, North Bergen
-        </Text>
+          <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
+            New York, North Bergen
+          </Text>
+        </View>
 
         <View className="flex-row">
           <Text className="text-xl font-proximanova-semibold text-primary">

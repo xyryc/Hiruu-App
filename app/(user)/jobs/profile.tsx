@@ -3,6 +3,9 @@ import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import JobApplyModal from "@/components/ui/modals/JobApplyModal";
 import {
+  Feather,
+  FontAwesome5,
+  FontAwesome6,
   Fontisto,
   Ionicons,
   MaterialCommunityIcons,
@@ -32,6 +35,7 @@ const JobProfile = () => {
 
       <ScreenHeader
         className="mx-5 pb-20"
+        title=""
         components={
           <Ionicons
             className="p-2 bg-white rounded-full"
@@ -58,6 +62,7 @@ const JobProfile = () => {
               contentFit="cover"
             />
           </View>
+
           {/* name */}
           <Text className="font-proximanova-semibold text-primary dark:text-dark-primary text-center mt-4">
             Farout Beach Club{" "}
@@ -66,7 +71,7 @@ const JobProfile = () => {
 
           <View className="flex-row items-center justify-center mt-2.5 gap-7">
             <View className="flex-row items-center gap-2.5 border-r-hairline border-[#7A7A7A] pr-7">
-              <SimpleLineIcons name="location-pin" size={20} color="#7A7A7A" />
+              <SimpleLineIcons name="location-pin" size={14} color="#7A7A7A" />
               <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
                 New York, North Bergen
               </Text>
@@ -92,10 +97,10 @@ const JobProfile = () => {
           {/* about the role */}
           <View className="mt-7">
             <View className="flex-row items-center gap-2">
-              <MaterialCommunityIcons
+              <Ionicons
                 className="p-2 bg-[#E5F4FD] rounded-full"
-                name="clipboard-check-outline"
-                size={20}
+                name="clipboard-outline"
+                size={18}
                 color="black"
               />
               <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
@@ -144,7 +149,7 @@ const JobProfile = () => {
           {/* hiring manager */}
           <View className="mt-7">
             <View className="flex-row items-center gap-2">
-              <SimpleLineIcons
+              <Feather
                 className="p-2 bg-[#E5F4FD] rounded-full"
                 name="user"
                 size={18}

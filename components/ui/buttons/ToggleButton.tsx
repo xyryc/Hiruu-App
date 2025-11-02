@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
 
-export const ToggleButton = ({ isOn, setIsOn, title }: any) => {
+export const ToggleButton = ({ isOn, setIsOn, title, className }: any) => {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -23,8 +23,8 @@ export const ToggleButton = ({ isOn, setIsOn, title }: any) => {
   });
 
   return (
-    <View className="flex-row items-center gap-4 mb-2">
-      <Text className="text-sm text-[#7A7A7A]">{title || "Half Day"}</Text>
+    <View className={`flex-row items-center gap-4 mb-2 ${className} `}>
+      <Text className="text-sm text-[#7A7A7A]">{title ? title : ""}</Text>
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => setIsOn(!isOn)}
