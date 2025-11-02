@@ -30,18 +30,24 @@ const UserRewards = () => {
       text1: "Complate",
       text2: "Profile",
       imageSource: require("@/assets/images/reward/complate-profile.svg"),
+      border: "#3EBF5A",
+      back: "#ECF9EF",
     },
     {
       coin: 20,
       text1: "Refer A",
       text2: "Friend",
       imageSource: require("@/assets/images/reward/refer-friend.svg"),
+      border: "#F3934F",
+      back: "#FEEFE5",
     },
     {
       coin: 30,
       text1: "Refer A",
       text2: "Business",
       imageSource: require("@/assets/images/reward/refer-business.svg"),
+      border: "#788CFF",
+      back: "#788CFF10",
     },
   ];
 
@@ -185,11 +191,19 @@ const UserRewards = () => {
                   key={index}
                   className="border-[#EEEEEE] border p-6 rounded-xl"
                 >
-                  <Image
-                    source={card.imageSource}
-                    contentFit="contain"
-                    style={{ height: 72, width: 61 }}
-                  />
+                  <View
+                    className=" h-[72px] w-[63px] border border-b-[3px] justify-between items-center flex-row rounded-xl"
+                    style={{
+                      backgroundColor: card.back,
+                      borderColor: card.border,
+                    }}
+                  >
+                    <Image
+                      source={card.imageSource}
+                      contentFit="contain"
+                      style={{ height: 57, width: 59 }}
+                    />
+                  </View>
                   <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-2.5 text-center ">
                     {card.text1}
                   </Text>

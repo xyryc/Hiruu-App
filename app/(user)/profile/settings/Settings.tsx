@@ -93,6 +93,7 @@ const Settings = () => {
           />
 
           <SettingsCard
+            click={() => router.push("/(user)/profile/settings/refer")}
             icon={<Ionicons name="wallet-outline" size={24} color="#11293A" />}
             text="Refer and Earn"
             className="mt-5"
