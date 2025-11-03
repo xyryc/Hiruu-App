@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import TestContact from "@/components/test/test";
-import ContactListWithLock from "@/components/test/test";
+import ContacrSection from "@/components/ui/cards/ContacrSection";
+import ContactListWithLock from "@/components/ui/cards/ContacrSection";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import {
   Entypo,
@@ -53,9 +53,10 @@ const refer = () => {
           iconColor={isDark ? "#fff" : "#111"}
         />
       </View>
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="mx-5">
-          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-5 ">
+          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-5">
             <Text className="font-proximanova-semibold">Note:</Text> Phone
             number verification is mandatory for any user who joins and wants to
             claim a reward.
@@ -164,10 +165,7 @@ const refer = () => {
             </View>
           </View>
 
-          {/* lock screen */}
-          <View>
-            <TestContact />
-          </View>
+          <ContacrSection />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,5 +1,4 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import PlanCard from "@/components/test/BusinessPlanCgart";
 import PricingTable from "@/components/test/BusinessPlanCgart";
 import BusinessDropdown from "@/components/ui/modals/BusinessDropdownModal";
 import { router } from "expo-router";

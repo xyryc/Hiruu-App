@@ -75,7 +75,7 @@ const UserPlan = () => {
             onPress={() =>
               setSelectedPlan(selectedPlan === "monthly" ? null : "monthly")
             }
-            className={`${selectedPlan === "monthly" && "bg-[#a59de9] border-[#4E57FF]"} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
+            className={`${selectedPlan === "monthly" && "bg-[#4fb1f333] border-[#4E57FF]"} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
           >
             <View className="flex-row gap-3">
               <View
