@@ -76,7 +76,9 @@ const Subscription = () => {
               </Text>
             </View>
           </View>
-          <View className="border border-[#EEEEEE] rounded-2xl">
+
+          {/* business plan */}
+          <View className="border border-[#EEEEEE] rounded-2xl mt-4">
             <View className="px-2.5 py-5 flex-row gap-3">
               <View className="h-[50px] w-[50px] bg-[#11293A1A] rounded-xl flex-row justify-center items-center">
                 <MaterialCommunityIcons
@@ -123,6 +125,10 @@ const Subscription = () => {
 
           <View className="border px-3 rounded-2xl border-[#EEEEEE] mt-5">
             <SettingsCard
+              click={() =>
+                router.push("/(user)/profile/settings/subscription/user-plan")
+              }
+              border={true}
               icon={
                 <Feather
                   name="user"
@@ -131,9 +137,9 @@ const Subscription = () => {
                   color="black"
                 />
               }
-              text="Subscription"
+              text="User plan"
               subtitle="Mobile"
-              className="mt-5"
+              className="my-5"
               arrowIcon={
                 <Entypo name="chevron-thin-right" size={20} color="#111111" />
               }
@@ -141,11 +147,13 @@ const Subscription = () => {
           </View>
           <View className="border px-3 rounded-2xl border-[#EEEEEE] mt-2.5">
             <SettingsCard
+              border={true}
               icon={
                 <SimpleLineIcons name="briefcase" size={24} color="black" />
               }
-              text="Subscription"
-              className="mt-5"
+              text="Business plan "
+              subtitle="Mobile"
+              className="my-5"
               arrowIcon={
                 <Entypo name="chevron-thin-right" size={20} color="#111111" />
               }

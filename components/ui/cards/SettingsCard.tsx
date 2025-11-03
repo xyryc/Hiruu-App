@@ -9,6 +9,7 @@ type SettingsCardProps = {
   className?: string;
   click?: any;
   subtitle?: string;
+  border?: boolean;
 };
 
 const SettingsCard = ({
@@ -18,6 +19,7 @@ const SettingsCard = ({
   className,
   click,
   subtitle,
+  border,
 }: SettingsCardProps) => {
   return (
     <TouchableOpacity onPress={click} className={`${className}`}>
@@ -42,7 +44,7 @@ const SettingsCard = ({
         {arrowIcon}
         {/* <Entypo name="chevron-thin-right" size={20} color="#111111" /> */}
       </View>
-      <View className="border-b-2 border-[#EEEEEE] mt-5" />
+      {border || <View className="border-b-2 border-[#EEEEEE] mt-5" />}
     </TouchableOpacity>
   );
 };
