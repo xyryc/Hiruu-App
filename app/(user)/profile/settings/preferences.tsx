@@ -35,92 +35,86 @@ const preferences = () => {
         />
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="mx-5">
-          {/* settings card */}
+      <ScrollView showsVerticalScrollIndicator={false} className="px-5">
+        {/* settings card */}
+        <SettingsCard
+          subtitle="English"
+          //   click={() => router.push("/(user)/profile/settings/preferences")}
+          icon={<Ionicons name="language-outline" size={24} color="#11293A" />}
+          className="mt-8"
+          text="App Preferences"
+          arrowIcon={
+            <Entypo name="chevron-thin-down" size={20} color="black" />
+          }
+        />
 
-          <SettingsCard
-            subtitle="English"
-            //   click={() => router.push("/(user)/profile/settings/preferences")}
-            icon={
-              <Ionicons name="language-outline" size={24} color="#11293A" />
-            }
-            className="mt-8"
-            text="App Preferences"
-            arrowIcon={
-              <Entypo name="chevron-thin-down" size={20} color="black" />
-            }
-          />
+        <SettingsCard
+          subtitle="Notify me 3 hours before shift"
+          //   click={() => router.push("/(user)/profile/settings/preferences")}
+          icon={<Ionicons name="alarm-outline" size={24} color="black" />}
+          className="mt-4"
+          text="Smart Alarm"
+          arrowIcon={
+            <ToggleButton isOn={isOn} setIsOn={() => setIsOn(!isOn)} />
+          }
+        />
 
-          <SettingsCard
-            subtitle="Notify me 3 hours before shift"
-            //   click={() => router.push("/(user)/profile/settings/preferences")}
-            icon={<Ionicons name="alarm-outline" size={24} color="black" />}
-            className="mt-8"
-            text="Smart Alarm"
-            arrowIcon={
-              <ToggleButton isOn={isOn} setIsOn={() => setIsOn(!isOn)} />
-            }
-          />
+        <SettingsCard
+          subtitle="Asia/kolkata"
+          //   click={() => router.push("/(user)/profile/settings/preferences")}
+          icon={<AntDesign name="global" size={24} color="black" />}
+          className="mt-4"
+          text="Time Zone"
+          arrowIcon={
+            <Entypo name="chevron-thin-down" size={20} color="black" />
+          }
+        />
 
-          <SettingsCard
-            subtitle="Asia/kolkata"
-            //   click={() => router.push("/(user)/profile/settings/preferences")}
-            icon={<AntDesign name="global" size={24} color="black" />}
-            className="mt-8"
-            text="Time Zone"
-            arrowIcon={
-              <Entypo name="chevron-thin-down" size={20} color="black" />
-            }
-          />
+        <SettingsCard
+          //   click={() => router.push("/(user)/profile/settings/preferences")}
+          icon={<Ionicons name="volume-high-outline" size={24} color="black" />}
+          className="mt-4"
+          text="App Sound"
+          arrowIcon={
+            <ToggleButton
+              isOn={isSoundOn}
+              setIsOn={() => setIsSoundOn(!isSoundOn)}
+            />
+          }
+        />
 
-          <SettingsCard
-            //   click={() => router.push("/(user)/profile/settings/preferences")}
-            icon={
-              <Ionicons name="volume-high-outline" size={24} color="black" />
-            }
-            className="mt-8"
-            text="App Sound"
-            arrowIcon={
-              <ToggleButton
-                isOn={isSoundOn}
-                setIsOn={() => setIsSoundOn(!isSoundOn)}
-              />
-            }
-          />
+        <SettingsCard
+          //   click={() => router.push("/(user)/profile/settings/preferences")}
+          icon={
+            <MaterialCommunityIcons
+              name="water-opacity"
+              size={24}
+              color="black"
+            />
+          }
+          className="mt-4"
+          text="Theme Mode"
+          subtitle="Light Mode"
+          arrowIcon={<AnimatedThemeToggle />}
+        />
 
-          <SettingsCard
-            //   click={() => router.push("/(user)/profile/settings/preferences")}
-            icon={
-              <MaterialCommunityIcons
-                name="water-opacity"
-                size={24}
-                color="black"
-              />
-            }
-            className="mt-8"
-            text="Theme Mode"
-            subtitle="Light Mode"
-            arrowIcon={<AnimatedThemeToggle />}
-          />
+        <SettingsCard
+          icon={
+            <MaterialCommunityIcons
+              name="calendar-multiselect-outline"
+              size={24}
+              color="black"
+            />
+          }
+          className="mt-4"
+          text="Available Working Days"
+          arrowIcon={
+            <Entypo name="chevron-thin-down" size={16} color="black" />
+          }
+        />
 
-          <SettingsCard
-            icon={
-              <MaterialCommunityIcons
-                name="calendar-multiselect-outline"
-                size={24}
-                color="black"
-              />
-            }
-            className="mt-8"
-            text="Available Working Days"
-            arrowIcon={
-              <Entypo name="chevron-thin-down" size={20} color="black" />
-            }
-          />
+        <View className="mt-4"></View>
 
-          <View className=" mt-4"></View>
-        </View>
         <WeeklySchedule />
       </ScrollView>
     </SafeAreaView>

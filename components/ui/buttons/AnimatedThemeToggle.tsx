@@ -1,5 +1,5 @@
 import { useTheme } from "@/contexts/ThemeContext";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import React, { useEffect } from "react";
 import { Animated, TouchableOpacity, View } from "react-native";
 
@@ -25,7 +25,7 @@ export const AnimatedThemeToggle = () => {
 
   const translateX = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [4, 28], // 4px to 28px (56px width - 24px circle - 4px padding)
+    outputRange: [2, 24], // 4px to 28px (56px width - 24px circle - 4px padding)
   });
 
   const backgroundColor = animatedValue.interpolate({
@@ -34,16 +34,16 @@ export const AnimatedThemeToggle = () => {
   });
 
   return (
-    <View className="flex-row items-center space-x-4">
+    <View className="flex-row items-center gap-1.5">
       {/* Moon Icon */}
-      <Ionicons name="moon" size={24} color={isDark ? "#FFFFFF" : "#9CA3AF"} />
+      <Feather name="moon" size={24} color={isDark ? "#9CA3AF" : "#7A7A7A"} />
 
       {/* Animated Toggle Switch */}
       <TouchableOpacity onPress={toggleTheme} activeOpacity={0.8}>
         <Animated.View
           style={{
-            width: 56,
-            height: 32,
+            width: 44,
+            height: 22,
             borderRadius: 16,
             backgroundColor,
             justifyContent: "center",
@@ -51,9 +51,9 @@ export const AnimatedThemeToggle = () => {
         >
           <Animated.View
             style={{
-              width: 24,
-              height: 24,
-              borderRadius: 12,
+              width: 18,
+              height: 18,
+              borderRadius: 14,
               backgroundColor: "white",
               transform: [{ translateX }],
               shadowColor: "#000",
@@ -67,7 +67,7 @@ export const AnimatedThemeToggle = () => {
       </TouchableOpacity>
 
       {/* Sun Icon */}
-      <Ionicons name="sunny" size={24} color={isDark ? "#9CA3AF" : "#F59E0B"} />
+      <Ionicons name="sunny" size={24} color={isDark ? "#9CA3AF" : "#7A7A7A"} />
     </View>
   );
 };

@@ -1,11 +1,11 @@
 import { Image } from "expo-image";
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import PrimaryButton from "../ui/buttons/PrimaryButton";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 
 const TestContact = () => {
   const [isLock, setIsLock] = useState(true);
+
   const contacts = [
     {
       id: 1,
@@ -35,19 +35,19 @@ const TestContact = () => {
 
   return (
     <View className="flex-1">
-      <Text
-        className="font-proximanova-semibold text-xl mt-4 text-primary dark:text-dark-primary mb-4"
-        style={isLock && { opacity: 0.4 }}
-      >
+      <View>
+        <MaterialCommunityIcons name="lock" size={24} color="black" />
+      </View>
+      <Text className="font-proximanova-semibold text-xl mt-4 text-primary dark:text-dark-primary mb-4">
         {isLock ? "Allow Access to Contact" : "Invite from Contact"}
       </Text>
-      <View style={{ position: "relative" }}>
+      <View style={{ position: "relative" }} className="">
         {/* Content */}
-        <View className="" style={isLock && styles.blurContainer}>
+        <View style={isLock && styles.blurContainer}>
           {contacts.map((contact, index) => (
             <View
               key={index}
-              className="flex-row justify-between mt-5"
+              className="flex-row justify-between mb-5"
               style={isLock && { opacity: 0.4 }}
             >
               <View className="flex-row items-center gap-3">
@@ -92,23 +92,21 @@ const TestContact = () => {
       </View>
 
       {isLock && (
-        <View className="-mt-6">
-          <TouchableOpacity
-            onPress={() => setIsLock(false)}
-            className={` p-0.5 bg-[#fffff] rounded-full border flex-row items-center justify-center  pl-10`}
-          >
-            <Text className="text-black text-center font-proximanova-semibold flex-1">
-              Grant Permission
-            </Text>
+        <TouchableOpacity
+          onPress={() => setIsLock(false)}
+          className={`p-0.5 bg-[#fffff] rounded-full border flex-row items-center justify-center  pl-10  absolute bottom-10`}
+        >
+          <Text className="text-black text-center font-proximanova-semibold flex-1">
+            Grant Permission
+          </Text>
 
-            <Feather
-              name="arrow-right"
-              size={24}
-              color="#000000"
-              className="p-2 bg-white rounded-full"
-            />
-          </TouchableOpacity>
-        </View>
+          <Feather
+            name="arrow-right"
+            size={24}
+            color="#000000"
+            className="p-2 bg-white rounded-full"
+          />
+        </TouchableOpacity>
       )}
     </View>
   );

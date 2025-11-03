@@ -24,6 +24,13 @@ export interface SmallButtonProps {
   textClass?: string;
 }
 
+export interface GradientButtonProps {
+  className?: string;
+  title: string;
+  icon: React.JSX.Element;
+  onPress?: (event: GestureResponderEvent) => void;
+}
+
 export interface TitleHeaderProps {
   className?: string;
   title: string;

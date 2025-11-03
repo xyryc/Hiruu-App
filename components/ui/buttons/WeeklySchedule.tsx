@@ -103,12 +103,14 @@ const WeeklySchedule = () => {
             {day}
           </Text>
 
-          <ToggleButton isOn={dayData.isOn} setIsOn={() => toggleDay(day)} />
+          {/* <ToggleButton isOn={dayData.isOn} setIsOn={() => toggleDay(day)} /> */}
         </View>
 
         {/* Right side: Time pickers or Closed */}
         {dayData.isOn ? (
           <View className="flex-row items-center gap-2">
+            <ToggleButton isOn={dayData.isOn} setIsOn={() => toggleDay(day)} />
+
             <TimePicker
               time={dayData.startTime}
               onTimeChange={(time) => updateTime(day, "startTime", time)}
@@ -122,14 +124,19 @@ const WeeklySchedule = () => {
             />
           </View>
         ) : (
-          <Text className="text-sm text-red-500">Closed</Text>
+          <View className="flex-row items-center gap-4">
+            <Text className="text-xs font-proximanova-semibold text-[#F34F4F]">
+              Closed
+            </Text>
+            <ToggleButton isOn={dayData.isOn} setIsOn={() => toggleDay(day)} />
+          </View>
         )}
       </View>
     );
   };
 
   return (
-    <View className="bg-white dark:bg-dark-background rounded-xl p-4 m-5">
+    <View className="bg-white dark:bg-dark-background rounded-xl p-4 border border-[#EEEEEE]">
       {Object.keys(schedule).map((day) => renderDayRow(day))}
     </View>
   );

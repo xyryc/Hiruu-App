@@ -24,6 +24,10 @@ interface BusinessDropdownProps {
   options: Option[];
   value?: string;
   onSelect: (value: string) => void;
+  className?: string;
+  hideSelectedText?: boolean; // New prop to hide text when selected
+  imageHeight?: number; // Custom height for avatar image
+  imageWidth?: number; // Custom width for avatar image
 }
 
 const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
@@ -32,6 +36,10 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
   options,
   value,
   onSelect,
+  className,
+  hideSelectedText = false, // Default false to maintain existing behavior
+  imageHeight = 35, // Default height
+  imageWidth = 35, // Default width
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -54,7 +62,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
   const selectedOption = options.find((o) => o.value === value);
 
   return (
-    <View>
+    <View className={`${className}`}>
       {label && (
         <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary mb-2">
           {label}
@@ -70,18 +78,21 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
             <Image
               source={selectedOption.avatar}
               contentFit="contain"
-              style={{ height: 35, width: 35 }}
+              style={{ height: imageHeight, width: imageWidth }}
             />
           )}
-          <Text
-            className={`text-sm ml-5 ${
-              value
-                ? "text-primary dark:text-dark-primary"
-                : "text-placeholder dark:text-dark-placeholder"
-            }`}
-          >
-            {selectedOption?.label || placeholder}
-          </Text>
+          {/* Conditionally render text based on hideSelectedText prop */}
+          {!(hideSelectedText && value) && (
+            <Text
+              className={`text-sm ml-5 ${
+                value
+                  ? "text-primary dark:text-dark-primary"
+                  : "text-placeholder dark:text-dark-placeholder"
+              }`}
+            >
+              {selectedOption?.label || placeholder}
+            </Text>
+          )}
         </View>
         <Ionicons name="chevron-down" size={18} color="#7D7D7D" />
       </TouchableOpacity>

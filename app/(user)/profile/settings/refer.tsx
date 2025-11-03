@@ -12,7 +12,7 @@ import {
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -107,6 +107,7 @@ const refer = () => {
           <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary mt-7">
             Share Via
           </Text>
+
           <View className="flex-row justify-between">
             {/* copy */}
             <View className="mt-4 items-center">

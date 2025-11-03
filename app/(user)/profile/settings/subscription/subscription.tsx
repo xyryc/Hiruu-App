@@ -147,6 +147,11 @@ const Subscription = () => {
           </View>
           <View className="border px-3 rounded-2xl border-[#EEEEEE] mt-2.5">
             <SettingsCard
+              click={() =>
+                router.push(
+                  "/(user)/profile/settings/subscription/business-plan"
+                )
+              }
               border={true}
               icon={
                 <SimpleLineIcons name="briefcase" size={24} color="black" />
