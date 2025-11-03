@@ -9,8 +9,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const UserPlan = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-  const [selectMontly, setSelectMontly] = useState(false);
-  const [selectAnnualy, setSelectAnnuly] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual" | null>(
+    null
+  );
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -25,7 +27,7 @@ const UserPlan = () => {
           iconColor={isDark ? "#fff" : "#111"}
         />
       </View>
-      <View className="mx-5 mt-8">
+      <View className="flex-1 mx-5 mt-8">
         <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
           Premium Benefits
         </Text>
@@ -40,7 +42,7 @@ const UserPlan = () => {
             </Text>
           </View>
 
-          {/* text icon 1 */}
+          {/* text icon 2 */}
           <View className="flex-row gap-3 mt-3">
             <View className="bg-[#4FB2F3] h-6 w-6 flex-row justify-center items-center rounded-full">
               <Feather name="check" size={14} color="white" />
@@ -50,7 +52,7 @@ const UserPlan = () => {
             </Text>
           </View>
 
-          {/* text icon 1 */}
+          {/* text icon 3 */}
           <View className="flex-row gap-3 mt-3">
             <View className="bg-[#4FB2F3] h-6 w-6 flex-row justify-center items-center rounded-full">
               <Feather name="check" size={14} color="white" />
@@ -65,16 +67,18 @@ const UserPlan = () => {
           Choose your Plan
         </Text>
         <View>
-          {/*  */}
+          {/* Monthly Plan */}
           <TouchableOpacity
-            onPress={() => setSelectMontly(!selectMontly)}
-            className={` ${selectMontly && "bg-[#5b60bb]"} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
+            onPress={() =>
+              setSelectedPlan(selectedPlan === "monthly" ? null : "monthly")
+            }
+            className={`${selectedPlan === "monthly" && "bg-[#a59de9] border-[#4E57FF]"} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
           >
             <View className="flex-row gap-3">
               <View
-                className={`h-6 w-6 flex-row justify-center items-center ${selectMontly ? "bg-[#4FB2F3] rounded-full" : "border rounded-full"} `}
+                className={`h-6 w-6 flex-row justify-center items-center ${selectedPlan === "monthly" ? "bg-[#4FB2F3] rounded-full" : "border rounded-full"}`}
               >
-                {selectMontly && (
+                {selectedPlan === "monthly" && (
                   <Feather name="check" size={14} color="white" />
                 )}
               </View>
@@ -87,16 +91,23 @@ const UserPlan = () => {
             </Text>
           </TouchableOpacity>
 
-          {/*  */}
+          {/* Annual Plan */}
           <TouchableOpacity
-            onPress={() => setSelectAnnuly(!selectAnnualy)}
-            className={` ${selectAnnualy && "bg-[#5b60bb]"} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
+            onPress={() =>
+              setSelectedPlan(selectedPlan === "annual" ? null : "annual")
+            }
+            className={`${selectedPlan === "annual" && "bg-[#a59de9] border-[#4E57FF] "} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
           >
             <View className="flex-row gap-3">
+              <View className="absolute bottom-10 py-0.5 px-3 bg-[#4FB2F3] rounded-3xl">
+                <Text className="font-proximanova-semibold text-sm text-[#FFFFFF]">
+                  Featured
+                </Text>
+              </View>
               <View
-                className={`h-6 w-6 flex-row justify-center items-center ${selectAnnualy ? "bg-[#4FB2F3] rounded-full" : "border rounded-full"} `}
+                className={`h-6 w-6 flex-row justify-center items-center ${selectedPlan === "annual" ? "bg-[#4FB2F3] rounded-full" : "border rounded-full"}`}
               >
-                {selectAnnualy && (
+                {selectedPlan === "annual" && (
                   <Feather name="check" size={14} color="white" />
                 )}
               </View>
@@ -104,11 +115,40 @@ const UserPlan = () => {
                 Annual Plan
               </Text>
             </View>
-            <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary">
-              $120
-            </Text>
+            <View className="flex-row gap-1.5">
+              <View className="px-2 items-center justify-center bg-yellow-500 rounded-full">
+                <Text className="font-proximanova-semibold text-sm ">
+                  17% OFF
+                </Text>
+              </View>
+              <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary">
+                <Text className="line-through font-proximanova-regular">
+                  $144
+                </Text>{" "}
+                $120
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
+      </View>
+
+      {/* Bottom Section - Subscription Text and Button */}
+      <View className="mx-5 mb-6">
+        {/* Subscription Text */}
+        <Text className="text-center text-secondary dark:text-dark-secondary text-sm mb-4">
+          subscription auto-renews until manually cancelled.
+        </Text>
+
+        {/* Subscribe Button */}
+        <TouchableOpacity
+          className="bg-[#4FB2F3] py-4 rounded-2xl"
+          disabled={!selectedPlan}
+          style={{ opacity: selectedPlan ? 1 : 0.5 }}
+        >
+          <Text className="text-center text-white font-proximanova-bold text-base">
+            Subscribe Now
+          </Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
