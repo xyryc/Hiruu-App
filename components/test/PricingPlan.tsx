@@ -1,6 +1,11 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import FreeIcon from "@/assets/images/subscription/free.svg";
+import StarterIcon from "@/assets/images/subscription/starter.svg";
+import GrowthIcon from "@/assets/images/subscription/growth.svg";
+import ProIcon from "@/assets/images/subscription/pro.svg";
 
 const PricingPlans = () => {
   const [selectedPlan, setSelectedPlan] = useState("free");
@@ -23,7 +28,7 @@ const PricingPlans = () => {
     {
       id: "free",
       name: "Free",
-      icon: "📦",
+      icon: FreeIcon,
       memberLimit: 10,
       features: [
         { feature1: true },
@@ -38,7 +43,7 @@ const PricingPlans = () => {
     {
       id: "starter",
       name: "Starter",
-      icon: "⭐",
+      icon: StarterIcon,
       memberLimit: 10,
       features: [
         { feature1: true },
@@ -53,7 +58,7 @@ const PricingPlans = () => {
     {
       id: "growth",
       name: "Growth",
-      icon: "💎",
+      icon: GrowthIcon,
       memberLimit: 25,
       features: [
         { feature1: true },
@@ -68,7 +73,7 @@ const PricingPlans = () => {
     {
       id: "pro",
       name: "Pro",
-      icon: "⚡",
+      icon: ProIcon,
       memberLimit: 50,
       features: [
         { feature1: true },
@@ -85,7 +90,7 @@ const PricingPlans = () => {
   return (
     <View className="flex-row p-4">
       {/* feature list */}
-      <View className="w-36">
+      <View className="w-36 flex-1 border">
         <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary mb-2">
           Member Limit
         </Text>
@@ -114,43 +119,65 @@ const PricingPlans = () => {
       </View>
 
       {/* plans */}
-      <View className="flex-row">
+      <View className="flex-row border">
         {plans.map((plan) => (
           <TouchableOpacity
             key={plan.id}
-            className={`w-12 rounded-lg ${
+            className={`w-12 rounded-lg items-center ${
               selectedPlan === plan.id
                 ? "border border-[#CFA873] bg-[#F7EDC0]"
                 : "border border-[#EEEEEE] bg-white"
             }`}
             onPress={() => handleSelect(plan.id)}
           >
-            <Text className="text-center text-2xl mb-2">{plan.icon}</Text>
+            <Image
+              source={plan.icon}
+              style={{
+                width: 26,
+                height: 26,
+                marginBottom: 8,
+              }}
+              contentFit="contain"
+            />
+
             <Text className="text-center font-bold text-xs mb-3.5">
               {plan.name}
             </Text>
+
+            {/* line */}
+            <View className="border-[#11111130] border-b h-[1px] w-8 rounded-full mb-2.5" />
+
             <Text className="text-center mb-3 text-gray-700">
               {plan.memberLimit}
             </Text>
 
             {/* Features */}
-            <View className="mt-2">
+            <View className="mt-2 items-center">
               {plan.features.map((feature, index) => (
-                <View key={index} className="flex-row items-center mb-1">
-                  <Text className="mr-2 text-green-600">✓</Text>
-                  <Text className="text-xs text-gray-700">{feature}</Text>
+                <View key={index} className="flex-row items-center">
+                  <Text className="text-primary">
+                    {feature.feature1 ? "✓" : "-"}
+                  </Text>
                 </View>
               ))}
             </View>
 
             {/* Selection indicator */}
-            <View className="mt-4 flex-row justify-center absolute -bottom-3 left-1/2 -translate-x-[70%]">
+            <View className="mt-4 flex-row justify-center absolute -bottom-3 left-1/2 -translate-x-[50%]">
               {selectedPlan === plan.id ? (
-                <View className="w-6 h-6 rounded-full bg-blue-600 justify-center items-center">
-                  <Text className="text-white text-xs">✓</Text>
-                </View>
+                <Ionicons
+                  className="bg-white rounded-full"
+                  name="checkmark-circle"
+                  size={24}
+                  color="#11293A"
+                />
               ) : (
-                <View className="w-6 h-6 bg-white rounded-full border border-gray-400" />
+                <Ionicons
+                  className="bg-white"
+                  name="radio-button-off-sharp"
+                  size={24}
+                  color="#7A7A7A"
+                />
               )}
             </View>
           </TouchableOpacity>

@@ -34,7 +34,7 @@ const BusinessPlan = () => {
   const displayContent = getDisplayContent();
 
   const insets = useSafeAreaInsets();
-  console.log(insets.top);
+  // console.log(insets.top);
 
   return (
     <SafeAreaView
@@ -81,7 +81,7 @@ const BusinessPlan = () => {
         </View>
       </View>
 
-      {/* <BusinessPlanChart /> */}
+      <BusinessPlanChart />
 
       {/* modal */}
       <BusinessSelectionModal
