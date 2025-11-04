@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import NotificationCard from "@/components/test/NotificationCard";
+import NotificationCard from "@/components/ui/cards/NotificationCard";
+import NotificationModal from "@/components/ui/modals/NotificationModal";
 import { Entypo, EvilIcons, Feather, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -10,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const NotificationScreen = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const [modalVisible, setModalVisible] = React.useState(false);
 
   return (
     <SafeAreaView
@@ -17,14 +19,14 @@ const NotificationScreen = () => {
       edges={["left", "right", "bottom"]}
     >
       {/* Header */}
-      <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-10 px-5 pb-4">
+      <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-14 px-5 pb-4">
         <ScreenHeader
           onPressBack={() => router.back()}
           title="Notifications"
           titleClass="text-primary dark:text-dark-primary"
           iconColor={isDark ? "#fff" : "#111"}
           components={
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
               <Entypo name="dots-three-vertical" size={20} color="black" />
             </TouchableOpacity>
           }
@@ -97,6 +99,10 @@ const NotificationScreen = () => {
           iconBackgroundColor="#F3934F4D"
         />
       </ScrollView>
+      <NotificationModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };
