@@ -1,11 +1,12 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import PricingTable from "@/components/test/BusinessPlanCgart";
-import BusinessDropdown from "@/components/ui/modals/BusinessDropdownModal";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import { View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import PricingPlans from "@/components/test/PricingPlan";
+import BusinessDropdown from "@/components/ui/modals/BusinessDropdownModal";
+import BusinessPlanChart from "@/components/test/PricingPlan";
 
 const BusinessPlan = () => {
   const leaveTypes = [
@@ -67,12 +68,9 @@ const BusinessPlan = () => {
             imageWidth={20}
           />
         </View>
-        <View>
-          <View className="w-full">
-            <PricingTable />
-          </View>
-        </View>
       </View>
+
+      <BusinessPlanChart />
     </SafeAreaView>
   );
 };
