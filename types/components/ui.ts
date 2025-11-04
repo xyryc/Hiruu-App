@@ -1,6 +1,6 @@
 import { ImageSource } from "expo-image";
 import { Dispatch, ReactElement, SetStateAction } from "react";
-import { GestureResponderEvent } from "react-native";
+import { GestureResponderEvent, ViewStyle } from "react-native";
 
 export interface PrimaryButtonProps {
   className?: string;
@@ -239,6 +239,7 @@ export interface ScreenHeaderProps {
   buttonTitle?: string;
   onPress?: () => void;
   className?: string;
+  style?: ViewStyle;
   components?: React.ReactNode;
 }
 

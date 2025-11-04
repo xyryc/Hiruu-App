@@ -12,13 +12,17 @@ const ScreenHeader = ({
   buttonTitle,
   onPress,
   className,
+  style,
   components,
 }: ScreenHeaderProps) => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
   return (
-    <View className={`${className} flex-row justify-between items-center`}>
+    <View
+      style={style}
+      className={`${className} flex-row justify-between items-center`}
+    >
       {/* left */}
       <View className="flex-row items-center gap-2.5">
         <TouchableOpacity onPress={onPressBack} className="p-1">

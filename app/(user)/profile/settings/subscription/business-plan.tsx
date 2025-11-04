@@ -2,75 +2,95 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { View, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import PricingPlans from "@/components/test/PricingPlan";
-import BusinessDropdown from "@/components/ui/modals/BusinessDropdownModal";
+import { View, Text, TouchableOpacity } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import BusinessPlanChart from "@/components/test/PricingPlan";
+import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
+import businesses from "@/assets/data/businesses.json";
+import { SimpleLineIcons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 
 const BusinessPlan = () => {
-  const leaveTypes = [
-    {
-      label: "Sick Leave",
-      value: "sick",
-      avatar:
-        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-    },
-    {
-      label: "Personal Leave",
-      value: "personal",
-      avatar:
-        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-    },
-    {
-      label: "Work From Home",
-      value: "wfh",
-      avatar:
-        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-    },
-    {
-      label: "Emergency Leave",
-      value: "emergency",
-      avatar:
-        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-    },
-  ];
-  const [selectedLeave, setSelectedLeave] = useState<string>("");
+  const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
+  const [showModal, setShowModal] = useState(false);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  // Get display content for header button
+  const getDisplayContent = () => {
+    if (selectedBusinesses.length === 0) {
+      return { type: "all", content: "All" };
+    } else if (selectedBusinesses.length === 1) {
+      const selectedBusiness = businesses.find(
+        (b) => b.id === selectedBusinesses[0]
+      );
+      return { type: "single", content: selectedBusiness };
+    }
+  };
+
+  const displayContent = getDisplayContent();
+
+  const insets = useSafeAreaInsets();
+  console.log(insets.top);
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
       edges={["left", "right", "bottom"]}
     >
-      <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-10 px-5">
-        <ScreenHeader
-          className="my-4"
-          onPressBack={() => router.back()}
-          title="Business Plan"
-          titleClass="text-primary dark:text-dark-primary"
-          iconColor={isDark ? "#fff" : "#111"}
-        />
-      </View>
+      <ScreenHeader
+        style={{ paddingTop: insets.top + 10 }}
+        className="pb-6 bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+        onPressBack={() => router.back()}
+        title="Business Plan"
+        titleClass="text-primary dark:text-dark-primary"
+        iconColor={isDark ? "#fff" : "#111"}
+      />
+
       <View className="mx-5">
         <View className="flex-row justify-between mt-4 items-center">
           <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
             Select your business
           </Text>
-          <BusinessDropdown
-            className="w-16 h-8"
-            placeholder="Select"
-            options={leaveTypes}
-            value={selectedLeave}
-            onSelect={(value: any) => setSelectedLeave(value)}
-            hideSelectedText={true}
-            imageHeight={20}
-            imageWidth={20}
-          />
+
+          <TouchableOpacity
+            onPress={() => setShowModal(true)}
+            className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
+          >
+            {displayContent?.type === "all" ? (
+              <View className="pl-2.5 py-1.5">
+                <Text className="font-semibold text-sm text-primary">All</Text>
+              </View>
+            ) : (
+              <Image
+                source={displayContent?.content?.imageUrl}
+                style={{ width: 30, height: 30, borderRadius: 999 }}
+                contentFit="cover"
+              />
+            )}
+            <SimpleLineIcons
+              className="p-1.5"
+              name="arrow-down"
+              size={12}
+              color="#111111"
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
-      <BusinessPlanChart />
+      {/* <BusinessPlanChart /> */}
+
+      {/* modal */}
+      <BusinessSelectionModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        businesses={businesses}
+        selectedBusinesses={selectedBusinesses}
+        onSelectionChange={setSelectedBusinesses}
+      />
     </SafeAreaView>
   );
 };
