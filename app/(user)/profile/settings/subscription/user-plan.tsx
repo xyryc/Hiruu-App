@@ -1,19 +1,17 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import GradientButton from "@/components/ui/buttons/GradientButton";
-import { Feather, FontAwesome6 } from "@expo/vector-icons";
-import { Image } from "expo-image";
-import { LinearGradient } from "expo-linear-gradient";
+import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserPlan = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual" | null>(
-    null
+    "annual"
   );
 
   return (
@@ -30,7 +28,8 @@ const UserPlan = () => {
           iconColor={isDark ? "#fff" : "#111"}
         />
       </View>
-      <View className="flex-1 mx-5 mt-8">
+
+      <ScrollView className="flex-1 mx-5 mt-8">
         <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
           Premium Benefits
         </Text>
@@ -66,28 +65,34 @@ const UserPlan = () => {
             </Text>
           </View>
         </View>
+
         <Text className="font-proximanova-semibold text-xl text-primary mt-8 dark:text-dark-primary">
           Choose your Plan
         </Text>
-        <View>
+
+        <View className="mt-4">
           {/* Monthly Plan */}
           <TouchableOpacity
             onPress={() =>
               setSelectedPlan(selectedPlan === "monthly" ? null : "monthly")
             }
-            className={`${selectedPlan === "monthly" && "bg-[#4fb1f333] border-[#4E57FF]"} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
+            className={`${selectedPlan === "monthly" && "bg-[#4fb1f333] border-[#4E57FF]"} border flex-row justify-between items-center p-4 rounded-2xl`}
           >
-            <View className="flex-row gap-3">
-              <View
-                className={`h-6 w-6 flex-row justify-center items-center ${selectedPlan === "monthly" ? "bg-[#4FB2F3] rounded-full" : "border rounded-full"}`}
-              >
-                {selectedPlan === "monthly" && (
-                  <Feather name="check" size={14} color="white" />
-                )}
+            <View className="flex-row items-center gap-3">
+              {selectedPlan === "monthly" ? (
+                <Ionicons name="checkmark-circle" size={24} color="#4E57FF" />
+              ) : (
+                <Ionicons name="radio-button-off" size={24} color="black" />
+              )}
+
+              <View>
+                <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary">
+                  Monthly Plan
+                </Text>
+                <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary">
+                  10 Member
+                </Text>
               </View>
-              <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary">
-                Monthly Plan
-              </Text>
             </View>
             <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary">
               $14
@@ -99,28 +104,27 @@ const UserPlan = () => {
             onPress={() =>
               setSelectedPlan(selectedPlan === "annual" ? null : "annual")
             }
-            className={`${selectedPlan === "annual" && "bg-[#4fb1f333] border-[#4E57FF] "} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
+            className={`${selectedPlan === "annual" && "border-[#4E57FF] bg-[#4fb1f333]"} flex-row justify-between items-center border p-4 mt-7 rounded-2xl`}
           >
-            <View className="flex-row gap-3">
-              <View className="absolute bottom-10 py-0.5 px-3 bg-[#4FB2F3] rounded-3xl">
-                <Text className="font-proximanova-semibold text-sm text-[#FFFFFF]">
-                  Featured
+            <View className="flex-row items-center gap-3">
+              {selectedPlan === "annual" ? (
+                <Ionicons name="checkmark-circle" size={24} color="#4E57FF" />
+              ) : (
+                <Ionicons name="radio-button-off" size={24} color="black" />
+              )}
+
+              <View>
+                <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary">
+                  Annual Plan
+                </Text>
+                <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary">
+                  10 Member
                 </Text>
               </View>
-              <View
-                className={`h-6 w-6 flex-row justify-center items-center ${selectedPlan === "annual" ? "bg-[#4FB2F3] rounded-full" : "border rounded-full"}`}
-              >
-                {selectedPlan === "annual" && (
-                  <Feather name="check" size={14} color="white" />
-                )}
-              </View>
-              <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary">
-                Annual Plan
-              </Text>
             </View>
             <View className="flex-row gap-1.5">
               <View className="px-2 items-center justify-center bg-yellow-500 rounded-lg">
-                <Text className="font-proximanova-semibold text-sm ">
+                <Text className="font-proximanova-semibold text-sm">
                   17% OFF
                 </Text>
               </View>
@@ -131,15 +135,21 @@ const UserPlan = () => {
                 $120
               </Text>
             </View>
+
+            <View className="absolute -top-4 left-4 py-0.5 px-3 bg-[#4FB2F3] rounded-3xl">
+              <Text className="font-proximanova-semibold text-sm text-[#FFFFFF]">
+                Featured
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
 
       {/* Bottom Section - Subscription Text and Button */}
-      <View className="mx-5 mb-6">
+      <View className="mx-5 mb-6 mt-4">
         {/* Subscription Text */}
-        <Text className="text-center text-secondary dark:text-dark-secondary text-sm mb-4">
-          subscription auto-renews until manually cancelled.
+        <Text className="text-center text-secondary dark:text-dark-secondary text-sm mb-4 capitalize">
+          Subscription auto-renews until manually cancelled.
         </Text>
 
         {/* Subscribe Button */}

@@ -2,7 +2,7 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -10,8 +10,9 @@ import {
 import BusinessPlanChart from "@/components/test/PricingPlan";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import businesses from "@/assets/data/businesses.json";
-import { SimpleLineIcons } from "@expo/vector-icons";
+import { FontAwesome6, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import GradientButton from "@/components/ui/buttons/GradientButton";
 
 const BusinessPlan = () => {
   const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
@@ -50,38 +51,63 @@ const BusinessPlan = () => {
         iconColor={isDark ? "#fff" : "#111"}
       />
 
-      <View className="mx-5">
-        <View className="flex-row justify-between mt-4 items-center">
-          <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
-            Select your business
-          </Text>
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{
+          paddingBottom: 60,
+        }}
+      >
+        <View className="mx-5">
+          <View className="flex-row justify-between mt-4 items-center">
+            <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
+              Select your business
+            </Text>
 
-          <TouchableOpacity
-            onPress={() => setShowModal(true)}
-            className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
-          >
-            {displayContent?.type === "all" ? (
-              <View className="pl-2.5 py-1.5">
-                <Text className="font-semibold text-sm text-primary">All</Text>
-              </View>
-            ) : (
-              <Image
-                source={displayContent?.content?.imageUrl}
-                style={{ width: 30, height: 30, borderRadius: 999 }}
-                contentFit="cover"
+            <TouchableOpacity
+              onPress={() => setShowModal(true)}
+              className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
+            >
+              {displayContent?.type === "all" ? (
+                <View className="pl-2.5 py-1.5">
+                  <Text className="font-semibold text-sm text-primary">
+                    All
+                  </Text>
+                </View>
+              ) : (
+                <Image
+                  source={displayContent?.content?.imageUrl}
+                  style={{ width: 30, height: 30, borderRadius: 999 }}
+                  contentFit="cover"
+                />
+              )}
+              <SimpleLineIcons
+                className="p-1.5"
+                name="arrow-down"
+                size={12}
+                color="#111111"
               />
-            )}
-            <SimpleLineIcons
-              className="p-1.5"
-              name="arrow-down"
-              size={12}
-              color="#111111"
-            />
-          </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
 
-      <BusinessPlanChart />
+        {/* line */}
+        <View className="border-[#11111130] border-b h-[1px] w-[90%] rounded-full mb-2.5 mx-auto mt-3.5" />
+
+        <BusinessPlanChart />
+      </ScrollView>
+
+      <View className="mx-5 mb-6 mt-4">
+        {/* Subscription Text */}
+        <Text className="text-center text-secondary dark:text-dark-secondary text-sm mb-4 capitalize">
+          Subscription auto-renews until manually cancelled.
+        </Text>
+
+        {/* Subscribe Button */}
+        <GradientButton
+          title="Suscribe Now"
+          icon={<FontAwesome6 name="crown" size={18} color="#FFFFFF" />}
+        />
+      </View>
 
       {/* modal */}
       <BusinessSelectionModal
