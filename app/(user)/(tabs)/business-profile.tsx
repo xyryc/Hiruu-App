@@ -134,23 +134,42 @@ const BusinessProfile = () => {
         </View>
         <View className="mx-5 p-4 border mt-4 border-[#EEEEEE] rounded-2xl ">
           <RatingBanner />
-          <View className="flex-row justify-between mt-5">
-            <RatingProgress rating={3.5} />
+          <View className="flex-row justify-between mx-3 mt-5">
+            <View>
+              <RatingProgress rating={3.5} />
+              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center mt-1.5 capitalize">
+                work enviroment
+              </Text>
+            </View>
 
             <Image
               source={require("@/assets/images/vertical-line.svg")}
               contentFit="contain"
               style={{ height: 70, width: 2 }}
             />
-
-            <RatingProgress rating={4.5} />
+            <View>
+              <RatingProgress rating={4.5} />
+              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center mt-1.5 capitalize">
+                pay on time
+              </Text>
+            </View>
             <Image
               source={require("@/assets/images/vertical-line.svg")}
               contentFit="contain"
               style={{ height: 70, width: 2 }}
             />
-            <RatingProgress rating={2} />
+            <View>
+              <RatingProgress rating={2} />
+              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center mt-1.5 capitalize">
+                communication
+              </Text>
+            </View>
           </View>
+          <Text className="mt-2.5 mx-2 font-proximanova-regular text-sm text-primary dark:text-dark-primary">
+            {" "}
+            <Text className="font-proximanova-semibold">Note</Text> : X more
+            hire to activate
+          </Text>
         </View>
 
         {/* About Us */}
@@ -246,13 +265,12 @@ const BusinessProfile = () => {
         <View className="border border-[#EEEEEE] rounded-xl m-5">
           <View className="flex-row justify-between items-center  p-2.5 border border-[#EEEEEE] rounded-t-xl ">
             <View className="flex-row items-center gap-2.5">
-              <View>
-                <Image
-                  source={require("@/assets/images/facebook2.svg")}
-                  contentFit="contain"
-                  style={{ height: 40, width: 40 }}
-                />
-              </View>
+              <Image
+                source={require("@/assets/images/facebook2.svg")}
+                contentFit="contain"
+                style={{ height: 40, width: 40 }}
+              />
+
               <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                 Facebook
               </Text>
