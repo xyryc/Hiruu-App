@@ -1,4 +1,3 @@
-import TitleHeader from "@/components/header/TitleHeader";
 import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
@@ -8,7 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const LogoutDeletModal = ({ visible, onClose, data }: any) => {
   const handleDone = () => {
-    onClose(); // Close the modal
+    onClose();
   };
 
   return (
@@ -30,23 +29,15 @@ const LogoutDeletModal = ({ visible, onClose, data }: any) => {
           </View>
 
           {/* Modal Content */}
-          <SafeAreaView className="px-5 pt-5 items-center">
-            <View
-              className="w-[100px] h-[100px] flex-row justify-center items-center rounded-full border-2 "
+          <SafeAreaView className="px-5 py-5 items-center">
+            <Image
+              source={data?.img}
               style={{
-                backgroundColor: data?.color,
-                borderColor: data?.border,
+                width: 117,
+                height: 111,
               }}
-            >
-              <Image
-                source={data?.img}
-                style={{
-                  width: 56,
-                  height: 56,
-                }}
-                contentFit="contain"
-              />
-            </View>
+              contentFit="contain"
+            />
 
             <Text className="text-center font-proximanova-semibold text-xl text-primary dark:text-dark-primary px-8 mt-5">
               {data?.title}
@@ -54,23 +45,25 @@ const LogoutDeletModal = ({ visible, onClose, data }: any) => {
             <Text className="text-center text-sm font-proximanova-regular text-secondary dark:text-dark-secondary mt-2.5">
               {data?.subtitle}
             </Text>
+
             <View className="flex-row  justify-between mt-5 gap-5">
               <TouchableOpacity
                 onPress={handleDone}
-                className=" border border-[#11111133] rounded-full px-14 py-3.5 "
+                className="border border-[#11111133] rounded-full py-3.5 w-[48%] items-center"
               >
                 <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
                   Cansel
                 </Text>
               </TouchableOpacity>
+
               <TouchableOpacity
-                className="rounded-full px-14 py-3.5 "
+                className="rounded-full py-3.5 w-[48%] items-center"
                 style={{
                   backgroundColor: data?.buttonColor,
                 }}
               >
                 <Text className="font-proximanova-semibold text-white">
-                  Yes {data?.buttonName}
+                  Yes, {data?.buttonName}
                 </Text>
               </TouchableOpacity>
             </View>
