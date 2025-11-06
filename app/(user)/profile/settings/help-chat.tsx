@@ -1,22 +1,29 @@
-import React, { useState } from "react";
 import {
   View,
   Text,
-  StatusBar,
   FlatList,
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import ChatScreenHeader from "@/components/header/ChatScreenHeader";
-import JobCard from "@/components/ui/cards/JobCard";
-import NoMessages from "@/components/ui/cards/NoMessages";
-import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
+import React, { useState } from "react";
+import ScreenHeader from "@/components/header/ScreenHeader";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import { useColorScheme } from "nativewind";
 import RenderMessage from "@/components/ui/cards/RenderMessage";
+import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
+import NoMessages from "@/components/ui/cards/NoMessages";
 import ChatInput from "@/components/ui/inputs/ChatInput";
 
-const ChatScreen = () => {
+const HelpChat = () => {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const router = useRouter();
   const [message, setMessage] = useState("");
+  const insets = useSafeAreaInsets();
 
   const messages = [
     {
@@ -65,35 +72,28 @@ const ChatScreen = () => {
 
   return (
     <SafeAreaView
-      className="flex-1 bg-white"
-      edges={["top", "bottom", "left", "right"]}
+      className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
+      edges={["left", "right", "bottom"]}
     >
-      <StatusBar barStyle="dark-content" />
+      <ScreenHeader
+        style={{ paddingTop: insets.top + 10 }}
+        className="pb-6 bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+        onPressBack={() => router.back()}
+        title="Help and Chat"
+        titleClass="text-primary dark:text-dark-primary"
+        iconColor={isDark ? "#fff" : "#111"}
+      />
+      <Text className="text-sm font-proximanova-semibold bg-[#11293A] text-white px-5 py-2.5">
+        Please wait.! You're <Text className="text-[#4FB2F3]">#7</Text> in line
+      </Text>
 
+      {/* chat */}
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         {/* message content */}
-        <View className="bg-[#E5F4FD80] flex-1">
-          {/* Header */}
-          <ChatScreenHeader />
-
-          {/* Job Card */}
-          <JobCard
-            status="chatscreen"
-            className="mx-5 bg-white border border-[#EEEEEE] mt-4"
-          />
-
-          {/* Date Divider */}
-          <View className="items-center my-3">
-            <View className="bg-gray-100 px-4 py-1.5 rounded-full">
-              <Text className="font-proximanova-regular text-xs text-gray-600">
-                Today
-              </Text>
-            </View>
-          </View>
-
+        <View className="bg-white flex-1">
           {/* Messages */}
           <FlatList
             data={messages}
@@ -104,14 +104,23 @@ const ChatScreen = () => {
             renderItem={({ item: msg }) => <RenderMessage msg={msg} />}
             ListHeaderComponent={<TypingIndicator />}
             ListEmptyComponent={<NoMessages />}
+            ListFooterComponent={
+              <View className="flex-row items-center justify-center pb-10">
+                <View className="h-[1px] w-36 bg-[#111111]"></View>
+                <Text className="font-proximanova-regular text-xs text-primary">
+                  Today
+                </Text>
+                <View className="h-[1px] w-36 bg-[#111111]"></View>
+              </View>
+            }
           />
-        </View>
 
-        {/* Input Bar */}
-        <ChatInput message={message} setMessage={setMessage} />
+          {/* Input Bar */}
+          <ChatInput message={message} setMessage={setMessage} />
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };
 
-export default ChatScreen;
+export default HelpChat;
