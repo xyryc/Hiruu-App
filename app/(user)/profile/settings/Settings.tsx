@@ -4,6 +4,7 @@ import SettingsCard from "@/components/ui/cards/SettingsCard";
 import LogoutDeletModal from "@/components/ui/modals/LogoutDeletModal";
 import {
   Entypo,
+  FontAwesome,
   FontAwesome5,
   Ionicons,
   MaterialCommunityIcons,
@@ -29,8 +30,10 @@ const Settings = () => {
     buttonName?: string;
     buttonColor?: string;
   }>();
+
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+
   const delData = {
     title: "Are you sure you want to delete your account?",
     subtitle:
@@ -41,6 +44,7 @@ const Settings = () => {
     buttonName: "Delete",
     buttonColor: "#F34F4F",
   };
+
   const logOutData = {
     title: "Are you sure you want to Logout your account?",
     subtitle:
@@ -51,7 +55,8 @@ const Settings = () => {
     buttonName: "Logour",
     buttonColor: "#11293A",
   };
-  console.log(data);
+
+  // console.log(data);
 
   const handleClick = (e: string) => {
     if (e === "delete") {
@@ -76,133 +81,138 @@ const Settings = () => {
           iconColor={isDark ? "#fff" : "#111"}
         />
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="mx-5">
-          {/* Create Business Profile */}
-          <View className="bg-[#FCF7E4] px-3 py-4 mt-8 rounded-xl flex-row justify-between">
-            <View>
-              <Text className="text-lg font-proximanova-semibold text-[#11293A]">
-                Grow and Manage All Your
-              </Text>
-              <Text className="text-lg font-proximanova-semibold text-[#11293A]">
-                Businesses Effortlessly
-              </Text>
-              <TouchableOpacity className="bg-[#11293A] rounded-full py-1.5 px-4 mt-5">
-                <Text className="text-sm font-proximanova-semibold text-[#ffffff] text-center">
-                  Create Business Profile
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <Image
-                source={require("@/assets/images/guy-in-chair.svg")}
-                contentFit="contain"
-                style={{ height: 110, width: 104 }}
-              />
-            </View>
-          </View>
 
-          {/* Name plate */}
-          <View className="mt-8">
-            <NamePlateCard variant="variant3" />
-          </View>
-
-          {/* settings card */}
-
-          <SettingsCard
-            click={() => router.push("/(user)/profile/settings/preferences")}
-            icon={
-              <Ionicons name="language-outline" size={24} color="#11293A" />
-            }
-            className="mt-8"
-            text="App Preferences"
-            arrowIcon={
-              <Entypo name="chevron-thin-right" size={20} color="#111111" />
-            }
-          />
-
-          <SettingsCard
-            click={() =>
-              router.push("/(user)/profile/settings/subscription/subscription")
-            }
-            icon={
-              <MaterialCommunityIcons
-                name="crown-outline"
-                size={24}
-                color="black"
-              />
-            }
-            text="Subscription"
-            className="mt-5"
-            arrowIcon={
-              <Entypo name="chevron-thin-right" size={20} color="#111111" />
-            }
-          />
-
-          <SettingsCard
-            click={() => router.push("/(user)/profile/settings/refer")}
-            icon={<Ionicons name="wallet-outline" size={24} color="#11293A" />}
-            text="Refer and Earn"
-            className="mt-5"
-            arrowIcon={
-              <Entypo name="chevron-thin-right" size={20} color="#111111" />
-            }
-          />
-
-          <SettingsCard
-            click={() => router.push("/(user)/profile/settings/privacy")}
-            icon={<SimpleLineIcons name="lock" size={24} color="black" />}
-            text="Privacy Policy"
-            className="mt-5"
-            arrowIcon={
-              <Entypo name="chevron-thin-right" size={20} color="#111111" />
-            }
-          />
-
-          <SettingsCard
-            click={() => router.push("/(user)/profile/settings/terms")}
-            icon={<Ionicons name="calendar-outline" size={24} color="black" />}
-            text="Terms and Condition"
-            className="mt-5"
-            arrowIcon={
-              <Entypo name="chevron-thin-right" size={20} color="#111111" />
-            }
-          />
-          <SettingsCard
-            click={() => router.push("/(user)/profile/settings/support")}
-            icon={<FontAwesome5 name="handshake" size={24} color="black" />}
-            text="Help and Support"
-            className="mt-5"
-            arrowIcon={
-              <Entypo name="chevron-thin-right" size={20} color="#111111" />
-            }
-          />
-          <SettingsCard
-            click={() => router.push("/(user)/profile/settings/info")}
-            icon={<SimpleLineIcons name="info" size={22} color="black" />}
-            text="App Info"
-            className="mt-5"
-            arrowIcon={
-              <Entypo name="chevron-thin-right" size={20} color="#111111" />
-            }
-          />
-          <TouchableOpacity onPress={() => handleClick("delete")}>
-            <Text className="text-[#F34F4F] font-proximanova-bold mt-5">
-              Delete Account
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          marginHorizontal: 20,
+          paddingBottom: 100,
+        }}
+      >
+        {/* Create Business Profile */}
+        <View className="bg-[#FCF7E4] px-3 py-4 mt-8 rounded-xl flex-row justify-between border border-[#EEEEEE]">
+          <View>
+            <Text className="text-lg font-proximanova-semibold text-[#11293A]">
+              Grow and Manage All Your
             </Text>
-          </TouchableOpacity>
-          <View className="border-b-2 border-[#EEEEEE] mt-5" />
-          <TouchableOpacity onPress={() => handleClick("logout")}>
-            <Text className="text-[#4FB2F3] font-proximanova-bold mt-5">
-              Log Out
+            <Text className="text-lg font-proximanova-semibold text-[#11293A]">
+              Businesses Effortlessly
             </Text>
-          </TouchableOpacity>
-          <LogoutDeletModal
-            visible={isModal}
-            onClose={() => setIsModal(false)}
-            data={data}
-          />
+            <TouchableOpacity className="bg-[#11293A] rounded-full py-1.5 px-4 mt-5">
+              <Text className="text-sm font-proximanova-semibold text-[#ffffff] text-center">
+                Create Business Profile
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View>
+            <Image
+              source={require("@/assets/images/guy-in-chair.svg")}
+              contentFit="contain"
+              style={{ height: 110, width: 104 }}
+            />
+          </View>
         </View>
+
+        {/* Name plate */}
+        <View className="mt-8">
+          <NamePlateCard variant="variant3" />
+        </View>
+
+        {/* settings card */}
+        <SettingsCard
+          click={() => router.push("/(user)/profile/settings/preferences")}
+          icon={<Ionicons name="language-outline" size={24} color="#11293A" />}
+          className="mt-8"
+          text="App Preferences"
+          arrowIcon={
+            <Entypo name="chevron-thin-right" size={20} color="#111111" />
+          }
+        />
+
+        <SettingsCard
+          click={() =>
+            router.push("/(user)/profile/settings/subscription/subscription")
+          }
+          icon={
+            <MaterialCommunityIcons
+              name="crown-outline"
+              size={24}
+              color="black"
+            />
+          }
+          text="Subscription"
+          className="mt-5"
+          arrowIcon={
+            <Entypo name="chevron-thin-right" size={20} color="#111111" />
+          }
+        />
+
+        <SettingsCard
+          click={() => router.push("/(user)/profile/settings/refer")}
+          icon={<Ionicons name="wallet-outline" size={24} color="#11293A" />}
+          text="Refer and Earn"
+          className="mt-5"
+          arrowIcon={
+            <Entypo name="chevron-thin-right" size={20} color="#111111" />
+          }
+        />
+
+        <SettingsCard
+          click={() => router.push("/(user)/profile/settings/privacy")}
+          icon={<SimpleLineIcons name="lock" size={24} color="black" />}
+          text="Privacy Policy"
+          className="mt-5"
+          arrowIcon={
+            <Entypo name="chevron-thin-right" size={20} color="#111111" />
+          }
+        />
+
+        <SettingsCard
+          click={() => router.push("/(user)/profile/settings/terms")}
+          icon={<Ionicons name="calendar-outline" size={24} color="black" />}
+          text="Terms and Condition"
+          className="mt-5"
+          arrowIcon={
+            <Entypo name="chevron-thin-right" size={20} color="#111111" />
+          }
+        />
+        <SettingsCard
+          click={() => router.push("/(user)/profile/settings/support")}
+          icon={<FontAwesome name="handshake-o" size={20} color="#111111" />}
+          text="Help and Support"
+          className="mt-5"
+          arrowIcon={
+            <Entypo name="chevron-thin-right" size={20} color="#111111" />
+          }
+        />
+        <SettingsCard
+          click={() => router.push("/(user)/profile/settings/info")}
+          icon={<SimpleLineIcons name="info" size={22} color="black" />}
+          text="App Info"
+          className="mt-5"
+          arrowIcon={
+            <Entypo name="chevron-thin-right" size={20} color="#111111" />
+          }
+        />
+
+        <TouchableOpacity onPress={() => handleClick("delete")}>
+          <Text className="text-[#F34F4F] font-proximanova-bold mt-5">
+            Delete Account
+          </Text>
+        </TouchableOpacity>
+
+        <View className="border-b-2 border-[#EEEEEE] mt-5" />
+        <TouchableOpacity onPress={() => handleClick("logout")}>
+          <Text className="text-[#4FB2F3] font-proximanova-bold mt-5">
+            Log Out
+          </Text>
+        </TouchableOpacity>
+
+        <LogoutDeletModal
+          visible={isModal}
+          onClose={() => setIsModal(false)}
+          data={data}
+        />
       </ScrollView>
     </SafeAreaView>
   );

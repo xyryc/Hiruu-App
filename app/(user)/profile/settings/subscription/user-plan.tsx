@@ -1,5 +1,8 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import { Feather } from "@expo/vector-icons";
+import GradientButton from "@/components/ui/buttons/GradientButton";
+import { Feather, FontAwesome6 } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
@@ -72,7 +75,7 @@ const UserPlan = () => {
             onPress={() =>
               setSelectedPlan(selectedPlan === "monthly" ? null : "monthly")
             }
-            className={`${selectedPlan === "monthly" && "bg-[#a59de9] border-[#4E57FF]"} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
+            className={`${selectedPlan === "monthly" && "bg-[#4fb1f333] border-[#4E57FF]"} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
           >
             <View className="flex-row gap-3">
               <View
@@ -96,7 +99,7 @@ const UserPlan = () => {
             onPress={() =>
               setSelectedPlan(selectedPlan === "annual" ? null : "annual")
             }
-            className={`${selectedPlan === "annual" && "bg-[#a59de9] border-[#4E57FF] "} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
+            className={`${selectedPlan === "annual" && "bg-[#4fb1f333] border-[#4E57FF] "} flex-row justify-between border border-[#EEEEEE] px-4 py-7 mt-4 rounded-2xl`}
           >
             <View className="flex-row gap-3">
               <View className="absolute bottom-10 py-0.5 px-3 bg-[#4FB2F3] rounded-3xl">
@@ -116,7 +119,7 @@ const UserPlan = () => {
               </Text>
             </View>
             <View className="flex-row gap-1.5">
-              <View className="px-2 items-center justify-center bg-yellow-500 rounded-full">
+              <View className="px-2 items-center justify-center bg-yellow-500 rounded-lg">
                 <Text className="font-proximanova-semibold text-sm ">
                   17% OFF
                 </Text>
@@ -140,15 +143,10 @@ const UserPlan = () => {
         </Text>
 
         {/* Subscribe Button */}
-        <TouchableOpacity
-          className="bg-[#4FB2F3] py-4 rounded-2xl"
-          disabled={!selectedPlan}
-          style={{ opacity: selectedPlan ? 1 : 0.5 }}
-        >
-          <Text className="text-center text-white font-proximanova-bold text-base">
-            Subscribe Now
-          </Text>
-        </TouchableOpacity>
+        <GradientButton
+          title="Suscribe Now"
+          icon={<FontAwesome6 name="crown" size={18} color="#FFFFFF" />}
+        />
       </View>
     </SafeAreaView>
   );

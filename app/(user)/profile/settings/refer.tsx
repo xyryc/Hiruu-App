@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import TestContact from "@/components/test/test";
-import ContactListWithLock from "@/components/test/test";
+import ContacrSection from "@/components/ui/cards/ContacrSection";
+import ContactListWithLock from "@/components/ui/cards/ContacrSection";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import {
   Entypo,
@@ -12,7 +12,7 @@ import {
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -53,9 +53,10 @@ const refer = () => {
           iconColor={isDark ? "#fff" : "#111"}
         />
       </View>
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="mx-5">
-          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-5 ">
+          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-5">
             <Text className="font-proximanova-semibold">Note:</Text> Phone
             number verification is mandatory for any user who joins and wants to
             claim a reward.
@@ -107,6 +108,7 @@ const refer = () => {
           <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary mt-7">
             Share Via
           </Text>
+
           <View className="flex-row justify-between">
             {/* copy */}
             <View className="mt-4 items-center">
@@ -163,10 +165,7 @@ const refer = () => {
             </View>
           </View>
 
-          {/* lock screen */}
-          <View>
-            <TestContact />
-          </View>
+          <ContacrSection />
         </View>
       </ScrollView>
     </SafeAreaView>

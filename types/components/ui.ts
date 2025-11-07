@@ -1,6 +1,6 @@
 import { ImageSource } from "expo-image";
 import { Dispatch, ReactElement, SetStateAction } from "react";
-import { GestureResponderEvent } from "react-native";
+import { GestureResponderEvent, ViewStyle } from "react-native";
 
 export interface PrimaryButtonProps {
   className?: string;
@@ -22,6 +22,13 @@ export interface SmallButtonProps {
   title: string;
   onPress?: (event: GestureResponderEvent) => void;
   textClass?: string;
+}
+
+export interface GradientButtonProps {
+  className?: string;
+  title: string;
+  icon: React.JSX.Element;
+  onPress?: (event: GestureResponderEvent) => void;
 }
 
 export interface TitleHeaderProps {
@@ -232,6 +239,7 @@ export interface ScreenHeaderProps {
   buttonTitle?: string;
   onPress?: () => void;
   className?: string;
+  style?: ViewStyle;
   components?: React.ReactNode;
 }
 

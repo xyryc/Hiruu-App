@@ -41,10 +41,12 @@ const SettingsCard = ({
             )}
           </View>
         </View>
+
         {arrowIcon}
         {/* <Entypo name="chevron-thin-right" size={20} color="#111111" /> */}
       </View>
-      {border || <View className="border-b-2 border-[#EEEEEE] mt-5" />}
+
+      {border || <View className="border-b border-[#EEEEEE] mt-4" />}
     </TouchableOpacity>
   );
 };

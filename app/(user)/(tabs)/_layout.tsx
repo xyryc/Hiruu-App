@@ -66,6 +66,16 @@ export default function TabLayout() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="business-profile"
+        options={{
+          title: "Business Profile",
+          tabBarIcon: ({ color }) => (
+            <Feather name="gift" size={28} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

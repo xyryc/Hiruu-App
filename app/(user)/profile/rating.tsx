@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import RatingBanner from "@/components/ui/cards/RatingBanner";
 import RatingCard from "@/components/ui/cards/RatingCard";
 import RatingStar from "@/components/ui/cards/RatingStar";
 import RatingBar from "@/components/ui/inputs/RatingBar";
@@ -26,7 +27,7 @@ const Rating = () => {
       className="flex-1 bg-white dark:bg-dark-background"
       edges={["bottom", "left", "right", "top"]}
     >
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <ScreenHeader
           onPressBack={() => router.back()}
@@ -35,31 +36,10 @@ const Rating = () => {
           titleClass="text-primary "
           iconColor={isDark ? "#fff" : "#111111"}
         />
-        <View className="flex-row justify-center items-center">
-          <Image
-            source={require("@/assets/images/profile/rating-leaves.svg")}
-            contentFit="contain"
-            style={{ height: 84, width: 61, transform: [{ scaleX: -1 }] }}
-          />
-          <View>
-            <Text className="text-center font-proximanova-semibold text-primary dark:text-dark-primary">
-              Overall Rating
-            </Text>
-            <Text className="text-center font-proximanova-bold text-5xl text-primary dark:text-dark-primary">
-              4.9
-            </Text>
-          </View>
-          <Image
-            source={require("@/assets/images/profile/rating-leaves.svg")}
-            contentFit="contain"
-            style={{ height: 84, width: 61 }}
-          />
-        </View>
 
-        <RatingStar rating={5} />
-        <Text className="text-center font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-2">
-          Based on overall rating
-        </Text>
+        <View>
+          <RatingBanner />
+        </View>
 
         {/* Ratings and star */}
         <View className=" mx-5 bg-[#E5F4FD] mt-8 rounded-2xl p-5 shadow-lg">
