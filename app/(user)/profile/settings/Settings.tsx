@@ -5,7 +5,6 @@ import LogoutDeletModal from "@/components/ui/modals/LogoutDeletModal";
 import {
   Entypo,
   FontAwesome,
-  FontAwesome5,
   Ionicons,
   MaterialCommunityIcons,
   SimpleLineIcons,
@@ -52,7 +51,7 @@ const Settings = () => {
     img: logOutImg,
     color: "#E5F4FD",
     border: "#4FB2F3",
-    buttonName: "Logour",
+    buttonName: "Logout",
     buttonColor: "#11293A",
   };
 

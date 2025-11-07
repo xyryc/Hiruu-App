@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import SettingsCard from "@/components/ui/cards/SettingsCard";
+import LogoutDeletModal from "@/components/ui/modals/LogoutDeletModal";
 import {
   Entypo,
   Feather,
@@ -8,13 +9,25 @@ import {
 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React from "react";
-import { View, Text, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import CancelImg from "@/assets/images/cancel.svg";
 
 const Subscription = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  const [showModal, setShowModal] = useState(false);
+  const modalData = {
+    title: "Cancel Your Plan?",
+    subtitle:
+      "Your current plan will remain active until [expiry date]. You can continue using features until then..",
+    img: CancelImg,
+    buttonName: "Cancel Plan",
+    buttonColor: "#F34F4F",
+  };
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -59,7 +72,9 @@ const Subscription = () => {
                 </Text>
               </View>
             </View>
-            <View className="border-b my-5 border-[#EEEEEE]" />
+
+            <View className="border-b border-[#EEEEEE]" />
+
             <View className="px-2.5 py-5">
               <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center">
                 Billed through Googlepay
@@ -69,12 +84,17 @@ const Subscription = () => {
                 billing throut googlepay
               </Text>
             </View>
-            <View className="border-b my-5 border-[#EEEEEE]" />
-            <View>
-              <Text className="font-proximanova-bold text-[#F34F4F] text-center mb-5">
+
+            <View className="border-b border-[#EEEEEE]" />
+
+            <TouchableOpacity
+              onPress={() => setShowModal(true)}
+              className="my-5"
+            >
+              <Text className="font-proximanova-bold text-[#F34F4F] text-center">
                 Cancel Plan
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           {/* business plan */}
@@ -105,7 +125,9 @@ const Subscription = () => {
                 </Text>
               </View>
             </View>
-            <View className="border-b my-5 border-[#EEEEEE]" />
+
+            <View className="border-b border-[#EEEEEE]" />
+
             <View className="px-2.5 py-5">
               <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center">
                 Billed through Googlepay
@@ -115,12 +137,17 @@ const Subscription = () => {
                 billing throut googlepay
               </Text>
             </View>
-            <View className="border-b my-5 border-[#EEEEEE]" />
-            <View>
-              <Text className="font-proximanova-bold text-[#F34F4F] text-center mb-5">
+
+            <View className="border-b border-[#EEEEEE]" />
+
+            <TouchableOpacity
+              onPress={() => setShowModal(true)}
+              className="my-5"
+            >
+              <Text className="font-proximanova-bold text-[#F34F4F] text-center">
                 Cancel Plan
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
 
           <View className="border px-3 rounded-2xl border-[#EEEEEE] mt-5">
@@ -145,6 +172,7 @@ const Subscription = () => {
               }
             />
           </View>
+
           <View className="border px-3 rounded-2xl border-[#EEEEEE] mt-2.5">
             <SettingsCard
               click={() =>
@@ -170,6 +198,12 @@ const Subscription = () => {
           subscription auto-renews until manually cancelled.
         </Text>
       </ScrollView>
+
+      <LogoutDeletModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        data={modalData}
+      />
     </SafeAreaView>
   );
 };

@@ -7,6 +7,7 @@ import FindNewJob from "@/components/layout/FindNewJob";
 import JoinCollegue from "@/components/layout/JoinCollegue";
 import ProfileProgress from "@/components/layout/ProfileProgress";
 import QuickAction from "@/components/layout/QuickAction";
+import TodayShiftsSummary from "@/components/layout/TodayShiftsSummary";
 import TodaysShift from "@/components/layout/TodaysShift";
 import Widgets from "@/components/layout/Widgets";
 import WorkInsights from "@/components/layout/WorkInsights";
@@ -37,7 +38,10 @@ const BusinessHome = () => {
         <ProfileProgress />
 
         {/* Business Summary */}
-        <BusinessSummary />
+        <BusinessSummary className="mt-8" />
+
+        {/* Today’s Shifts Summary */}
+        <TodayShiftsSummary />
 
         {/* join your collegues */}
         <JoinCollegue className="mt-7" />
