@@ -36,9 +36,13 @@ const WorkInsights = ({ className, title }: WorkInsightsProps | any) => {
   return (
     <View className={`${className} px-4`}>
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-xl font-proximanova-semibold">
-          {title ? title : "Work Insights"}
-        </Text>
+        {title ? (
+          <Text className="text-xl font-proximanova-semibold">{title}</Text>
+        ) : (
+          <Text className="text-xl font-proximanova-semibold">
+            Work Insights
+          </Text>
+        )}
 
         {/* picker */}
         {title || (
