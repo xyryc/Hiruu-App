@@ -35,7 +35,7 @@ const BusinessProfile = () => {
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
-      edges={["left", "right", "bottom", "top"]}
+      edges={["left", "right", "top"]}
     >
       <ScrollView
         showsVerticalScrollIndicator={false}

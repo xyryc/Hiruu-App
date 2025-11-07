@@ -330,7 +330,11 @@ const EditBusinessProfile = () => {
             </View>
           </ScrollView>
 
-          <PrimaryButton title="Save Change" className="mx-5 my-4" />
+          <PrimaryButton
+            title="Save Change"
+            className="mx-5 my-4"
+            onPress={() => router.back()}
+          />
         </LinearGradient>
       </SafeAreaView>
     </KeyboardAvoidingView>
