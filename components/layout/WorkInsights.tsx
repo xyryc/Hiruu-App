@@ -9,7 +9,7 @@ import StatCardSecondary from "../ui/cards/StatCardSecondary";
 import MonthPicker from "../ui/inputs/MonthPicker";
 import BusinessSelectionModal from "../ui/modals/BusinessSelectionModal";
 
-const WorkInsights = ({ className }: WorkInsightsProps) => {
+const WorkInsights = ({ className, title }: WorkInsightsProps | any) => {
   const [reportMonth, setReportMonth] = useState<Date | null>(new Date());
   const [showModal, setShowModal] = useState(false);
   const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
@@ -36,38 +36,44 @@ const WorkInsights = ({ className }: WorkInsightsProps) => {
   return (
     <View className={`${className} px-4`}>
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-xl font-proximanova-semibold">Work Insights</Text>
+        <Text className="text-xl font-proximanova-semibold">
+          {title ? title : "Work Insights"}
+        </Text>
 
         {/* picker */}
-        <View className="flex-row items-center gap-2">
-          <MonthPicker
-            value={reportMonth}
-            onDateChange={handleReportMonthChange}
-          />
-
-          <TouchableOpacity
-            onPress={() => setShowModal(true)}
-            className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
-          >
-            {displayContent?.type === "all" ? (
-              <View className="pl-2.5 py-1.5">
-                <Text className="font-semibold text-sm text-primary">All</Text>
-              </View>
-            ) : (
-              <Image
-                source={displayContent?.content?.imageUrl}
-                style={{ width: 30, height: 30, borderRadius: 999 }}
-                contentFit="cover"
-              />
-            )}
-            <SimpleLineIcons
-              className="p-1.5"
-              name="arrow-down"
-              size={12}
-              color="#111111"
+        {title || (
+          <View className="flex-row items-center gap-2">
+            <MonthPicker
+              value={reportMonth}
+              onDateChange={handleReportMonthChange}
             />
-          </TouchableOpacity>
-        </View>
+
+            <TouchableOpacity
+              onPress={() => setShowModal(true)}
+              className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
+            >
+              {displayContent?.type === "all" ? (
+                <View className="pl-2.5 py-1.5">
+                  <Text className="font-semibold text-sm text-primary">
+                    All
+                  </Text>
+                </View>
+              ) : (
+                <Image
+                  source={displayContent?.content?.imageUrl}
+                  style={{ width: 30, height: 30, borderRadius: 999 }}
+                  contentFit="cover"
+                />
+              )}
+              <SimpleLineIcons
+                className="p-1.5"
+                name="arrow-down"
+                size={12}
+                color="#111111"
+              />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
 
       {/* modal */}

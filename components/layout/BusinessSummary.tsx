@@ -1,17 +1,31 @@
 import { View, Text } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import StatCardPrimary from "../ui/cards/StatCardPrimary";
+import BusinessSelectionModal from "../ui/modals/BusinessSelectionModal";
+import businesses from "@/assets/data/businesses.json";
 
 type BusinessSummaryProps = {
   className?: string;
 };
 
 const BusinessSummary = ({ className }: BusinessSummaryProps) => {
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
   return (
     <View className={`${className} px-4`}>
-      <Text className="text-xl font-proximanova-semibold">
-        Business Summary
-      </Text>
+      <View className="">
+        <Text className="text-xl font-proximanova-semibold">
+          Business Summary
+        </Text>
+
+        <BusinessSelectionModal
+          visible={showModal}
+          onClose={() => setShowModal(false)}
+          businesses={businesses}
+          selectedBusinesses={selectedBusinesses}
+          onSelectionChange={setSelectedBusinesses}
+        />
+      </View>
       {/* stats*/}
       <View className="flex-row gap-3 mb-4 mt-4">
         <StatCardPrimary

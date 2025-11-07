@@ -1,5 +1,6 @@
 import HomeHeader from "@/components/header/HomeHeader";
 import WelcomeHeader from "@/components/header/WelcomeHeader";
+import AttendanceSummary from "@/components/layout/AttendanceSummary";
 import BusinessProfile from "@/components/layout/BusinessProfile";
 import BusinessSummary from "@/components/layout/BusinessSummary";
 import EngagementPerks from "@/components/layout/EngagementPerks";
@@ -43,6 +44,9 @@ const BusinessHome = () => {
         {/* Today’s Shifts Summary */}
         <TodayShiftsSummary />
 
+        {/* Today’s Attendance Summary */}
+        <AttendanceSummary className="mx-5 mt-8" />
+
         {/* join your collegues */}
         <JoinCollegue className="mt-7" />
 
@@ -52,20 +56,14 @@ const BusinessHome = () => {
         {/* do you  manage a business */}
         <BusinessProfile className="mt-7" />
 
-        {/* your todays shift */}
-        <TodaysShift className="mt-7" />
-
         {/* quick actions */}
         <QuickAction className="mt-7" />
 
-        {/* work insights */}
-        <WorkInsights className="mt-7" />
+        {/* Team Insights */}
+        <WorkInsights title="Team Insights" className="mt-7" />
 
         {/* engagement & perks */}
         <EngagementPerks className="mt-7" />
-
-        {/* widgets */}
-        <Widgets className="mt-7" />
       </ScrollView>
     </SafeAreaView>
   );
