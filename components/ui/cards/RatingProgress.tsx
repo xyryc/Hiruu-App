@@ -1,8 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 import React, { useState } from "react";
-import { Image } from "expo-image";
-import PrimaryButton from "../buttons/PrimaryButton";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 
 const RatingProgress = ({ rating }: { rating: number }) => {
@@ -11,9 +9,9 @@ const RatingProgress = ({ rating }: { rating: number }) => {
 
   // Color mapping based on progress
   const getTintColor = (fill: number) => {
-    if (fill < 25) return "#FE714E"; // red
-    if (fill < 50) return "#e0c722"; // yellow
-    if (fill < 75) return "#a5c738"; // orange
+    if (fill < 25) return "#E39393"; // red
+    if (fill < 50) return "#FFBE8F"; // yellow
+    if (fill < 75) return "#93E3A4"; // orange
     return "#10B981"; // Green
   };
 
