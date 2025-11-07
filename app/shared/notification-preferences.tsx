@@ -13,30 +13,80 @@ const NotificationPreferences = () => {
   const isDark = colorScheme === "dark";
   const [isAll, setIsAll] = React.useState(false);
   const [isGeneral, setIsGeneral] = React.useState(false);
+  const [isEmail, setIsEmail] = React.useState(false);
+  const [isPush, setIsPush] = React.useState(false);
 
-  const [settings, setSettings] = useState({
+  const [general, setGeneral] = useState({
     shiftReminders: true,
     scheduleUpdates: false,
     newAssigned: false,
     shiftCancellation: false,
     managerMessages: false,
   });
+  const [email, setEmail] = useState({
+    DailyWeeklyReports: true,
+    SubscriptionPaymentUpdates: false,
+    LeaveRequestsStatus: false,
+    ShiftCancellation: false,
+    ImportantAnnouncements: false,
+  });
+  const [push, setPush] = useState({
+    AppUpdatesTips: true,
+    NewJobOpportunities: false,
+    RatingreviewReceived: false,
+    NewMessageAlerts: false,
+    ImportantAnnouncements: false,
+  });
 
-  type SettingsKeys = keyof typeof settings;
+  type GeneralKeys = keyof typeof general;
+  type EmailKeys = keyof typeof email;
+  type PushKeys = keyof typeof push;
 
-  const toggleSetting = (key: SettingsKeys) => {
-    setSettings((prev) => ({
+  const toggleGeneral = (key: GeneralKeys) => {
+    setGeneral((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+  const toggleEmail = (key: EmailKeys) => {
+    setEmail((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+  const togglePush = (key: PushKeys) => {
+    setPush((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
   };
 
-  const settingsConfig: { key: SettingsKeys; label: string }[] = [
+  const generalConfig: { key: GeneralKeys; label: string }[] = [
     { key: "shiftReminders", label: "Shift Reminders" },
     { key: "scheduleUpdates", label: "Schedule Updates" },
     { key: "newAssigned", label: "New Assigned" },
     { key: "shiftCancellation", label: "Shift Cancellation" },
     { key: "managerMessages", label: "Manager Messages" },
+  ];
+  const emailConfig: { key: EmailKeys; label: string }[] = [
+    { key: "DailyWeeklyReports", label: "Daily/Weekly Reports" },
+    {
+      key: "SubscriptionPaymentUpdates",
+      label: "Subscription Payment Updates",
+    },
+    { key: "LeaveRequestsStatus", label: "Leave Requests Status" },
+    { key: "ShiftCancellation", label: "Shift Cancellation" },
+    { key: "ImportantAnnouncements", label: "Important Announcements" },
+  ];
+  const pushConfig: { key: PushKeys; label: string }[] = [
+    { key: "AppUpdatesTips", label: "App Updates / Tips" },
+    {
+      key: "NewJobOpportunities",
+      label: "New Job Opportunities",
+    },
+    { key: "RatingreviewReceived", label: "Rating/review Received" },
+    { key: "NewMessageAlerts", label: "App Updates / Tips" },
+    { key: "ImportantAnnouncements", label: "Important Announcements" },
   ];
 
   return (
@@ -62,27 +112,30 @@ const NotificationPreferences = () => {
         </View>
 
         <NotificationPreferencesInpute
-          settingsConfig={settingsConfig}
-          settings={settings}
-          toggleSetting={toggleSetting}
+          title="General Notification"
+          settingsConfig={generalConfig}
+          settings={general}
+          toggleSetting={toggleGeneral}
           isToggle={isGeneral}
           setIsToggle={setIsGeneral}
         />
 
         <NotificationPreferencesInpute
-          settingsConfig={settingsConfig}
-          settings={settings}
-          toggleSetting={toggleSetting}
-          isToggle={isGeneral}
-          setIsToggle={setIsGeneral}
+          title="Email Notification"
+          settingsConfig={emailConfig}
+          settings={email}
+          toggleSetting={toggleEmail}
+          isToggle={isEmail}
+          setIsToggle={setIsEmail}
         />
 
         <NotificationPreferencesInpute
-          settingsConfig={settingsConfig}
-          settings={settings}
-          toggleSetting={toggleSetting}
-          isToggle={isGeneral}
-          setIsToggle={setIsGeneral}
+          title="Push Notification"
+          settingsConfig={pushConfig}
+          settings={push}
+          toggleSetting={togglePush}
+          isToggle={isPush}
+          setIsToggle={setIsPush}
         />
       </ScrollView>
     </SafeAreaView>

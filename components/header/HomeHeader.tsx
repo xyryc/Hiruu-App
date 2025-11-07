@@ -17,9 +17,6 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
       />
 
       <View className="flex-row items-center gap-1.5">
-        {/* theme toggle */}
-        <AnimatedThemeToggle />
-
         {/* messages */}
         <View className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
           <Image

@@ -18,6 +18,11 @@ const NotificationModal = ({ visible, onClose }: any) => {
     onClose(); // Close the modal
   };
 
+  const handlePreferences = () => {
+    router.push("/shared/notification-preferences");
+    onClose(); // Close the modal
+  };
+
   return (
     <Modal
       visible={visible}
@@ -57,7 +62,7 @@ const NotificationModal = ({ visible, onClose }: any) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => router.push("/shared/notification-preferences")}
+                onPress={handlePreferences}
                 className="flex-row gap-2.5 items-center mb-6"
               >
                 <Ionicons name="settings-outline" size={24} color="black" />

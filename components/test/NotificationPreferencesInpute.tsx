@@ -9,13 +9,14 @@ const NotificationPreferencesInpute = ({
   settings,
   toggleSetting,
   isToggle,
+  title,
 }: any) => {
   return (
     <View>
       {/* title title title */}
       <View className="flex-row justify-between items-center mt-7 px-4 py-2.5 border border-[#EEEEEE] rounded-xl">
         <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-          General Notification
+          {title}
         </Text>
         <ToggleButton setIsOn={setIsToggle} isOn={isToggle} />
       </View>
