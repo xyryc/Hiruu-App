@@ -1,0 +1,88 @@
+import { EvilIcons, Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+
+const BusinessShiftPending = ({ title, status, selectedTab }: any) => {
+  return (
+    <View>
+      {title && (
+        <Text className="text-xl font-proximanova-bold text-primary dark:text-dark-primary mt-5">
+          {title}
+        </Text>
+      )}
+      <View className="border border-[#eeeeee] rounded-xl p-2.5 mt-2.5">
+        <View className="flex-row justify-between">
+          <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+            June 09, 2025
+          </Text>
+          <Text
+            className={`font-proximanova-regular text-sm text-primary dark:text-dark-primary py-0.5 px-3 rounded-full ${status === "Missed Clock-out" ? "bg-[#F34F4F4D]" : "bg-[#E5F4FD]"} `}
+          >
+            {status}
+          </Text>
+        </View>
+        <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-1">
+          09:00 AM to 1:00 PM
+        </Text>
+        <View className="flex-row gap-1  mt-2.5">
+          <EvilIcons name="location" size={20} color="black" />
+          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+            New York, North Bergen
+          </Text>
+        </View>
+        <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-2.5">
+          <Text className="text-[#4FB2F3]">Reason</Text>: Unable to clock in due
+          to poor internet connectivity at location.
+        </Text>
+        <Image
+          source={require("@/assets/images/dotted-line.svg")}
+          contentFit="contain"
+          style={{ height: 2, width: 352, marginTop: 10 }}
+        />
+        <View className="flex-row justify-between items-center mt-2.5">
+          <View className="flex-row gap-2 items-center">
+            <Image
+              source={require("@/assets/images/reward/nameplate-profile.png")}
+              contentFit="contain"
+              style={{ height: 40, width: 40 }}
+            />
+            <View>
+              <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
+                Rohan Mehta
+              </Text>
+              <Text className="font-proximanova-regular text-secondary text-sm dark:text-dark-secondary">
+                IT Support
+              </Text>
+            </View>
+          </View>
+          {selectedTab ? (
+            <View className="flex-row gap-1.5">
+              <TouchableOpacity className="h-10 w-10 bg-[#E5F4FD] rounded-full flex-row justify-center items-center">
+                <Image
+                  source={require("@/assets/images/messages-fill.svg")}
+                  contentFit="contain"
+                  style={{ height: 22, width: 22 }}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity className="h-10 w-10 bg-[#292D32] rounded-full flex-row justify-center items-center">
+                <Feather name="check" size={22} color="white" />
+              </TouchableOpacity>
+              <TouchableOpacity className="h-10 w-10 bg-[#F34F4F] rounded-full flex-row justify-center items-center">
+                <EvilIcons name="close" size={22} color="white" />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View className="bg-[#11293A] py-2.5 px-3 rounded-full">
+              <Text className="font-proximanova-semibold text-sm text-white">
+                Add Request
+              </Text>
+            </View>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+};
+
+export default BusinessShiftPending;

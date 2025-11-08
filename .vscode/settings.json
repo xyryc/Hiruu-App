@@ -1,8 +1,8 @@
 {
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true,
-    "source.fixAll": true
+    "source.organizeImports": "explicit",
+    "source.fixAll": "explicit"
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[javascript]": {
@@ -31,7 +31,7 @@
     "typescriptreact"
   ],
 
-  "files.autoSave": "onFocusChange",
+  "files.autoSave": "off",
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
   "files.trimTrailingWhitespace": true,

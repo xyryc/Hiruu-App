@@ -28,13 +28,13 @@ const ShiftItem = ({ shift, index, shiftsLength }) => {
 
   return (
     <TouchableOpacity
-      onPress={() => router.push("/schedule/shift/[id]")}
+      onPress={() => router.push("/screens/schedule/shift/[id]")}
       className="flex-row mb-4 overflow-hidden relative"
     >
       {/* Time Column */}
       <View className="mr-5 relative">
         <Text
-          className={`font-proximanova-regular w-10 text-center 
+          className={`font-proximanova-regular w-10 text-center
         ${shift.type === "ongoing" ? "text-[#F3934F] font-proximanova-semibold" : " text-secondary dark:text-dark-secondary"}
         `}
         >
@@ -171,7 +171,7 @@ const ShiftItem = ({ shift, index, shiftsLength }) => {
         </View>
 
         <View
-          className={`px-4 pb-4 pt-12 rounded-2xl dark:bg-dark-surface border 
+          className={`px-4 pb-4 pt-12 rounded-2xl dark:bg-dark-surface border
                 ${
                   (shift.type === "leave" &&
                     shift.status === "pending" &&

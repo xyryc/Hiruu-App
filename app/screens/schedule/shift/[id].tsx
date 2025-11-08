@@ -160,7 +160,8 @@ const ShiftDetails = () => {
               }
               title="Sick Leave"
               onPress={() =>
-                router.push("/(user)/schedule/shift/request-leave")
+                // router.push("/(user)/schedule/shift/request-leave")
+                router.push("/screens/schedule/shift/request-leave")
               }
             />
 
@@ -173,19 +174,21 @@ const ShiftDetails = () => {
                 />
               }
               title="Overwork"
-              onPress={() => router.push("/(user)/schedule/shift/overtime")}
+              // onPress={() => router.push("/(user)/schreen/schedule/shift/overtime")}
+              onPress={() => router.push("/screens/schedule/shift/overtime")}
             />
 
             <ActionIconCard
               icon={<Feather name="repeat" size={24} color="#4FB2F3" />}
               title="Swap Shift"
-              onPress={() => router.push("/(user)/schedule/shift/swap")}
+              onPress={() => router.push("/screens/schedule/shift/swap")}
+              // onPress={() => router.push("/(user)/schedule/shift/swap")}
             />
 
             <ActionIconCard
               icon={<Ionicons name="document-text" size={24} color="#4FB2F3" />}
               title="Report Issue"
-              onPress={() => router.push("/(user)/schedule/shift/report")}
+              onPress={() => router.push("/screens/schedule/shift/report")}
             />
           </ScrollView>
         </View>
