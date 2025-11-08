@@ -13,6 +13,7 @@ import { useRouter } from "expo-router";
 import businesses from "@/assets/data/businesses.json";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import ShiftCard from "@/components/ui/cards/ShiftCard";
+import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
 
 const BusinessScheduleScreen = () => {
   const [selectedDate, setSelectedDate] = useState(6);
@@ -92,10 +93,49 @@ const BusinessScheduleScreen = () => {
     },
   ];
 
+  const menuItems = [
+    {
+      id: 1,
+      title: "Create Role",
+      icon: "pencil-outline",
+      onPress: () => {
+        console.log("Navigate to Create Role");
+        // router.push("/create-role");
+      },
+    },
+    {
+      id: 2,
+      title: "Create Template",
+      icon: "document-attach-outline",
+      onPress: () => {
+        console.log("Navigate to Create Template");
+        // router.push("/create-template");
+      },
+    },
+    {
+      id: 3,
+      title: "Weekly Schedule",
+      icon: "calendar-outline",
+      onPress: () => {
+        console.log("Navigate to Weekly Schedule");
+        // router.push("/weekly-schedule");
+      },
+    },
+    {
+      id: 4,
+      title: "Saved Shift Template",
+      icon: "document-text-outline",
+      onPress: () => {
+        console.log("Navigate to Saved Templates");
+        // router.push("/saved-templates");
+      },
+    },
+  ];
+
   const router = useRouter();
 
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
@@ -305,6 +345,13 @@ const BusinessScheduleScreen = () => {
         businesses={businesses}
         selectedBusinesses={selectedBusinesses}
         onSelectionChange={setSelectedBusinesses}
+      />
+
+      {/* add icon */}
+      <AnimatedFABMenu
+        menuItems={menuItems}
+        fabColor="#11293A"
+        menuItemColor="#11293A"
       />
     </SafeAreaView>
   );
