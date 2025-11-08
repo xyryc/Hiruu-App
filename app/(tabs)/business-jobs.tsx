@@ -58,14 +58,17 @@ const BusinessJobs = () => {
 
               {/* Input */}
               <TextInput
-                placeholder="Search..."
+                placeholder="Search"
                 placeholderTextColor="#9CA3AF"
                 className="flex-1 ml-2 text-base text-gray-800 dark:text-gray-200"
               />
             </View>
           </View>
           {/* Filter Icon Button */}
-          <TouchableOpacity className="w-10 h-10 bg-[#0C2433] rounded-full items-center justify-center ml-2">
+          <TouchableOpacity
+            onPress={() => router.push("/screens/jobs/business/filter")}
+            className="w-10 h-10 bg-[#0C2433] rounded-full items-center justify-center ml-2"
+          >
             <Ionicons name="options-outline" size={18} color="#fff" />
           </TouchableOpacity>
         </View>

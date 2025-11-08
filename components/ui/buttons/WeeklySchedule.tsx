@@ -1,5 +1,6 @@
+import { SimpleLineIcons } from "@expo/vector-icons";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 // ToggleButton Component
 type ToggleButtonProps = {
@@ -63,7 +64,7 @@ type WeekSchedule = {
 };
 
 // Main WeeklySchedule Component
-const WeeklySchedule = () => {
+const WeeklySchedule = ({ business }: { business: boolean }) => {
   const [schedule, setSchedule] = useState<WeekSchedule>({
     Monday: { isOn: true, startTime: "10:00 AM", endTime: "10:00 AM" },
     Tuesday: { isOn: true, startTime: "10:00 AM", endTime: "10:00 AM" },
@@ -137,6 +138,12 @@ const WeeklySchedule = () => {
 
   return (
     <View className="bg-white dark:bg-dark-background rounded-xl p-4 border border-[#EEEEEE]">
+      {business && (
+        <View className="flex-row justify-between mb-5 rounded-xl">
+          <Text>Available Working Days</Text>
+          <SimpleLineIcons name="arrow-down" size={16} color="black" />
+        </View>
+      )}
       {Object.keys(schedule).map((day) => renderDayRow(day))}
     </View>
   );
