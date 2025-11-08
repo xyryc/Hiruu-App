@@ -29,15 +29,6 @@ const FindJobFilters = () => {
   });
   const router = useRouter();
 
-  const updateExperience = (role: string, increment: boolean) => {
-    setExperiences({
-      ...experiences,
-      [role]: increment
-        ? experiences[role] + 1
-        : Math.max(0, experiences[role] - 1),
-    });
-  };
-
   //   sorty by
   const sortOptions = [
     "Newest",

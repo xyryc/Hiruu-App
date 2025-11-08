@@ -64,7 +64,7 @@ type WeekSchedule = {
 };
 
 // Main WeeklySchedule Component
-const WeeklySchedule = ({ business }: { business: boolean }) => {
+const WeeklySchedule = ({ business }: { business?: boolean }) => {
   const [schedule, setSchedule] = useState<WeekSchedule>({
     Monday: { isOn: true, startTime: "10:00 AM", endTime: "10:00 AM" },
     Tuesday: { isOn: true, startTime: "10:00 AM", endTime: "10:00 AM" },
