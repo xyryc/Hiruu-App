@@ -26,9 +26,13 @@ const ShiftsSummaryCard = ({
             {title}
           </Text>
 
-          <Text className="font-proximanova-semibold  rounded-[30px]">
-            {endItem}
-          </Text>
+          {typeof endItem === "string" || typeof endItem === "number" ? (
+            <Text className="font-proximanova-semibold rounded-[30px]">
+              {endItem}
+            </Text>
+          ) : (
+            endItem
+          )}
         </View>
       </View>
     </View>

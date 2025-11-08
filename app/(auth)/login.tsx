@@ -208,7 +208,7 @@ const Login = () => {
           <PrimaryButton
             className="mb-7"
             title="Log in"
-            onPress={() => router.push("/(user)/(tabs)/home")}
+            onPress={() => router.push("/(tabs)/user-home")}
           />
 
           {/* OR Divider */}

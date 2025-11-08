@@ -6,11 +6,13 @@ import RatingProgress from "@/components/ui/cards/RatingProgress";
 import {
   EvilIcons,
   Feather,
+  FontAwesome5,
   FontAwesome6,
   Foundation,
   Ionicons,
   MaterialCommunityIcons,
   Octicons,
+  SimpleLineIcons,
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -33,7 +35,7 @@ const BusinessProfile = () => {
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
-      edges={["left", "right", "bottom", "top"]}
+      edges={["left", "right", "top"]}
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -49,12 +51,13 @@ const BusinessProfile = () => {
               onPress={() => router.push("/profile/edit-business-profile")}
               className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
             >
-              {/* <EvilIcons name="share-apple" size={24} color="black" /> */}
-              <Feather name="edit-2" size={18} color="black" />
+              <SimpleLineIcons name="pencil" size={16} color="black" />
             </TouchableOpacity>
+
             <TouchableOpacity className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center">
-              <Octicons name="share" size={18} color="black" />
+              <EvilIcons name="share-apple" size={24} color="black" />
             </TouchableOpacity>
+
             <TouchableOpacity className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center">
               <Ionicons name="settings-outline" size={20} color="black" />
             </TouchableOpacity>
@@ -65,48 +68,54 @@ const BusinessProfile = () => {
         <View className="mt-3 relative">
           {/* cover photo */}
           <Image
-            source={require("@/assets/images/business-cover.png")}
+            source="https://media-cdn.tripadvisor.com/media/photo-s/09/de/d6/61/infinity-resort.jpg"
+            style={{ width: "100%", height: 137 }}
             contentFit="cover"
-            style={{ width: 430, height: 137 }}
           />
-          {/* prifile photo */}
-          <View className="flex-row items-center justify-between ml-7 mr-14 absolute -bottom-[45px]">
+
+          {/* profile photo */}
+          <View className="absolute -bottom-11 left-6">
             <View className="h-[90px] w-[90px] bg-white flex-row justify-center items-center rounded-full">
               <Image
-                source={require("@/assets/images/business-profil-pic.png")}
+                source="https://cdn.dribbble.com/userupload/11076335/file/original-991912ab2ec877a6ca29ed851a2c2088.jpg?format=webp&resize=400x300&vertical=center"
                 contentFit="cover"
                 style={{ height: 86, width: 86, borderRadius: 100 }}
               />
             </View>
-            <View className="bg-primary py-1 px-4 rounded-full left-36">
-              <Text className="font-proximanova-semibold text-sm p-1 text-[#FFFFFF] capitalize">
-                actively recruiting
-              </Text>
-            </View>
+          </View>
+
+          <View className="absolute -bottom-3 right-6">
+            <Text className="bg-[#11293A] py-1 px-4 rounded-full border font-proximanova-semibold text-sm p-1 text-[#FFFFFF] capitalize">
+              actively recruiting
+            </Text>
           </View>
         </View>
         {/* prifile name and details */}
-        <View className="mx-6 mt-16 ">
-          <View className="flex-row gap-1.5">
-            <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+        <View className="mx-6 mt-16">
+          <View className="flex-row items-center gap-1.5">
+            <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
               PalmBeach Hotel
             </Text>
+
             <MaterialCommunityIcons
               name="check-decagram"
               size={20}
               color="#3EBF5A"
             />
             <View className="h-5 w-5 bg-[#4E57FF]  flex-row justify-center items-center rounded-full">
-              <FontAwesome6 name="crown" size={10} color="white" />
+              <FontAwesome6 name="crown" size={8} color="white" />
             </View>
           </View>
-          <View className="flex-row items-center gap-1.5">
+
+          <View className="flex-row items-center gap-1">
             <EvilIcons name="location" size={18} color="black" />
+
             <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
               New York, North Bergen{"  "} |{"  "} 150 employee
             </Text>
           </View>
         </View>
+
         {/* Tabs */}
         <View className="flex-row mx-5 mt-4 dark:bg-dark-background">
           {["about", "job"].map((tab) => (
@@ -133,7 +142,8 @@ const BusinessProfile = () => {
             <View className="flex-row justify-between items-centers mx-5 mt-4">
               <View className="flex-row items-centers gap-2.5">
                 <View className="bg-[#E5F4FD] h-7 w-7 rounded-full flex-row items-center justify-center">
-                  <EvilIcons name="star" size={18} color="black" />
+                  {/* <EvilIcons name="star" size={18} color="black" /> */}
+                  <SimpleLineIcons name="star" size={14} color="black" />
                 </View>
                 <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
                   Rating Summary
@@ -148,34 +158,39 @@ const BusinessProfile = () => {
                 </Text>
               </TouchableOpacity>
             </View>
-            <View className="mx-5 p-4 border mt-4 border-[#EEEEEE] rounded-2xl ">
+
+            <View className="mx-5 pt-4 px-2.5 pb-3 border mt-4 border-[#EEEEEE] rounded-2xl">
               <RatingBanner />
-              <View className="flex-row justify-between mx-3 mt-5">
+
+              <View className="flex-row justify-between mt-5">
                 <View>
-                  <RatingProgress rating={3.5} />
+                  <RatingProgress rating={4.5} />
                   <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center mt-1.5 capitalize">
-                    work enviroment
+                    Work Enviroment
                   </Text>
                 </View>
 
                 <Image
                   source={require("@/assets/images/vertical-line.svg")}
                   contentFit="contain"
-                  style={{ height: 70, width: 2 }}
+                  style={{ height: 70, width: 0.5 }}
                 />
+
                 <View>
                   <RatingProgress rating={4.5} />
                   <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center mt-1.5 capitalize">
                     pay on time
                   </Text>
                 </View>
+
                 <Image
                   source={require("@/assets/images/vertical-line.svg")}
                   contentFit="contain"
-                  style={{ height: 70, width: 2 }}
+                  style={{ height: 70, width: 0.5 }}
                 />
+
                 <View>
-                  <RatingProgress rating={2} />
+                  <RatingProgress rating={2.1} />
                   <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center mt-1.5 capitalize">
                     communication
                   </Text>
@@ -186,12 +201,14 @@ const BusinessProfile = () => {
             {/* About Us */}
             <View className="mx-5 mt-8 flex-row gap-2.5">
               <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
-                <Foundation name="clipboard" size={16} color="black" />
+                {/* <Foundation name="clipboard" size={16} color="black" /> */}
+                <SimpleLineIcons name="notebook" size={14} color="black" />
               </View>
-              <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
+              <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
                 About Us
               </Text>
             </View>
+
             <View className="mx-5 mt-4">
               <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
                 Ocean View Hotel is a premium beachfront destination renowned
@@ -209,8 +226,9 @@ const BusinessProfile = () => {
                 Team & Overview
               </Text>
             </View>
+
             <View className="mx-5 px-4 py-3 border border-[#eeeeee] mt-4 rounded-xl">
-              <View className="flex-row justify-between items-center mt-2.5 p-2">
+              <View className="flex-row justify-between items-center p-2">
                 <View className="flex-row gap-2">
                   <Feather name="users" size={18} color="black" />
                   <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -255,16 +273,15 @@ const BusinessProfile = () => {
                   title={`${togolIsOn ? "YES" : "NO"}`}
                 />
               </View>
-              <Text className="mt-2.5 mx-2 font-proximanova-regular text-sm text-primary dark:text-dark-primary">
-                {" "}
+
+              <Text className="mt-2.5 font-proximanova-regular text-sm text-primary dark:text-dark-primary">
                 <Text className="font-proximanova-semibold">Note</Text> : X more
                 hire to activate
               </Text>
             </View>
 
             {/* Contact Us On */}
-
-            <View className="flex-row justify-between items-center mx-5 mt-8 ">
+            <View className="flex-row justify-between items-center mx-5 mt-8">
               <View className="flex-row gap-2.5">
                 <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
                   <Ionicons name="call-outline" size={16} color="black" />
@@ -278,7 +295,7 @@ const BusinessProfile = () => {
               </Text>
             </View>
 
-            <View className="border border-[#EEEEEE] rounded-xl m-5">
+            <View className="border border-[#EEEEEE] rounded-xl mx-5 mt-4">
               <View className="flex-row justify-between items-center  p-2.5 border border-[#EEEEEE] rounded-t-xl ">
                 <View className="flex-row items-center gap-2.5">
                   <Image
@@ -364,11 +381,20 @@ const BusinessProfile = () => {
         {/* job tobs */}
         {selectedTab === "job" && (
           <View className="mx-5">
-            <Text className="my-4">aslkdfj</Text>
+            <Text className="my-4">Open Positions</Text>
 
-            <JobCard className="bg-white border border-[#EEEEEE]" status={""} />
-            <JobCard className="bg-white border border-[#EEEEEE]" status={""} />
-            <JobCard className="bg-white border border-[#EEEEEE]" status={""} />
+            <JobCard
+              className="bg-white border border-[#EEEEEE] mb-4"
+              status={""}
+            />
+            <JobCard
+              className="bg-white border border-[#EEEEEE] mb-4"
+              status={""}
+            />
+            <JobCard
+              className="bg-white border border-[#EEEEEE] mb-4"
+              status={""}
+            />
           </View>
         )}
       </ScrollView>

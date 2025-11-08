@@ -1,4 +1,4 @@
-import { LeaveItem } from "@/app/(user)/home/shift/leave/leave-history";
+import { LeaveItem } from "@/app/screens/home/shift/leave/leave-history";
 import RejectionReasonModal from "@/components/ui/modals/RejectionReasonModal";
 import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";

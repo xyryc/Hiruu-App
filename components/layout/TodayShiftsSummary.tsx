@@ -21,7 +21,7 @@ const TodayShiftsSummary = ({ className }: any) => {
         padding: 15,
         overflow: "hidden",
       }}
-      className="border border-[#4FB2F3]"
+      className="border border-[#4FB2F3] mx-5 mt-8"
     >
       <View className={className}>
         <Text className="text-xl font-proximanova-semibold text-black">
