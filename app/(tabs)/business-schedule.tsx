@@ -12,6 +12,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import businesses from "@/assets/data/businesses.json";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
+import ShiftCard from "@/components/ui/cards/ShiftCard";
 
 const BusinessScheduleScreen = () => {
   const [selectedDate, setSelectedDate] = useState(6);
@@ -98,7 +99,7 @@ const BusinessScheduleScreen = () => {
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-      <View className="py-4">
+      <View className="pt-2.5 pb-5">
         <View className="flex-row items-center justify-between mb-4 px-5">
           {/* left */}
           <View>
@@ -257,7 +258,7 @@ const BusinessScheduleScreen = () => {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          className="mb-4 pl-5"
+          className="pl-5"
         >
           {filters.map((filter) => (
             <TouchableOpacity
@@ -268,8 +269,10 @@ const BusinessScheduleScreen = () => {
               }`}
             >
               <Text
-                className={`font-proximanova-semibold text-sm ${
-                  selectedFilter === filter.id ? "text-white" : "text-primary"
+                className={` text-sm ${
+                  selectedFilter === filter.id
+                    ? "text-white font-proximanova-semibold"
+                    : "text-primary font-proximanova-regular"
                 }`}
               >
                 {filter.label} ({filter.count})
@@ -282,85 +285,16 @@ const BusinessScheduleScreen = () => {
       {/* Shifts List */}
       <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
         <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-lg font-proximanova-bold text-primary">
+          <Text className="text-lg font-proximanova-semibold text-primary">
             Morning Shifts (15)
           </Text>
-          <Text className="text-sm font-proximanova-regular text-gray-600">
+          <Text className="text-sm font-proximanova-regular text-secondary">
             10:00AM to 5:00PM
           </Text>
         </View>
 
         {shifts.map((shift) => (
-          <View
-            key={shift.id}
-            className="bg-[#F8F9FA] rounded-2xl p-4 mb-3 flex-row items-start"
-          >
-            <Image
-              source={{ uri: shift.avatar }}
-              style={{ width: 50, height: 50 }}
-              className="rounded-full mr-3"
-            />
-
-            <View className="flex-1">
-              <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-base font-proximanova-bold text-primary">
-                  {shift.name}
-                </Text>
-                <TouchableOpacity>
-                  <Entypo name="dots-three-vertical" size={16} color="#666" />
-                </TouchableOpacity>
-              </View>
-
-              <Text className="text-sm font-proximanova-regular text-gray-600 mb-3">
-                {shift.role}
-              </Text>
-
-              <View className="flex-row items-center mb-2">
-                <Text className="text-xs font-proximanova-regular text-gray-500 w-20">
-                  Shift Time:
-                </Text>
-                <Text className="text-sm font-proximanova-semibold text-primary">
-                  {shift.shiftTime}
-                </Text>
-              </View>
-
-              <View className="flex-row items-center mb-3">
-                <Text className="text-xs font-proximanova-regular text-gray-500 w-20">
-                  Location:
-                </Text>
-                <Text className="text-sm font-proximanova-regular text-primary">
-                  {shift.location}
-                </Text>
-              </View>
-
-              <View className="flex-row items-center justify-between">
-                <TouchableOpacity className="flex-row items-center gap-2">
-                  <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
-                    View Details
-                  </Text>
-                  <Ionicons name="arrow-forward" size={16} color="#4FB2F3" />
-                </TouchableOpacity>
-
-                <View
-                  className={`px-3 py-1.5 rounded-full ${
-                    shift.status === "ongoing"
-                      ? "bg-orange-100"
-                      : "bg-green-100"
-                  }`}
-                >
-                  <Text
-                    className={`text-xs font-proximanova-semibold capitalize ${
-                      shift.status === "ongoing"
-                        ? "text-orange-600"
-                        : "text-green-600"
-                    }`}
-                  >
-                    ● {shift.status}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
+          <ShiftCard shift={shift} />
         ))}
       </ScrollView>
 
