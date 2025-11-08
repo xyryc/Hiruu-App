@@ -3,7 +3,6 @@ import WelcomeHeader from "@/components/header/WelcomeHeader";
 import AttendanceSummary from "@/components/layout/AttendanceSummary";
 import BusinessProfile from "@/components/layout/BusinessProfile";
 import BusinessSummary from "@/components/layout/BusinessSummary";
-import EngagementPerks from "@/components/layout/EngagementPerks";
 import FindNewJob from "@/components/layout/FindNewJob";
 import JoinCollegue from "@/components/layout/JoinCollegue";
 import ProfileProgress from "@/components/layout/ProfileProgress";

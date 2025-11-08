@@ -1,3 +1,4 @@
+import userData from "@/assets/data/user.json";
 import { HapticTab } from "@/components/HapticTab";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -5,7 +6,6 @@ import Feather from "@expo/vector-icons/Feather";
 import Octicons from "@expo/vector-icons/Octicons";
 import { Tabs } from "expo-router";
 import React from "react";
-import userData from "@/assets/data/user.json";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
