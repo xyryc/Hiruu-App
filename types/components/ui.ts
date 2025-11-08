@@ -260,6 +260,6 @@ export interface TimeLeft {
 }
 
 export interface JobCardProps {
-  className: string;
-  status: string;
+  className?: string;
+  status?: string;
 }

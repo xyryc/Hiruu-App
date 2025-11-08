@@ -1,4 +1,3 @@
-import SmallButton from "@/components/ui/buttons/SmallButton";
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
 import JobCard from "@/components/ui/cards/JobCard";
 import RatingBanner from "@/components/ui/cards/RatingBanner";
@@ -6,19 +5,16 @@ import RatingProgress from "@/components/ui/cards/RatingProgress";
 import {
   EvilIcons,
   Feather,
-  FontAwesome5,
   FontAwesome6,
-  Foundation,
   Ionicons,
   MaterialCommunityIcons,
-  Octicons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
