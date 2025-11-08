@@ -27,8 +27,7 @@ const AppContent = () => {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(user)" />
-      <Stack.Screen name="(business)" />
+      <Stack.Screen name="(tabs)" />
       <Stack.Screen name="+not-found" />
     </Stack>
   );
