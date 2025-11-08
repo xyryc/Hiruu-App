@@ -9,11 +9,10 @@ import JoinCollegue from "@/components/layout/JoinCollegue";
 import ProfileProgress from "@/components/layout/ProfileProgress";
 import QuickAction from "@/components/layout/QuickAction";
 import TodayShiftsSummary from "@/components/layout/TodayShiftsSummary";
-import TodaysShift from "@/components/layout/TodaysShift";
-import Widgets from "@/components/layout/Widgets";
 import WorkInsights from "@/components/layout/WorkInsights";
+import ActionCard from "@/components/ui/cards/ActionCard";
 import React from "react";
-import { ScrollView, StatusBar } from "react-native";
+import { ScrollView, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const BusinessHome = () => {
@@ -50,20 +49,29 @@ const BusinessHome = () => {
         {/* join your collegues */}
         <JoinCollegue className="mt-7" />
 
-        {/* find new job */}
-        <FindNewJob className="mt-7" />
-
         {/* do you  manage a business */}
         <BusinessProfile className="mt-7" />
 
+        {/* See Employee rank on board */}
+        <View className="mx-4 mt-8">
+          <ActionCard
+            title="See Employee rank on board"
+            buttonTitle="View"
+            rightImage={require("@/assets/images/rank.svg")}
+            imageClass="absolute bottom-0 right-2.5"
+            imageWidth={144}
+            imageHeight={95}
+            background={require("@/assets/images/chessboard-bg.svg")}
+          />
+        </View>
         {/* quick actions */}
         <QuickAction className="mt-7" />
 
         {/* Team Insights */}
         <WorkInsights title="Team Insights" className="mt-7" />
 
-        {/* engagement & perks */}
-        <EngagementPerks className="mt-7" />
+        {/* job Board */}
+        <FindNewJob business={true} className="mt-7" />
       </ScrollView>
     </SafeAreaView>
   );
