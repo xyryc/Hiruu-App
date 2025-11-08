@@ -65,7 +65,7 @@ const UserJobs = () => {
       <View className="flex-row items-center gap-1.5 mr-12 mt-3.5 px-5">
         <SearchBar />
 
-        <TouchableOpacity onPress={() => router.push("/(user)/jobs/filter")}>
+        <TouchableOpacity onPress={() => router.push("/screens/jobs/filter")}>
           <Ionicons name="filter-circle" size={44} color="black" />
         </TouchableOpacity>
       </View>
