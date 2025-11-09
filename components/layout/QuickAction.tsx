@@ -27,7 +27,7 @@ const QuickAction = ({ className }: QuickActionProps) => {
             title="Leave"
             onPress={() =>
               // router.push("/(user)/schedule/shift/request-leave")
-              router.push("/screens/schedule/shift/request-leave")
+              router.push("/screens/home/business/leave/leave-request")
             }
           />
 
