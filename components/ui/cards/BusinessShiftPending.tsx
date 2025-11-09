@@ -1,9 +1,11 @@
 import { EvilIcons, Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import React from "react";
+import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import ShiftRequestModal from "../modals/ShiftRequestModal";
 
 const BusinessShiftPending = ({ title, status, selectedTab }: any) => {
+  const [isFilterModal, setIsFilterModal] = useState(false);
   return (
     <View>
       {title && (
@@ -73,13 +75,20 @@ const BusinessShiftPending = ({ title, status, selectedTab }: any) => {
               </TouchableOpacity>
             </View>
           ) : (
-            <View className="bg-[#11293A] py-2.5 px-3 rounded-full">
+            <TouchableOpacity
+              onPress={() => setIsFilterModal(true)}
+              className="bg-[#11293A] py-2.5 px-3 rounded-full"
+            >
               <Text className="font-proximanova-semibold text-sm text-white">
                 Add Request
               </Text>
-            </View>
+            </TouchableOpacity>
           )}
         </View>
+        <ShiftRequestModal
+          onClose={() => setIsFilterModal(false)}
+          visible={isFilterModal}
+        />
       </View>
     </View>
   );

@@ -2,7 +2,15 @@ import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import { FlatList, Modal, Text, TouchableOpacity, View } from "react-native";
 
-const Dropdown = ({ label, placeholder, options, value, onSelect }: any) => {
+const Dropdown = ({
+  label,
+  placeholder,
+  options,
+  value,
+  onSelect,
+  className,
+  fontSize,
+}: any) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const handleSelect = (item: any) => {
@@ -11,9 +19,12 @@ const Dropdown = ({ label, placeholder, options, value, onSelect }: any) => {
   };
 
   return (
-    <View>
+    <View className={className}>
       {label && (
-        <Text className="text-sm font-proximanova-medium text-primary dark:text-dark-primary mb-2.5">
+        <Text
+          className="font-proximanova-medium text-primary dark:text-dark-primary mb-2.5"
+          style={{ fontSize: fontSize | 14 }}
+        >
           {label}
         </Text>
       )}

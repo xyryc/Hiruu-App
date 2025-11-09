@@ -1,7 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import BusinessShiftPending from "@/components/ui/cards/BusinessShiftPending";
 import RequestLogModal from "@/components/ui/modals/RequestLogModal";
-import ShiftRequestModal from "@/components/ui/modals/ShiftRequestModal";
 import { Feather, SimpleLineIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -17,7 +16,6 @@ const ShiftRequest = () => {
   const isDark = colorScheme === "dark";
   const [selectedTab, setSelectedTab] = useState("Pending Requests");
   const insets = useSafeAreaInsets();
-  const [isModal, setIsModal] = useState(false);
   const [isModalSettings, setIsModalSettings] = useState(false);
   return (
     <SafeAreaView
@@ -43,7 +41,9 @@ const ShiftRequest = () => {
                 <SimpleLineIcons name="settings" size={22} color="black" />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => setIsModal(true)}
+                onPress={() =>
+                  router.push("/screens/home/business/filter-shift")
+                }
                 className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center"
               >
                 <Feather name="filter" size={22} color="black" />
@@ -52,10 +52,6 @@ const ShiftRequest = () => {
           }
         />
 
-        <ShiftRequestModal
-          onClose={() => setIsModal(false)}
-          visible={isModal}
-        />
         <RequestLogModal
           visible={isModalSettings}
           onClose={() => setIsModalSettings(false)}
@@ -84,7 +80,7 @@ const ShiftRequest = () => {
         {selectedTab === "Pending Requests" && (
           <View>
             <BusinessShiftPending status="Missed Clock-out" title="Pending" />
-            <BusinessShiftPending status="Late Clock-in" />
+            <BusinessShiftPending status="Late Clo        ck-in" />
             <BusinessShiftPending status="Missed Clock-out" />
             <BusinessShiftPending status="Network Issues" />
             <BusinessShiftPending status="Missed Clock-out" title="Pending" />
