@@ -48,7 +48,7 @@ const BusinessScheduleScreen = () => {
     { date: 9, day: "AM" },
     { date: 10, day: "AM" },
     { date: 11, day: "AM" },
-    { date: 12, day: "PM" },
+    { date: 12, day: "AM" },
     { date: 1, day: "PM" },
     { date: 2, day: "PM" },
     { date: 3, day: "PM" },
@@ -97,7 +97,7 @@ const BusinessScheduleScreen = () => {
     {
       id: 1,
       title: "Create Role",
-      icon: "pencil-outline",
+      icon: "create-outline",
       onPress: () => {
         console.log("Navigate to Create Role");
         // router.push("/create-role");
@@ -106,10 +106,10 @@ const BusinessScheduleScreen = () => {
     {
       id: 2,
       title: "Create Template",
-      icon: "document-attach-outline",
+      icon: "document-text-outline",
       onPress: () => {
-        console.log("Navigate to Create Template");
-        // router.push("/create-template");
+        // console.log("Navigate to Create Template");
+        router.push("/screens/schedule/business/create-template");
       },
     },
     {
@@ -124,7 +124,7 @@ const BusinessScheduleScreen = () => {
     {
       id: 4,
       title: "Saved Shift Template",
-      icon: "document-text-outline",
+      icon: "document-attach-outline",
       onPress: () => {
         console.log("Navigate to Saved Templates");
         // router.push("/saved-templates");
@@ -334,7 +334,7 @@ const BusinessScheduleScreen = () => {
         </View>
 
         {shifts.map((shift) => (
-          <ShiftCard shift={shift} />
+          <ShiftCard key={shift.id} shift={shift} />
         ))}
       </ScrollView>
 

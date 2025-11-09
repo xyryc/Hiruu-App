@@ -137,9 +137,8 @@ const AnimatedFABMenu: React.FC<AnimatedFABMenuProps> = ({
               >
                 {item.title}
               </Text>
-              <View className="w-9 h-9 rounded-full bg-gray-100 justify-center items-center">
-                <Ionicons name={item.icon} size={20} color={menuItemColor} />
-              </View>
+
+              <Ionicons name={item.icon} size={20} color={menuItemColor} />
             </TouchableOpacity>
           </Animated.View>
         );
