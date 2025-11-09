@@ -241,19 +241,7 @@ const SwapRequestAction = () => {
   ).length;
 
   return (
-    // <SafeAreaView
-    //   className="flex-1 bg-[#E5F4FD] dark:bg-dark-background"
-    //   edges={["top", "left", "right"]}
-    // >
-    //   {/* Header */}
-    //   <ScreenHeader
-    //     className="mx-5 rounded-3xl"
-    //     onPressBack={() => router.back()}
-    //     title="Swap Request"
-    //     titleClass="text-primary dark:text-dark-primary"
-    //     iconColor={isDark ? "#fff" : "#111"}
-    //     components={<></>}
-    //   />
+
     <SafeAreaView
       className="flex-1 bg-white"
       edges={["left", "right", "bottom"]}

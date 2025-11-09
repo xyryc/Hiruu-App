@@ -4,7 +4,12 @@ import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import ShiftRequestModal from "../modals/ShiftRequestModal";
 
-const BusinessShiftPending = ({ title, status, selectedTab }: any) => {
+const BusinessShiftPending = ({
+  title,
+  status,
+  selectedTab,
+  approved,
+}: any) => {
   const [isFilterModal, setIsFilterModal] = useState(false);
   return (
     <View>
@@ -77,7 +82,7 @@ const BusinessShiftPending = ({ title, status, selectedTab }: any) => {
           ) : (
             <TouchableOpacity
               onPress={() => setIsFilterModal(true)}
-              className="bg-[#11293A] py-2.5 px-3 rounded-full"
+              className={`py-2.5 px-3 rounded-full ${approved || "bg-[#11293A] "}`}
             >
               <Text className="font-proximanova-semibold text-sm text-white">
                 Add Request
