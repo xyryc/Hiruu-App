@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import BusinessShiftPending from "@/components/ui/cards/BusinessShiftPending";
+import CustomModal from "@/components/ui/modals/CustomModal";
 import { Feather, SimpleLineIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -15,6 +16,7 @@ const ShiftRequest = () => {
   const isDark = colorScheme === "dark";
   const [selectedTab, setSelectedTab] = useState("Pending Requests");
   const insets = useSafeAreaInsets();
+  const [isModal, setIsModal] = useState(false);
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -32,16 +34,20 @@ const ShiftRequest = () => {
           iconColor={isDark ? "#fff" : "#111"}
           components={
             <View className="flex-row gap-2.5">
-              <View className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center">
+              <TouchableOpacity className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center">
                 <SimpleLineIcons name="settings" size={22} color="black" />
-              </View>
-              <View className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center">
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => setIsModal(true)}
+                className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center"
+              >
                 <Feather name="filter" size={22} color="black" />
-              </View>
+              </TouchableOpacity>
             </View>
           }
         />
 
+        <CustomModal onClose={() => setIsModal(false)} visible={isModal} />
         {/* tabs  */}
         <View className="flex-row mx-5 mt-2 dark:bg-dark-background">
           {["Pending Requests", "Request History"].map((tab) => (
