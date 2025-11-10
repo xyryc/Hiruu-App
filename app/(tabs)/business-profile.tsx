@@ -44,7 +44,9 @@ const BusinessProfile = () => {
           </Text>
           <View className="flex-row gap-1.5 items-center justify-center">
             <TouchableOpacity
-              onPress={() => router.push("/profile/edit-business-profile")}
+              onPress={() =>
+                router.push("/screens/profile/business/edit-business-profile")
+              }
               className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
             >
               <SimpleLineIcons name="pencil" size={16} color="black" />
