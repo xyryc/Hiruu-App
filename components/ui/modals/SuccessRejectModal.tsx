@@ -33,7 +33,11 @@ const SuccessRejectModal = ({ visible, onClose, reject }: any) => {
           <SafeAreaView edges={["bottom"]} className="px-5 py-7">
             <View className="items-center"></View>
 
-            {reject && <Text>asdfsd</Text>}
+            {reject && (
+              <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary mb-8">
+                Add Rejection Reason
+              </Text>
+            )}
             {/* headers */}
             <View className="flex-row gap-2 items-center">
               <Image
@@ -92,24 +96,29 @@ const SuccessRejectModal = ({ visible, onClose, reject }: any) => {
             </View>
 
             {/* details */}
-            <View className="mt-4">
-              <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">
-                Reason:
-              </Text>
-              <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary mt-1.5">
-                I have a doctor's appointment and may not return until late
-                afternoon due to tests. Need to undergo some routine checkups
-                and waiting time might be longer.
-              </Text>
-            </View>
+            {reject || (
+              <View className="mt-4">
+                <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">
+                  Reason:
+                </Text>
+                <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary mt-1.5">
+                  I have a doctor's appointment and may not return until late
+                  afternoon due to tests. Need to undergo some routine checkups
+                  and waiting time might be longer.
+                </Text>
+              </View>
+            )}
 
             {/* status button and date */}
-            <View className="flex-row justify-between mt-9 items-center mb-4 ">
-              <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                Approved on apr 20, 2025
-              </Text>
-              <StatusBadge status="approved" />
-            </View>
+
+            {reject || (
+              <View className="flex-row justify-between mt-9 items-center mb-4 ">
+                <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                  Approved on apr 20, 2025
+                </Text>
+                <StatusBadge status="approved" />
+              </View>
+            )}
           </SafeAreaView>
         </View>
       </BlurView>
