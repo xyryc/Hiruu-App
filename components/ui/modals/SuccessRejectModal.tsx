@@ -1,7 +1,7 @@
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import React from "react";
+import React, { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import StatusBadge from "../badges/StatusBadge";
@@ -10,6 +10,11 @@ const SuccessRejectModal = ({ visible, onClose, reject }: any) => {
   const handleDone = () => {
     onClose();
   };
+
+  const [isLeaves, setIsLeaves] = useState(false);
+  const [isOther, setIsOther] = useState(false);
+  const [isNotice, setIsNotice] = useState(false);
+  const [isPriority, setIsPriority] = useState(false);
 
   return (
     <Modal
@@ -117,6 +122,88 @@ const SuccessRejectModal = ({ visible, onClose, reject }: any) => {
                   Approved on apr 20, 2025
                 </Text>
                 <StatusBadge status="approved" />
+              </View>
+            )}
+
+            {/* radio button */}
+            {reject && (
+              <View>
+                <TouchableOpacity
+                  onPress={() => setIsLeaves(!isLeaves)}
+                  className="flex-row items-center mt-4 gap-2"
+                >
+                  <View
+                    className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${isLeaves ? "bg-primary" : ""} `}
+                  >
+                    {isLeaves && (
+                      <Ionicons
+                        name="checkmark-outline"
+                        size={17}
+                        color="white"
+                      />
+                    )}
+                  </View>
+                  <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary">
+                    Too many employees on leave
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setIsLeaves(!isLeaves)}
+                  className="flex-row items-center mt-4 gap-2"
+                >
+                  <View
+                    className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${isLeaves ? "bg-primary" : ""} `}
+                  >
+                    {isLeaves && (
+                      <Ionicons
+                        name="checkmark-outline"
+                        size={17}
+                        color="white"
+                      />
+                    )}
+                  </View>
+                  <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary">
+                    Business priority day
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setIsLeaves(!isLeaves)}
+                  className="flex-row items-center mt-4 gap-2"
+                >
+                  <View
+                    className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${isLeaves ? "bg-primary" : ""} `}
+                  >
+                    {isLeaves && (
+                      <Ionicons
+                        name="checkmark-outline"
+                        size={17}
+                        color="white"
+                      />
+                    )}
+                  </View>
+                  <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary">
+                    Insufficient notice
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => setIsLeaves(!isLeaves)}
+                  className="flex-row items-center mt-4 gap-2"
+                >
+                  <View
+                    className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${isLeaves ? "bg-primary" : ""} `}
+                  >
+                    {isLeaves && (
+                      <Ionicons
+                        name="checkmark-outline"
+                        size={17}
+                        color="white"
+                      />
+                    )}
+                  </View>
+                  <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary">
+                    Other
+                  </Text>
+                </TouchableOpacity>
               </View>
             )}
           </SafeAreaView>
