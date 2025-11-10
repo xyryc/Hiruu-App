@@ -1,3 +1,4 @@
+import userData from "@/assets/data/user.json";
 import { QuickActionProps } from "@/types";
 import {
   FontAwesome,
@@ -11,6 +12,7 @@ import ActionIconCard from "../ui/cards/ActionIconCard";
 
 const QuickAction = ({ className }: QuickActionProps) => {
   const router = useRouter();
+  const user = userData.user;
 
   return (
     <View className={`${className} px-4`}>
@@ -25,10 +27,11 @@ const QuickAction = ({ className }: QuickActionProps) => {
           <ActionIconCard
             icon={<Ionicons name="calendar" size={24} color="#4FB2F3" />}
             title="Leave"
-            onPress={() =>
-              // router.push("/(user)/schedule/shift/request-leave")
-              router.push("/screens/home/business/leave/leave-request")
-            }
+            onPress={() => {
+              user.role === "user"
+                ? router.push("/screens/home/shift/leave/leave-history")
+                : router.push("/screens/home/business/leave/leave-request");
+            }}
           />
 
           <ActionIconCard
