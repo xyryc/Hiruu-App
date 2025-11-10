@@ -13,6 +13,7 @@ const LeaveRequest = () => {
   const isDark = colorScheme === "dark";
   const [selectedTab, setSelectedTab] = useState("New Request");
   const [isSuccess, setIssuccess] = useState(false);
+  const [reject, setReject] = useState(false);
   return (
     <SafeAreaView
       className="flex-1 bg-white"
@@ -77,6 +78,8 @@ const LeaveRequest = () => {
           <View>
             <BusinessShiftPending
               modal={() => setIssuccess(true)}
+              setReject={setReject}
+              reject={reject}
               selectedTab
               title="Today 21"
               status="Hourly Leave"
@@ -94,6 +97,7 @@ const LeaveRequest = () => {
         <SuccessRejectModal
           visible={isSuccess}
           onClose={() => setIssuccess(false)}
+          reject={reject}
         />
       </ScrollView>
     </SafeAreaView>

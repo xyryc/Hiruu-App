@@ -4,9 +4,9 @@ import { Image } from "expo-image";
 import React from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CoinProgressSlider from "../inputs/CoinProgressSlider";
+import StatusBadge from "../badges/StatusBadge";
 
-const SuccessRejectModal = ({ visible, onClose }: any) => {
+const SuccessRejectModal = ({ visible, onClose, reject }: any) => {
   const handleDone = () => {
     onClose();
   };
@@ -31,31 +31,85 @@ const SuccessRejectModal = ({ visible, onClose }: any) => {
 
           {/* Modal Content */}
           <SafeAreaView edges={["bottom"]} className="px-5 py-7">
-            <View className="flex-row justify-between">
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center">
-                Unlock this badge to earn Hirru coins.
-              </Text>
-
-              {/* coin */}
-              <View className="flex-row items-center">
-                <Image
-                  source={require("@/assets/images/hiruu-coin.svg")}
-                  style={{
-                    width: 22,
-                    height: 22,
-                  }}
-                  contentFit="contain"
-                />
-              </View>
-            </View>
             <View className="items-center"></View>
 
-            <CoinProgressSlider max={500} achieved={300} className="mt-4" />
+            {reject && <Text>asdfsd</Text>}
+            {/* headers */}
+            <View className="flex-row gap-2 items-center">
+              <Image
+                source={require("@/assets/images/reward/nameplate-profile.png")}
+                contentFit="contain"
+                style={{ height: 40, width: 40 }}
+              />
+              <View>
+                <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
+                  Emma Wilson
+                </Text>
+                <Text className="font-proximanova-regular text-secondary text-sm dark:text-dark-secondary">
+                  Cashier - Housekeeping
+                </Text>
+              </View>
+            </View>
 
-            <Text className="text-center font-proximanova-regular text-sm text-secondary dark:text-dark-secondary px-3">
-              Earn this badge by working consisent hours over time. keep going
-              to level up and earn rewardz
-            </Text>
+            {/* date */}
+            <View className="flex-row justify-between mt-8">
+              <View>
+                <View>
+                  <Text className="font-proximanova-regular text-secondary text-sm dark:text-dark-secondary">
+                    From:
+                  </Text>
+                  <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                    Apr 20, 2025
+                  </Text>
+                </View>
+                <View className="mt-4">
+                  <Text className="font-proximanova-regular text-secondary text-sm dark:text-dark-secondary">
+                    Submitted On:
+                  </Text>
+                  <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                    Apr 20,2025
+                  </Text>
+                </View>
+              </View>
+              <View>
+                <View>
+                  <Text className="font-proximanova-regular text-secondary text-sm dark:text-dark-secondary">
+                    To:
+                  </Text>
+                  <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                    Apr 23, 2025
+                  </Text>
+                </View>
+                <View className="mt-4">
+                  <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">
+                    Type:
+                  </Text>
+                  <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                    doctor’s Appointment
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* details */}
+            <View className="mt-4">
+              <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">
+                Reason:
+              </Text>
+              <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary mt-1.5">
+                I have a doctor's appointment and may not return until late
+                afternoon due to tests. Need to undergo some routine checkups
+                and waiting time might be longer.
+              </Text>
+            </View>
+
+            {/* status button and date */}
+            <View className="flex-row justify-between mt-9 items-center mb-4 ">
+              <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                Approved on apr 20, 2025
+              </Text>
+              <StatusBadge status="approved" />
+            </View>
           </SafeAreaView>
         </View>
       </BlurView>
