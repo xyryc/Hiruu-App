@@ -3,8 +3,11 @@ import { Image } from "expo-image";
 import React from "react";
 import { Text, View } from "react-native";
 import SmallButton from "../ui/buttons/SmallButton";
+import { useRouter } from "expo-router";
 
 const BusinessProfile = ({ className }: BusinessProfileProps) => {
+  const router = useRouter();
+
   return (
     <View className={`${className} px-4`}>
       <Text className="text-xl font-proximanova-semibold mb-4">
@@ -38,7 +41,11 @@ const BusinessProfile = ({ className }: BusinessProfileProps) => {
           </View>
 
           {/* button */}
-          <SmallButton title="Create Business Profile" className="mt-5" />
+          <SmallButton
+            onPress={() => router.push("/(setup)/business-setup")}
+            title="Create Business Profile"
+            className="mt-5"
+          />
         </View>
 
         {/* background image */}
