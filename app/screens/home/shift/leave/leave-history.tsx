@@ -109,7 +109,9 @@ const LeaveHistory = () => {
               <Ionicons name="calendar-outline" size={22} color="#111111" />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => router.push("/schedule/shift/request-leave")}
+              onPress={() =>
+                router.push("/screens/schedule/shift/request-leave")
+              }
               className="bg-[#F5F5F5] rounded-full p-2"
             >
               <Image

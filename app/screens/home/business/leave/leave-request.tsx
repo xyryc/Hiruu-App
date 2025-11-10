@@ -6,7 +6,10 @@ import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const LeaveRequest = () => {
   const { colorScheme } = useColorScheme();
@@ -14,14 +17,16 @@ const LeaveRequest = () => {
   const [selectedTab, setSelectedTab] = useState("New Request");
   const [isSuccess, setIssuccess] = useState(false);
   const [reject, setReject] = useState(false);
+  const insets = useSafeAreaInsets();
+
   return (
     <SafeAreaView
       className="flex-1 bg-white"
       edges={["left", "right", "bottom"]}
     >
-      <View className="bg-[#E5F4FD] rounded-b-2xl pt-10 px-5">
+      <View className="bg-[#E5F4FD] rounded-b-2xl px-5">
         <ScreenHeader
-          className="my-4"
+          style={{ paddingTop: insets.top + 10, paddingBottom: 10 }}
           onPressBack={() => router.back()}
           title="Leave Requests"
           titleClass="text-primary dark:text-dark-primary"
@@ -29,7 +34,7 @@ const LeaveRequest = () => {
           components={
             <TouchableOpacity
               onPress={() =>
-                router.push("/screens/home/business/leave/request-leave")
+                router.push("/screens/schedule/shift/request-leave")
               }
               className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center"
             >
@@ -65,35 +70,43 @@ const LeaveRequest = () => {
         {/* pending screen */}
         {selectedTab === "Approved" && (
           <View>
-            <BusinessShiftPending approved={true} status="Earned Leave" />
-            <BusinessShiftPending approved={true} status="Sick Leave" />
-            <BusinessShiftPending approved={true} status="Hourly Leave" />
-            <BusinessShiftPending approved={true} status="Earned Leave" />
-            <BusinessShiftPending approved={true} status="Hourly Leave" />
+            {[
+              "Earned Leave",
+              "Sick Leave",
+              "Hourly Leave",
+              "Earned Leave",
+              "Hourly Leave",
+            ].map((status, i) => (
+              <BusinessShiftPending key={i} approved status={status} />
+            ))}
           </View>
         )}
 
-        {/* Request History */}
+        {/* New Request Tab */}
         {selectedTab === "New Request" && (
           <View>
-            <BusinessShiftPending
-              modal={() => setIssuccess(true)}
-              setReject={setReject}
-              reject={reject}
-              selectedTab
-              title="Today 21"
-              status="Hourly Leave"
-            />
-            <BusinessShiftPending selectedTab status="Late Clock-in" />
-            <BusinessShiftPending
-              title="20 Apr, 2025"
-              selectedTab
-              status="Hourly Leave"
-            />
-            <BusinessShiftPending selectedTab status="Network Issues" />
-            <BusinessShiftPending selectedTab status="Hourly Leave" />
+            {[
+              { title: "Today 21", status: "Hourly Leave", modal: true },
+              { status: "Late Clock-in", modal: true },
+              { title: "20 Apr, 2025", status: "Hourly Leave", modal: true },
+              { status: "Network Issues", modal: true },
+              { status: "Hourly Leave", modal: true },
+            ].map((item, i) => (
+              <BusinessShiftPending
+                key={i}
+                {...(item.modal && {
+                  modal: () => setIssuccess(true),
+                  setReject,
+                  reject,
+                })}
+                selectedTab
+                title={item.title}
+                status={item.status}
+              />
+            ))}
           </View>
         )}
+
         <SuccessRejectModal
           visible={isSuccess}
           onClose={() => setIssuccess(false)}
