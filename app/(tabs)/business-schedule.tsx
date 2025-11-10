@@ -1,16 +1,144 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+<<<<<<< HEAD
 import React from "react";
 import { StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const BusinessScheduleScreen = () => {
+=======
+import { useRouter } from "expo-router";
+import businesses from "@/assets/data/businesses.json";
+import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
+import ShiftCard from "@/components/ui/cards/ShiftCard";
+import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
+
+const BusinessScheduleScreen = () => {
+  const [selectedDate, setSelectedDate] = useState(6);
+  const [selectedShift, setSelectedShift] = useState("morning");
+  const [selectedFilter, setSelectedFilter] = useState("all");
+
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
+  // Get display content for header button
+  const getDisplayContent = () => {
+    if (selectedBusinesses.length === 0) {
+      return { type: "all", content: "All" };
+    } else if (selectedBusinesses.length === 1) {
+      const selectedBusiness = businesses.find(
+        (b) => b.id === selectedBusinesses[0]
+      );
+      return { type: "single", content: selectedBusiness };
+    }
+  };
+
+  const displayContent = getDisplayContent();
+
+  const dates = [
+    { date: 1, day: "AM" },
+    { date: 2, day: "AM" },
+    { date: 3, day: "AM" },
+    { date: 4, day: "AM" },
+    { date: 5, day: "AM" },
+    { date: 6, day: "AM" },
+    { date: 7, day: "AM" },
+    { date: 8, day: "AM" },
+    { date: 9, day: "AM" },
+    { date: 10, day: "AM" },
+    { date: 11, day: "AM" },
+    { date: 12, day: "AM" },
+    { date: 1, day: "PM" },
+    { date: 2, day: "PM" },
+    { date: 3, day: "PM" },
+    { date: 4, day: "PM" },
+    { date: 5, day: "PM" },
+    { date: 6, day: "PM" },
+    { date: 7, day: "PM" },
+    { date: 8, day: "PM" },
+    { date: 9, day: "PM" },
+    { date: 10, day: "PM" },
+    { date: 11, day: "PM" },
+    { date: 12, day: "PM" },
+  ];
+
+  const filters = [
+    { id: "all", label: "All", count: 20 },
+    { id: "cashier", label: "Cashier", count: 5 },
+    { id: "bartender", label: "Bartender", count: 8 },
+    { id: "housekeeping", label: "Housekeeping", count: 7 },
+  ];
+
+  const shifts = [
+    {
+      id: 1,
+      name: "Amid Hazelwood",
+      role: "Cashier",
+      avatar:
+        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
+      shiftTime: "6:00 AM - 2:00 PM",
+      location: "136 Avenue-Maciezine, Ne...",
+      status: "ongoing",
+    },
+    {
+      id: 2,
+      name: "Sarah Johnson",
+      role: "Bartender",
+      avatar:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
+      shiftTime: "6:00 AM - 2:00 PM",
+      location: "136 Avenue-Maciezine, Ne...",
+      status: "upcoming",
+    },
+  ];
+
+  const menuItems = [
+    {
+      id: 1,
+      title: "Create Role",
+      icon: "create-outline",
+      onPress: () => {
+        console.log("Navigate to Create Role");
+        // router.push("/create-role");
+      },
+    },
+    {
+      id: 2,
+      title: "Create Template",
+      icon: "document-text-outline",
+      onPress: () => {
+        // console.log("Navigate to Create Template");
+        router.push("/screens/schedule/business/create-template");
+      },
+    },
+    {
+      id: 3,
+      title: "Weekly Schedule",
+      icon: "calendar-outline",
+      onPress: () => {
+        console.log("Navigate to Weekly Schedule");
+        // router.push("/weekly-schedule");
+      },
+    },
+    {
+      id: 4,
+      title: "Saved Shift Template",
+      icon: "document-attach-outline",
+      onPress: () => {
+        console.log("Navigate to Saved Templates");
+        // router.push("/saved-templates");
+      },
+    },
+  ];
+
+  const router = useRouter();
+
+>>>>>>> 3d94082688e39a1546bf3e84d3f2dba4d10160c2
   return (
-    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-      <View className="py-4">
+      <View className="pt-2.5 pb-5">
         <View className="flex-row items-center justify-between mb-4 px-5">
           {/* left */}
           <View>
@@ -169,7 +297,7 @@ const BusinessScheduleScreen = () => {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
-          className="mb-4 pl-5"
+          className="pl-5"
         >
           {filters.map((filter) => (
             <TouchableOpacity
@@ -180,8 +308,10 @@ const BusinessScheduleScreen = () => {
               }`}
             >
               <Text
-                className={`font-proximanova-semibold text-sm ${
-                  selectedFilter === filter.id ? "text-white" : "text-primary"
+                className={` text-sm ${
+                  selectedFilter === filter.id
+                    ? "text-white font-proximanova-semibold"
+                    : "text-primary font-proximanova-regular"
                 }`}
               >
                 {filter.label} ({filter.count})
@@ -194,85 +324,16 @@ const BusinessScheduleScreen = () => {
       {/* Shifts List */}
       <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
         <View className="flex-row items-center justify-between mb-4">
-          <Text className="text-lg font-proximanova-bold text-primary">
+          <Text className="text-lg font-proximanova-semibold text-primary">
             Morning Shifts (15)
           </Text>
-          <Text className="text-sm font-proximanova-regular text-gray-600">
+          <Text className="text-sm font-proximanova-regular text-secondary">
             10:00AM to 5:00PM
           </Text>
         </View>
 
         {shifts.map((shift) => (
-          <View
-            key={shift.id}
-            className="bg-[#F8F9FA] rounded-2xl p-4 mb-3 flex-row items-start"
-          >
-            <Image
-              source={{ uri: shift.avatar }}
-              style={{ width: 50, height: 50 }}
-              className="rounded-full mr-3"
-            />
-
-            <View className="flex-1">
-              <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-base font-proximanova-bold text-primary">
-                  {shift.name}
-                </Text>
-                <TouchableOpacity>
-                  <Entypo name="dots-three-vertical" size={16} color="#666" />
-                </TouchableOpacity>
-              </View>
-
-              <Text className="text-sm font-proximanova-regular text-gray-600 mb-3">
-                {shift.role}
-              </Text>
-
-              <View className="flex-row items-center mb-2">
-                <Text className="text-xs font-proximanova-regular text-gray-500 w-20">
-                  Shift Time:
-                </Text>
-                <Text className="text-sm font-proximanova-semibold text-primary">
-                  {shift.shiftTime}
-                </Text>
-              </View>
-
-              <View className="flex-row items-center mb-3">
-                <Text className="text-xs font-proximanova-regular text-gray-500 w-20">
-                  Location:
-                </Text>
-                <Text className="text-sm font-proximanova-regular text-primary">
-                  {shift.location}
-                </Text>
-              </View>
-
-              <View className="flex-row items-center justify-between">
-                <TouchableOpacity className="flex-row items-center gap-2">
-                  <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
-                    View Details
-                  </Text>
-                  <Ionicons name="arrow-forward" size={16} color="#4FB2F3" />
-                </TouchableOpacity>
-
-                <View
-                  className={`px-3 py-1.5 rounded-full ${
-                    shift.status === "ongoing"
-                      ? "bg-orange-100"
-                      : "bg-green-100"
-                  }`}
-                >
-                  <Text
-                    className={`text-xs font-proximanova-semibold capitalize ${
-                      shift.status === "ongoing"
-                        ? "text-orange-600"
-                        : "text-green-600"
-                    }`}
-                  >
-                    ● {shift.status}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </View>
+          <ShiftCard key={shift.id} shift={shift} />
         ))}
       </ScrollView>
 
@@ -283,6 +344,13 @@ const BusinessScheduleScreen = () => {
         businesses={businesses}
         selectedBusinesses={selectedBusinesses}
         onSelectionChange={setSelectedBusinesses}
+      />
+
+      {/* add icon */}
+      <AnimatedFABMenu
+        menuItems={menuItems}
+        fabColor="#11293A"
+        menuItemColor="#11293A"
       />
     </SafeAreaView>
   );
