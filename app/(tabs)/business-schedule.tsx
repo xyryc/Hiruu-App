@@ -1,3 +1,16 @@
+<<<<<<< HEAD
+=======
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+<<<<<<< HEAD
+import React from "react";
+import { StatusBar, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const BusinessScheduleScreen = () => {
+=======
+import { useRouter } from "expo-router";
+>>>>>>> 76ab6fc6423aba7a080882ce306a57cc22638171
 import businesses from "@/assets/data/businesses.json";
 import ShiftCard from "@/components/ui/cards/ShiftCard";
 import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
@@ -134,6 +147,10 @@ const BusinessScheduleScreen = () => {
 
   const router = useRouter();
 
+<<<<<<< HEAD
+=======
+>>>>>>> 3d94082688e39a1546bf3e84d3f2dba4d10160c2
+>>>>>>> 76ab6fc6423aba7a080882ce306a57cc22638171
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
       <StatusBar barStyle="dark-content" />
