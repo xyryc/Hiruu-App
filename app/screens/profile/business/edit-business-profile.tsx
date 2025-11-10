@@ -268,6 +268,7 @@ const EditBusinessProfile = () => {
                 )}
               </View>
             </View>
+
             {/* inpute field  */}
             <View className="flex-row justify-between items-center mt-8 ">
               <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
@@ -277,6 +278,7 @@ const EditBusinessProfile = () => {
                 Edit
               </Text>
             </View>
+
             <View>
               <TextInput
                 placeholder="Enter your business name"
