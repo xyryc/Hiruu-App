@@ -1,9 +1,8 @@
 import { QuickActionProps } from "@/types";
 import {
-  Feather,
+  FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
-  MaterialIcons,
 } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -20,56 +19,50 @@ const QuickAction = ({ className }: QuickActionProps) => {
       </Text>
 
       <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        <ActionIconCard
-          icon={
-            <MaterialCommunityIcons name="clock" size={24} color="#4FB2F3" />
-          }
-          title="Track Hours"
-          count={6}
-          onPress={() => {
-            router.push("/(user)/home/shift/track-hours/track-hours");
-          }}
-        />
+        {/* quick actions */}
 
-        <ActionIconCard
-          icon={
-            <MaterialCommunityIcons
-              name="clock-plus"
-              size={24}
-              color="#4FB2F3"
-            />
-          }
-          title="OT Request"
-          count={3}
-          onPress={() => {
-            router.push("/(user)/home/shift/overtime-action");
-          }}
-        />
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          <ActionIconCard
+            icon={<Ionicons name="calendar" size={24} color="#4FB2F3" />}
+            title="Leave"
+            onPress={() =>
+              // router.push("/(user)/schedule/shift/request-leave")
+              router.push("/screens/home/business/leave/leave-request")
+            }
+          />
 
-        <ActionIconCard
-          icon={<Ionicons name="calendar" size={24} color="#4FB2F3" />}
-          title="Leave"
-          onPress={() => {
-            router.push("/(user)/home/shift/leave/leave-history");
-          }}
-        />
+          <ActionIconCard
+            icon={
+              <MaterialCommunityIcons
+                name="timer-settings"
+                size={24}
+                color="#4FB2F3"
+              />
+            }
+            title="Shift Request"
+            // onPress={() => router.push("/(user)/schreen/schedule/shift/overtime")}
+            onPress={() => router.push("/screens/home/business/shift-request")}
+          />
 
-        <ActionIconCard
-          icon={<Feather name="repeat" size={24} color="#4FB2F3" />}
-          title="Swap Request"
-          count={4}
-          onPress={() => {
-            router.push("/(user)/home/shift/swap-action");
-          }}
-        />
+          <ActionIconCard
+            icon={<FontAwesome name="users" size={20} color="#4FB2F3" />}
+            title="Team Panel"
+            onPress={() => router.push("/screens/schedule/shift/swap")}
+            // onPress={() => router.push("/(user)/schedule/shift/swap")}
+          />
 
-        <ActionIconCard
-          icon={<MaterialIcons name="leaderboard" size={24} color="#4FB2F3" />}
-          title="Leaderboard"
-          onPress={() => {
-            router.push("/(user)/home/leaderboard");
-          }}
-        />
+          <ActionIconCard
+            icon={
+              <MaterialCommunityIcons
+                name="calendar-plus-outline"
+                size={24}
+                color="#4FB2F3"
+              />
+            }
+            title="Week Schedule"
+            onPress={() => router.push("/screens/schedule/shift/report")}
+          />
+        </ScrollView>
       </ScrollView>
     </View>
   );

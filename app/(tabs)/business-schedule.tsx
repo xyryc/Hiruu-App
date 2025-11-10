@@ -1,19 +1,19 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  StatusBar,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons, Entypo, SimpleLineIcons } from "@expo/vector-icons";
-import { Image } from "expo-image";
-import { useRouter } from "expo-router";
 import businesses from "@/assets/data/businesses.json";
-import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import ShiftCard from "@/components/ui/cards/ShiftCard";
 import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
+import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
+import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import {
+  ScrollView,
+  StatusBar,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const BusinessScheduleScreen = () => {
   const [selectedDate, setSelectedDate] = useState(6);

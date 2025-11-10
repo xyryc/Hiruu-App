@@ -93,6 +93,7 @@ export interface JoinCollegueProps {
 
 export interface FindNewJobProps {
   className?: string;
+  business?: boolean;
 }
 
 export interface ActionCardProps {
@@ -166,6 +167,7 @@ export interface StatCardPrimaryProps {
 
 export interface StatCardSecondaryProps {
   background: string;
+  business?: boolean;
 }
 
 type StatusType =
@@ -258,6 +260,6 @@ export interface TimeLeft {
 }
 
 export interface JobCardProps {
-  className: string;
-  status: string;
+  className?: string;
+  status?: string;
 }

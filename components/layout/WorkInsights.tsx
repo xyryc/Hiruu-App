@@ -91,11 +91,22 @@ const WorkInsights = ({ className, title }: WorkInsightsProps | any) => {
 
       {/* stats*/}
       <View className="flex-row gap-3 mb-4">
-        <StatCardPrimary background={require("@/assets/images/stats-bg.svg")} />
-        <StatCardPrimary background={require("@/assets/images/stats-bg.svg")} />
+        <StatCardPrimary
+          title="Total team"
+          point="25"
+          subtitle="Employees"
+          background={require("@/assets/images/stats-bg.svg")}
+        />
+        <StatCardPrimary
+          title="On Leave Today"
+          point="03"
+          subtitle="Employees"
+          background={require("@/assets/images/stats-bg.svg")}
+        />
       </View>
 
       <StatCardSecondary
+        business={true}
         background={require("@/assets/images/stats-bg2.svg")}
       />
     </View>

@@ -11,11 +11,10 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import SmallButton from "../buttons/SmallButton";
-import JobApplyModal from "../modals/JobApplyModal";
-import SimpleStatusBadge from "../badges/SimpleStatusBadge";
 import StatusBadge from "../badges/StatusBadge";
 import SecondaryButton from "../buttons/SecondaryButton";
+import SmallButton from "../buttons/SmallButton";
+import JobApplyModal from "../modals/JobApplyModal";
 
 const JobCard = ({ className, status }: JobCardProps) => {
   const router = useRouter();
@@ -25,7 +24,7 @@ const JobCard = ({ className, status }: JobCardProps) => {
     <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>
       {/* company name */}
       <TouchableOpacity
-        onPress={() => router.push("/(user)/jobs/profile")}
+        onPress={() => router.push("/(tabs)/user-profile")}
         className="flex-row gap-2.5"
       >
         <Image

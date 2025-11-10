@@ -1,0 +1,120 @@
+import { Entypo } from "@expo/vector-icons";
+import { BlurView } from "expo-blur";
+import { Image } from "expo-image";
+import React from "react";
+import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import StatusBadge from "../badges/StatusBadge";
+
+const SuccessRejectModal = ({ visible, onClose, reject }: any) => {
+  const handleDone = () => {
+    onClose();
+  };
+
+  return (
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent={true}
+      onRequestClose={onClose}
+    >
+      <BlurView intensity={80} tint="dark" className="flex-1 justify-end">
+        <View className="bg-white rounded-t-3xl">
+          {/* Close Button */}
+          <View className="absolute -top-24 inset-x-0 items-center pt-4 pb-2">
+            <TouchableOpacity onPress={handleDone}>
+              <View className="bg-[#000] rounded-full p-2.5">
+                <Entypo name="cross" size={30} color="white" />
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {/* Modal Content */}
+          <SafeAreaView edges={["bottom"]} className="px-5 py-7">
+            <View className="items-center"></View>
+
+            {reject && <Text>asdfsd</Text>}
+            {/* headers */}
+            <View className="flex-row gap-2 items-center">
+              <Image
+                source={require("@/assets/images/reward/nameplate-profile.png")}
+                contentFit="contain"
+                style={{ height: 40, width: 40 }}
+              />
+              <View>
+                <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
+                  Emma Wilson
+                </Text>
+                <Text className="font-proximanova-regular text-secondary text-sm dark:text-dark-secondary">
+                  Cashier - Housekeeping
+                </Text>
+              </View>
+            </View>
+
+            {/* date */}
+            <View className="flex-row justify-between mt-8">
+              <View>
+                <View>
+                  <Text className="font-proximanova-regular text-secondary text-sm dark:text-dark-secondary">
+                    From:
+                  </Text>
+                  <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                    Apr 20, 2025
+                  </Text>
+                </View>
+                <View className="mt-4">
+                  <Text className="font-proximanova-regular text-secondary text-sm dark:text-dark-secondary">
+                    Submitted On:
+                  </Text>
+                  <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                    Apr 20,2025
+                  </Text>
+                </View>
+              </View>
+              <View>
+                <View>
+                  <Text className="font-proximanova-regular text-secondary text-sm dark:text-dark-secondary">
+                    To:
+                  </Text>
+                  <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                    Apr 23, 2025
+                  </Text>
+                </View>
+                <View className="mt-4">
+                  <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">
+                    Type:
+                  </Text>
+                  <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                    doctor’s Appointment
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* details */}
+            <View className="mt-4">
+              <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">
+                Reason:
+              </Text>
+              <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary mt-1.5">
+                I have a doctor's appointment and may not return until late
+                afternoon due to tests. Need to undergo some routine checkups
+                and waiting time might be longer.
+              </Text>
+            </View>
+
+            {/* status button and date */}
+            <View className="flex-row justify-between mt-9 items-center mb-4 ">
+              <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                Approved on apr 20, 2025
+              </Text>
+              <StatusBadge status="approved" />
+            </View>
+          </SafeAreaView>
+        </View>
+      </BlurView>
+    </Modal>
+  );
+};
+
+export default SuccessRejectModal;
