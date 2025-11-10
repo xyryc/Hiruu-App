@@ -9,8 +9,22 @@ const BusinessShiftPending = ({
   status,
   selectedTab,
   approved,
+  modal,
+  setReject,
 }: any) => {
   const [isFilterModal, setIsFilterModal] = useState(false);
+  // const [reject, setReject] = useState(false);
+
+  const handleButton = (e: string) => {
+    if (e === "reject") {
+      modal();
+      setReject(true);
+    } else {
+      modal();
+      setReject(false);
+    }
+  };
+
   return (
     <View>
       {title && (
@@ -72,10 +86,16 @@ const BusinessShiftPending = ({
                   style={{ height: 22, width: 22 }}
                 />
               </TouchableOpacity>
-              <TouchableOpacity className="h-10 w-10 bg-[#292D32] rounded-full flex-row justify-center items-center">
+              <TouchableOpacity
+                onPress={() => handleButton("success")}
+                className="h-10 w-10 bg-[#292D32] rounded-full flex-row justify-center items-center"
+              >
                 <Feather name="check" size={22} color="white" />
               </TouchableOpacity>
-              <TouchableOpacity className="h-10 w-10 bg-[#F34F4F] rounded-full flex-row justify-center items-center">
+              <TouchableOpacity
+                onPress={() => handleButton("reject")}
+                className="h-10 w-10 bg-[#F34F4F] rounded-full flex-row justify-center items-center"
+              >
                 <EvilIcons name="close" size={22} color="white" />
               </TouchableOpacity>
             </View>

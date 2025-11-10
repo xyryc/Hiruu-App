@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import BusinessShiftPending from "@/components/ui/cards/BusinessShiftPending";
+import SuccessRejectModal from "@/components/ui/modals/SuccessRejectModal";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -11,6 +12,8 @@ const LeaveRequest = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const [selectedTab, setSelectedTab] = useState("New Request");
+  const [isSuccess, setIssuccess] = useState(false);
+  const [reject, setReject] = useState(false);
   return (
     <SafeAreaView
       className="flex-1 bg-white"
@@ -26,7 +29,7 @@ const LeaveRequest = () => {
           components={
             <TouchableOpacity
               onPress={() =>
-                router.push("/screens/schedule/shift/request-leave")
+                router.push("/screens/home/business/leave/request-leave")
               }
               className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center"
             >
@@ -74,6 +77,9 @@ const LeaveRequest = () => {
         {selectedTab === "New Request" && (
           <View>
             <BusinessShiftPending
+              modal={() => setIssuccess(true)}
+              setReject={setReject}
+              reject={reject}
               selectedTab
               title="Today 21"
               status="Hourly Leave"
@@ -88,6 +94,11 @@ const LeaveRequest = () => {
             <BusinessShiftPending selectedTab status="Hourly Leave" />
           </View>
         )}
+        <SuccessRejectModal
+          visible={isSuccess}
+          onClose={() => setIssuccess(false)}
+          reject={reject}
+        />
       </ScrollView>
     </SafeAreaView>
   );
