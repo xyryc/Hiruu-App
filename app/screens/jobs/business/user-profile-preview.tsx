@@ -10,15 +10,22 @@ import {
   Foundation,
   Ionicons,
   MaterialCommunityIcons,
-  Octicons,
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { router } from "expo-router";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  Share,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserProfilePreview = () => {
+  const router = useRouter();
   const [showText, setShowText] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState("");
   const issues = [
@@ -31,37 +38,40 @@ const UserProfilePreview = () => {
 
   const [isOn, setIsOn] = useState(false);
 
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message:
+          "Check out Mohammad Anik's profile on Hiruu!\nhttps://hiruu.com/profile/mohammad-anik",
+        title: "Mohammad Anik's Profile",
+      });
+    } catch (error) {
+      Alert.alert("Error", "Could not share profile");
+    }
+  };
+
   return (
     <View className="bg-white pb-32 dark:bg-dark-background">
       <View className="bg-[#E5F4FD] rounded-b-xl">
         <SafeAreaView>
           <View className={`flex-row justify-between items-center mt-5 mx-5`}>
-            <View className="flex-row items-center gap-2.5">
-              <Text
-                className={`font-proximanova-bold text-2xl text-primary dark:text-dark-primary`}
-              >
-                Profile
-              </Text>
-            </View>
-            <View className="flex-row gap-1.5 items-center justify-center">
-              <TouchableOpacity className="h-10 w-10 bg-white rounded-full items-center justify-center">
-                <Octicons name="paintbrush" size={18} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => router.push("/screens/profile/user/edit")}
-                className="h-10 w-10 bg-white rounded-full items-center justify-center"
-              >
-                <Feather name="edit-2" size={18} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  router.push("/screens/profile/settings/Settings")
-                }
-                className="h-10 w-10 bg-white rounded-full items-center justify-center"
-              >
-                <Ionicons name="settings-outline" size={20} color="black" />
-              </TouchableOpacity>
-            </View>
+            <TouchableOpacity onPress={() => router.back()}>
+              <Feather
+                className="p-2"
+                name="arrow-left"
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => handleShare()}>
+              <Ionicons
+                className="p-2"
+                name="share-outline"
+                size={24}
+                color="black"
+              />
+            </TouchableOpacity>
           </View>
         </SafeAreaView>
       </View>
