@@ -8,6 +8,7 @@ import {
 import { Image } from "expo-image";
 import React from "react";
 import { Text, View } from "react-native";
+import StatusBadge from "../badges/StatusBadge";
 import SmallButton from "../buttons/SmallButton";
 
 const BusinessJobCard = ({ className, status }: BusinessJobCardProps) => {
@@ -49,7 +50,7 @@ const BusinessJobCard = ({ className, status }: BusinessJobCardProps) => {
         {status === "featured" && (
           <View className="absolute top-0 left-0 w-full">
             <Image
-              source={require("@/assets/images/featured.svg")}
+              source={require("@/assets/images/featured.png")}
               style={{
                 width: "100%",
                 height: 50,
@@ -82,23 +83,39 @@ const BusinessJobCard = ({ className, status }: BusinessJobCardProps) => {
 
       {/* badges */}
       <View className="flex-row gap-1.5 mt-2.5">
-        <View className="flex-row gap-1.5 items-center px-2.5 py-1 bg-[#3F98FF4D] rounded-full">
-          <MaterialIcons name="verified" size={16} color="#3090FF" />
-          <Text className="text-xs font-proximanova-regular text-primary">
-            Verified
-          </Text>
-        </View>
+        {status === "featured" ? (
+          <View className="flex-row gap-1.5 items-center px-2.5 py-1 bg-[#3F98FF4D] rounded-full">
+            <MaterialIcons name="verified" size={16} color="#3090FF" />
+            <Text className="text-xs font-proximanova-regular text-primary">
+              Verified
+            </Text>
+          </View>
+        ) : (
+          <StatusBadge status="available" size="small" />
+        )}
 
-        <View className="flex-row gap-1.5 items-center px-2.5 py-1 bg-white rounded-full">
+        <View
+          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full
+                ${status === "featured" ? "bg-white" : "bg-[#F5F5F5]"}
+          `}
+        >
           <FontAwesome name="star" size={16} color="#F1C400" />
           <Text className="text-xs font-proximanova-regular">4</Text>
         </View>
 
-        <View className="flex-row gap-1.5 items-center px-2.5 py-1 bg-white rounded-full">
+        <View
+          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full
+                ${status === "featured" ? "bg-white" : "bg-[#F5F5F5]"}
+          `}
+        >
           <Text className="text-xs font-proximanova-regular">Full Time</Text>
         </View>
 
-        <View className="flex-row gap-1.5 items-center px-2.5 py-1 bg-white rounded-full">
+        <View
+          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full
+                ${status === "featured" ? "bg-white" : "bg-[#F5F5F5]"}
+          `}
+        >
           <Text className="text-xs font-proximanova-regular">2km away</Text>
         </View>
       </View>
@@ -117,7 +134,10 @@ const BusinessJobCard = ({ className, status }: BusinessJobCardProps) => {
       <View className="flex-row justify-between">
         {/* left */}
         <View className="flex-row gap-2.5 items-center">
-          <View className="h-10 w-10 bg-white rounded-full flex-row items-center justify-center">
+          <View
+            className={`h-10 w-10 rounded-full flex-row items-center justify-center
+             ${status === "featured" ? "bg-white" : "bg-[#E5F4FD]"}`}
+          >
             <Image
               source={require("@/assets/images/messages-fill.svg")}
               contentFit="contain"
@@ -133,7 +153,10 @@ const BusinessJobCard = ({ className, status }: BusinessJobCardProps) => {
             }}
           />
 
-          <View className="h-10 w-10 bg-white rounded-full flex-row items-center justify-center">
+          <View
+            className={`h-10 w-10 rounded-full flex-row items-center justify-center
+             ${status === "featured" ? "bg-white" : "bg-[#E5F4FD]"}`}
+          >
             <Image
               source={require("@/assets/images/messages-fill.svg")}
               contentFit="contain"

@@ -73,6 +73,14 @@ const StatusBadge = ({
           dotClasses: "bg-[#F34F4F]",
           label: "Rejected",
         };
+
+      case "available":
+        return {
+          containerClasses: "bg-[#EAFFEF] border-[#3EBF5A4D]",
+          textClasses: "text-[#3EBF5A]",
+          dotClasses: "bg-[#3EBF5A]",
+          label: "Available",
+        };
       default:
         return {
           containerClasses: "bg-gray-100",

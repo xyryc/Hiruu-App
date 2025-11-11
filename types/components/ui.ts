@@ -179,7 +179,8 @@ type StatusType =
   | "approved"
   | "rejected"
   | "accepted"
-  | "submitted";
+  | "submitted"
+  | "available";
 
 export interface StatusBadgeProps {
   label?: string;
