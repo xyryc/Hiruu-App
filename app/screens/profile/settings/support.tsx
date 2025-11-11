@@ -3,7 +3,7 @@ import { AntDesign, Fontisto } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HelpSupport = () => {
@@ -66,7 +66,7 @@ const HelpSupport = () => {
       {/* bottom  buttons */}
       <View className="flex-row justify-between gap-3 my-10 mx-5">
         <TouchableOpacity
-          onPress={() => router.push("/(user)/profile/settings/help-chat")}
+          onPress={() => router.push("/screens/profile/settings/help-chat")}
           className="rounded-full border border-[#11111133] py-2.5 px-5 flex-1 flex-row gap-1.5 items-center justify-center"
         >
           <AntDesign name="message" size={18} color="black" />

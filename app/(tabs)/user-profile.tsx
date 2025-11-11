@@ -47,13 +47,15 @@ const profile = () => {
                 <Octicons name="paintbrush" size={18} color="black" />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => router.push("/profile/edit")}
+                onPress={() => router.push("/screens/profile/user/edit")}
                 className="h-10 w-10 bg-white rounded-full items-center justify-center"
               >
                 <Feather name="edit-2" size={18} color="black" />
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => router.push("/(user)/profile/settings/settings")}
+                onPress={() =>
+                  router.push("/screens/profile/settings/Settings")
+                }
                 className="h-10 w-10 bg-white rounded-full items-center justify-center"
               >
                 <Ionicons name="settings-outline" size={20} color="black" />
@@ -63,9 +65,14 @@ const profile = () => {
         </SafeAreaView>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 40,
+        }}
+      >
         <TouchableOpacity
-          onPress={() => router.push("/profile/rating")}
+          onPress={() => router.push("/screens/profile/rating")}
           className="mx-5 mt-3.5"
         >
           <NamePlateCard variant="variant4" />
@@ -85,7 +92,9 @@ const profile = () => {
               Badge
             </Text>
           </View>
-          <TouchableOpacity onPress={() => router.push("/profile/badge")}>
+          <TouchableOpacity
+            onPress={() => router.push("/screens/profile/badge")}
+          >
             <Text className="font-proximanova-semibold text-sm text-[#4FB2F3] underline ">
               View all Badge
             </Text>
@@ -270,7 +279,6 @@ const profile = () => {
         </View>
 
         {/* Contact Us On */}
-
         <View className="flex-row items-center gap-2.5 mt-8 mx-5">
           <View className="h-8 w-8 bg-[#E5F4FD] rounded-full flex-row justify-center items-center">
             <Ionicons name="call-outline" size={16} color="black" />
@@ -281,7 +289,7 @@ const profile = () => {
         </View>
 
         <View className="border border-[#EEEEEE] rounded-xl m-5">
-          <View className="flex-row justify-between items-center  p-2.5 border border-[#EEEEEE] rounded-t-xl ">
+          <View className="flex-row justify-between items-center p-2.5 border-b border-[#EEEEEE]">
             <View className="flex-row items-center gap-2.5">
               <View>
                 <Image
@@ -295,10 +303,11 @@ const profile = () => {
               </Text>
             </View>
             <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-              @alvber_f{" "}
+              @alvber_f
             </Text>
           </View>
-          <View className="flex-row justify-between items-center  p-2.5  border border-[#EEEEEE]">
+
+          <View className="flex-row justify-between items-center  p-2.5  border-b border-[#EEEEEE]">
             <View className="flex-row items-center gap-2.5">
               <View>
                 <Image
@@ -316,7 +325,8 @@ const profile = () => {
               in/albert-flore-12562f25{" "}
             </Text>
           </View>
-          <View className="flex-row justify-between items-center  p-2.5 border border-[#EEEEEE] ">
+
+          <View className="flex-row justify-between items-center  p-2.5 border-b border-[#EEEEEE] ">
             <View className="flex-row items-center gap-2.5">
               <View>
                 <Image
@@ -334,7 +344,8 @@ const profile = () => {
               +1(125) 256 25612{" "}
             </Text>
           </View>
-          <View className="flex-row justify-between items-center p-2.5  border border-[#EEEEEE] rounded-b-xl">
+
+          <View className="flex-row justify-between items-center p-2.5">
             <View className="flex-row items-center gap-2.5">
               <View>
                 <Image

@@ -27,8 +27,11 @@ const WorkInsights = ({ className, title }: WorkInsightsProps | any) => {
       const selectedBusiness = businesses.find(
         (b) => b.id === selectedBusinesses[0]
       );
-      return { type: "single", content: selectedBusiness };
+      if (selectedBusiness) {
+        return { type: "single", content: selectedBusiness };
+      }
     }
+    return { type: "all", content: "All" }; // fallback
   };
 
   const displayContent = getDisplayContent();
@@ -36,16 +39,11 @@ const WorkInsights = ({ className, title }: WorkInsightsProps | any) => {
   return (
     <View className={`${className} px-4`}>
       <View className="flex-row justify-between items-center mb-4">
-        {title ? (
-          <Text className="text-xl font-proximanova-semibold">{title}</Text>
-        ) : (
-          <Text className="text-xl font-proximanova-semibold">
-            Work Insights
-          </Text>
-        )}
+        <Text className="text-xl font-proximanova-semibold">
+          {title ? title : "Work Insights"}
+        </Text>
 
-        {/* picker */}
-        {title || (
+        {!title && (
           <View className="flex-row items-center gap-2">
             <MonthPicker
               value={reportMonth}
@@ -59,15 +57,17 @@ const WorkInsights = ({ className, title }: WorkInsightsProps | any) => {
               {displayContent?.type === "all" ? (
                 <View className="pl-2.5 py-1.5">
                   <Text className="font-semibold text-sm text-primary">
-                    All
+                    {displayContent.content}
                   </Text>
                 </View>
               ) : (
-                <Image
-                  source={displayContent?.content?.imageUrl}
-                  style={{ width: 30, height: 30, borderRadius: 999 }}
-                  contentFit="cover"
-                />
+                displayContent.content?.imageUrl && (
+                  <Image
+                    source={displayContent.content.imageUrl}
+                    style={{ width: 30, height: 30, borderRadius: 999 }}
+                    contentFit="cover"
+                  />
+                )
               )}
               <SimpleLineIcons
                 className="p-1.5"
@@ -89,7 +89,7 @@ const WorkInsights = ({ className, title }: WorkInsightsProps | any) => {
         onSelectionChange={setSelectedBusinesses}
       />
 
-      {/* stats*/}
+      {/* stats */}
       <View className="flex-row gap-3 mb-4">
         <StatCardPrimary
           title="Total team"

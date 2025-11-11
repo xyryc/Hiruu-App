@@ -2,7 +2,7 @@ import { Entypo, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import React, { useState } from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
+import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import StatusBadge from "../badges/StatusBadge";
 
@@ -11,10 +11,14 @@ const SuccessRejectModal = ({ visible, onClose, reject }: any) => {
     onClose();
   };
 
-  const [isLeaves, setIsLeaves] = useState(false);
-  const [isOther, setIsOther] = useState(false);
-  const [isNotice, setIsNotice] = useState(false);
-  const [isPriority, setIsPriority] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
+
+  const options = [
+    { key: "leaves", label: "Too many employees on leave" },
+    { key: "priority", label: "Business priority day" },
+    { key: "notice", label: "Insufficient notice" },
+    { key: "other", label: "Other" },
+  ];
 
   return (
     <Modal
@@ -128,82 +132,70 @@ const SuccessRejectModal = ({ visible, onClose, reject }: any) => {
             {/* radio button */}
             {reject && (
               <View>
-                <TouchableOpacity
-                  onPress={() => setIsLeaves(!isLeaves)}
-                  className="flex-row items-center mt-4 gap-2"
-                >
-                  <View
-                    className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${isLeaves ? "bg-primary" : ""} `}
+                {options.map((option) => (
+                  <TouchableOpacity
+                    key={option.key}
+                    onPress={() =>
+                      setSelected(selected === option.key ? null : option.key)
+                    }
+                    className="flex-row items-center mt-4 gap-2"
                   >
-                    {isLeaves && (
-                      <Ionicons
-                        name="checkmark-outline"
-                        size={17}
-                        color="white"
-                      />
-                    )}
-                  </View>
-                  <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary">
-                    Too many employees on leave
+                    <View
+                      className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${
+                        selected === option.key ? "bg-primary" : ""
+                      }`}
+                    >
+                      {selected === option.key && (
+                        <Ionicons
+                          name="checkmark-outline"
+                          size={17}
+                          color="white"
+                        />
+                      )}
+                    </View>
+                    <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary">
+                      {option.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+
+                <View className="mt-4">
+                  <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+                    Rejection Reason
                   </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setIsLeaves(!isLeaves)}
-                  className="flex-row items-center mt-4 gap-2"
-                >
-                  <View
-                    className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${isLeaves ? "bg-primary" : ""} `}
-                  >
-                    {isLeaves && (
-                      <Ionicons
-                        name="checkmark-outline"
-                        size={17}
-                        color="white"
-                      />
-                    )}
+                  <View className="bg-white  dark:bg-dark-surface rounded-xl border border-[#EEEEEE] dark:border-dark-border overflow-hidden">
+                    <TextInput
+                      className="px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary min-h-[120px]"
+                      placeholder="Please explain why this leave request is being denied..."
+                      placeholderTextColor="#7D7D7D"
+                      multiline
+                      textAlignVertical="top"
+                    />
                   </View>
-                  <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary">
-                    Business priority day
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setIsLeaves(!isLeaves)}
-                  className="flex-row items-center mt-4 gap-2"
-                >
-                  <View
-                    className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${isLeaves ? "bg-primary" : ""} `}
-                  >
-                    {isLeaves && (
-                      <Ionicons
-                        name="checkmark-outline"
-                        size={17}
-                        color="white"
-                      />
-                    )}
+                </View>
+                <Text className="mt-8 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary ">
+                  This reason will be visible to the employee
+                </Text>
+                {/* Footer Buttons */}
+                <View className="mt-5">
+                  <View className="flex-row gap-3">
+                    <TouchableOpacity className="flex-1 border border-[#11111133] rounded-full py-4">
+                      <Text className="text-center text-gray-700 font-semibold text-base">
+                        Cancel
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      className={`flex-1 rounded-full py-4 bg-[#F34F4F]`}
+                    >
+                      <Text
+                        className={`text-center font-semibold text-base text-white`}
+                      >
+                        Save
+                      </Text>
+                    </TouchableOpacity>
                   </View>
-                  <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary">
-                    Insufficient notice
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => setIsLeaves(!isLeaves)}
-                  className="flex-row items-center mt-4 gap-2"
-                >
-                  <View
-                    className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${isLeaves ? "bg-primary" : ""} `}
-                  >
-                    {isLeaves && (
-                      <Ionicons
-                        name="checkmark-outline"
-                        size={17}
-                        color="white"
-                      />
-                    )}
-                  </View>
-                  <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary">
-                    Other
-                  </Text>
-                </TouchableOpacity>
+                </View>
               </View>
             )}
           </SafeAreaView>

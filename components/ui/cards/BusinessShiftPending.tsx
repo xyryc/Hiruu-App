@@ -16,12 +16,14 @@ const BusinessShiftPending = ({
   // const [reject, setReject] = useState(false);
 
   const handleButton = (e: string) => {
-    if (e === "reject") {
-      modal();
-      setReject(true);
-    } else {
-      modal();
-      setReject(false);
+    if (modal) {
+      if (e === "reject") {
+        modal();
+        setReject(true);
+      } else {
+        modal();
+        setReject(false);
+      }
     }
   };
 

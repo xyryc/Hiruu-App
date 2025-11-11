@@ -2,7 +2,7 @@
   "user": {
     "email": "abc@gmail.com",
     "token": "e4544fsefs46ty24f",
-    "role": "business",
+    "role": "user",
     "subRole": "manager",
     "permission": {
       "business_overview": true,

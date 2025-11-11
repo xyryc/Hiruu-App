@@ -26,9 +26,9 @@ const SickLeaveCard = ({
           />
           <Text className="text-[#7A7A7A]">{item.name}</Text>
         </View>
-        {selectedCategory === "All" && (
+        {selectedCategory === "all" && (
           <View className="flex-row gap-3 items-center">
-            {["Pending", "Rejected"].includes(item.status) && (
+            {["pending", "rejected"].includes(item.status) && (
               <View className="h-[30px] w-[30px] rounded-full bg-[#add5f0] justify-center items-center">
                 <Feather name="message-circle" size={20} color="#4FB2F3" />
               </View>

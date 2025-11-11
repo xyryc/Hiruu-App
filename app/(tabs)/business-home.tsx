@@ -30,6 +30,7 @@ const BusinessHome = () => {
       <ScrollView
         contentContainerStyle={{
           paddingTop: 8,
+          paddingBottom: 40,
         }}
         showsVerticalScrollIndicator={false}
       >

@@ -148,7 +148,7 @@ const BusinessProfile = () => {
                 </Text>
               </View>
               <TouchableOpacity
-                onPress={() => router.push("/profile/rating")}
+                onPress={() => router.push("/screens/profile/rating")}
                 className="items-center"
               >
                 <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">

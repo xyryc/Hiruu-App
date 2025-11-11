@@ -23,11 +23,11 @@ const ShiftRequest = () => {
       edges={["left", "right", "bottom"]}
     >
       <View
-        className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl  px-5"
+        className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl   px-5"
         style={{ paddingTop: insets.top + 10 }}
       >
         <ScreenHeader
-          className="my-4"
+          className="mb-5"
           onPressBack={() => router.back()}
           title="Shift Requests"
           titleClass="text-primary dark:text-dark-primary"
