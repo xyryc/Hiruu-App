@@ -166,11 +166,11 @@ const EditBusinessProfile = () => {
         <LinearGradient
           colors={["#BDE4F9", "#F7F7F7"]}
           locations={[0, 0.38]}
-          className="flex-1 px-5"
+          className="flex-1"
           style={{ paddingTop: insets.top + 10 }}
         >
           <ScreenHeader
-            className="mt-3"
+            className="mt-3 mx-5"
             onPressBack={() => router.back()}
             title="Edit Profile"
             titleClass="text-primary dark:text-dark-primary "
@@ -178,7 +178,7 @@ const EditBusinessProfile = () => {
           />
 
           <ScrollView
-            className="flex-1 pt-8"
+            className="mx-5 pt-8"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
               paddingBottom: 80,
@@ -296,7 +296,7 @@ const EditBusinessProfile = () => {
 
               <View className="flex-row mt-2.5 gap-2.5">
                 {/* City Dropdown */}
-                <TouchableOpacity className="flex-1 flex-row justify-between items-center w-32 border border-gray-300 rounded-xl px-4 py-3 bg-white shadow-sm">
+                <TouchableOpacity className="flex-1 flex-row justify-between items-center w-32 border border-gray-300 rounded-xl px-4 py-3 bg-white">
                   <Text className="text-gray-500">City</Text>
                   <MaterialIcons
                     name="keyboard-arrow-down"
@@ -306,7 +306,7 @@ const EditBusinessProfile = () => {
                 </TouchableOpacity>
 
                 {/* Area Dropdown */}
-                <TouchableOpacity className="flex-1 flex-row justify-between items-center w-32 border border-gray-300 rounded-xl px-4 py-3 bg-white shadow-sm">
+                <TouchableOpacity className="flex-1 flex-row justify-between items-center w-32 border border-gray-300 rounded-xl px-4 py-3 bg-white">
                   <Text className="text-gray-500">Area</Text>
                   <MaterialIcons
                     name="keyboard-arrow-down"
@@ -343,8 +343,8 @@ const EditBusinessProfile = () => {
           </ScrollView>
 
           <PrimaryButton
+            className="absolute bottom-10 mx-5 my-4"
             title="Save Change"
-            className="mx-5 my-4"
             onPress={() => router.back()}
           />
         </LinearGradient>

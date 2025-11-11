@@ -126,7 +126,7 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
       <ActionCard
         title="See your rank on board"
         buttonTitle="View"
-        onPress={() => router.push("/(user)/home/leaderboard")}
+        onPress={() => router.push("/screens/home/leaderboard")}
         rightImage={require("@/assets/images/rank.svg")}
         imageClass="absolute bottom-0 right-2.5"
         imageWidth={144}
