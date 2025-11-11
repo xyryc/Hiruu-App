@@ -43,15 +43,21 @@ const QuickAction = ({ className }: QuickActionProps) => {
               />
             }
             title="Shift Request"
-            // onPress={() => router.push("/(user)/schreen/schedule/shift/overtime")}
-            onPress={() => router.push("/screens/home/business/shift-request")}
+            onPress={() => {
+              user.role === "user"
+                ? router.push("/screens/schedule/shift/overtime")
+                : router.push("/screens/home/business/shift-request");
+            }}
           />
 
           <ActionIconCard
             icon={<FontAwesome name="users" size={20} color="#4FB2F3" />}
             title="Team Panel"
-            onPress={() => router.push("/screens/schedule/shift/swap")}
-            // onPress={() => router.push("/(user)/schedule/shift/swap")}
+            onPress={() => {
+              user.role === "user"
+                ? router.push("/screens/schedule/shift/swap")
+                : "";
+            }}
           />
 
           <ActionIconCard
@@ -63,7 +69,11 @@ const QuickAction = ({ className }: QuickActionProps) => {
               />
             }
             title="Week Schedule"
-            onPress={() => router.push("/screens/schedule/shift/report")}
+            onPress={() => {
+              user.role === "user"
+                ? router.push("/screens/schedule/shift/report")
+                : "";
+            }}
           />
         </ScrollView>
       </ScrollView>
