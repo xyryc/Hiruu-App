@@ -5,9 +5,9 @@ import SmallButton from "../buttons/SmallButton";
 
 const ConnectSocials = () => {
   return (
-    <View>
+    <View className="border border-[#EEEEEE] rounded-xl m-5">
       {/* facebook */}
-      <View className="flex-row justify-between items-center bg-white p-3 rounded-[10px] border border-[#EEEEEE]">
+      <View className="flex-row justify-between items-center p-3 border-b border-[#EEEEEE]">
         <TouchableOpacity className="flex-row items-center gap-1.5">
           <Image
             style={{
@@ -25,7 +25,7 @@ const ConnectSocials = () => {
       </View>
 
       {/* linkedin */}
-      <View className="flex-row justify-between items-center bg-white p-3 rounded-[10px] border border-[#EEEEEE]">
+      <View className="flex-row justify-between items-center p-3 border-b border-[#EEEEEE]">
         <TouchableOpacity className="flex-row items-center gap-1.5">
           <Image
             style={{
@@ -43,7 +43,7 @@ const ConnectSocials = () => {
       </View>
 
       {/* whatsapp */}
-      <View className="flex-row justify-between items-center bg-white p-3 rounded-[10px] border border-[#EEEEEE]">
+      <View className="flex-row justify-between items-center p-3 border-b border-[#EEEEEE]">
         <TouchableOpacity className="flex-row items-center gap-1.5">
           <Image
             style={{
@@ -61,7 +61,7 @@ const ConnectSocials = () => {
       </View>
 
       {/* twitter */}
-      <View className="flex-row justify-between items-center bg-white p-3 rounded-[10px] border border-[#EEEEEE]">
+      <View className="flex-row justify-between items-center p-3 border-b border-[#EEEEEE]">
         <TouchableOpacity className="flex-row items-center gap-1.5">
           <Image
             style={{
@@ -79,7 +79,7 @@ const ConnectSocials = () => {
       </View>
 
       {/* telegram */}
-      <View className="flex-row justify-between items-center bg-white p-3 rounded-[10px] border border-[#EEEEEE]">
+      <View className="flex-row justify-between items-center p-3 border-b border-[#EEEEEE]">
         <TouchableOpacity className="flex-row items-center gap-1.5">
           <Image
             style={{
@@ -97,7 +97,7 @@ const ConnectSocials = () => {
       </View>
 
       {/* instagram */}
-      <View className="flex-row justify-between items-center bg-white p-3 rounded-[10px] border border-[#EEEEEE]">
+      <View className="flex-row justify-between items-center p-3">
         <TouchableOpacity className="flex-row items-center gap-1.5">
           <Image
             style={{

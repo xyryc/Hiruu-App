@@ -18,7 +18,7 @@ import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const profile = () => {
+const UserProfilePreview = () => {
   const [showText, setShowText] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState("");
   const issues = [
@@ -296,4 +296,4 @@ const profile = () => {
   );
 };
 
-export default profile;
+export default UserProfilePreview;

@@ -6,12 +6,15 @@ import {
   SimpleLineIcons,
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
 import StatusBadge from "../badges/StatusBadge";
 import SmallButton from "../buttons/SmallButton";
 
 const BusinessJobCard = ({ className, status }: BusinessJobCardProps) => {
+  const router = useRouter();
+
   return (
     <View
       className={`${className}
@@ -166,7 +169,12 @@ const BusinessJobCard = ({ className, status }: BusinessJobCardProps) => {
         </View>
 
         {/* right */}
-        <SmallButton title="View Profile" />
+        <SmallButton
+          title="View Profile"
+          onPress={() =>
+            router.replace("/screens/jobs/business/user-profile-preview")
+          }
+        />
       </View>
     </View>
   );
