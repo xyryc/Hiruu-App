@@ -19,7 +19,7 @@ export default function SearchBar({ className, onSearch }: SearchBarProps) {
 
   return (
     <View
-      className={`flex-row items-center rounded-[10px] px-4 py-3 ${className} border ${
+      className={`flex-row items-center rounded-[10px] px-4 ${className} border ${
         isFocused ? "border-[#00000027]" : "border-[#EEEEEE]"
       }`}
     >
@@ -35,6 +35,7 @@ export default function SearchBar({ className, onSearch }: SearchBarProps) {
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         returnKeyType="search"
+        keyboardAppearance="dark"
       />
 
       {searchQuery.length > 0 && (
