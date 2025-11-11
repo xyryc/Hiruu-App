@@ -1,9 +1,9 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdownModal";
 import ExperienceLevel from "@/components/ui/inputs/ExperienceLevel";
 import SearchBar from "@/components/ui/inputs/SearchBar";
 import TimePicker from "@/components/ui/inputs/TimePicker";
-import BusinessDropdown from "@/components/ui/modals/BusinessDropdownModal";
 import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";

@@ -126,8 +126,7 @@ const BusinessScheduleScreen = () => {
       title: "Saved Shift Template",
       icon: "document-attach-outline",
       onPress: () => {
-        console.log("Navigate to Saved Templates");
-        // router.push("/saved-templates");
+        router.push("/screens/schedule/business/saved-shift-template");
       },
     },
   ];

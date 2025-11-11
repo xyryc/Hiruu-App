@@ -1,7 +1,7 @@
 import { Entypo, Feather } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import React, { useState } from "react";
+import React from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../buttons/PrimaryButton";
@@ -15,8 +15,6 @@ const PreviewTemplateModal = ({ visible, onClose }: any) => {
   const handleDone = () => {
     onClose();
   };
-
-  const [selectedLeave, setSelectedLeave] = useState<string>("");
 
   return (
     <Modal
@@ -64,6 +62,7 @@ const PreviewTemplateModal = ({ visible, onClose }: any) => {
                   <Feather name="edit-2" size={16} color="black" />
                 </View>
               </View>
+
               {/* time box */}
               <View>
                 <View className="flex-row justify-between items-center mt-4 ">

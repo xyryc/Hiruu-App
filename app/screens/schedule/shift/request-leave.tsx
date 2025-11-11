@@ -1,10 +1,10 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
 import ActionCard from "@/components/ui/cards/ActionCard";
+import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdownModal";
 import DatePicker from "@/components/ui/inputs/DatePicker";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import LeaveRequestModal from "@/components/ui/modals/LeaveRequestModal";
-import SelectBusiness from "@/components/ui/modals/SelectBusiness";
 import SelectLeaveType from "@/components/ui/modals/SelectLeaveType";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -17,6 +17,36 @@ const RequestLeave = () => {
   const isDark = colorScheme === "dark";
   const [isOn, setIsOn] = useState(false);
   const [leaveText, setLeaveText] = useState("");
+
+  // Sample data
+  const businessData = [
+    {
+      label: "Sick Leave",
+      value: "sick",
+      avatar:
+        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+    },
+    {
+      label: "Personal Leave",
+      value: "personal",
+      avatar:
+        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+    },
+    {
+      label: "Work From Home",
+      value: "wfh",
+      avatar:
+        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+    },
+    {
+      label: "Emergency Leave",
+      value: "emergency",
+      avatar:
+        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+    },
+  ];
+
+  const [selectedBusiness, setSelectedBusiness] = useState<string>("");
 
   return (
     <SafeAreaView
@@ -96,7 +126,15 @@ const RequestLeave = () => {
         {/* Reason End */}
         {/* Select business start */}
         <View className="mx-5 py-2 mt-2">
-          <SelectBusiness />
+          <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mb-2">
+            Select Business
+          </Text>
+          <BusinessDropdown
+            placeholder="Choose Business"
+            options={businessData}
+            value={selectedBusiness}
+            onSelect={(value: any) => setSelectedBusiness(value)}
+          />
         </View>
         {/* Select business end */}
 
