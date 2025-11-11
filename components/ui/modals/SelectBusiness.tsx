@@ -41,7 +41,7 @@ const SelectBusiness = () => {
       {/* Top bar showing selected profiles */}
       <View>
         <BusinessDropdown
-          placeholder="Choose leave type"
+          placeholder="Select Business"
           options={leaveTypes}
           value={selectedLeave}
           onSelect={(value: any) => setSelectedLeave(value)}
