@@ -31,7 +31,7 @@ const UserJobs = () => {
           <View className="flex-row items-center gap-2.5">
             {/* left */}
             <TouchableOpacity
-              onPress={() => router.push("/(user)/jobs/job-request")}
+              onPress={() => router.push("/screens/jobs/job-request")}
               className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
             >
               <Ionicons name="newspaper-outline" size={24} color="#4b5563" />
@@ -42,7 +42,7 @@ const UserJobs = () => {
 
             {/* right */}
             <TouchableOpacity
-              onPress={() => router.push("/(user)/jobs/chatlist")}
+              onPress={() => router.push("/screens/jobs/chatlist")}
               className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
             >
               <Image
@@ -65,7 +65,9 @@ const UserJobs = () => {
       <View className="flex-row items-center gap-1.5 mr-12 mt-3.5 px-5">
         <SearchBar />
 
-        <TouchableOpacity onPress={() => router.push("/screens/jobs/filter")}>
+        <TouchableOpacity
+          onPress={() => router.push("/screens/jobs/user/filter")}
+        >
           <Ionicons name="filter-circle" size={44} color="black" />
         </TouchableOpacity>
       </View>

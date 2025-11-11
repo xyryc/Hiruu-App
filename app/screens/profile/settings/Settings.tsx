@@ -13,7 +13,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Settings = () => {
@@ -119,7 +119,7 @@ const Settings = () => {
 
         {/* settings card */}
         <SettingsCard
-          click={() => router.push("/(user)/profile/settings/preferences")}
+          click={() => router.push("/screens/profile/settings/preferences")}
           icon={<Ionicons name="language-outline" size={24} color="#11293A" />}
           className="mt-8"
           text="App Preferences"
@@ -130,7 +130,7 @@ const Settings = () => {
 
         <SettingsCard
           click={() =>
-            router.push("/(user)/profile/settings/subscription/subscription")
+            router.push("/screens/profile/settings/subscription/subscription")
           }
           icon={
             <MaterialCommunityIcons
@@ -147,7 +147,7 @@ const Settings = () => {
         />
 
         <SettingsCard
-          click={() => router.push("/(user)/profile/settings/refer")}
+          click={() => router.push("/screens/profile/settings/refer")}
           icon={<Ionicons name="wallet-outline" size={24} color="#11293A" />}
           text="Refer and Earn"
           className="mt-5"
@@ -157,7 +157,7 @@ const Settings = () => {
         />
 
         <SettingsCard
-          click={() => router.push("/(user)/profile/settings/privacy")}
+          click={() => router.push("/screens/profile/settings/privacy")}
           icon={<SimpleLineIcons name="lock" size={24} color="black" />}
           text="Privacy Policy"
           className="mt-5"
@@ -167,7 +167,7 @@ const Settings = () => {
         />
 
         <SettingsCard
-          click={() => router.push("/(user)/profile/settings/terms")}
+          click={() => router.push("/screens/profile/settings/terms")}
           icon={<Ionicons name="calendar-outline" size={24} color="black" />}
           text="Terms and Condition"
           className="mt-5"
@@ -176,7 +176,7 @@ const Settings = () => {
           }
         />
         <SettingsCard
-          click={() => router.push("/(user)/profile/settings/support")}
+          click={() => router.push("/screens/profile/settings/support")}
           icon={<FontAwesome name="handshake-o" size={20} color="#111111" />}
           text="Help and Support"
           className="mt-5"
@@ -185,7 +185,7 @@ const Settings = () => {
           }
         />
         <SettingsCard
-          click={() => router.push("/(user)/profile/settings/info")}
+          click={() => router.push("/screens/profile/settings/info")}
           icon={<SimpleLineIcons name="info" size={22} color="black" />}
           text="App Info"
           className="mt-5"

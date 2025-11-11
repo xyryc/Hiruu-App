@@ -1,12 +1,11 @@
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenHeader from "@/components/header/ScreenHeader";
-import { Image } from "expo-image";
+import ChatListItem from "@/components/ui/cards/ChatListItem";
+import SearchBar from "@/components/ui/inputs/SearchBar";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
-import SearchBar from "@/components/ui/inputs/SearchBar";
-import ChatListItem from "@/components/ui/cards/ChatListItem";
+import React, { useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ChatList = () => {
   const router = useRouter();
@@ -50,16 +49,16 @@ const ChatList = () => {
       >
         <SearchBar className="mt-5 mb-4" />
 
-        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/(user)/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
+        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
       </ScrollView>
     </SafeAreaView>
   );

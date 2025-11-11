@@ -26,7 +26,9 @@ const challenges = () => {
       />
 
       {/* banner token */}
-      <TouchableOpacity onPress={() => router.push("/rewards/redeem-tokens")}>
+      <TouchableOpacity
+        onPress={() => router.push("/screens/rewards/redeem-tokens")}
+      >
         <View className="bg-[#aed7f1] mx-4 rounded-xl flex-row">
           <View className="mt-3 mb-2">
             <Image

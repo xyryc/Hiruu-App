@@ -6,7 +6,10 @@ import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const RedeemTokens = () => {
   const img = require("@/assets/images/reward/premium.svg");
@@ -73,10 +76,10 @@ const RedeemTokens = () => {
       setData(me);
       setModalVisible(true);
     } else if (key === "nameplate") {
-      router.push("/(user)/rewards/nameplate");
+      router.push("/screens/rewards/nameplate");
     }
   };
-
+  const insets = useSafeAreaInsets();
   return (
     <SafeAreaView
       className="flex-1 bg-white dark:bg-dark-background"
@@ -85,7 +88,7 @@ const RedeemTokens = () => {
       {/* Header */}
       <ScreenHeader
         onPressBack={() => router.back()}
-        className="px-5 pb-6 rounded-b-3xl overflow-hidden"
+        className="px-5 pb-6 rounded-b-3xl pt-2.5 overflow-hidden"
         title="Redeem Tokens"
         titleClass="text-primary "
         iconColor={isDark ? "#fff" : "#111111"}
