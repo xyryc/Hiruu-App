@@ -1,15 +1,13 @@
+import ErrorBoundary from "@/components/ui/error/ErrorBoundary";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import { useState } from "react";
 import "react-native-reanimated";
 import "./global.css";
 import SplashScreen from "./splash";
-import ErrorBoundary from "@/components/ui/error/ErrorBoundary";
 
 // Create a separate component that uses the theme
 const AppContent = () => {
-  const [showSplash, setShowSplash] = useState(true);
   const [fontsLoaded] = useFonts({
     "ProximaNova-Thin": require("../assets/fonts/ProximaNova-Thin.ttf"),
     "ProximaNova-Light": require("../assets/fonts/ProximaNova-Light.ttf"),
@@ -26,6 +24,7 @@ const AppContent = () => {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="+not-found" />

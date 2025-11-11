@@ -10,11 +10,12 @@ import {
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CancelImg from "@/assets/images/cancel.svg";
+// import CancelImg from "@/assets/images/cancel.svg";
 
 const Subscription = () => {
+  const CancelImg = require("@/assets/images/cancel.svg");
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -153,7 +154,7 @@ const Subscription = () => {
           <View className="border px-3 rounded-2xl border-[#EEEEEE] mt-5">
             <SettingsCard
               click={() =>
-                router.push("/(user)/profile/settings/subscription/user-plan")
+                router.push("/screens/profile/settings/subscription/user-plan")
               }
               border={true}
               icon={
@@ -177,7 +178,7 @@ const Subscription = () => {
             <SettingsCard
               click={() =>
                 router.push(
-                  "/(user)/profile/settings/subscription/business-plan"
+                  "/screens/profile/settings/subscription/business-plan"
                 )
               }
               border={true}

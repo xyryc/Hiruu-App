@@ -1,7 +1,8 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -21,7 +22,6 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import * as ImagePicker from "expo-image-picker";
 
 const EditBusinessProfile = () => {
   const { colorScheme } = useColorScheme();
@@ -194,8 +194,7 @@ const EditBusinessProfile = () => {
                 ) : (
                   <Image
                     source={
-                      profileImage ||
-                      "https://media-cdn.tripadvisor.com/media/photo-s/09/de/d6/61/infinity-resort.jpg"
+                      profileImage || require("@/assets/images/reward/user.svg")
                     }
                     contentFit="cover"
                     style={{ height: 116, width: 116, borderRadius: 100 }}
@@ -206,9 +205,9 @@ const EditBusinessProfile = () => {
                 {!uploading && (
                   <TouchableOpacity
                     onPress={() => showImagePickerOptions("profile")}
-                    className="h-8 w-8 border border-white bg-[#4FB2F3] rounded-full absolute bottom-2 right-2 flex-row justify-center items-center"
+                    className="h-8 w-8 border border-[#EEEEEE] bg-white rounded-full absolute bottom-2 right-2 flex-row justify-center items-center"
                   >
-                    <Feather name="edit-2" size={16} color="white" />
+                    <Feather name="edit-2" size={16} color="#282930" />
                   </TouchableOpacity>
                 )}
               </View>
@@ -232,32 +231,44 @@ const EditBusinessProfile = () => {
                     <ActivityIndicator size="large" color="#4FB2F3" />
                     <Text className="text-gray-500 mt-2">Uploading...</Text>
                   </View>
-                ) : (
-                  <Image
-                    source={
-                      coverImage ||
-                      "https://media-cdn.tripadvisor.com/media/photo-s/09/de/d6/61/infinity-resort.jpg"
-                    }
-                    contentFit="cover"
-                    style={{
-                      width: "100%",
-                      height: 150,
-                      borderRadius: 12,
-                    }}
-                    transition={300}
-                  />
-                )}
+                ) : coverImage ? (
+                  <View>
+                    <Image
+                      source={coverImage}
+                      contentFit="cover"
+                      style={{
+                        width: "100%",
+                        height: 150,
+                        borderRadius: 12,
+                      }}
+                      transition={300}
+                    />
 
-                {!uploading && (
+                    <TouchableOpacity
+                      onPress={() => showImagePickerOptions("cover")}
+                      className="h-8 w-8 border border-white bg-[#4FB2F3] rounded-full absolute bottom-2 right-2 z10 flex-row justify-center items-center"
+                    >
+                      <Feather name="edit-2" size={16} color="white" />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
                   <TouchableOpacity
                     onPress={() => showImagePickerOptions("cover")}
-                    className="h-8 w-8 border border-white bg-[#4FB2F3] rounded-full absolute bottom-2 right-2 flex-row justify-center items-center"
+                    className="flex items-center justify-center py-6 border border-dotted rounded-xl"
                   >
-                    <Feather name="edit-2" size={16} color="white" />
+                    <Ionicons
+                      name="add-circle-sharp"
+                      size={36}
+                      color="#053C5A"
+                    />
+                    <Text className="font-proximanova-semibold text-sm mt-2">
+                      Upload Photo
+                    </Text>
                   </TouchableOpacity>
                 )}
               </View>
             </View>
+
             {/* inpute field  */}
             <View className="flex-row justify-between items-center mt-8 ">
               <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
@@ -267,6 +278,7 @@ const EditBusinessProfile = () => {
                 Edit
               </Text>
             </View>
+
             <View>
               <TextInput
                 placeholder="Enter your business name"

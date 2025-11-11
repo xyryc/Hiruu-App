@@ -1,5 +1,5 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import JobCard from "@/components/ui/cards/JobCard";
+import BusinessJobCard from "@/components/ui/cards/BusinessJobCard";
 import { EvilIcons, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -20,7 +20,7 @@ const BusinessJobs = () => {
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
-      edges={["left", "top", "right", "bottom"]}
+      edges={["left", "top", "right"]}
     >
       <ScreenHeader
         className="my-4 mx-5"
@@ -64,6 +64,7 @@ const BusinessJobs = () => {
               />
             </View>
           </View>
+
           {/* Filter Icon Button */}
           <TouchableOpacity
             onPress={() => router.push("/screens/jobs/business/filter")}
@@ -85,7 +86,8 @@ const BusinessJobs = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <JobCard className="mt-4" />
+
+          <BusinessJobCard className="mt-4" status="featured" />
         </View>
 
         {/* Suggested Profile */}
@@ -100,9 +102,10 @@ const BusinessJobs = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <JobCard className="mt-4" />
-          <JobCard className="mt-4" />
-          <JobCard className="mt-4" />
+
+          <BusinessJobCard className="mt-4" />
+          <BusinessJobCard className="mt-4" />
+          <BusinessJobCard className="mt-4" />
         </View>
       </ScrollView>
     </SafeAreaView>

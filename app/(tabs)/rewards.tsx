@@ -76,7 +76,7 @@ const UserRewards = () => {
             </Text>
 
             <TouchableOpacity
-              onPress={() => router.push("/(user)/rewards/token-activity")}
+              onPress={() => router.push("/screens/rewards/token-activity")}
             >
               <AntDesign
                 className="justify-end p-2.5 bg-[#ffffff] rounded-full absolute top-4 right-0"
@@ -101,7 +101,7 @@ const UserRewards = () => {
 
             <PrimaryButton
               title="Redeem"
-              onPress={() => router.push("/(user)/rewards/redeem-tokens")}
+              onPress={() => router.push("/screens/rewards/redeem-tokens")}
               className="w-44 justify-center items-center mx-auto mt-4"
             />
 
@@ -176,7 +176,7 @@ const UserRewards = () => {
                 Standard Challenges
               </Text>
               <TouchableOpacity
-                onPress={() => router.push("/(user)/rewards/challenges")}
+                onPress={() => router.push("/screens/rewards/challenges")}
               >
                 <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">
                   See All
@@ -185,14 +185,21 @@ const UserRewards = () => {
             </View>
 
             {/* standard challenges */}
-            <View className="flex-row flex-wrap gap-2 items-center mt-4">
+            <ScrollView
+              horizontal
+              className="mt-4"
+              showsHorizontalScrollIndicator={false}
+            >
               {cardData.map((card, index) => (
                 <View
                   key={index}
-                  className="border-[#EEEEEE] border p-6 rounded-xl"
+                  style={{
+                    width: screenWidth * 0.3,
+                  }}
+                  className="border-[#EEEEEE] border p-3 rounded-xl mr-1 items-center"
                 >
                   <View
-                    className=" h-[72px] w-[63px] border border-b-[3px] justify-between items-center flex-row rounded-xl"
+                    className="h-[72px] w-[63px] border border-b-[3px] justify-between items-center flex-row rounded-xl"
                     style={{
                       backgroundColor: card.back,
                       borderColor: card.border,
@@ -210,8 +217,10 @@ const UserRewards = () => {
                   <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center ">
                     {card.text2}
                   </Text>
+
                   <View className="flex-row justify-between items-center"></View>
-                  <View className="flex-row items-center justify-between mt-2">
+
+                  <View className="flex-row items-center justify-between gap-2 mt-2">
                     <Image
                       source={require("@/assets/images/hiruu-coin.svg")}
                       style={{
@@ -235,7 +244,7 @@ const UserRewards = () => {
                   </View>
                 </View>
               ))}
-            </View>
+            </ScrollView>
 
             {/* redeem rewards */}
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary mt-6">
@@ -250,7 +259,7 @@ const UserRewards = () => {
                   width: screenWidth * 0.9,
                   height: 230,
                 }}
-                contentFit="contain"
+                contentFit="fill"
               />
 
               {/* content */}

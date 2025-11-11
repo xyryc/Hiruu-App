@@ -13,7 +13,11 @@ const SmallButton = ({
       onPress={onPress}
       className={`${className} bg-[#11293A] rounded-full px-4 py-2.5`}
     >
-      <Text className={`${textClass} text-white text-center`}>{title}</Text>
+      <Text
+        className={`${textClass} text-white text-center font-proximanova-semibold text-sm`}
+      >
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };

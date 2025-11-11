@@ -2,13 +2,12 @@ import {
   FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
-  SimpleLineIcons,
 } from "@expo/vector-icons";
-import { LinearGradient } from "expo-linear-gradient";
-import { View, Text } from "react-native";
-import ShiftsSummaryCard from "../ui/cards/ShiftsSummaryCard";
 import { Image } from "expo-image";
+import { LinearGradient } from "expo-linear-gradient";
+import { Text, View } from "react-native";
 import PrimaryButton from "../ui/buttons/PrimaryButton";
+import ShiftsSummaryCard from "../ui/cards/ShiftsSummaryCard";
 
 const TodayShiftsSummary = ({ className }: any) => {
   const teamMembers = ["John", "Jane", "Mike", "Sarah", "Tom"];

@@ -31,7 +31,7 @@ const UserJobs = () => {
           <View className="flex-row items-center gap-2.5">
             {/* left */}
             <TouchableOpacity
-              onPress={() => router.push("/(user)/jobs/job-request")}
+              onPress={() => router.push("/screens/jobs/job-request")}
               className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
             >
               <Ionicons name="newspaper-outline" size={24} color="#4b5563" />
@@ -42,7 +42,7 @@ const UserJobs = () => {
 
             {/* right */}
             <TouchableOpacity
-              onPress={() => router.push("/(user)/jobs/chatlist")}
+              onPress={() => router.push("/screens/jobs/chatlist")}
               className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
             >
               <Image
@@ -61,61 +61,63 @@ const UserJobs = () => {
         }
       />
 
-      {/* search box */}
-      <View className="flex-row items-center gap-1.5 mr-12 mt-3.5 px-5">
-        <SearchBar />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* search box */}
+        <View className="flex-row items-center gap-1.5 mr-12 mt-3.5 px-5">
+          <SearchBar />
 
-        <TouchableOpacity onPress={() => router.push("/screens/jobs/filter")}>
-          <Ionicons name="filter-circle" size={44} color="black" />
-        </TouchableOpacity>
-      </View>
-
-      {/* featured job */}
-      <View className="mt-7">
-        <View className="flex-row justify-between items-center mb-4 px-5">
-          <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
-            Featured Job
-          </Text>
-
-          <TouchableOpacity>
-            <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
-              See All
-            </Text>
+          <TouchableOpacity
+            onPress={() => router.push("/screens/jobs/user/filter")}
+          >
+            <Ionicons name="filter-circle" size={44} color="black" />
           </TouchableOpacity>
         </View>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="pl-5"
-        >
-          <JobCard className="mr-2.5" />
-          <JobCard className="mr-2.5" />
-          <JobCard className="mr-2.5" />
-          <JobCard className="mr-2.5" />
-        </ScrollView>
-      </View>
-
-      <View className="mt-7 px-5">
-        <View className="flex-row justify-between items-center mb-4">
-          <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
-            Suggested Job
-          </Text>
-
-          <TouchableOpacity>
-            <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
-              See All
+        {/* featured job */}
+        <View className="mt-7">
+          <View className="flex-row justify-between items-center mb-4 px-5">
+            <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
+              Featured Job
             </Text>
-          </TouchableOpacity>
+
+            <TouchableOpacity>
+              <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
+                See All
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            className="pl-5"
+          >
+            <JobCard className="mr-2.5" />
+            <JobCard className="mr-2.5" />
+            <JobCard className="mr-2.5" />
+            <JobCard className="mr-2.5" />
+          </ScrollView>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <View className="mt-7 px-5">
+          <View className="flex-row justify-between items-center mb-4">
+            <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
+              Suggested Job
+            </Text>
+
+            <TouchableOpacity>
+              <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
+                See All
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
           <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
           <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
           <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

@@ -31,7 +31,7 @@ const TrackHours = () => {
         iconColor={isDark ? "#fff" : "#111"}
         components={<></>}
       />
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View className="mx-5 mt-8">
           <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
             This Month’s Overview
@@ -113,7 +113,7 @@ const TrackHours = () => {
 
           <PrimaryButton
             onPress={() =>
-              router.push("/(user)/home/shift/track-hours/attendance-log")
+              router.push("/screens/home/shift/track-hours/attendance-log")
             }
             title="View Attendance log"
             className="mt-4"

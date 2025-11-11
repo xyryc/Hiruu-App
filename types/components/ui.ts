@@ -263,3 +263,8 @@ export interface JobCardProps {
   className?: string;
   status?: string;
 }
+
+export interface BusinessJobCardProps {
+  className?: string;
+  status?: string;
+}

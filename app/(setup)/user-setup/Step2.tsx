@@ -104,6 +104,7 @@ export default function Step2({
             className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm h-20"
             autoCapitalize="none"
             multiline={true}
+            textAlignVertical="top"
           />
         </View>
       </ScrollView>
