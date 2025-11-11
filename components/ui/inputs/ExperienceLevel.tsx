@@ -2,7 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
-const ExperienceLevel = () => {
+const ExperienceLevel = ({ titleHeight }: any) => {
   const [experiences, setExperiences] = useState([
     { id: 1, role: "Cashier", value: 5 },
     { id: 2, role: "Receptionist", value: 5 },
@@ -32,9 +32,11 @@ const ExperienceLevel = () => {
 
   return (
     <View className="py-5">
-      <Text className="text-base font-proximanova-semibold text-primary mb-4">
-        Experience Level
-      </Text>
+      {titleHeight || (
+        <Text className="text-base font-proximanova-semibold text-primary mb-4">
+          Experience Level
+        </Text>
+      )}
 
       {experiences.map((exp) => (
         <View key={exp.id} className="flex-row items-center mb-3 gap-3">
