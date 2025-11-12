@@ -1,10 +1,11 @@
-import { EvilIcons, Feather } from "@expo/vector-icons";
+import { EvilIcons, Feather, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { router } from "expo-router";
 import React from "react";
-import { Animated, Text, View } from "react-native";
+import { Animated, Text, TouchableOpacity, View } from "react-native";
 
-const ShiftTemplateCard = ({ className, title }: any) => {
+const ShiftTemplateCard = ({ className, title, weekly }: any) => {
   const scrollX = new Animated.Value(0);
   const roles = [
     { name: "Cashier", count: 2, bg: "#EEF2FF", color: "#4F46E5" },
@@ -23,10 +24,18 @@ const ShiftTemplateCard = ({ className, title }: any) => {
             {title}
           </Text>
           <View className="flex-row gap-1.5 items-center mx-3">
+            {weekly && (
+              <TouchableOpacity
+                onPress={() => router.push("/screens/schedule/business/assign")}
+                className="h-10 w-10 rounded-full bg-[#FFF] flex-row justify-center items-center "
+              >
+                <MaterialIcons name="person-add-alt" size={20} color="black" />
+              </TouchableOpacity>
+            )}
             <View className="h-10 w-10 rounded-full bg-[#FFF] flex-row justify-center items-center ">
               <Feather name="edit-2" size={20} color="black" />
             </View>
-            <EvilIcons name="trash" size={24} color="#F34F4F" />
+            {weekly || <EvilIcons name="trash" size={24} color="#F34F4F" />}
           </View>
         </View>
 
@@ -96,11 +105,10 @@ const ShiftTemplateCard = ({ className, title }: any) => {
                 )}
               />
 
-              {/* Right blur edge */}
               <LinearGradient
-                colors={["transparent", "white"]}
-                start={{ x: 1, y: 1 }}
-                end={{ x: 0, y: 1 }}
+                colors={["rgba(255,255,255,0.9)", "rgba(255,255,255,0)"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
                 style={{
                   position: "absolute",
                   left: 0,
@@ -111,6 +119,21 @@ const ShiftTemplateCard = ({ className, title }: any) => {
               />
             </View>
           </View>
+
+          {/* Incomplete: Bartender 1 needed */}
+          {weekly && (
+            <View className="flex-row items-center gap-2.5 mt-2.5">
+              <Feather name="alert-triangle" size={16} color="#F34F4F" />
+              <Text
+                numberOfLines={1}
+                className="ml-1.5 text-sm font-proximanova-regular text-[#F34F4F]"
+              >
+                Incomplete: Bartender 1 needed
+              </Text>
+            </View>
+          )}
+
+          {/* line  */}
           <Image
             source={require("@/assets/images/dotted-line.svg")}
             contentFit="contain"

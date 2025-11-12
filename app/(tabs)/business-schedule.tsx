@@ -117,8 +117,7 @@ const BusinessScheduleScreen = () => {
       title: "Weekly Schedule",
       icon: "calendar-outline",
       onPress: () => {
-        console.log("Navigate to Weekly Schedule");
-        // router.push("/weekly-schedule");
+        router.push("/screens/schedule/business/weekly-schedule");
       },
     },
     {
