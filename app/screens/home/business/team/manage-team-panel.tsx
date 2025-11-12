@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
+import AssignRoleModal from "@/components/ui/modals/AssignRoleModal";
 import { Entypo, EvilIcons, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -15,11 +16,35 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+const assignRole = [
+  {
+    id: "1",
+    name: "Employee",
+  },
+  {
+    id: "2",
+    name: "Manager",
+  },
+  {
+    id: "3",
+    name: "HR / Recruiter",
+  },
+  {
+    id: "4",
+    name: "Shift Supervisor",
+  },
+  {
+    id: "5",
+    name: "Auditor",
+  },
+];
+
 const ManageTeamPanel = () => {
   const [selectedTab, setSelectedTab] = useState("Team Member(50)");
   const [filter, setFilter] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAssignRole, setSelectedAssignRole] = useState();
   const filterOptions = [
     { label: "All", value: "all", count: 50 },
     { label: "Manager", value: "manager", count: 1 },
@@ -250,7 +275,10 @@ const ManageTeamPanel = () => {
           </Text>
           <Ionicons name="arrow-forward" size={16} color="#4FB2F3" />
         </TouchableOpacity>
-        <TouchableOpacity className="bg-[#11293A] px-5 py-2 rounded-full">
+        <TouchableOpacity
+          onPress={() => setShowModal(true)}
+          className="bg-[#11293A] px-5 py-2 rounded-full"
+        >
           <Text className="text-[#ffffff] text-sm font-proximanova-semibold">
             Manage Role
           </Text>
@@ -431,13 +459,22 @@ const ManageTeamPanel = () => {
       </View>
 
       {/* Floating Add Button */}
-      <TouchableOpacity>
-        <AnimatedFABMenu
-          menuItems={menuItems}
-          fabColor="#11293A"
-          menuItemColor="#11293A"
-        />
-      </TouchableOpacity>
+
+      <AnimatedFABMenu
+        menuItems={menuItems}
+        fabColor="#11293A"
+        menuItemColor="#11293A"
+      />
+
+      {/* hapiness bar */}
+
+      <AssignRoleModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        assignRole={assignRole}
+        selectedAssignRole={selectedAssignRole}
+        setSelectedAssignRole={setSelectedAssignRole}
+      />
     </SafeAreaView>
   );
 };
