@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../buttons/PrimaryButton";
-import BusinessDropdown from "../dropdown/BusinessDropdownModal";
+import BusinessDropdown from "../dropdown/BusinessDropdown";
 
 interface Option {
   label: string;

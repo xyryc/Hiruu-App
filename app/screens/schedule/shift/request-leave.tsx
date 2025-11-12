@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
 import ActionCard from "@/components/ui/cards/ActionCard";
-import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdownModal";
+import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
 import DatePicker from "@/components/ui/inputs/DatePicker";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import LeaveRequestModal from "@/components/ui/modals/LeaveRequestModal";

@@ -71,14 +71,18 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
 
       <TouchableOpacity
         onPress={() => setIsVisible(true)}
-        className="flex-row items-center justify-between px-3 py-3 bg-white dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border"
+        className="flex-row items-center justify-between p-1 bg-white dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border"
       >
         <View className="flex-row items-center">
           {selectedOption?.avatar && (
             <Image
               source={selectedOption.avatar}
-              contentFit="contain"
-              style={{ height: imageHeight, width: imageWidth }}
+              style={{
+                height: imageHeight,
+                width: imageWidth,
+                borderRadius: 999,
+              }}
+              contentFit="cover"
             />
           )}
           {/* Conditionally render text based on hideSelectedText prop */}
@@ -141,8 +145,8 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
                     {item.avatar && (
                       <Image
                         source={item.avatar}
-                        contentFit="contain"
-                        style={{ height: 40, width: 40 }}
+                        style={{ height: 40, width: 40, borderRadius: 999 }}
+                        contentFit="cover"
                       />
                     )}
                     <Text className="text-base ml-5 text-primary dark:text-dark-primary flex-1">
