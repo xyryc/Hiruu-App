@@ -57,7 +57,10 @@ const BusinessProfile = () => {
               <EvilIcons name="share-apple" size={24} color="black" />
             </TouchableOpacity>
 
-            <TouchableOpacity className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center">
+            <TouchableOpacity
+              onPress={() => router.push("/screens/profile/settings/Settings")}
+              className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
+            >
               <Ionicons name="settings-outline" size={20} color="black" />
             </TouchableOpacity>
           </View>
