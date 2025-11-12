@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Animated, Text, View } from "react-native";
 
-const ShiftTemplateCard = ({ className }: any) => {
+const ShiftTemplateCard = ({ className, title }: any) => {
   const scrollX = new Animated.Value(0);
   const roles = [
     { name: "Cashier", count: 2, bg: "#EEF2FF", color: "#4F46E5" },
@@ -20,7 +20,7 @@ const ShiftTemplateCard = ({ className }: any) => {
       <View className="border border-[#EEEEEE] rounded-[14px]">
         <View className="bg-[#E5F4FD] rounded-t-[14px] flex-row justify-between items-center py-1.5">
           <Text className="mx-3 font-proximanova-semibold text-primary dark:text-dark-primary ">
-            Morning Shift
+            {title}
           </Text>
           <View className="flex-row gap-1.5 items-center mx-3">
             <View className="h-10 w-10 rounded-full bg-[#FFF] flex-row justify-center items-center ">
@@ -76,7 +76,7 @@ const ShiftTemplateCard = ({ className }: any) => {
                 horizontal
                 keyExtractor={(item) => item.name}
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: 8, paddingRight: 40 }}
+                contentContainerStyle={{ gap: 8, paddingRight: 20 }}
                 onScroll={Animated.event(
                   [{ nativeEvent: { contentOffset: { x: scrollX } } }],
                   { useNativeDriver: true }

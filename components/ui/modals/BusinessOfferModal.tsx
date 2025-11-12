@@ -14,7 +14,34 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../buttons/PrimaryButton";
 import SmallButton from "../buttons/SmallButton";
-import SelectBusiness from "./SelectBusiness";
+import BusinessDropdown from "../dropdown/BusinessDropdownModal";
+
+const leaveTypes = [
+  {
+    label: "Sick Leave",
+    value: "sick",
+    avatar:
+      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+  },
+  {
+    label: "Personal Leave",
+    value: "personal",
+    avatar:
+      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+  },
+  {
+    label: "Work From Home",
+    value: "wfh",
+    avatar:
+      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+  },
+  {
+    label: "Emergency Leave",
+    value: "emergency",
+    avatar:
+      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+  },
+];
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -22,6 +49,7 @@ const BusinessOfferModal = ({ visible, onClose }: any) => {
   const [showDetails, setShowDetails] = useState(false);
   const slideAnim = useRef(new Animated.Value(SCREEN_WIDTH)).current;
   const router = useRouter();
+  const [selectedLeave, setSelectedLeave] = useState<string>("");
 
   useEffect(() => {
     if (showDetails) {
@@ -122,7 +150,19 @@ const BusinessOfferModal = ({ visible, onClose }: any) => {
             </Text>
 
             {/* business */}
-            <SelectBusiness />
+            {/* hapiness bar */}
+            <View>
+              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-8">
+                Select business
+              </Text>
+              <BusinessDropdown
+                className="mt-4"
+                placeholder="Choose leave type"
+                options={leaveTypes}
+                value={selectedLeave}
+                onSelect={(value: any) => setSelectedLeave(value)}
+              />
+            </View>
 
             {/* button */}
             <PrimaryButton

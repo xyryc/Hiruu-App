@@ -1,47 +1,19 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import ShiftTemplateCard from "@/components/ui/cards/ShiftTemplateCard";
+import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React from "react";
 import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 
-const leaveTypes = [
-  {
-    label: "Sick Leave",
-    value: "sick",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Personal Leave",
-    value: "personal",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Work From Home",
-    value: "wfh",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Emergency Leave",
-    value: "emergency",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-];
 const SavedShiftTemplate = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const [selectedLeave, setSelectedLeave] = useState<string>("");
-  const [search, setSearch] = useState("");
-  const [isPreview, setIsPreview] = useState(false);
 
   return (
     <KeyboardAvoidingView
@@ -60,10 +32,17 @@ const SavedShiftTemplate = () => {
             title="Saved Shift template"
             titleClass="text-primary dark:text-dark-primary"
             iconColor={isDark ? "#fff" : "#111"}
+            components={
+              <View className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center">
+                <Ionicons name="documents-outline" size={22} color="black" />
+              </View>
+            }
           />
         </View>
         <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
-          <ShiftTemplateCard className="mt-8" />
+          <ShiftTemplateCard title="Morning Shift" className="mt-8" />
+          <ShiftTemplateCard title="Afternoon Shift" className="mt-4" />
+          <ShiftTemplateCard title="Evening Shift" className="mt-4" />
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
