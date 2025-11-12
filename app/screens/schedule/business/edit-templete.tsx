@@ -48,7 +48,7 @@ const leaveTypes = [
       "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
   },
 ];
-const CreateTemplate = () => {
+const EditTemplete = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
@@ -70,7 +70,7 @@ const CreateTemplate = () => {
             className=""
             style={{ paddingTop: insets.top + 10, paddingBottom: 10 }}
             onPressBack={() => router.back()}
-            title="Create Templete"
+            title="Edit Templete"
             titleClass="text-primary dark:text-dark-primary"
             iconColor={isDark ? "#fff" : "#111"}
           />
@@ -167,10 +167,16 @@ const CreateTemplate = () => {
             </Text>
           </View>
 
-          <View className="mt-8 mb-5">
+          <View className="mt-8 mb-5 flex-row gap-2">
+            <View className="flex-1 bg-[#F34F4F] items-center justify-center rounded-full">
+              <Text className="font-proximanova-semibold text-base text-center text-[#ffffff]">
+                Delete
+              </Text>
+            </View>
             <PrimaryButton
+              className="flex-1"
               onPress={() => setIsPreview(true)}
-              title="Save Template"
+              title="Save"
             />
           </View>
           <PreviewTemplateModal
@@ -183,4 +189,4 @@ const CreateTemplate = () => {
   );
 };
 
-export default CreateTemplate;
+export default EditTemplete;

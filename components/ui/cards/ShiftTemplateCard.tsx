@@ -32,9 +32,14 @@ const ShiftTemplateCard = ({ className, title, weekly }: any) => {
                 <MaterialIcons name="person-add-alt" size={20} color="black" />
               </TouchableOpacity>
             )}
-            <View className="h-10 w-10 rounded-full bg-[#FFF] flex-row justify-center items-center ">
+            <TouchableOpacity
+              onPress={() =>
+                router.push("/screens/schedule/business/edit-templete")
+              }
+              className="h-10 w-10 rounded-full bg-[#FFF] flex-row justify-center items-center "
+            >
               <Feather name="edit-2" size={20} color="black" />
-            </View>
+            </TouchableOpacity>
             {weekly || <EvilIcons name="trash" size={24} color="#F34F4F" />}
           </View>
         </View>

@@ -1,7 +1,8 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
+import GradientButton from "@/components/ui/buttons/GradientButton";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ShiftTemplateCard from "@/components/ui/cards/ShiftTemplateCard";
-import { SimpleLineIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
@@ -92,6 +93,17 @@ const SavedShiftTemplate = () => {
           </View>
 
           {/* button  */}
+          <GradientButton
+            className="mt-10"
+            title="Save"
+            icon={
+              <MaterialCommunityIcons
+                name="line-scan"
+                size={20}
+                color="black"
+              />
+            }
+          />
           <PrimaryButton title="Next" className="my-10" />
         </ScrollView>
       </SafeAreaView>

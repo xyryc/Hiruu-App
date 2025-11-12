@@ -1,13 +1,12 @@
 import { GradientButtonProps } from "@/types";
-import { FontAwesome6 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
-const GradientButton = ({ title, icon }: GradientButtonProps) => {
+const GradientButton = ({ title, icon, className }: GradientButtonProps) => {
   return (
-    <TouchableOpacity>
+    <TouchableOpacity className={`${className}`}>
       <LinearGradient
         colors={["#4FB2F3", "#4E57FF"]}
         start={{ x: 1, y: 0 }}

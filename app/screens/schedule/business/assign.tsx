@@ -178,7 +178,7 @@ const Assign = () => {
 
           {/* button  */}
         </ScrollView>
-        <PrimaryButton className="mx-5" title="Next" />
+        <PrimaryButton className="mx-5" title="Assign" />
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
