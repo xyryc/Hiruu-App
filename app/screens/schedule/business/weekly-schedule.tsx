@@ -2,7 +2,7 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import GradientButton from "@/components/ui/buttons/GradientButton";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ShiftTemplateCard from "@/components/ui/cards/ShiftTemplateCard";
-import { MaterialCommunityIcons, SimpleLineIcons } from "@expo/vector-icons";
+import { FontAwesome6, SimpleLineIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
@@ -65,12 +65,17 @@ const SavedShiftTemplate = () => {
           />
         </View>
         <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
-          <View className="border mt-9 border-[#eeeeee] rounded-[10px] py-5 px-4 gap-5 flex-row items-center">
+          <TouchableOpacity
+            onPress={() =>
+              router.push("/screens/schedule/business/list-shifts")
+            }
+            className="border mt-9 border-[#eeeeee] rounded-[10px] py-5 px-4 gap-5 flex-row items-center"
+          >
             <SimpleLineIcons name="plus" size={24} color="#4FB2F3" />
             <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
               Monday
             </Text>
-          </View>
+          </TouchableOpacity>
 
           <ShiftTemplateCard
             weekly={true}
@@ -81,6 +86,9 @@ const SavedShiftTemplate = () => {
           <View>
             {daysData.map((day, index) => (
               <TouchableOpacity
+                onPress={() =>
+                  router.push("/screens/schedule/business/list-shifts")
+                }
                 key={index}
                 className="border mt-3 border-[#eeeeee] rounded-[10px] py-5 px-4 gap-5 flex-row items-center"
               >
@@ -95,16 +103,10 @@ const SavedShiftTemplate = () => {
           {/* button  */}
           <GradientButton
             className="mt-10"
-            title="Save"
-            icon={
-              <MaterialCommunityIcons
-                name="line-scan"
-                size={20}
-                color="black"
-              />
-            }
+            title="Fill With AI"
+            icon={<FontAwesome6 name="crown" size={20} color="white" />}
           />
-          <PrimaryButton title="Next" className="my-10" />
+          <PrimaryButton title="Next" className="my-4" />
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>

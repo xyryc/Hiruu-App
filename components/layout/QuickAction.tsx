@@ -68,7 +68,7 @@ const QuickAction = ({ className }: QuickActionProps) => {
             onPress={() => {
               user.role === "user"
                 ? router.push("/screens/home/shift/leave/leave-history")
-                : "";
+                : router.push("/screens/home/business/team/manage-team-panel");
             }}
           />
 
