@@ -1,7 +1,8 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
 import AssignRoleModal from "@/components/ui/modals/AssignRoleModal";
-import { Entypo, EvilIcons, Ionicons } from "@expo/vector-icons";
+import WorkingHourSettingsModal from "@/components/ui/modals/WorkingHourSettingsModal";
+import { AntDesign, Entypo, EvilIcons, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -45,6 +46,8 @@ const ManageTeamPanel = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [selectedAssignRole, setSelectedAssignRole] = useState();
+  const [showWorkingHourSettingsModal, setShowWorkingHourSettingsModal] =
+    useState(false);
   const filterOptions = [
     { label: "All", value: "all", count: 50 },
     { label: "Manager", value: "manager", count: 1 },
@@ -269,20 +272,33 @@ const ManageTeamPanel = () => {
       />
 
       <View className=" mt-2.5 pt-3 flex-row items-center justify-between">
+        {/* view profile */}
         <TouchableOpacity className="flex-row items-center gap-1">
           <Text className="text-[#4FB2F3] text-sm font-proximanova-semibold">
             View Profile
           </Text>
           <Ionicons name="arrow-forward" size={16} color="#4FB2F3" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => setShowModal(true)}
-          className="bg-[#11293A] px-5 py-2 rounded-full"
-        >
-          <Text className="text-[#ffffff] text-sm font-proximanova-semibold">
-            Manage Role
-          </Text>
-        </TouchableOpacity>
+
+        <View className="flex-row items-center gap-4">
+          {/* working hour */}
+          <TouchableOpacity
+            onPress={() => setShowWorkingHourSettingsModal(true)}
+            className="p-1"
+          >
+            <AntDesign name="field-time" size={24} color="black" />
+          </TouchableOpacity>
+
+          {/* manage role */}
+          <TouchableOpacity
+            onPress={() => setShowModal(true)}
+            className="bg-[#11293A] px-5 py-2 rounded-full"
+          >
+            <Text className="text-[#ffffff] text-sm font-proximanova-semibold">
+              Manage Role
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -350,6 +366,7 @@ const ManageTeamPanel = () => {
 
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+
   return (
     <SafeAreaView
       className="flex-1 bg-white"
@@ -464,6 +481,11 @@ const ManageTeamPanel = () => {
         menuItems={menuItems}
         fabColor="#11293A"
         menuItemColor="#11293A"
+      />
+
+      <WorkingHourSettingsModal
+        visible={showWorkingHourSettingsModal}
+        onClose={() => setShowWorkingHourSettingsModal(false)}
       />
 
       {/* hapiness bar */}
