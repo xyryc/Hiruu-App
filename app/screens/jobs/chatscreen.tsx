@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StatusBar,
-  FlatList,
-  KeyboardAvoidingView,
-  Platform,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ChatScreenHeader from "@/components/header/ChatScreenHeader";
 import JobCard from "@/components/ui/cards/JobCard";
 import NoMessages from "@/components/ui/cards/NoMessages";
-import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
 import RenderMessage from "@/components/ui/cards/RenderMessage";
 import ChatInput from "@/components/ui/inputs/ChatInput";
+import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useState } from "react";
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+  Text,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ChatScreen = () => {
   const [message, setMessage] = useState("");
@@ -26,7 +27,7 @@ const ChatScreen = () => {
       isSent: true,
       isRead: true,
       avatar:
-        "https://i0.wp.com/www.splento.com/blog/wp-content/uploads/2024/10/confident-young-african-american-business-woman-in-2024-04-26-18-20-12-utc-scaled.jpg?ssl=1",
+        "https://www.denverheadshotco.com/wp-content/uploads/2023/06/Company-Headshots-scaled.jpg",
     },
     {
       id: 2,
@@ -43,7 +44,7 @@ const ChatScreen = () => {
       isSent: true,
       isRead: true,
       avatar:
-        "https://i0.wp.com/www.splento.com/blog/wp-content/uploads/2024/10/confident-young-african-american-business-woman-in-2024-04-26-18-20-12-utc-scaled.jpg?ssl=1",
+        "https://media.licdn.com/dms/image/v2/D5603AQFMeZ7i9ybZgw/profile-displayphoto-shrink_200_200/B56ZS29wLQHwAY-/0/1738236429558?e=2147483647&v=beta&t=RTX-UGEWSzuEb-Gv2bqXqREzQX15FMKi0TK1HJBAKuE",
     },
     {
       id: 4,
@@ -85,15 +86,6 @@ const ChatScreen = () => {
             className="mx-5 bg-white border border-[#EEEEEE] mt-4"
           />
 
-          {/* Date Divider */}
-          <View className="items-center my-3">
-            <View className="bg-gray-100 px-4 py-1.5 rounded-full">
-              <Text className="font-proximanova-regular text-xs text-gray-600">
-                Today
-              </Text>
-            </View>
-          </View>
-
           {/* Messages */}
           <FlatList
             data={messages}
@@ -104,6 +96,25 @@ const ChatScreen = () => {
             renderItem={({ item: msg }) => <RenderMessage msg={msg} />}
             ListHeaderComponent={<TypingIndicator />}
             ListEmptyComponent={<NoMessages />}
+            ListFooterComponent={
+              <View className="flex-row items-center justify-center my-6">
+                <LinearGradient
+                  colors={["transparent", "#D1D5DB"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  className="h-[1px] flex-1"
+                />
+                <Text className="mx-4 text-xs font-proximanova-regular text-primary">
+                  Today
+                </Text>
+                <LinearGradient
+                  colors={["#D1D5DB", "transparent"]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  className="h-[1px] flex-1"
+                />
+              </View>
+            }
           />
         </View>
 

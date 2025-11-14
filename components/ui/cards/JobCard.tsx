@@ -66,23 +66,39 @@ const JobCard = ({ className, status }: JobCardProps) => {
 
       {/* badges */}
       <View className="flex-row gap-1.5 mt-2.5">
-        <View className="flex-row gap-1.5 items-center px-2.5 py-1 bg-[#3F98FF4D] rounded-full">
+        <View
+          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full
+            ${status === "chatscreen" ? "bg-[#F5F5F5]" : "bg-white"}
+          `}
+        >
           <MaterialIcons name="verified" size={16} color="#3090FF" />
           <Text className="text-xs font-proximanova-regular text-primary">
             Verified
           </Text>
         </View>
 
-        <View className="flex-row gap-1.5 items-center px-2.5 py-1 bg-white rounded-full">
+        <View
+          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full
+            ${status === "chatscreen" ? "bg-[#F5F5F5]" : "bg-white"}
+          `}
+        >
           <FontAwesome name="star" size={16} color="#F1C400" />
           <Text className="text-xs font-proximanova-regular">4</Text>
         </View>
 
-        <View className="flex-row gap-1.5 items-center px-2.5 py-1 bg-white rounded-full">
+        <View
+          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full
+            ${status === "chatscreen" ? "bg-[#F5F5F5]" : "bg-white"}
+          `}
+        >
           <Text className="text-xs font-proximanova-regular">Full Time</Text>
         </View>
 
-        <View className="flex-row gap-1.5 items-center px-2.5 py-1 bg-white rounded-full">
+        <View
+          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full
+            ${status === "chatscreen" ? "bg-[#F5F5F5]" : "bg-white"}
+          `}
+        >
           <Text className="text-xs font-proximanova-regular">2km away</Text>
         </View>
       </View>

@@ -33,7 +33,11 @@ const BusinessJobs = () => {
             <TouchableOpacity className="h-10 w-10 bg-[#F5F5F5] flex-row justify-center items-center rounded-full">
               <Ionicons name="document-text-outline" size={18} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity className="h-10 w-10 bg-[#F5F5F5] flex-row justify-center items-center rounded-full">
+
+            <TouchableOpacity
+              onPress={() => router.push("/screens/jobs/chatlist")}
+              className="h-10 w-10 bg-[#F5F5F5] flex-row justify-center items-center rounded-full"
+            >
               <Image
                 source={require("@/assets/images/messages.svg")}
                 contentFit="contain"
@@ -43,9 +47,15 @@ const BusinessJobs = () => {
           </View>
         }
       />
-      <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="mx-5"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 40,
+        }}
+      >
         {/* search and filter button */}
-        <View className="flex-row mt-4">
+        <View className="flex-row items-center mt-4">
           <View className="flex-1 border border-[#EEEEEE] rounded-[10px] ">
             <View className="flex-row items-center ">
               {/* Search Icon */}

@@ -47,18 +47,57 @@ const ChatList = () => {
         showsVerticalScrollIndicator={false}
         className="bg-white px-5"
       >
-        <SearchBar className="mt-5 mb-4" />
+        {isActive === "group" ? (
+          <>
+            <SearchBar className="mt-5 mb-4" />
 
-        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
-        <ChatListItem onPress={() => router.push("/screens/jobs/chatscreen")} />
+            <ChatListItem
+              isActive={isActive}
+              onPress={() => router.push("/screens/jobs/chatscreen")}
+            />
+            <ChatListItem
+              isActive={isActive}
+              onPress={() => router.push("/screens/jobs/chatscreen")}
+            />
+            <ChatListItem
+              isActive={isActive}
+              onPress={() => router.push("/screens/jobs/chatscreen")}
+            />
+            <ChatListItem
+              isActive={isActive}
+              onPress={() => router.push("/screens/jobs/chatscreen")}
+            />
+            <ChatListItem
+              isActive={isActive}
+              onPress={() => router.push("/screens/jobs/chatscreen")}
+            />
+          </>
+        ) : (
+          <>
+            <SearchBar className="mt-5 mb-4" />
+
+            <ChatListItem
+              isActive={isActive}
+              onPress={() => router.push("/screens/jobs/chatscreen")}
+            />
+            <ChatListItem
+              isActive={isActive}
+              onPress={() => router.push("/screens/jobs/chatscreen")}
+            />
+            <ChatListItem
+              isActive={isActive}
+              onPress={() => router.push("/screens/jobs/chatscreen")}
+            />
+            <ChatListItem
+              isActive={isActive}
+              onPress={() => router.push("/screens/jobs/chatscreen")}
+            />
+            <ChatListItem
+              isActive={isActive}
+              onPress={() => router.push("/screens/jobs/chatscreen")}
+            />
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
