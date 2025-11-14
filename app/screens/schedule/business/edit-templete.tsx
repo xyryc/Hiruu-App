@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdownModal";
+import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
 import ExperienceLevel from "@/components/ui/inputs/ExperienceLevel";
 import SearchBar from "@/components/ui/inputs/SearchBar";
 import TimePicker from "@/components/ui/inputs/TimePicker";

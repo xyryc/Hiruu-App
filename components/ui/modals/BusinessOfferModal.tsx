@@ -8,40 +8,14 @@ import {
   Dimensions,
   Modal,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../buttons/PrimaryButton";
 import SmallButton from "../buttons/SmallButton";
-import BusinessDropdown from "../dropdown/BusinessDropdownModal";
-
-const leaveTypes = [
-  {
-    label: "Sick Leave",
-    value: "sick",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Personal Leave",
-    value: "personal",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Work From Home",
-    value: "wfh",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Emergency Leave",
-    value: "emergency",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-];
+import BusinessDropdown from "../dropdown/BusinessDropdown";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -88,6 +62,37 @@ const BusinessOfferModal = ({ visible, onClose }: any) => {
     setShowDetails(false);
     // router.replace("/(tabs)/business-jobs");
   };
+
+  // Sample data
+  const businessData = [
+    {
+      label: "Hapiness bar",
+      value: "hb",
+      avatar:
+        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+    },
+    {
+      label: "Personal Leave",
+      value: "personal",
+      avatar:
+        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+    },
+    {
+      label: "Work From Home",
+      value: "wfh",
+      avatar:
+        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+    },
+    {
+      label: "Emergency Leave",
+      value: "emergency",
+      avatar:
+        "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
+    },
+  ];
+
+  const [selectedBusiness, setSelectedBusiness] = useState<string>("");
+  const [role, setRole] = useState("");
 
   return (
     <Modal
@@ -150,17 +155,31 @@ const BusinessOfferModal = ({ visible, onClose }: any) => {
             </Text>
 
             {/* business */}
-            {/* hapiness bar */}
-            <View>
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-8">
-                Select business
+            <View className="w-full">
+              <Text className="font-proximanova-semibold text-sm text-primary mb-2.5">
+                Business
               </Text>
+
               <BusinessDropdown
-                className="mt-4"
-                placeholder="Choose leave type"
-                options={leaveTypes}
-                value={selectedLeave}
-                onSelect={(value: any) => setSelectedLeave(value)}
+                placeholder="Choose Business"
+                options={businessData}
+                value={selectedBusiness}
+                onSelect={(value: any) => setSelectedBusiness(value)}
+              />
+            </View>
+
+            <View className="w-full">
+              <Text className="font-proximanova-semibold text-sm text-primary mb-2.5">
+                Role
+              </Text>
+
+              <TextInput
+                placeholder="Enter Email"
+                value={role}
+                onChangeText={setRole}
+                className="w-full px-4 py-3.5 bg-white border border-[#EEEEEE] rounded-xl text-[#7A7A7A]"
+                keyboardType="email-address"
+                autoCapitalize="none"
               />
             </View>
 
