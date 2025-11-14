@@ -71,7 +71,9 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
 
       <TouchableOpacity
         onPress={() => setIsVisible(true)}
-        className="flex-row items-center justify-between p-1 bg-white dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border"
+        className={`flex-row items-center justify-between dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border
+            ${selectedOption ? "py-1 pl-4" : "px-4 py-3"}
+          `}
       >
         <View className="flex-row items-center">
           {selectedOption?.avatar && (
@@ -85,10 +87,11 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
               contentFit="cover"
             />
           )}
+
           {/* Conditionally render text based on hideSelectedText prop */}
           {!(hideSelectedText && value) && (
             <Text
-              className={`text-sm ml-5 ${
+              className={`text-sm ml-2.5 font-proximanova-regular ${
                 value
                   ? "text-primary dark:text-dark-primary"
                   : "text-placeholder dark:text-dark-placeholder"
@@ -140,7 +143,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
                 renderItem={({ item }) => (
                   <TouchableOpacity
                     onPress={() => handleSelect(item)}
-                    className="p-4 flex-row items-center border-b border-gray-100 dark:border-dark-border/50"
+                    className="p-3 flex-row items-center border-b border-gray-100 dark:border-dark-border/50"
                   >
                     {item.avatar && (
                       <Image
@@ -149,7 +152,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
                         contentFit="cover"
                       />
                     )}
-                    <Text className="text-base ml-5 text-primary dark:text-dark-primary flex-1">
+                    <Text className="text-sm font-proximanova-regular ml-5 text-primary dark:text-dark-primary flex-1">
                       {item.label}
                     </Text>
                   </TouchableOpacity>
