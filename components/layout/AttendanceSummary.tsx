@@ -1,13 +1,7 @@
-import { View, Text, TouchableOpacity, Dimensions } from "react-native";
-import React from "react";
-import {
-  FontAwesome,
-  FontAwesome6,
-  Ionicons,
-  MaterialCommunityIcons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import React from "react";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 
 const AttendanceSummary = ({ className }: { className: string }) => {
   const screenWidth = Dimensions.get("window").width;
@@ -21,8 +15,8 @@ const AttendanceSummary = ({ className }: { className: string }) => {
         <Image
           source={require("@/assets/images/AttendanceSummary.svg")}
           style={{
-            width: screenWidth * 0.9,
-            height: 141,
+            width: screenWidth * 0.92,
+            height: 148,
           }}
           contentFit="contain"
         />
@@ -47,8 +41,13 @@ const AttendanceSummary = ({ className }: { className: string }) => {
               />
             </View>
           </TouchableOpacity>
+          <Image
+            source={require("@/assets/images/dotted-line.svg")}
+            contentFit="contain"
+            style={{ width: 350, height: 2, marginTop: 2 }}
+          />
 
-          <TouchableOpacity className="flex-row justify-between items-center p-4">
+          <TouchableOpacity className="flex-row justify-between items-center p-4 ">
             <View className="flex-row items-center  gap-1.5">
               <View className="h-2 w-2 rounded-full bg-[#F34F4F]" />
               <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -67,7 +66,13 @@ const AttendanceSummary = ({ className }: { className: string }) => {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row justify-between items-center p-4">
+          <Image
+            source={require("@/assets/images/dotted-line.svg")}
+            contentFit="contain"
+            style={{ width: 350, height: 2 }}
+          />
+
+          <TouchableOpacity className="flex-row justify-between items-center p-4 ">
             <View className="flex-row items-center  gap-1.5">
               <View className="h-2 w-2 rounded-full bg-[#F34F4F]" />
               <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">

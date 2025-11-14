@@ -71,9 +71,9 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
 
       <TouchableOpacity
         onPress={() => setIsVisible(true)}
-        className="flex-row items-center justify-between p-1 bg-white dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border"
+        className="flex-row items-center justify-between p-1.5 bg-white dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border"
       >
-        <View className="flex-row items-center">
+        <View className="flex-row items-center p-1">
           {selectedOption?.avatar && (
             <Image
               source={selectedOption.avatar}

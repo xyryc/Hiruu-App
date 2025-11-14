@@ -124,7 +124,7 @@ const Assign = () => {
           className="mx-5 flex-1"
           showsVerticalScrollIndicator={false}
         >
-          <View className="border mt-9 border-[#eeeeee] rounded-[10px] py-4 px-4 flex-row items-center">
+          <View className="border mt-9 border-[#eeeeee] rounded-[10px] px-4 flex-row items-center">
             {/* Search Icon */}
             <Ionicons
               name="search"
