@@ -25,9 +25,9 @@ interface BusinessDropdownProps {
   value?: string;
   onSelect: (value: string) => void;
   className?: string;
-  hideSelectedText?: boolean; // New prop to hide text when selected
-  imageHeight?: number; // Custom height for avatar image
-  imageWidth?: number; // Custom width for avatar image
+  hideSelectedText?: boolean;
+  imageHeight?: number;
+  imageWidth?: number;
 }
 
 const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
@@ -37,9 +37,9 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
   value,
   onSelect,
   className,
-  hideSelectedText = false, // Default false to maintain existing behavior
-  imageHeight = 35, // Default height
-  imageWidth = 35, // Default width
+  hideSelectedText = false,
+  imageHeight = 35,
+  imageWidth = 35,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [searchText, setSearchText] = useState("");

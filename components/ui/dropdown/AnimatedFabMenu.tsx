@@ -1,13 +1,7 @@
-import React, { useState, useRef } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Animated,
-  StyleSheet,
-} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import React, { useRef, useState } from "react";
+import { Animated, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 interface MenuItem {
   id: string | number;
