@@ -119,7 +119,7 @@ const StatusBadge = ({
 
   return (
     <TouchableOpacity
-      className={`flex-row items-center border-hairline ${statusConfig.containerClasses} ${sizeConfig.containerClasses} ${className}`}
+      className={`flex-row items-center border-hairline rounded-full ${statusConfig.containerClasses} ${sizeConfig.containerClasses} ${className}`}
     >
       {/* Status Dot */}
       <View
