@@ -13,7 +13,12 @@ import StatusBadge from "../badges/StatusBadge";
 import SmallButton from "../buttons/SmallButton";
 import BusinessOfferModal from "../modals/BusinessOfferModal";
 
-const BusinessJobCard = ({ className, status }: BusinessJobCardProps) => {
+const BusinessJobCard = ({
+  className,
+  status,
+  candidate,
+  received,
+}: BusinessJobCardProps) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
 
