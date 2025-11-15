@@ -1,6 +1,7 @@
 import { BusinessJobCardProps } from "@/types";
 import {
   FontAwesome,
+  Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
   SimpleLineIcons,
@@ -10,6 +11,7 @@ import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import StatusBadge from "../badges/StatusBadge";
+import SecondaryButton from "../buttons/SecondaryButton";
 import SmallButton from "../buttons/SmallButton";
 import BusinessOfferModal from "../modals/BusinessOfferModal";
 
@@ -94,7 +96,7 @@ const BusinessJobCard = ({
 
       {/* badges */}
       <View className="flex-row gap-1.5 mt-2.5">
-        {status === "featured" ? (
+        {status === "featured" || candidate ? (
           <View className="flex-row gap-1.5 items-center px-2.5 py-1 bg-[#3F98FF4D] rounded-full">
             <MaterialIcons name="verified" size={16} color="#3090FF" />
             <Text className="text-xs font-proximanova-regular text-primary">
@@ -142,48 +144,78 @@ const BusinessJobCard = ({
       />
 
       {/* bottom */}
-      <View className="flex-row justify-between">
-        {/* left */}
-        <View className="flex-row gap-2.5 items-center">
-          <View
-            className={`h-10 w-10 rounded-full flex-row items-center justify-center
+      {received || (
+        <View className="flex-row justify-between">
+          {/* left */}
+          <View className="flex-row gap-2.5 items-center">
+            <View
+              className={`h-10 w-10 rounded-full flex-row items-center justify-center
              ${status === "featured" ? "bg-white" : "bg-[#E5F4FD]"}`}
-          >
+            >
+              <Image
+                source={require("@/assets/images/messages-fill.svg")}
+                contentFit="contain"
+                style={{ height: 22, width: 22 }}
+              />
+            </View>
+
             <Image
-              source={require("@/assets/images/messages-fill.svg")}
-              contentFit="contain"
-              style={{ height: 22, width: 22 }}
+              source={require("@/assets/images/vertical-line.svg")}
+              style={{
+                height: 18,
+                width: 0.5,
+              }}
             />
+
+            <View
+              className={`h-10 w-10 rounded-full flex-row items-center justify-center
+             ${status === "featured" ? "bg-white" : "bg-[#E5F4FD]"}`}
+            >
+              <Ionicons name="call" size={20} color="#4FB2F3" />
+            </View>
           </View>
 
-          <Image
-            source={require("@/assets/images/vertical-line.svg")}
-            style={{
-              height: 18,
-              width: 0.5,
-            }}
+          {/* right */}
+          {candidate ? (
+            <StatusBadge status="submitted" />
+          ) : (
+            <SmallButton
+              title="View Profile"
+              onPress={() =>
+                router.replace("/screens/jobs/business/user-profile-preview")
+              }
+            />
+          )}
+        </View>
+      )}
+
+      {/* bottom */}
+      {received && (
+        <View className="flex-row items-center justify-between">
+          {/* left */}
+          <SecondaryButton
+            title="View Details"
+            textClass="text-[#4FB2F3]"
+            iconBackground="bg-white"
+            iconColor="#4FB2F3"
           />
 
-          <View
-            className={`h-10 w-10 rounded-full flex-row items-center justify-center
-             ${status === "featured" ? "bg-white" : "bg-[#E5F4FD]"}`}
-          >
-            <Image
-              source={require("@/assets/images/messages-fill.svg")}
-              contentFit="contain"
-              style={{ height: 22, width: 22 }}
+          {/* right */}
+          <View className="flex-row items-center gap-1.5">
+            <View className="bg-[#E5F4FD] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
+              <Ionicons name="chatbubbles" size={22} color="#4FB2F3" />
+            </View>
+
+            <MaterialCommunityIcons
+              name="close-circle"
+              size={40}
+              color="#F34F4F"
             />
+
+            <Ionicons name="checkmark-circle" size={40} color="#292D32" />
           </View>
         </View>
-
-        {/* right */}
-        <SmallButton
-          title="View Profile"
-          onPress={() =>
-            router.replace("/screens/jobs/business/user-profile-preview")
-          }
-        />
-      </View>
+      )}
 
       {/* modal */}
       <BusinessOfferModal
