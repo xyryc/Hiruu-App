@@ -1,9 +1,9 @@
 import { BusinessProfileProps } from "@/types";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
 import SmallButton from "../ui/buttons/SmallButton";
-import { useRouter } from "expo-router";
 
 const BusinessProfile = ({ className }: BusinessProfileProps) => {
   const router = useRouter();

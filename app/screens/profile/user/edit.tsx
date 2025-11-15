@@ -1,31 +1,31 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-} from "react-native";
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenHeader from "@/components/header/ScreenHeader";
-import { router } from "expo-router";
-import { useColorScheme } from "nativewind";
+import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import SmallButton from "@/components/ui/buttons/SmallButton";
+import BadgeCard from "@/components/ui/cards/BadgeCard";
+import ExperienceCard from "@/components/ui/cards/ExperienceCard";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
+import Dropdown from "@/components/ui/dropdown/DropDown";
+import DatePicker from "@/components/ui/inputs/DatePicker";
+import EditBadgeModal from "@/components/ui/modals/EditBadgeModal";
+import InterestModal from "@/components/ui/modals/InterestModal";
 import {
   Foundation,
   Ionicons,
   MaterialCommunityIcons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
-import BadgeCard from "@/components/ui/cards/BadgeCard";
-import Dropdown from "@/components/ui/dropdown/DropDown";
-import ExperienceCard from "@/components/ui/cards/ExperienceCard";
-import DatePicker from "@/components/ui/inputs/DatePicker";
 import { Image } from "expo-image";
-import SmallButton from "@/components/ui/buttons/SmallButton";
-import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import InterestModal from "@/components/ui/modals/InterestModal";
-import EditBadgeModal from "@/components/ui/modals/EditBadgeModal";
+import { router } from "expo-router";
+import { useColorScheme } from "nativewind";
+import React, { useState } from "react";
+import {
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Edit = () => {
   const [isBadgeVisible, setIsBadgeVisible] = useState(false);
@@ -278,7 +278,7 @@ const Edit = () => {
           </Text>
         </View>
 
-        <View className="border border-[#EEEEEE] rounded-xl m-5">
+        <View className="border border-[#EEEEEE] rounded-xl mx-5 my-4">
           <View className="flex-row justify-between items-center  p-2.5 border border-[#EEEEEE] rounded-t-xl ">
             <View className="flex-row items-center gap-2.5">
               <View>

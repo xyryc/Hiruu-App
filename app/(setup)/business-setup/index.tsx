@@ -390,7 +390,11 @@ const BusinessSetup = () => {
         </ScrollView>
 
         {/* button */}
-        <PrimaryButton title="Create Profile" className="mx-5 my-4" />
+        <PrimaryButton
+          onPress={() => router.push("/(tabs)/business-home")}
+          title="Create Profile"
+          className="mx-5 my-4"
+        />
       </LinearGradient>
     </SafeAreaView>
   );

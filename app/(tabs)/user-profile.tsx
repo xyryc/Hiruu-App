@@ -290,7 +290,7 @@ const profile = () => {
           </Text>
         </View>
 
-        <ConnectSocials />
+        <ConnectSocials className="mx-5 my-4" />
       </ScrollView>
     </View>
   );

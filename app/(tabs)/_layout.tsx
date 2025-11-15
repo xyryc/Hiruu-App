@@ -1,5 +1,4 @@
 import userData from "@/assets/data/user.json";
-import { HapticTab } from "@/components/HapticTab";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
@@ -18,7 +17,6 @@ export default function TabLayout() {
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
-        tabBarButton: HapticTab,
         tabBarStyle: {
           backgroundColor: "#EEEEEE",
         },

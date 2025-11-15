@@ -297,7 +297,7 @@ const BusinessProfile = () => {
               </Text>
             </View>
 
-            <ConnectSocials />
+            <ConnectSocials className="mx-5 my-4" />
           </View>
         )}
 

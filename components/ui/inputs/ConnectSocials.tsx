@@ -3,9 +3,9 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import SmallButton from "../buttons/SmallButton";
 
-const ConnectSocials = () => {
+const ConnectSocials = ({ className }: any) => {
   return (
-    <View className="border border-[#EEEEEE] rounded-xl m-5">
+    <View className={`${className} border border-[#EEEEEE] rounded-xl`}>
       {/* facebook */}
       <View className="flex-row justify-between items-center p-3 border-b border-[#EEEEEE]">
         <TouchableOpacity className="flex-row items-center gap-1.5">

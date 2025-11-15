@@ -41,7 +41,7 @@ const Complete = () => {
 
         <View className="absolute bottom-0 inset-x-5">
           <PrimaryButton
-            onPress={() => router.push("/(user)/(tabs)/home")}
+            onPress={() => router.push("/(tabs)/user-home")}
             className="w-full"
             title="Go to Profile"
           />
