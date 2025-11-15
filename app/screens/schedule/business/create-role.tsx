@@ -1,4 +1,5 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
+import CheckButton from "@/components/test/CheckButton";
 import RoleSelector from "@/components/test/RoleSelector";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
@@ -114,15 +115,25 @@ const CreateRole = () => {
             {toggleData.map((toggle, index) => (
               <View
                 key={index}
-                className="flex-row justify-between items-center border border-[#EEEEEE] p-4 rounded-[10px] mt-4"
+                className="border border-[#EEEEEE] p-4 rounded-[10px] mt-4"
               >
-                <Text className="font-proximanova-semibold text-primary dark:text-dark-primary capitalize">
-                  {toggle.name}
-                </Text>
-                <ToggleButton
-                  isOn={toggle.isOn}
-                  setIsOn={() => handleToggle(index)}
-                />
+                <View className="flex-row justify-between items-center ">
+                  <Text className="font-proximanova-semibold text-primary dark:text-dark-primary capitalize">
+                    {toggle.name}
+                  </Text>
+                  <ToggleButton
+                    isOn={toggle.isOn}
+                    setIsOn={() => handleToggle(index)}
+                  />
+                </View>
+                {toggle.isOn && (
+                  <View className="border-b border-[#EEEEEE] mt-3" />
+                )}
+                {toggle.isOn && <CheckButton title="View Business Summary" />}
+                {toggle.isOn && (
+                  <CheckButton title="View Business Statistics" />
+                )}
+                {toggle.isOn && <CheckButton title="View User Statistics" />}
               </View>
             ))}
           </View>

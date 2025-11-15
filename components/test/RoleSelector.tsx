@@ -78,57 +78,59 @@ const RoleSelector = ({ className }: { className?: string }) => {
       </TouchableOpacity>
 
       {/* Dropdown Content */}
-      <View className="border border-[#EEEEEE] rounded-lg bg-white overflow-hidden">
-        {/* Search Bar */}
-        <View className="mx-4 mt-4 ">
-          <View className="flex-row items-center border border-[#EEEEEE] rounded-lg px-3 ">
-            <Ionicons name="search" size={20} color="#666" className="mr-2" />
-            <TextInput
-              placeholder="Search here..."
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              className="flex-1 pt-3 text-base font-proximanova-regular text-secondary dark:text-dark-secondary"
-              autoFocus={true}
-              placeholderTextColor="#666"
-            />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery("")}>
-                <MaterialIcons name="clear" size={20} color="#7A7A7A" />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-
-        {/* Roles List using ScrollView */}
-        <ScrollView
-          style={{ maxHeight: 200 }}
-          showsVerticalScrollIndicator={true}
-        >
-          {filteredRoles.map((item) => (
-            <TouchableOpacity
-              style={{
-                marginBottom: item.name === "graphic designer" ? 15 : 0,
-              }}
-              key={item.name}
-              onPress={() => handleRoleSelect(item.name)}
-              className={`px-4 mt-4 ${
-                selectedRole === item.name ? "bg-blue-50" : "bg-white"
-              } `}
-            >
-              <Text
-                className={`text-sm font-proximanova-regular text-primary dark:text-dark-primary capitalize `}
-              >
-                {item.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
-          {filteredRoles.length === 0 && (
-            <View className="p-4 items-center">
-              <Text className="text-base text-gray-600">No roles found</Text>
+      {isDropdownOpen && (
+        <View className="border border-[#EEEEEE] rounded-lg bg-white overflow-hidden">
+          {/* Search Bar */}
+          <View className="mx-4 mt-4 ">
+            <View className="flex-row items-center border border-[#EEEEEE] rounded-lg px-3 ">
+              <Ionicons name="search" size={20} color="#666" className="mr-2" />
+              <TextInput
+                placeholder="Search here..."
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                className="flex-1 pt-3 text-base font-proximanova-regular text-secondary dark:text-dark-secondary"
+                autoFocus={true}
+                placeholderTextColor="#666"
+              />
+              {searchQuery.length > 0 && (
+                <TouchableOpacity onPress={() => setSearchQuery("")}>
+                  <MaterialIcons name="clear" size={20} color="#7A7A7A" />
+                </TouchableOpacity>
+              )}
             </View>
-          )}
-        </ScrollView>
-      </View>
+          </View>
+
+          {/* Roles List using ScrollView */}
+          <ScrollView
+            style={{ maxHeight: 200 }}
+            showsVerticalScrollIndicator={true}
+          >
+            {filteredRoles.map((item) => (
+              <TouchableOpacity
+                style={{
+                  marginBottom: item.name === "graphic designer" ? 15 : 0,
+                }}
+                key={item.name}
+                onPress={() => handleRoleSelect(item.name)}
+                className={`px-4 mt-4 ${
+                  selectedRole === item.name ? "bg-blue-50" : "bg-white"
+                } `}
+              >
+                <Text
+                  className={`text-sm font-proximanova-regular text-primary dark:text-dark-primary capitalize `}
+                >
+                  {item.name}
+                </Text>
+              </TouchableOpacity>
+            ))}
+            {filteredRoles.length === 0 && (
+              <View className="p-4 items-center">
+                <Text className="text-base text-gray-600">No roles found</Text>
+              </View>
+            )}
+          </ScrollView>
+        </View>
+      )}
     </View>
   );
 };
