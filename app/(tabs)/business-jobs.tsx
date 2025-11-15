@@ -30,7 +30,12 @@ const BusinessJobs = () => {
         iconColor={isDark ? "#fff" : "#111"}
         components={
           <View className="flex-row items-center gap-2.5">
-            <TouchableOpacity className="h-10 w-10 bg-[#F5F5F5] flex-row justify-center items-center rounded-full">
+            <TouchableOpacity
+              onPress={() =>
+                router.push("/screens/jobs/business/candidate-requests")
+              }
+              className="h-10 w-10 bg-[#F5F5F5] flex-row justify-center items-center rounded-full"
+            >
               <Ionicons name="document-text-outline" size={18} color="black" />
             </TouchableOpacity>
 
