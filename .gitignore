@@ -38,3 +38,16 @@ yarn-error.*
 
 app-example
 test.tx
+
+
+# generated native folders
+/ios
+/android
+
+release.keystore
+keystore.txt
+*.keystore
+*.jks
+keystore.properties
+android/keystore.properties
+android/app/release.keystore

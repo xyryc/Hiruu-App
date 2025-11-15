@@ -2,10 +2,12 @@ import userData from "@/assets/data/user.json";
 import { HapticTab } from "@/components/HapticTab";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import Octicons from "@expo/vector-icons/Octicons";
 import { Tabs } from "expo-router";
 import React from "react";
+import { View } from "react-native";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -17,6 +19,9 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarButton: HapticTab,
+        tabBarStyle: {
+          backgroundColor: "#EEEEEE",
+        },
       }}
     >
       {/* home */}
@@ -26,7 +31,7 @@ export default function TabLayout() {
           title: "Home",
           href: user.role === "user" ? undefined : null, // Hide if not user
           tabBarIcon: ({ color }) => (
-            <Octicons name="home" size={28} color={color} />
+            <Octicons name="home" size={24} color={color} />
           ),
         }}
       />
@@ -34,10 +39,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="business-home"
         options={{
-          title: "Business Home",
+          title: "Home",
           href: user.role === "business" ? undefined : null, // Hide if not business
           tabBarIcon: ({ color }) => (
-            <Feather name="briefcase" size={28} color={color} />
+            <Octicons name="home-fill" size={24} color={color} />
           ),
         }}
       />
@@ -48,7 +53,7 @@ export default function TabLayout() {
         options={{
           title: "Rewards",
           tabBarIcon: ({ color }) => (
-            <Feather name="gift" size={28} color={color} />
+            <Ionicons name="gift-outline" size={24} color={color} />
           ),
         }}
       />
@@ -60,7 +65,7 @@ export default function TabLayout() {
           title: "Schedule",
           href: user.role === "user" ? undefined : null, // Hide if not business
           tabBarIcon: ({ color }) => (
-            <Feather name="calendar" size={28} color={color} />
+            <Ionicons name="calendar" size={28} color={color} />
           ),
         }}
       />
@@ -68,10 +73,12 @@ export default function TabLayout() {
       <Tabs.Screen
         name="business-schedule"
         options={{
-          title: "Schedule",
+          title: "",
           href: user.role === "business" ? undefined : null, // Hide if not business
           tabBarIcon: ({ color }) => (
-            <Feather name="calendar" size={28} color={color} />
+            <View className="bg-[#4FB2F3] h-14 w-14 rounded-full items-center justify-center">
+              <Ionicons name="calendar" size={26} color="white" />
+            </View>
           ),
         }}
       />
@@ -83,7 +90,7 @@ export default function TabLayout() {
           title: "Jobs",
           href: user.role === "user" ? undefined : null, // Hide if not user
           tabBarIcon: ({ color }) => (
-            <Octicons name="home" size={28} color={color} />
+            <Ionicons name="briefcase-outline" size={24} color={color} />
           ),
         }}
       />
@@ -94,7 +101,7 @@ export default function TabLayout() {
           title: "Jobs",
           href: user.role === "business" ? undefined : null, // Hide if not business
           tabBarIcon: ({ color }) => (
-            <Feather name="briefcase" size={28} color={color} />
+            <Ionicons name="briefcase-outline" size={24} color={color} />
           ),
         }}
       />
@@ -106,7 +113,7 @@ export default function TabLayout() {
           title: "Profile",
           href: user.role === "user" ? undefined : null, // Hide if not user
           tabBarIcon: ({ color }) => (
-            <Feather name="user" size={28} color={color} />
+            <Feather name="user" size={24} color={color} />
           ),
         }}
       />
@@ -117,7 +124,7 @@ export default function TabLayout() {
           title: "Profile",
           href: user.role === "business" ? undefined : null, // Hide if not business
           tabBarIcon: ({ color }) => (
-            <Feather name="users" size={28} color={color} />
+            <FontAwesome5 name="user" size={24} color={color} />
           ),
         }}
       />
