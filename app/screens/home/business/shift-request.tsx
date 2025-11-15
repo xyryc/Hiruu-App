@@ -80,7 +80,7 @@ const ShiftRequest = () => {
         {selectedTab === "Pending Requests" && (
           <View>
             <BusinessShiftPending status="Missed Clock-out" title="Pending" />
-            <BusinessShiftPending status="Late Clo        ck-in" />
+            <BusinessShiftPending status="Late Clock-in" />
             <BusinessShiftPending status="Missed Clock-out" />
             <BusinessShiftPending status="Network Issues" />
             <BusinessShiftPending status="Missed Clock-out" title="Pending" />

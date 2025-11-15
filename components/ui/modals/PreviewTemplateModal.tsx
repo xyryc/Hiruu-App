@@ -65,7 +65,7 @@ const PreviewTemplateModal = ({ visible, onClose }: any) => {
 
               {/* time box */}
               <View>
-                <View className="flex-row justify-between items-center mt-4 ">
+                <View className="flex-row justify-between items-center mt-3.5 ">
                   <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
                     Time:
                   </Text>
@@ -92,7 +92,7 @@ const PreviewTemplateModal = ({ visible, onClose }: any) => {
                   </Text>
                 </View>
 
-                <View className="flex-row justify-between items-center mt-4 ">
+                <View className="flex-row justify-between items-center mt-3  ">
                   <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
                     Roles:
                   </Text>

@@ -65,10 +65,10 @@ const CreateTemplate = () => {
         className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
         edges={["left", "right", "bottom"]}
       >
-        <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pb-4 pt-2.5 px-5">
+        <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-2.5 px-5">
           <ScreenHeader
             className=""
-            style={{ paddingTop: insets.top + 10, paddingBottom: 10 }}
+            style={{ paddingTop: insets.top + 10, paddingBottom: 26 }}
             onPressBack={() => router.back()}
             title="Create Templete"
             titleClass="text-primary dark:text-dark-primary"
@@ -149,7 +149,7 @@ const CreateTemplate = () => {
           {/* <TextInput /> */}
 
           <SearchBar
-            className="mt-4 py-3.5"
+            className="mt-4 py-1"
             onSearch={(text) => setSearch(text)}
           />
 

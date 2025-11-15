@@ -216,7 +216,7 @@ const ManageTeamPanel = () => {
 
   const renderTeamMember = ({ item }: any) => (
     <View className="mx-5 border border-[#EEEEEE] mb-3 rounded-3xl p-4">
-      <View className="flex-row items-start justify-between mb-3">
+      <View className="flex-row items-start justify-between ">
         <View className="flex-row items-center gap-3">
           <Image
             source={item.profilePic}
@@ -246,8 +246,8 @@ const ManageTeamPanel = () => {
         </View>
       </View>
 
-      <View className="mb-3">
-        <View className="flex-row justify-between mb-1">
+      <View>
+        <View className="flex-row justify-between mt-4">
           <Text className="text-secondary dark:text-dark-secondary  text-sm font-proximanova-regular">
             Shift Time:
           </Text>
@@ -255,7 +255,7 @@ const ManageTeamPanel = () => {
             {item.shiftTime}
           </Text>
         </View>
-        <View className="flex-row justify-between">
+        <View className="flex-row justify-between mt-2.5">
           <Text className="text-secondary dark:text-dark-secondary  text-sm font-proximanova-regular">
             Location:
           </Text>
@@ -268,10 +268,10 @@ const ManageTeamPanel = () => {
       <Image
         source={require("@/assets/images/dotted-line.svg")}
         contentFit="contain"
-        style={{ width: 360, height: 2, marginTop: 10 }}
+        style={{ width: 360, height: 2, marginTop: 15 }}
       />
 
-      <View className=" mt-2.5 pt-3 flex-row items-center justify-between">
+      <View className=" mt-2.5 flex-row items-center justify-between">
         {/* view profile */}
         <TouchableOpacity className="flex-row items-center gap-1">
           <Text className="text-[#4FB2F3] text-sm font-proximanova-semibold">
@@ -304,7 +304,7 @@ const ManageTeamPanel = () => {
   );
 
   const renderJoiningRequest = ({ item }: any) => (
-    <View className="mt-4 mx-5 border border-[#EEEEEE] mb-3 rounded-3xl p-5 bg-white dark:bg-dark-secondary">
+    <View className="mt-4 mx-5 border border-[#EEEEEE] mb-3 rounded-xl p-4 bg-white dark:bg-dark-secondary">
       {/* Header with Profile */}
       <View className="flex-row items-center justify-between mb-4">
         <View className="flex-row items-center gap-2.5 flex-1">
@@ -343,7 +343,7 @@ const ManageTeamPanel = () => {
         style={{ width: 360, height: 2, marginTop: 10 }}
       />
 
-      <View className="flex-row  justify-between my-2.5 items-center">
+      <View className="flex-row  justify-between mt-2.5 items-center">
         {/* View Profile Link */}
         <TouchableOpacity className="">
           <Text className="text-[#4FB2F3] font-proximanova-semibold text-base text-center">

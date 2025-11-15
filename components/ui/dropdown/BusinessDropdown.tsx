@@ -75,7 +75,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
             ${selectedOption ? "py-1 pl-4" : "px-4 py-3"}
           `}
       >
-        <View className="flex-row items-center">
+        <View className="flex-row items-center p-1">
           {selectedOption?.avatar && (
             <Image
               source={selectedOption.avatar}
