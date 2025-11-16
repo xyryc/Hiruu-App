@@ -42,7 +42,10 @@ const ShiftDetails = () => {
           <View className="flex-row items-center gap-2.5">
             <StatusBadge status={status} />
 
-            <TouchableOpacity className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
+            <TouchableOpacity
+              onPress={() => router.push("/screens/home/qr-scanner")}
+              className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
+            >
               <Image
                 source={require("@/assets/images/scan.svg")}
                 style={{
