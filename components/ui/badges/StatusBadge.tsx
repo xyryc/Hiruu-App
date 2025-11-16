@@ -119,17 +119,12 @@ const StatusBadge = ({
 
   return (
     <TouchableOpacity
-<<<<<<< HEAD
-      className={`flex-row items-center border-hairline rounded-[30px] ${statusConfig.containerClasses} ${sizeConfig.containerClasses} ${className}`}
-=======
       className={`flex-row items-center border-hairline rounded-full ${statusConfig.containerClasses} ${sizeConfig.containerClasses} ${className}`}
->>>>>>> 97ad048574dcb5470fdb94f076be1208a43d853e
     >
       {/* Status Dot */}
       <View
         className={`${statusConfig.dotClasses} ${sizeConfig.dotClasses} rounded-full mr-1.5`}
       />
-
       {/* Status Text */}
       <Text className={`${statusConfig.textClasses} ${sizeConfig.textClasses}`}>
         {statusConfig.label}
