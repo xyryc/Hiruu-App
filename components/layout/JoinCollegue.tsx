@@ -1,5 +1,6 @@
 import { JoinCollegueProps } from "@/types";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
@@ -11,7 +12,10 @@ const JoinCollegue = ({ className }: JoinCollegueProps) => {
       </Text>
 
       <View className="flex-row items-center gap-3">
-        <TouchableOpacity className="flex-row flex-1 max-w-56 justify-between items-center border border-[#EEEEEE] rounded-xl p-4">
+        <TouchableOpacity
+          onPress={() => router.push("/screens/home/qr-scanner")}
+          className="flex-row flex-1 max-w-56 justify-between items-center border border-[#EEEEEE] rounded-xl p-4"
+        >
           <Text className="text-sm font-proximanova-semibold">Scan QR</Text>
 
           <Image

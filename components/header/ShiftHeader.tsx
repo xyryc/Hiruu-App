@@ -1,6 +1,7 @@
 import { ShiftHeaderProps } from "@/types";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const ShiftHeader = ({ setShowModal, displayContent }: ShiftHeaderProps) => {
@@ -30,7 +31,10 @@ const ShiftHeader = ({ setShowModal, displayContent }: ShiftHeaderProps) => {
           </TouchableOpacity>
 
           {/* notification */}
-          <TouchableOpacity className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
+          <TouchableOpacity
+            onPress={() => router.push("/shared/notification")}
+            className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
+          >
             <Image
               source={require("@/assets/images/bell.svg")}
               style={{

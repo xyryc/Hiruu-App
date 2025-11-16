@@ -93,7 +93,7 @@ const QuickAction = ({ className }: QuickActionProps) => {
             onPress={() => {
               user.role === "user"
                 ? router.push("/screens/home/shift/swap-action")
-                : "";
+                : router.push("/screens/schedule/business/weekly-schedule");
             }}
           />
         </ScrollView>

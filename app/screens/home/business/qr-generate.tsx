@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import ShareVia from "@/components/ui/modals/ShareVia";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -46,7 +47,7 @@ const QrGenerate = () => {
     }, 1500);
   };
 
-  const logo = require("@/assets/images/hiruu-logo.svg");
+  const [isModal, setIsModal] = useState(false);
 
   return (
     <SafeAreaView
@@ -137,8 +138,13 @@ const QrGenerate = () => {
             Scan the QR code to get started on Hirru
           </Text>
         </View>
+        <ShareVia visible={isModal} onClose={() => setIsModal(false)} />
       </ScrollView>
-      <PrimaryButton title="Share QR Code" className="mx-5 my-10" />
+      <PrimaryButton
+        onPress={() => setIsModal(true)}
+        title="Share QR Code"
+        className="mx-5 my-10"
+      />
     </SafeAreaView>
   );
 };

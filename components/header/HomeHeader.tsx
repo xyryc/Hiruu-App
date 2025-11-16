@@ -52,7 +52,7 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
           onPress={
             user.role !== "user"
               ? () => router.push("/screens/home/business/qr-generate")
-              : undefined
+              : () => router.push("/screens/home/qr-scanner")
           }
           className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
         >
