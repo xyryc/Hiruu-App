@@ -1,9 +1,9 @@
+import { user } from "@/assets/data/user.json";
 import { HomeHeaderProps } from "@/types";
 import { Image } from "expo-image";
+import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { AnimatedThemeToggle } from "../ui/buttons/AnimatedThemeToggle";
-import { router } from "expo-router";
 
 const HomeHeader = ({ className }: HomeHeaderProps) => {
   return (
@@ -48,7 +48,14 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
         </TouchableOpacity>
 
         {/* scanner */}
-        <View className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
+        <TouchableOpacity
+          onPress={
+            user.role !== "user"
+              ? () => router.push("/screens/home/business/qr-generate")
+              : undefined
+          }
+          className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
+        >
           <Image
             source={require("@/assets/images/scan.svg")}
             style={{
@@ -57,7 +64,7 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
             }}
             contentFit="contain"
           />
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );
