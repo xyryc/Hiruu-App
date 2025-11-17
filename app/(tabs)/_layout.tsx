@@ -4,6 +4,7 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import Feather from "@expo/vector-icons/Feather";
 import Octicons from "@expo/vector-icons/Octicons";
+import { Image } from "expo-image";
 import { Tabs } from "expo-router";
 import React from "react";
 import { View } from "react-native";
@@ -15,10 +16,24 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
+        tabBarBackground: () => (
+          <Image
+            source={require("@/assets/images/tabbar-background.png")}
+            style={{
+              position: "absolute",
+              bottom: 0,
+              width: "100%",
+              height: "125%",
+            }}
+          />
+        ),
+
+        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         tabBarStyle: {
-          backgroundColor: "#EEEEEE",
+          backgroundColor: "transparent",
+          height: 70,
+          borderTopWidth: 0,
         },
       }}
     >
@@ -60,11 +75,11 @@ export default function TabLayout() {
       <Tabs.Screen
         name="user-schedule"
         options={{
-          title: "Schedule",
+          title: "",
           href: user.role === "user" ? undefined : null, // Hide if not business
-          tabBarIcon: ({ color }) => (
-            <View className="bg-[#4FB2F3] p-2 h-14 w-14 border-2 border-[#4FB2F34D]">
-              <Ionicons name="calendar" size={28} color={color} />
+          tabBarIcon: () => (
+            <View className="bg-[#4FB2F3] h-14 w-14 rounded-full items-center justify-center border-2 border-[#4FB2F34D]">
+              <Ionicons name="calendar" size={24} color="white" />
             </View>
           ),
         }}
@@ -75,9 +90,9 @@ export default function TabLayout() {
         options={{
           title: "",
           href: user.role === "business" ? undefined : null, // Hide if not business
-          tabBarIcon: ({ color }) => (
+          tabBarIcon: () => (
             <View className="bg-[#4FB2F3] h-14 w-14 rounded-full items-center justify-center">
-              <Ionicons name="calendar" size={26} color="white" />
+              <Ionicons name="calendar" size={24} color="white" />
             </View>
           ),
         }}

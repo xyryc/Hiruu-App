@@ -32,41 +32,38 @@ const profile = () => {
   const [isOn, setIsOn] = useState(false);
 
   return (
-    <View className="bg-white pb-32 dark:bg-dark-background">
-      <View className="bg-[#E5F4FD] rounded-b-xl">
-        <SafeAreaView>
-          <View className={`flex-row justify-between items-center mt-5 mx-5`}>
-            <View className="flex-row items-center gap-2.5">
-              <Text
-                className={`font-proximanova-bold text-2xl text-primary dark:text-dark-primary`}
-              >
-                Profile
-              </Text>
-            </View>
-            <View className="flex-row gap-1.5 items-center justify-center">
-              <TouchableOpacity className="h-10 w-10 bg-white rounded-full items-center justify-center">
-                <Octicons name="paintbrush" size={18} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => router.push("/screens/profile/user/edit")}
-                className="h-10 w-10 bg-white rounded-full items-center justify-center"
-              >
-                <Feather name="edit-2" size={18} color="black" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() =>
-                  router.push("/screens/profile/settings/Settings")
-                }
-                className="h-10 w-10 bg-white rounded-full items-center justify-center"
-              >
-                <Ionicons name="settings-outline" size={20} color="black" />
-              </TouchableOpacity>
-            </View>
+    <SafeAreaView edges={["top", "left", "right"]} className="bg-[#E5F4FD]">
+      <View className="bg-[#E5F4FD] rounded-b-xl pb-3">
+        <View className={`flex-row justify-between items-center mt-5 mx-5`}>
+          <View className="flex-row items-center gap-2.5">
+            <Text
+              className={`font-proximanova-bold text-2xl text-primary dark:text-dark-primary`}
+            >
+              Profile
+            </Text>
           </View>
-        </SafeAreaView>
+          <View className="flex-row gap-1.5 items-center justify-center">
+            <TouchableOpacity className="h-10 w-10 bg-white rounded-full items-center justify-center">
+              <Octicons name="paintbrush" size={18} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push("/screens/profile/user/edit")}
+              className="h-10 w-10 bg-white rounded-full items-center justify-center"
+            >
+              <Feather name="edit-2" size={18} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push("/screens/profile/settings/Settings")}
+              className="h-10 w-10 bg-white rounded-full items-center justify-center"
+            >
+              <Ionicons name="settings-outline" size={20} color="black" />
+            </TouchableOpacity>
+          </View>
+        </View>
       </View>
 
       <ScrollView
+        className="bg-white"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 40,
@@ -292,7 +289,7 @@ const profile = () => {
 
         <ConnectSocials className="mx-5 my-4" />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
