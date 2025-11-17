@@ -13,7 +13,8 @@ const BusinessShiftPending = ({
   setReject,
 }: any) => {
   const [isFilterModal, setIsFilterModal] = useState(false);
-  // const [reject, setReject] = useState(false);
+
+  console.log(approved && selectedTab);
 
   const handleButton = (e: string) => {
     if (modal) {
@@ -36,7 +37,7 @@ const BusinessShiftPending = ({
       )}
       <View className="border border-[#eeeeee] rounded-xl p-2.5 mt-2.5">
         <View className="flex-row justify-between">
-          <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+          <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary ">
             June 09, 2025
           </Text>
           <Text
@@ -48,20 +49,26 @@ const BusinessShiftPending = ({
         <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-1">
           09:00 AM to 1:00 PM
         </Text>
-        <View className="flex-row gap-1  mt-2.5">
-          <EvilIcons name="location" size={20} color="black" />
-          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-            New York, North Bergen
-          </Text>
-        </View>
+        {!(approved || selectedTab) && (
+          <View className="flex-row gap-1 mt-2.5">
+            <EvilIcons name="location" size={20} color="black" />
+            <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+              New York, North Bergen
+            </Text>
+          </View>
+        )}
         <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-2.5">
-          <Text className="text-[#4FB2F3]">Reason</Text>: Unable to clock in due
-          to poor internet connectivity at location.
+          {!(approved || selectedTab) && (
+            <Text className="text-[#4FB2F3]">Reason{" :  "}</Text>
+          )}
+          {approved || selectedTab
+            ? "Fever and body ache Medical checkup and recovery at home Fever and body ache Medical  "
+            : " Unable to clock in due to poor internet connectivity at location."}
         </Text>
         <Image
           source={require("@/assets/images/dotted-line.svg")}
           contentFit="contain"
-          style={{ height: 2, width: 352, marginTop: 10 }}
+          style={{ height: 2, width: 352, marginTop: 15 }}
         />
         <View className="flex-row justify-between items-center mt-2.5">
           <View className="flex-row gap-2 items-center">

@@ -37,10 +37,12 @@ const AssignRoleModal: React.FC<any> = ({
             </TouchableOpacity>
           </View>
 
-          <SafeAreaView edges={["bottom"]}>
+          <SafeAreaView edges={["bottom"]} className="pb-14">
             {/* Header */}
             <View className="px-6 py-7 flex-row justify-between">
-              <Text className="font-proximanova-bold text-xl">Assign Role</Text>
+              <Text className="font-proximanova-bold text-xl" numberOfLines={1}>
+                Assign Role
+              </Text>
               <View className="h-10 w-10 bg-[#eeeeee] rounded-full flex-row items-center justify-center">
                 <Feather name="edit" size={20} color="black" />
               </View>

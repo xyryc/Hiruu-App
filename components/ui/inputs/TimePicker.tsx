@@ -41,7 +41,7 @@ const TimePicker = ({
       <TouchableOpacity
         onPress={() => setShow(true)}
         activeOpacity={0.8}
-        className="flex-row items-center justify-between border border-gray-300  px-4 bg-white"
+        className="flex-row items-center justify-between border border-gray-300  px-4 py-3 bg-white"
         style={{
           paddingVertical: paddingy || 12,
           marginHorizontal: marginx,

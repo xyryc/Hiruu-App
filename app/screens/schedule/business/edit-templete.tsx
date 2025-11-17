@@ -148,10 +148,7 @@ const EditTemplete = () => {
 
           {/* <TextInput /> */}
 
-          <SearchBar
-            className="mt-4 py-3.5"
-            onSearch={(text) => setSearch(text)}
-          />
+          <SearchBar className="mt-4 " onSearch={(text) => setSearch(text)} />
 
           {/* ExperienceLevel */}
           <ExperienceLevel titleHeight={true} />

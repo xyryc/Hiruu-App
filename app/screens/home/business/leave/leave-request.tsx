@@ -56,9 +56,9 @@ const LeaveRequest = () => {
                 >
                   {tab}
                 </Text>
-                {tab === "New Request" && selectedTab === "New Request" && (
-                  <View className="bg-[#4FB2F3] px-2 py-1 rounded-full">
-                    <Text className="text-white">3</Text>
+                {tab === selectedTab && (
+                  <View className="bg-[#4FB2F3] px-1.5 py-0.5 rounded-full">
+                    <Text className="text-white text-sm">3</Text>
                   </View>
                 )}
               </View>
@@ -71,13 +71,18 @@ const LeaveRequest = () => {
         {selectedTab === "Approved" && (
           <View>
             {[
-              "Earned Leave",
-              "Sick Leave",
-              "Hourly Leave",
-              "Earned Leave",
-              "Hourly Leave",
+              { title: "Today 21", status: "Hourly Leave" },
+              { status: "Late Clock-in" },
+              { title: "20 Apr, 2025", status: "Hourly Leave" },
+              { status: "Network Issues" },
+              { status: "Hourly Leave" },
             ].map((status, i) => (
-              <BusinessShiftPending key={i} approved status={status} />
+              <BusinessShiftPending
+                key={i}
+                approved
+                status={status.status}
+                title={status.title}
+              />
             ))}
           </View>
         )}
