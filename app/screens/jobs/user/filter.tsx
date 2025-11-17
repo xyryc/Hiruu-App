@@ -105,7 +105,11 @@ const FindJobFilters = () => {
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-      <ScreenHeader title="Find Job Filters" className="mx-5" />
+      <ScreenHeader
+        title="Find Job Filters"
+        className="mx-5"
+        onPressBack={() => router.back()}
+      />
 
       <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
         {/* Verified Candidates Only */}

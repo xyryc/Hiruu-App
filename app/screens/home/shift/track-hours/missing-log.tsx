@@ -1,10 +1,11 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import TaskCard from "@/components/ui/cards/TaskCard";
+import TrackHoursFilter from "@/components/ui/modals/TrackHoursFilter";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const MissingLog = () => {
@@ -13,9 +14,10 @@ const MissingLog = () => {
   };
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const [isModal, setIsModal] = useState(false);
   return (
     <SafeAreaView
-      className="flex-1  dark:bg-dark-background"
+      className="flex-1 bg-[#FFFFFF]  dark:bg-dark-background"
       edges={["top", "left", "right", "bottom"]}
     >
       {/* Header */}
@@ -26,14 +28,14 @@ const MissingLog = () => {
         titleClass="text-primary dark:text-dark-primary"
         iconColor={isDark ? "#fff" : "#111"}
         components={
-          <View>
+          <TouchableOpacity onPress={() => setIsModal(true)}>
             <Feather
-              className="p-2 bg-[#B2B1B1]/40 rounded-full"
+              className="p-2 bg-[#F5F5F5] rounded-full"
               name="filter"
               size={24}
               color="black"
             />
-          </View>
+          </TouchableOpacity>
         }
       />
       <ScrollView className="ml-5" showsVerticalScrollIndicator={false}>
@@ -107,6 +109,7 @@ const MissingLog = () => {
             requestLog={true}
           />
         </View>
+        <TrackHoursFilter visible={isModal} onClose={() => setIsModal(false)} />
       </ScrollView>
     </SafeAreaView>
   );

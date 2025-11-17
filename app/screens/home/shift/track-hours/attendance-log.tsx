@@ -10,7 +10,7 @@ const AttendanceLog = () => {
   const isDark = colorScheme === "dark";
   return (
     <SafeAreaView
-      className="flex-1  dark:bg-dark-background"
+      className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
       edges={["top", "left", "right", "bottom"]}
     >
       {/* Header */}
