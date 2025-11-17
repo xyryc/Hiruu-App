@@ -4,11 +4,17 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ActionCard from "@/components/ui/cards/ActionCard";
 import ShiftLogCard from "@/components/ui/cards/ShiftLogCard";
 import TaskCard from "@/components/ui/cards/TaskCard";
-import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import TrackHoursFilter from "@/components/ui/modals/TrackHoursFilter";
+import {
+  Entypo,
+  Feather,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { Link, router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React from "react";
-import { ScrollView, Text, View } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const TrackHours = () => {
@@ -17,9 +23,10 @@ const TrackHours = () => {
   };
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const [isModal, setIsModal] = useState(false);
   return (
     <SafeAreaView
-      className="flex-1  dark:bg-dark-background"
+      className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
       edges={["top", "left", "right", "bottom"]}
     >
       {/* Header */}
@@ -29,7 +36,16 @@ const TrackHours = () => {
         title="Track Hours"
         titleClass="text-primary dark:text-dark-primary"
         iconColor={isDark ? "#fff" : "#111"}
-        components={<></>}
+        components={
+          <TouchableOpacity onPress={() => setIsModal(true)}>
+            <Feather
+              className="p-2 bg-[#F5F5F5] rounded-full"
+              name="filter"
+              size={24}
+              color="black"
+            />
+          </TouchableOpacity>
+        }
       />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="mx-5 mt-8">
@@ -193,6 +209,8 @@ const TrackHours = () => {
             />
           </View>
         </View>
+
+        <TrackHoursFilter visible={isModal} onClose={() => setIsModal(false)} />
       </ScrollView>
     </SafeAreaView>
   );

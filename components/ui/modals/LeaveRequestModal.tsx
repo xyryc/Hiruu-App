@@ -22,7 +22,7 @@ const LeaveRequestModal = () => {
           <PrimaryButton
             onPress={() => setIsVisible(true)}
             title="Submit Request"
-            className=""
+            className="my-10"
           />
         </View>
       </TouchableOpacity>

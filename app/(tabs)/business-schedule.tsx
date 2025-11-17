@@ -99,8 +99,7 @@ const BusinessScheduleScreen = () => {
       title: "Create Role",
       icon: "create-outline",
       onPress: () => {
-        console.log("Navigate to Create Role");
-        // router.push("/create-role");
+        router.push("/screens/schedule/business/all-created-role");
       },
     },
     {

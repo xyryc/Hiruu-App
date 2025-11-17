@@ -35,6 +35,7 @@ const ScreenHeader = ({
 
         <Text
           className={`${titleClass} font-proximanova-bold text-2xl text-primary dark:text-dark-primary`}
+          numberOfLines={1}
         >
           {title}
         </Text>
