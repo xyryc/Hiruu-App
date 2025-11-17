@@ -63,7 +63,9 @@ export default function TabLayout() {
           title: "Schedule",
           href: user.role === "user" ? undefined : null, // Hide if not business
           tabBarIcon: ({ color }) => (
-            <Ionicons name="calendar" size={28} color={color} />
+            <View className="bg-[#4FB2F3] p-2 h-14 w-14 border-2 border-[#4FB2F34D]">
+              <Ionicons name="calendar" size={28} color={color} />
+            </View>
           ),
         }}
       />

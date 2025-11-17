@@ -6,6 +6,7 @@ export interface PrimaryButtonProps {
   className?: string;
   title: string;
   onPress?: (event: GestureResponderEvent) => void;
+  iconSize: number;
 }
 
 export interface SecondaryButtonProps {

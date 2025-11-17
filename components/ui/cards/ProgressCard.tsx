@@ -92,7 +92,11 @@ const ProgressCard = () => {
           5 Tokens
         </Text>
 
-        <PrimaryButton className="mt-2.5 w-full" title="Complete Profile" />
+        <PrimaryButton
+          className="mt-2.5 w-full"
+          title="Complete Profile"
+          iconSize={18}
+        />
       </View>
     </View>
   );

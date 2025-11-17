@@ -3,7 +3,12 @@ import { Feather } from "@expo/vector-icons";
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 
-const PrimaryButton = ({ className, title, onPress }: PrimaryButtonProps) => {
+const PrimaryButton = ({
+  className,
+  title,
+  onPress,
+  iconSize = 24,
+}: PrimaryButtonProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -13,7 +18,7 @@ const PrimaryButton = ({ className, title, onPress }: PrimaryButtonProps) => {
 
       <Feather
         name="arrow-right"
-        size={24}
+        size={iconSize}
         color="#000000"
         className="p-2 bg-white rounded-full"
       />
