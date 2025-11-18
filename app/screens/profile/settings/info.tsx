@@ -1,14 +1,19 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
+import Constants from "expo-constants";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import { View, Text } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Info = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  const appVersion = Constants.expoConfig?.version ?? "?.?"; // fallback if something goes wrong
+  const currentYear = new Date().getFullYear(); // e.g. 2025
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -28,7 +33,7 @@ const Info = () => {
           Hiruu Platform
         </Text>
         <Text className="font-proximanova-regular text-lg text-secondary dark:text-dark-secondary">
-          Version 2.24.25.45
+          Version {appVersion}
         </Text>
         <Image
           source={require("@/assets/images/hiruu-logo.svg")}
@@ -36,7 +41,7 @@ const Info = () => {
           style={{ height: 34, width: 98 }}
         />
         <Text className="font-proximanova-regular text-lg text-secondary dark:text-dark-secondary mt-2.5">
-          2025-2030 Hiruu Inc.
+          2023-{currentYear} Hiruu Inc.
         </Text>
       </View>
     </SafeAreaView>

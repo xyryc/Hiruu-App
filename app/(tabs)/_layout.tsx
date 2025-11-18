@@ -26,6 +26,7 @@ export default function TabLayout() {
               width: "100%",
               height: "125%",
             }}
+            cachePolicy="disk"
           />
         ),
 
@@ -44,7 +45,7 @@ export default function TabLayout() {
           title: "Home",
           href: user.role === "user" ? undefined : null, // Hide if not user
           tabBarIcon: ({ color }) => (
-            <Octicons name="home" size={24} color={color} />
+            <Octicons name="home-fill" size={24} color={color} />
           ),
         }}
       />

@@ -6,7 +6,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 const ShiftHeader = ({ setShowModal, displayContent }: ShiftHeaderProps) => {
   return (
-    <View className="px-5 pb-4">
+    <View className="px-5 pb-4 pt-2.5">
       <View className="flex-row justify-between items-center mb-2">
         <View>
           <Text className="font-proximanova-regular text-primary dark:text-dark-primary">
@@ -51,7 +51,7 @@ const ShiftHeader = ({ setShowModal, displayContent }: ShiftHeaderProps) => {
       </View>
 
       <View className="flex-row justify-between items-center mt-7">
-        <Text className="text-lg font-semibold text-primary dark:text-dark-primary">
+        <Text className="text-lg font-proximanova-semibold text-primary dark:text-dark-primary">
           Friday, 16 June, 2025
         </Text>
 

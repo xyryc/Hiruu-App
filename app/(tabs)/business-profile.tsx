@@ -35,8 +35,11 @@ const BusinessProfile = () => {
       edges={["left", "right", "top"]}
     >
       <ScrollView
-        showsVerticalScrollIndicator={false}
         className="bg-[#ffffff] dark:bg-dark-border rounded-b-2xl pt-3.5"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 40,
+        }}
       >
         {/* Profile Header */}
         <View className="flex-row justify-between mx-5">

@@ -66,7 +66,7 @@ const profile = () => {
         className="bg-white"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 40,
+          paddingBottom: 80,
         }}
       >
         <TouchableOpacity
