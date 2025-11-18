@@ -1,0 +1,28 @@
+{
+  "user": {
+    "home": {},
+    "rewards": {},
+    "schedule": {},
+    "jobs": {},
+    "profile": {
+      "appPreferences": "Προτιμήσεις Εφαρμογής",
+      "settings": "Ρυθμίσεις",
+      "subscription": "Συνδρομή",
+      "referAndEarn": "Αναφερθείτε και κερδίστε",
+      "privacyPolicy": "Πολιτική Απορρήτου",
+      "termsAndConditions": "Όροι και Προϋποθέσεις",
+      "helpAndSupport": "Βοήθεια και Υποστήριξη",
+      "appInfo": "Πληροφορίες εφαρμογής",
+      "deleteAccount": "Διαγραφή λογαριασμού",
+      "logout": "Αποσύνδεση"
+    }
+  },
+  "business": {
+    "home": {},
+    "rewards": {},
+    "schedule": {},
+    "jobs": {},
+    "profile": {}
+  },
+  "common": {}
+}

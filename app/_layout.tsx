@@ -3,10 +3,10 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import "react-native-reanimated";
+import "../utils/i18n";
 import "./global.css";
 import SplashScreen from "./splash";
 
-// Create a separate component that uses the theme
 const AppContent = () => {
   const [fontsLoaded] = useFonts({
     "ProximaNova-Thin": require("../assets/fonts/ProximaNova-Thin.ttf"),
@@ -32,7 +32,6 @@ const AppContent = () => {
   );
 };
 
-// Root layout only provides the theme context
 export default function RootLayout() {
   return (
     <ErrorBoundary>

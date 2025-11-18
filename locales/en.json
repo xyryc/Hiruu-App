@@ -1,0 +1,28 @@
+{
+  "user": {
+    "home": {},
+    "rewards": {},
+    "schedule": {},
+    "jobs": {},
+    "profile": {
+      "appPreferences": "App Preferences",
+      "settings": "Settings",
+      "subscription": "Subscription",
+      "referAndEarn": "Refer and Earn",
+      "privacyPolicy": "Privacy Policy",
+      "termsAndConditions": "Terms and Conditions",
+      "helpAndSupport": "Help and Support",
+      "appInfo": "App Info",
+      "deleteAccount": "Delete Account",
+      "logout": "Log Out"
+    }
+  },
+  "business": {
+    "home": {},
+    "rewards": {},
+    "schedule": {},
+    "jobs": {},
+    "profile": {}
+  },
+  "common": {}
+}

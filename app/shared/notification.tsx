@@ -4,14 +4,14 @@ import NotificationModal from "@/components/ui/modals/NotificationModal";
 import { Entypo, EvilIcons, Feather, Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React from "react";
-import { View, TouchableOpacity, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const NotificationScreen = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-  const [modalVisible, setModalVisible] = React.useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
 
   return (
     <SafeAreaView

@@ -3,6 +3,7 @@ import { AnimatedThemeToggle } from "@/components/ui/buttons/AnimatedThemeToggle
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
 import WeeklySchedule from "@/components/ui/buttons/WeeklySchedule";
 import SettingsCard from "@/components/ui/cards/SettingsCard";
+import LanguageSwitcherModal from "@/components/ui/modals/LanguageSwitcherModal";
 import {
   AntDesign,
   Entypo,
@@ -11,8 +12,9 @@ import {
 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const preferences = () => {
@@ -20,6 +22,12 @@ const preferences = () => {
   const [isSoundOn, setIsSoundOn] = useState(false);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const [showModal, setShowModal] = useState(false);
+
+  // language
+  const { i18n, t } = useTranslation();
+  const currentLanguage = i18n.language;
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -29,7 +37,7 @@ const preferences = () => {
         <ScreenHeader
           className="my-4"
           onPressBack={() => router.back()}
-          title="App Preferences"
+          title={t("user.profile.appPreferences")}
           titleClass="text-primary dark:text-dark-primary"
           iconColor={isDark ? "#fff" : "#111"}
         />
@@ -38,14 +46,19 @@ const preferences = () => {
       <ScrollView showsVerticalScrollIndicator={false} className="px-5">
         {/* settings card */}
         <SettingsCard
-          subtitle="English"
+          click={() => setShowModal(true)}
+          subtitle={currentLanguage.toUpperCase()}
           //   click={() => router.push("/(user)/profile/settings/preferences")}
           icon={<Ionicons name="language-outline" size={24} color="#11293A" />}
           className="mt-8"
-          text="App Preferences"
+          text={t("user.profile.appPreferences")}
           arrowIcon={
             <Entypo name="chevron-thin-down" size={20} color="black" />
           }
+        />
+        <LanguageSwitcherModal
+          visible={showModal}
+          onClose={() => setShowModal(false)}
         />
 
         <SettingsCard

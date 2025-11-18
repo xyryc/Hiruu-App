@@ -1,13 +1,5 @@
-import TitleHeader from "@/components/header/TitleHeader";
-import {
-  Entypo,
-  Feather,
-  FontAwesome6,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import { Image } from "expo-image";
 import { router } from "expo-router";
 import React from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";

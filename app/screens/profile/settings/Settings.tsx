@@ -13,6 +13,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -66,6 +67,10 @@ const Settings = () => {
       setIsModal(true);
     }
   };
+
+  // language
+  const { t } = useTranslation();
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -75,7 +80,7 @@ const Settings = () => {
         <ScreenHeader
           className="my-4"
           onPressBack={() => router.back()}
-          title="Settings"
+          title={t("user.profile.settings")}
           titleClass="text-primary dark:text-dark-primary"
           iconColor={isDark ? "#fff" : "#111"}
         />
@@ -122,7 +127,7 @@ const Settings = () => {
           click={() => router.push("/screens/profile/settings/preferences")}
           icon={<Ionicons name="language-outline" size={24} color="#11293A" />}
           className="mt-8"
-          text="App Preferences"
+          text={t("user.profile.appPreferences")}
           arrowIcon={
             <Entypo name="chevron-thin-right" size={20} color="#111111" />
           }
@@ -139,7 +144,7 @@ const Settings = () => {
               color="black"
             />
           }
-          text="Subscription"
+          text={t("user.profile.subscription")}
           className="mt-5"
           arrowIcon={
             <Entypo name="chevron-thin-right" size={20} color="#111111" />
@@ -149,7 +154,7 @@ const Settings = () => {
         <SettingsCard
           click={() => router.push("/screens/profile/settings/refer")}
           icon={<Ionicons name="wallet-outline" size={24} color="#11293A" />}
-          text="Refer and Earn"
+          text={t("user.profile.referAndEarn")}
           className="mt-5"
           arrowIcon={
             <Entypo name="chevron-thin-right" size={20} color="#111111" />
@@ -159,7 +164,7 @@ const Settings = () => {
         <SettingsCard
           click={() => router.push("/screens/profile/settings/privacy")}
           icon={<SimpleLineIcons name="lock" size={24} color="black" />}
-          text="Privacy Policy"
+          text={t("user.profile.privacyPolicy")}
           className="mt-5"
           arrowIcon={
             <Entypo name="chevron-thin-right" size={20} color="#111111" />
@@ -169,7 +174,7 @@ const Settings = () => {
         <SettingsCard
           click={() => router.push("/screens/profile/settings/terms")}
           icon={<Ionicons name="calendar-outline" size={24} color="black" />}
-          text="Terms and Condition"
+          text={t("user.profile.termsAndConditions")}
           className="mt-5"
           arrowIcon={
             <Entypo name="chevron-thin-right" size={20} color="#111111" />
@@ -178,7 +183,7 @@ const Settings = () => {
         <SettingsCard
           click={() => router.push("/screens/profile/settings/support")}
           icon={<FontAwesome name="handshake-o" size={20} color="#111111" />}
-          text="Help and Support"
+          text={t("user.profile.helpAndSupport")}
           className="mt-5"
           arrowIcon={
             <Entypo name="chevron-thin-right" size={20} color="#111111" />
@@ -187,7 +192,7 @@ const Settings = () => {
         <SettingsCard
           click={() => router.push("/screens/profile/settings/info")}
           icon={<SimpleLineIcons name="info" size={22} color="black" />}
-          text="App Info"
+          text={t("user.profile.appInfo")}
           className="mt-5"
           arrowIcon={
             <Entypo name="chevron-thin-right" size={20} color="#111111" />
@@ -196,14 +201,14 @@ const Settings = () => {
 
         <TouchableOpacity onPress={() => handleClick("delete")}>
           <Text className="text-[#F34F4F] font-proximanova-bold mt-5">
-            Delete Account
+            {t("user.profile.deleteAccount")}
           </Text>
         </TouchableOpacity>
 
         <View className="border-b-2 border-[#EEEEEE] mt-5" />
         <TouchableOpacity onPress={() => handleClick("logout")}>
           <Text className="text-[#4FB2F3] font-proximanova-bold mt-5">
-            Log Out
+            {t("user.profile.logout")}
           </Text>
         </TouchableOpacity>
 
