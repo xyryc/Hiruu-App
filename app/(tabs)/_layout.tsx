@@ -1,8 +1,5 @@
 import userData from "@/assets/data/user.json";
-import { Colors } from "@/constants/Colors";
-import { useColorScheme } from "@/hooks/useColorScheme";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
-import Feather from "@expo/vector-icons/Feather";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Octicons from "@expo/vector-icons/Octicons";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
@@ -10,7 +7,6 @@ import React from "react";
 import { View } from "react-native";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
   const user = userData.user;
 
   return (
@@ -30,7 +26,9 @@ export default function TabLayout() {
           />
         ),
 
-        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
+        tabBarActiveTintColor: "#4FB2F3",
+        tabBarInactiveTintColor: "#A0A0A0",
+
         tabBarStyle: {
           backgroundColor: "transparent",
           height: 70,
@@ -55,8 +53,12 @@ export default function TabLayout() {
         options={{
           title: "Home",
           href: user.role === "business" ? undefined : null, // Hide if not business
-          tabBarIcon: ({ color }) => (
-            <Octicons name="home-fill" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Octicons
+              name={focused ? "home-fill" : "home"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -66,8 +68,12 @@ export default function TabLayout() {
         name="rewards"
         options={{
           title: "Rewards",
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="gift-outline" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "gift" : "gift-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -105,8 +111,12 @@ export default function TabLayout() {
         options={{
           title: "Jobs",
           href: user.role === "user" ? undefined : null, // Hide if not user
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="briefcase-outline" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "briefcase" : "briefcase-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -116,8 +126,12 @@ export default function TabLayout() {
         options={{
           title: "Jobs",
           href: user.role === "business" ? undefined : null, // Hide if not business
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="briefcase-outline" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "briefcase" : "briefcase-outline"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -128,8 +142,12 @@ export default function TabLayout() {
         options={{
           title: "Profile",
           href: user.role === "user" ? undefined : null, // Hide if not user
-          tabBarIcon: ({ color }) => (
-            <Feather name="user" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <FontAwesome
+              name={focused ? "user" : "user-o"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />
@@ -139,8 +157,12 @@ export default function TabLayout() {
         options={{
           title: "Profile",
           href: user.role === "business" ? undefined : null, // Hide if not business
-          tabBarIcon: ({ color }) => (
-            <FontAwesome5 name="user" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <FontAwesome
+              name={focused ? "user" : "user-o"}
+              size={24}
+              color={color}
+            />
           ),
         }}
       />

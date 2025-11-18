@@ -3,7 +3,7 @@ import businesses from "@/assets/data/businesses.json";
 import ScreenHeader from "@/components/header/ScreenHeader";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import CountdownTimer from "@/components/ui/timer/CountdownTimer";
-import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -121,7 +121,7 @@ export default function LeaderboardScreen() {
       {/* Custom Header */}
       <ScreenHeader
         onPressBack={() => router.back()}
-        className="px-4"
+        className="px-4 mt-2.5"
         title="Leaderboard"
         components={
           <TouchableOpacity
@@ -130,11 +130,11 @@ export default function LeaderboardScreen() {
           >
             <Image
               source="https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp"
-              style={{ width: 30, height: 30, borderRadius: 999 }}
+              style={{ width: 28, height: 28, borderRadius: 999 }}
               contentFit="cover"
             />
             <SimpleLineIcons
-              className="p-1.5"
+              className="px-1.5"
               name="arrow-down"
               size={12}
               color="#111111"
@@ -154,14 +154,14 @@ export default function LeaderboardScreen() {
       <LinearGradient
         colors={["#BDE4F9", "#F7F7F7"]}
         locations={[0, 0.38]}
-        className="flex-1 justify-center items-center"
+        className="flex-1 justify-center"
       >
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="h-screen-safe mx-4 pt-8"
         >
           {/* Countdown Timer Card */}
-          <View className="bg-white border border-[#EEEEEE] rounded-2xl dark:bg-dark-surface p-2.5">
+          <View className="pt-2.5 bg-white border border-[#EEEEEE] rounded-2xl dark:bg-dark-surface">
             <Text className="text-center text-sm text-secondary dark:text-dark-secondary font-proximanova-regular mb-4">
               Next Top Performer Results in
             </Text>
@@ -206,9 +206,9 @@ export default function LeaderboardScreen() {
                   key={performer.id}
                   className={`
                     flex-row items-center p-4 rounded-2xl border ml-5 pl-7 mb-4
-                    ${performer.rank === 1 ? "bg-[#F1C6BA1A] border-[#F3934F]" : ""}
-                    ${performer.rank === 2 ? "bg-[#e3f6e7a4] border-[#3EBF5A]" : ""}
-                    ${performer.rank === 3 ? "bg-[#badcf15d] border-[#4FB2F3]" : ""}
+                    ${performer.rank === 1 ? "bg-[#f1c6ba09] border-[#F3934F]" : ""}
+                    ${performer.rank === 2 ? "bg-[#e3f6e763] border-[#3EBF5A]" : ""}
+                    ${performer.rank === 3 ? "bg-[#badcf125] border-[#4FB2F3]" : ""}
                 `}
                 >
                   {/* Rank Badge */}
@@ -237,17 +237,33 @@ export default function LeaderboardScreen() {
 
                   {/* Name & Verified */}
                   <View className="flex-1 ml-2">
-                    <View className="flex-row items-center">
-                      <Text className="text-base font-proximanova-semibold text-primary dark:text-dark-primary mr-2">
+                    <View className="flex-row items-center gap-1.5">
+                      <Text className="text-base font-proximanova-semibold text-primary dark:text-dark-primary">
                         {performer.name}
                       </Text>
                       {performer.verified && (
-                        <Ionicons
-                          name="checkmark-circle"
-                          size={18}
+                        <MaterialCommunityIcons
+                          name="crown"
+                          size={14}
                           color="#3B82F6"
                         />
                       )}
+                    </View>
+
+                    <View className="flex-row items-center mt-2">
+                      <Image
+                        source={require("@/assets/images/hiruu-coin.svg")}
+                        style={{
+                          width: 22,
+                          height: 22,
+                        }}
+                        contentFit="contain"
+                      />
+                      <View className="px-4 py-1 bg-[#DDF1FF] -ml-3 -z-10 rounded-r-[40px]">
+                        <Text className="text-xs font-proximanova-semibold">
+                          15 token reward
+                        </Text>
+                      </View>
                     </View>
                   </View>
 
@@ -261,7 +277,7 @@ export default function LeaderboardScreen() {
                 `}
                   >
                     <Text
-                      className={`font-proximanova-bold ${getPointsColor(performer.rank)}`}
+                      className={`font-proximanova-regular text-sm ${getPointsColor(performer.rank)}`}
                     >
                       {performer.points} Points
                     </Text>

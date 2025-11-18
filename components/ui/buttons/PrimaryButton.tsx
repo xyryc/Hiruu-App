@@ -14,7 +14,9 @@ const PrimaryButton = ({
       onPress={onPress}
       className={`${className} p-0.5 bg-[#11293A] rounded-full flex-row items-center justify-center  pl-10`}
     >
-      <Text className="text-white text-center flex-1">{title}</Text>
+      <Text className="font-proximanova-semibold text-white text-center flex-1">
+        {title}
+      </Text>
 
       <Feather
         name="arrow-right"
