@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { Modal, Platform, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const MonthPicker = ({ value, onDateChange }: MonthPickerProps) => {
+const MonthPicker = ({ value, onDateChange, bgColor }: MonthPickerProps) => {
   const [show, setShow] = useState(false);
   const [tempDate, setTempDate] = useState<Date>(value || new Date());
 
@@ -55,6 +55,7 @@ const MonthPicker = ({ value, onDateChange }: MonthPickerProps) => {
       <TouchableOpacity
         onPress={() => setShow(true)}
         className="flex-row items-center pl-2.5 pr-1.5 py-2 bg-[#F5F5F5] rounded-full"
+        style={{ backgroundColor: bgColor }}
       >
         <Text
           className={`font-proximanova-regular text-sm ${value ? "text-primary" : "text-secondary"}`}

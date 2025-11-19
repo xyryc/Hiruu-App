@@ -157,7 +157,7 @@ const BusinessScheduleScreen = () => {
             <TouchableOpacity
               onPress={() =>
                 router.push(
-                  "/screens/schedule/business/create-holiday/create-holiday"
+                  "/screens/schedule/business/create-holiday/calendar"
                 )
               }
               className="w-10 h-10 items-center justify-center bg-[#F5F5F5] rounded-full"

@@ -160,6 +160,7 @@ export interface WorkInsightsProps {
 export interface MonthPickerProps {
   value: Date | null;
   onDateChange: (date: Date) => void;
+  bgColor?: string;
 }
 
 export interface StatCardPrimaryProps {
