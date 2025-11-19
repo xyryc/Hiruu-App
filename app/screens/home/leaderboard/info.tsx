@@ -9,40 +9,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const LeaderboardInfo = () => {
   const router = useRouter();
 
-  // const renderComponent = ({
-  //   icon,
-  //   title,
-  //   subtitle,
-  //   point,
-  //   className,
-  // }: any) => {
-  //   return (
-  //     <View className={`flex-row gap-2.5 ${className || ""} `}>
-  //       <View className="border border-[#EEEEEE] h-10 w-10 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
-  //         {icon || <SimpleLineIcons name="clock" size={18} color="black" />}
-  //       </View>
-  //       <View className="flex-1">
-  //         <View className="flex-row justify-between mt-2">
-  //           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-  //             {title || "Be On Time"}
-  //           </Text>
-  //           <View className="border border-[#4FB2F34D] rounded-[30px] py-1.5 px-2 bg-[#4fb2f330]">
-  //             <Text
-  //               className="text-[#4FB2F3] font-proximanova-regular text-sm text-center"
-  //               numberOfLines={1}
-  //             >
-  //               {point || " +40 Points/month"}
-  //             </Text>
-  //           </View>
-  //         </View>
-  //         <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary ">
-  //           {subtitle || "+2 points for every day you arrive on time"}
-  //         </Text>
-  //       </View>
-  //     </View>
-  //   );
-  // };
-
   const renderComponent = ({
     icon,
     title,
@@ -132,10 +98,10 @@ const LeaderboardInfo = () => {
             subtitle: "Show up 10+ minutes early",
             point: "+1 Point/shift",
             className: "mt-4",
-          })}{" "}
+          })}
           {renderComponent({
             icon: <Feather name="repeat" size={18} color="black" />,
-            title: "Cover a Teammate’s Shift",
+            title: "Cover a Teammate's Shift",
             subtitle: "Accept and complete a swap request",
             point: "+2 Points/shift",
             className: "mt-4",

@@ -60,7 +60,7 @@ const CreateHoliday = () => {
             style={{ paddingTop: insets.top + 15, paddingBottom: 20 }}
             className=""
             onPressBack={() => router.back()}
-            title="Create Role"
+            title="Create Holiday"
             titleClass="text-primary dark:text-dark-primary"
             iconColor={isDark ? "#fff" : "#111"}
           />
