@@ -26,25 +26,25 @@ const ShiftHeader = ({ setShowModal, displayContent }: ShiftHeaderProps) => {
         </View>
 
         <View className="flex-row items-center gap-1.5">
-          <TouchableOpacity className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
-            <Ionicons name="calendar-outline" size={24} color="#111111" />
+          <TouchableOpacity className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full w-10 h-10 items-center justify-center">
+            <Ionicons name="calendar-outline" size={20} color="#111111" />
           </TouchableOpacity>
 
           {/* notification */}
           <TouchableOpacity
             onPress={() => router.push("/shared/notification")}
-            className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
+            className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full w-10 h-10 items-center justify-center"
           >
             <Image
               source={require("@/assets/images/bell.svg")}
               style={{
-                width: 24,
-                height: 24,
+                width: 20,
+                height: 20,
               }}
               contentFit="contain"
             />
             <View className="bg-[#4FB2F3] absolute top-1.5 right-2 w-3.5 h-3.5 items-center rounded-full">
-              <Text className="text-[10px] text-white">1</Text>
+              <Text className="text-[10px] text-white">4</Text>
             </View>
           </TouchableOpacity>
         </View>

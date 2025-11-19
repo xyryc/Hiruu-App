@@ -7,10 +7,10 @@ import Dropdown from "@/components/ui/dropdown/DropDown";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import {
   Feather,
-  Foundation,
+  FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
-  Octicons,
+  SimpleLineIcons,
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -44,13 +44,13 @@ const profile = () => {
           </View>
           <View className="flex-row gap-1.5 items-center justify-center">
             <TouchableOpacity className="h-10 w-10 bg-white rounded-full items-center justify-center">
-              <Octicons name="paintbrush" size={18} color="black" />
+              <Ionicons name="brush-outline" size={20} color="black" />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.push("/screens/profile/user/edit")}
               className="h-10 w-10 bg-white rounded-full items-center justify-center"
             >
-              <Feather name="edit-2" size={18} color="black" />
+              <SimpleLineIcons name="pencil" size={18} color="black" />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => router.push("/screens/profile/settings/Settings")}
@@ -79,12 +79,7 @@ const profile = () => {
         <View className="mx-5 flex-row justify-between mt-5 items-center">
           <View className="flex-row gap-2.5 items-center">
             <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row items-center justify-center ">
-              <MaterialCommunityIcons
-                className="rotate-180"
-                name="medal-outline"
-                size={16}
-                color="black"
-              />
+              <FontAwesome6 name="id-badge" size={14} color="black" />
             </View>
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
               Badge
@@ -101,9 +96,14 @@ const profile = () => {
         <BadgeCard className="mx-5 mt-3.5" />
 
         {/* short intro */}
-        <View className="mx-5 mt-8 flex-row gap-2.5">
+        <View className="mx-5 mt-8 flex-row items-center gap-2.5">
           <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
-            <Foundation name="clipboard" size={16} color="black" />
+            {/* <Foundation name="clipboard" size={16} color="black" /> */}
+            <MaterialCommunityIcons
+              name="file-document-check-outline"
+              size={16}
+              color="black"
+            />
           </View>
           <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
             Short Intro
@@ -129,7 +129,11 @@ const profile = () => {
         {/* Experience */}
         <View className="mx-5 mt-8 flex-row gap-2.5">
           <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
-            <Foundation name="clipboard" size={16} color="black" />
+            <MaterialCommunityIcons
+              name="file-document-check-outline"
+              size={16}
+              color="black"
+            />
           </View>
           <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
             Experience
@@ -187,7 +191,11 @@ const profile = () => {
         {/* Interests */}
         <View className="mx-5 mt-8 flex-row gap-2.5">
           <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
-            <Foundation name="clipboard" size={16} color="black" />
+            <MaterialCommunityIcons
+              name="file-document-check-outline"
+              size={16}
+              color="black"
+            />
           </View>
           <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
             Interests
@@ -249,7 +257,7 @@ const profile = () => {
         {/* Employee Info */}
         <View className="flex-row items-center gap-2.5 mt-8 mx-5">
           <View className="h-8 w-8 bg-[#E5F4FD] rounded-full flex-row justify-center items-center">
-            <Ionicons name="person" size={16} color="black" />
+            <Feather name="user" size={16} color="black" />
           </View>
           <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
             Employee Info
