@@ -153,7 +153,15 @@ const BusinessScheduleScreen = () => {
           {/* right */}
           <View className="flex-row gap-3">
             {/* calendar */}
-            <TouchableOpacity className="w-10 h-10 items-center justify-center bg-[#F5F5F5] rounded-full">
+
+            <TouchableOpacity
+              onPress={() =>
+                router.push(
+                  "/screens/schedule/business/create-holiday/create-holiday"
+                )
+              }
+              className="w-10 h-10 items-center justify-center bg-[#F5F5F5] rounded-full"
+            >
               <Ionicons name="calendar-outline" size={22} color="black" />
             </TouchableOpacity>
 
