@@ -22,7 +22,7 @@ export default function TabLayout() {
               width: "100%",
               height: "125%",
             }}
-            cachePolicy="disk"
+            cachePolicy="memory"
           />
         ),
 
