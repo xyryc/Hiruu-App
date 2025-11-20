@@ -1,5 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import BusinessScheduleMonthYearsPickerModal from "@/components/ui/modals/BusinessScheduleMonthYearsPickerModal";
+import ImportHolidayModal from "@/components/ui/modals/ImportHolidayModal";
+import LogoutDeletModal from "@/components/ui/modals/LogoutDeletModal";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -31,15 +33,27 @@ const appliesToOptions = [
 ];
 
 const Calendar = () => {
+  const delImg = require("@/assets/images/holiday-modal.svg");
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentViewDate, setCurrentViewDate] = useState(new Date()); // Currently viewing month/year
   const [showPicker, setShowPicker] = useState(false);
   const [pickerMode, setPickerMode] = useState<"month" | "year">("month");
   const [selected, setSelected] = useState<number[]>([2, 16, 27]);
   const [holiday, setHolidays] = useState<number[]>([1, 15, 26]);
+  const [isModal, setIsModal] = useState(false);
+  const [isHolidayModal, setIsHolidayModal] = useState(false);
+
+  const data = {
+    title: "Do You Want to Delete This Holiday?",
+    subtitle: "Once deleted, this day will be marked as aworking day.",
+    img: delImg,
+    color: "#F34F4F26",
+    border: "#F34F4F",
+    buttonName: "Delete",
+    buttonColor: "#F34F4F",
+  };
 
   const months = [
     "Jan",
@@ -98,10 +112,6 @@ const Calendar = () => {
     setPickerMode("month");
   };
 
-  const handleDateSelect = (day: number) => {
-    setSelectedDate(new Date(currentYear, currentMonth, day));
-  };
-
   const isToday = (day: number) => {
     return (
       day === today.getDate() &&
@@ -153,7 +163,7 @@ const Calendar = () => {
           </View>
         </View>
         <View>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setIsModal(true)}>
             <Ionicons name="trash-outline" size={25} color="red" />
           </TouchableOpacity>
         </View>
@@ -222,7 +232,6 @@ const Calendar = () => {
                 {daysInMonth.map((day) => (
                   <TouchableOpacity
                     key={day}
-                    onPress={() => handleDateSelect(day)}
                     className={`w-14 h-14 m-1  items-center justify-center rounded-full ${
                       isToday(day)
                         ? "bg-blue-500"
@@ -276,7 +285,10 @@ const Calendar = () => {
                 Create Holiday
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-1 py-3 px-8 border border-[#11111120] rounded-full">
+            <TouchableOpacity
+              onPress={() => setIsHolidayModal(true)}
+              className="flex-1 py-3 px-8 border border-[#11111120] rounded-full"
+            >
               <Text className="text-center font-proximanova-semibold ">
                 Import Holidays
               </Text>
@@ -298,6 +310,16 @@ const Calendar = () => {
             {renderHolidaysCard()}
             {renderHolidaysCard()}
           </View>
+
+          <LogoutDeletModal
+            visible={isModal}
+            onClose={() => setIsModal(false)}
+            data={data}
+          />
+          <ImportHolidayModal
+            visible={isHolidayModal}
+            onClose={() => setIsHolidayModal(false)}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

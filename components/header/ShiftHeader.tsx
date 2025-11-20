@@ -2,9 +2,16 @@ import { ShiftHeaderProps } from "@/types";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
+import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import UserCalenderShidulModal from "../ui/modals/UserCalenderShidulModal";
 
-const ShiftHeader = ({ setShowModal, displayContent }: ShiftHeaderProps) => {
+const ShiftHeader = ({
+  setShowModal,
+  displayContent,
+}: ShiftHeaderProps | any) => {
+  const [isCalenderModal, setCalenderModal] = useState(false);
+
   return (
     <View className="px-5 pb-4 pt-2.5">
       <View className="flex-row justify-between items-center mb-2">
@@ -26,7 +33,10 @@ const ShiftHeader = ({ setShowModal, displayContent }: ShiftHeaderProps) => {
         </View>
 
         <View className="flex-row items-center gap-1.5">
-          <TouchableOpacity className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
+          <TouchableOpacity
+            onPress={() => setCalenderModal(true)}
+            className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
+          >
             <Ionicons name="calendar-outline" size={24} color="#111111" />
           </TouchableOpacity>
 
@@ -77,6 +87,10 @@ const ShiftHeader = ({ setShowModal, displayContent }: ShiftHeaderProps) => {
             color="#111111"
           />
         </TouchableOpacity>
+        <UserCalenderShidulModal
+          visible={isCalenderModal}
+          onClose={() => setCalenderModal(false)}
+        />
       </View>
     </View>
   );
