@@ -7,6 +7,8 @@ import ColorPicker, { HueSlider, Panel1 } from "reanimated-color-picker";
 import PrimaryButton from "../buttons/PrimaryButton";
 
 interface ColorPickerModalProps {
+  pickerType: string;
+  setPickerType: React.Dispatch<React.SetStateAction<"solid" | "gradient">>;
   visible: boolean;
   onClose: () => void;
   onSelectColor: (color: string | string[]) => void;
@@ -14,12 +16,13 @@ interface ColorPickerModalProps {
 }
 
 const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
+  pickerType,
+  setPickerType,
   visible,
   onClose,
   onSelectColor,
   initialColor = "#6366F1",
 }) => {
-  const [pickerType, setPickerType] = useState<"solid" | "gradient">("solid");
   const [selectedColor, setSelectedColor] = useState(initialColor);
   const [gradientColors, setGradientColors] = useState(["#6366F1", "#EC4899"]);
   const [activeGradientIndex, setActiveGradientIndex] = useState(0);
@@ -127,8 +130,14 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
                     : gradientColors[activeGradientIndex]
                 }
                 onChangeJS={({ hex }) => {
-                  console.log("Selected color:", hex);
-                  setSelectedColor(hex);
+                  if (pickerType === "solid") {
+                    setSelectedColor(hex);
+                  } else {
+                    // Create copy of array, update specific index, save state
+                    const newColors = [...gradientColors];
+                    newColors[activeGradientIndex] = hex;
+                    setGradientColors(newColors);
+                  }
                 }}
                 style={{ width: "100%" }}
               >

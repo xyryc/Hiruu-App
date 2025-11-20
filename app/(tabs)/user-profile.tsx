@@ -1,3 +1,4 @@
+import DynamicBackground from "@/components/layout/DynamicBackground";
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
 import BadgeCard from "@/components/ui/cards/BadgeCard";
 import ExperienceCard from "@/components/ui/cards/ExperienceCard";
@@ -29,15 +30,19 @@ const profile = () => {
     { label: "Forget to Tap", value: "Forget to Tap" },
     { label: "Network Issues", value: "Network Issues" },
   ];
-
   const [isOn, setIsOn] = useState(false);
+
+  // color
+  const [pickerType, setPickerType] = useState<"solid" | "gradient">("solid");
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [profileColor, setProfileColor] = useState("#6366F1");
+  const [gradientColors, setGradientColors] = useState(["#6366F1", "#EC4899"]);
 
   const handleColorSelect = (color: string | string[]) => {
     if (Array.isArray(color)) {
       // Handle gradient
       console.log("Selected gradient:", color);
+      setGradientColors(color);
     } else {
       // Handle solid color
       setProfileColor(color);
@@ -46,7 +51,12 @@ const profile = () => {
 
   return (
     <SafeAreaView edges={["top", "left", "right"]} className="bg-[#E5F4FD]">
-      <View className="bg-[#E5F4FD] rounded-b-xl pb-3">
+      <DynamicBackground
+        className="rounded-b-xl pb-3"
+        pickerType={pickerType}
+        profileColor={profileColor}
+        gradientColors={gradientColors}
+      >
         <View className={`flex-row justify-between items-center mt-5 mx-5`}>
           <View className="flex-row items-center gap-2.5">
             <Text
@@ -66,6 +76,8 @@ const profile = () => {
 
             {/* color picker modal */}
             <ColorPickerModal
+              pickerType={pickerType}
+              setPickerType={setPickerType}
               visible={showColorPicker}
               onClose={() => setShowColorPicker(false)}
               onSelectColor={handleColorSelect}
@@ -89,7 +101,7 @@ const profile = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+      </DynamicBackground>
 
       <ScrollView
         className="bg-white"
@@ -104,6 +116,7 @@ const profile = () => {
         >
           <NamePlateCard variant="variant4" />
         </TouchableOpacity>
+
         {/* Badge item */}
         <View className="mx-5 flex-row justify-between mt-5 items-center">
           <View className="flex-row gap-2.5 items-center">
