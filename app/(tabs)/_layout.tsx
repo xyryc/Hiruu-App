@@ -16,6 +16,7 @@ export default function TabLayout() {
         tabBarBackground: () => (
           <Image
             source={require("@/assets/images/tabbar-background.png")}
+            contentFit="fill"
             style={{
               position: "absolute",
               bottom: 0,

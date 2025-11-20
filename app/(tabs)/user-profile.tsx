@@ -5,6 +5,7 @@ import NamePlateCard from "@/components/ui/cards/NamePlateCard";
 import StatCardPrimary from "@/components/ui/cards/StatCardPrimary";
 import Dropdown from "@/components/ui/dropdown/DropDown";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
+import ColorPickerModal from "@/components/ui/modals/ColorPickerModal";
 import {
   Feather,
   FontAwesome6,
@@ -30,6 +31,18 @@ const profile = () => {
   ];
 
   const [isOn, setIsOn] = useState(false);
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [profileColor, setProfileColor] = useState("#6366F1");
+
+  const handleColorSelect = (color: string | string[]) => {
+    if (Array.isArray(color)) {
+      // Handle gradient
+      console.log("Selected gradient:", color);
+    } else {
+      // Handle solid color
+      setProfileColor(color);
+    }
+  };
 
   return (
     <SafeAreaView edges={["top", "left", "right"]} className="bg-[#E5F4FD]">
@@ -43,17 +56,33 @@ const profile = () => {
             </Text>
           </View>
           <View className="flex-row gap-1.5 items-center justify-center">
-            <TouchableOpacity className="h-10 w-10 bg-white rounded-full items-center justify-center">
+            {/* color picker */}
+            <TouchableOpacity
+              onPress={() => setShowColorPicker(true)}
+              className="h-10 w-10 bg-white rounded-full items-center justify-center"
+            >
               <Ionicons name="brush-outline" size={20} color="black" />
             </TouchableOpacity>
+
+            {/* color picker modal */}
+            <ColorPickerModal
+              visible={showColorPicker}
+              onClose={() => setShowColorPicker(false)}
+              onSelectColor={handleColorSelect}
+              initialColor={profileColor}
+            />
+
+            {/* user edit screen */}
             <TouchableOpacity
               onPress={() => router.push("/screens/profile/user/edit")}
               className="h-10 w-10 bg-white rounded-full items-center justify-center"
             >
               <SimpleLineIcons name="pencil" size={18} color="black" />
             </TouchableOpacity>
+
+            {/* setting */}
             <TouchableOpacity
-              onPress={() => router.push("/screens/profile/settings/Settings")}
+              onPress={() => router.push("/screens/profile/settings/settings")}
               className="h-10 w-10 bg-white rounded-full items-center justify-center"
             >
               <Ionicons name="settings-outline" size={20} color="black" />
