@@ -15,22 +15,14 @@ const ChatScreenHeader = () => {
       </View>
 
       <View className="flex-row items-center gap-4">
-        <TouchableOpacity>
-          <Ionicons
-            className="p-2 bg-[#F5F5F5] rounded-full"
-            name="call-outline"
-            size={24}
-            color="black"
-          />
+        <TouchableOpacity className="w-10 h-10 items-center justify-center rounded-full bg-[#F5F5F5] border-[0.5px] border-[#B2B1B165]">
+          <Ionicons name="call-outline" size={20} color="black" />
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons
-            className="p-2 bg-[#F5F5F5] rounded-full"
-            name="videocam-outline"
-            size={26}
-            color="black"
-          />
+
+        <TouchableOpacity className="w-10 h-10 items-center justify-center rounded-full bg-[#F5F5F5] border-[0.5px] border-[#b2b1b165]">
+          <Ionicons name="videocam-outline" size={20} color="black" />
         </TouchableOpacity>
+
         <TouchableOpacity>
           <Entypo name="dots-three-vertical" size={18} color="black" />
         </TouchableOpacity>

@@ -91,6 +91,26 @@ const BusinessScheduleScreen = () => {
       location: "136 Avenue-Maciezine, Ne...",
       status: "upcoming",
     },
+    {
+      id: 3,
+      name: "Sarah Johnson",
+      role: "Bartender",
+      avatar:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
+      shiftTime: "6:00 AM - 2:00 PM",
+      location: "136 Avenue-Maciezine, Ne...",
+      status: "upcoming",
+    },
+    {
+      id: 4,
+      name: "Sarah Johnson",
+      role: "Bartender",
+      avatar:
+        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
+      shiftTime: "6:00 AM - 2:00 PM",
+      location: "136 Avenue-Maciezine, Ne...",
+      status: "missed",
+    },
   ];
 
   const menuItems = [
@@ -153,7 +173,6 @@ const BusinessScheduleScreen = () => {
           {/* right */}
           <View className="flex-row gap-3">
             {/* calendar */}
-
             <TouchableOpacity
               onPress={() =>
                 router.push(
@@ -162,7 +181,7 @@ const BusinessScheduleScreen = () => {
               }
               className="w-10 h-10 items-center justify-center bg-[#F5F5F5] rounded-full"
             >
-              <Ionicons name="calendar-outline" size={22} color="black" />
+              <Ionicons name="calendar-outline" size={20} color="black" />
             </TouchableOpacity>
 
             {/* notification */}
@@ -173,8 +192,8 @@ const BusinessScheduleScreen = () => {
               <Image
                 source={require("@/assets/images/bell.svg")}
                 style={{
-                  width: 24,
-                  height: 24,
+                  width: 20,
+                  height: 20,
                 }}
                 contentFit="contain"
               />
@@ -327,7 +346,11 @@ const BusinessScheduleScreen = () => {
       </View>
 
       {/* Shifts List */}
-      <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1 px-5"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-lg font-proximanova-semibold text-primary">
             Morning Shifts (15)

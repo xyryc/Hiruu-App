@@ -1,12 +1,7 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
+import { FontAwesome6, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import {
-  Entypo,
-  Feather,
-  FontAwesome6,
-  SimpleLineIcons,
-} from "@expo/vector-icons";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import StatusBadge from "../badges/StatusBadge";
 
 const ShiftCard = ({ shift }) => {
@@ -92,7 +87,7 @@ const ShiftCard = ({ shift }) => {
         </TouchableOpacity>
 
         {/* status */}
-        <StatusBadge status="ongoing" />
+        <StatusBadge status={shift?.status} />
       </View>
     </View>
   );

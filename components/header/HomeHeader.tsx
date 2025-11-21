@@ -18,12 +18,12 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
 
       <View className="flex-row items-center gap-1.5">
         {/* messages */}
-        <View className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
+        <View className="h-10 w-10 bg-[#F5F5F5] border-[0.5px] border-[#b2b1b185] rounded-full items-center justify-center">
           <Image
             source={require("@/assets/images/messages.svg")}
             style={{
-              width: 24,
-              height: 24,
+              width: 22,
+              height: 22,
             }}
             contentFit="contain"
           />
@@ -32,13 +32,13 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
         {/* notification */}
         <TouchableOpacity
           onPress={() => router.push("/shared/notification")}
-          className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
+          className="h-10 w-10 bg-[#F5F5F5] border-[0.5px] border-[#b2b1b185] rounded-full items-center justify-center"
         >
           <Image
             source={require("@/assets/images/bell.svg")}
             style={{
-              width: 24,
-              height: 24,
+              width: 22,
+              height: 22,
             }}
             contentFit="contain"
           />
@@ -54,13 +54,13 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
               ? () => router.push("/screens/home/business/qr-generate")
               : () => router.push("/screens/home/qr-scanner")
           }
-          className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
+          className="h-10 w-10 bg-[#F5F5F5] border-[0.5px] border-[#b2b1b185] rounded-full items-center justify-center"
         >
           <Image
             source={require("@/assets/images/scan.svg")}
             style={{
-              width: 24,
-              height: 24,
+              width: 18,
+              height: 18,
             }}
             contentFit="contain"
           />

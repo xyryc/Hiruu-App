@@ -13,18 +13,11 @@ import {
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const BusinessProfile = () => {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
-  const insets = useSafeAreaInsets();
   const [selectedTab, setSelectedTab] = useState("about");
   const [togolIsOn, setTogolIsOn] = useState(false);
   console.log(selectedTab);
@@ -61,7 +54,7 @@ const BusinessProfile = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => router.push("/screens/profile/settings/Settings")}
+              onPress={() => router.push("/screens/profile/settings/settings")}
               className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
             >
               <Ionicons name="settings-outline" size={20} color="black" />

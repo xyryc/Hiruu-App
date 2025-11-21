@@ -1,11 +1,11 @@
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import {
-  AntDesign,
   FontAwesome,
   FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
+  Octicons,
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
@@ -67,7 +67,7 @@ const UserRewards = () => {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
-            paddingBottom: 100,
+            paddingBottom: 40,
           }}
         >
           <View className="mx-5">
@@ -77,13 +77,9 @@ const UserRewards = () => {
 
             <TouchableOpacity
               onPress={() => router.push("/screens/rewards/token-activity")}
+              className="w-10 h-10 items-center justify-center bg-[#ffffff] rounded-full absolute top-2.5 right-0"
             >
-              <AntDesign
-                className="justify-end p-2.5 bg-[#ffffff] rounded-full absolute top-4 right-0"
-                name="history"
-                size={20}
-                color="black"
-              />
+              <Octicons name="history" size={18} color="black" />
             </TouchableOpacity>
 
             <View className="flex-row items-center justify-center mt-1 gap-2.5">
@@ -103,6 +99,7 @@ const UserRewards = () => {
               title="Redeem"
               onPress={() => router.push("/screens/rewards/redeem-tokens")}
               className="w-44 justify-center items-center mx-auto mt-4"
+              iconSize={18}
             />
 
             <Text className="font-proximanova-regular text-sm text-center text-primary dark:text-dark-primary mt-2.5">
