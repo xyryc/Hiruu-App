@@ -9,12 +9,12 @@ export default function SearchBar({ className, onSearch }: SearchBarProps) {
 
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
-    onSearch(text);
+    onSearch?.(text); // Optional chaining
   };
 
   const handleClear = () => {
     setSearchQuery("");
-    onSearch("");
+    onSearch?.(""); // Optional chaining
   };
 
   return (

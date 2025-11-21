@@ -1,17 +1,12 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import Dropdown from "@/components/ui/dropdown/DropDown";
-import { Ionicons, Octicons } from "@expo/vector-icons";
+import DatePicker from "@/components/ui/inputs/DatePicker";
+import TimePicker from "@/components/ui/inputs/TimePicker";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import {
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const OvertimeRequest = () => {
@@ -66,31 +61,14 @@ const OvertimeRequest = () => {
 
           {/* Select Dates */}
           <View className="mb-5">
-            <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
-              Select Dates
-            </Text>
-            <TouchableOpacity className="flex-row items-center justify-between px-4 py-3.5 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
-              <Text className="text-sm font-proximanova-regular text-placeholder dark:text-dark-placeholder">
-                Start Date
-              </Text>
-              <Ionicons name="calendar-outline" size={20} color="#0000" />
-            </TouchableOpacity>
+            <DatePicker title="Select Dates" />
           </View>
 
           {/* Overtime Start and End Time */}
           <View className="flex-row mb-5 gap-3">
             {/* Overtime Start */}
             <View className="flex-1">
-              <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
-                Overtime Start
-              </Text>
-              <TouchableOpacity className="flex-row items-center justify-between px-4 py-3.5 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
-                <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
-                  {overtimeStart}
-                </Text>
-
-                <Octicons name="clock-fill" size={20} color="#4FB2F3" />
-              </TouchableOpacity>
+              <TimePicker title="Overtime Start" />
             </View>
 
             {/* To Separator */}
@@ -102,16 +80,7 @@ const OvertimeRequest = () => {
 
             {/* Overtime End */}
             <View className="flex-1">
-              <Text className="text-sm font-proximanova-medium text-primary dark:text-dark-primary mb-2.5">
-                Overtime End
-              </Text>
-              <TouchableOpacity className="flex-row items-center justify-between px-4 py-3.5 bg-white dark:bg-dark-surface rounded-xl border border-gray-200 dark:border-dark-border">
-                <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
-                  {overtimeEnd}
-                </Text>
-
-                <Octicons name="clock-fill" size={20} color="#4FB2F3" />
-              </TouchableOpacity>
+              <TimePicker title=" Overtime End" />
             </View>
           </View>
 

@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import SickLeaveCard from "@/components/ui/cards/SickLeaveCard";
+import UserCalenderShidulModal from "@/components/ui/modals/UserCalenderShidulModal";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -90,7 +91,7 @@ const LeaveHistory = () => {
     },
     {} as Record<string, number>
   );
-
+  const [onCalender, setOnCalendet] = useState(false);
   return (
     <SafeAreaView
       className="flex-1 bg-white dark:bg-dark-background"
@@ -105,7 +106,10 @@ const LeaveHistory = () => {
         iconColor={isDark ? "#fff" : "#111"}
         components={
           <View className="flex-row items-center gap-2">
-            <TouchableOpacity className="bg-[#F5F5F5] rounded-full p-2">
+            <TouchableOpacity
+              onPress={() => setOnCalendet(true)}
+              className="bg-[#F5F5F5] rounded-full p-2"
+            >
               <Ionicons name="calendar-outline" size={22} color="#111111" />
             </TouchableOpacity>
             <TouchableOpacity
@@ -175,6 +179,10 @@ const LeaveHistory = () => {
         renderItem={({ item }) => (
           <SickLeaveCard item={item} selectedCategory={selectedCategory} />
         )}
+      />
+      <UserCalenderShidulModal
+        visible={onCalender}
+        onClose={() => setOnCalendet(false)}
       />
     </SafeAreaView>
   );

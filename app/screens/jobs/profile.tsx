@@ -4,8 +4,6 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import JobApplyModal from "@/components/ui/modals/JobApplyModal";
 import {
   Feather,
-  FontAwesome5,
-  FontAwesome6,
   Fontisto,
   Ionicons,
   MaterialCommunityIcons,

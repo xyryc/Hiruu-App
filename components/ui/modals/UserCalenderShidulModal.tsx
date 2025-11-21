@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// UserCalenderShidulModal Component
 const UserCalenderShidulModal = ({ visible, onClose }: any) => {
   const handleDone = () => {
     onClose();
@@ -12,18 +11,14 @@ const UserCalenderShidulModal = ({ visible, onClose }: any) => {
 
   const [currentViewDate, setCurrentViewDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<"date" | "month" | "year">("date");
-  const [selectedDate, setSelectedDate] = useState<number | null>(null); // Track selected date
+  const [selectedDate, setSelectedDate] = useState<number | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<number>(
     currentViewDate.getMonth()
-  ); // Track selected month
+  );
   const [selectedYear, setSelectedYear] = useState<number>(
     currentViewDate.getFullYear()
-  ); // Track selected year
+  );
   const [holiday, setHolidays] = useState<number[]>([1, 15, 26]);
-
-  console.log(selectedDate);
-  console.log(selectedMonth);
-  console.log(selectedYear);
 
   const months = [
     "Jan",
@@ -72,7 +67,7 @@ const UserCalenderShidulModal = ({ visible, onClose }: any) => {
   };
 
   const handleMonthSelect = (monthIndex: number) => {
-    setSelectedMonth(monthIndex + 1);
+    setSelectedMonth(monthIndex);
     setCurrentViewDate(new Date(currentYear, monthIndex, 1));
     setViewMode("date");
   };
@@ -164,54 +159,62 @@ const UserCalenderShidulModal = ({ visible, onClose }: any) => {
             <ScrollView showsVerticalScrollIndicator={false}>
               {/* DATE VIEW */}
               {viewMode === "date" && (
-                <View className="p-4">
-                  {/* Days of Week */}
-                  <View className="flex-row justify-around mb-2">
+                <View className="px-2">
+                  {/* Days of Week Header */}
+                  <View className="flex-row">
                     {daysOfWeek.map((day, index) => (
-                      <Text
-                        key={index}
-                        className="font-proximanova-semibold text-[#4FB2F3] w-12 text-center"
-                      >
-                        {day}
-                      </Text>
+                      <View key={index} className="flex-1 items-center py-2">
+                        <Text className="font-proximanova-semibold text-[#4FB2F3]">
+                          {day}
+                        </Text>
+                      </View>
                     ))}
                   </View>
 
                   {/* Calendar Grid */}
                   <View className="flex-row flex-wrap">
-                    {/* Empty Days */}
+                    {/* Empty Days - same width as date cells */}
                     {emptyDays.map((_, index) => (
-                      <View key={`empty-${index}`} className="w-14 h-14 m-1" />
+                      <View
+                        key={`empty-${index}`}
+                        style={{ width: "14.28%" }}
+                        className="aspect-square items-center justify-center p-1"
+                      />
                     ))}
 
                     {/* Days in Month */}
                     {daysInMonth.map((day) => (
-                      <TouchableOpacity
+                      <View
                         key={day}
-                        onPress={() => {
-                          setSelectedDate(day);
-                          onClose(); // Close the modal after selecting the date
-                        }}
-                        className={`w-14 h-14 m-1 items-center justify-center rounded-full ${
-                          isToday(day)
-                            ? "bg-blue-500"
-                            : isSelected(day)
-                              ? "bg-[#E5F4FD]"
-                              : ""
-                        }`}
+                        style={{ width: "14.28%" }}
+                        className="aspect-square items-center justify-center p-1"
                       >
-                        <Text
-                          className={`font-proximanova-regular ${
+                        <TouchableOpacity
+                          onPress={() => {
+                            setSelectedDate(day);
+                            onClose();
+                          }}
+                          className={`w-10 h-10 items-center justify-center rounded-full ${
                             isToday(day)
-                              ? "text-white font-bold"
-                              : isHoliday(day)
-                                ? "text-red-500"
+                              ? "bg-blue-500"
+                              : isSelected(day)
+                                ? "bg-[#E5F4FD]"
                                 : ""
                           }`}
                         >
-                          {day}
-                        </Text>
-                      </TouchableOpacity>
+                          <Text
+                            className={`font-proximanova-regular ${
+                              isToday(day)
+                                ? "text-white font-proximanova-semibold"
+                                : isHoliday(day)
+                                  ? "text-red-500"
+                                  : "text-gray-800"
+                            }`}
+                          >
+                            {day}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
                     ))}
                   </View>
                 </View>
@@ -220,7 +223,7 @@ const UserCalenderShidulModal = ({ visible, onClose }: any) => {
               {/* MONTH VIEW */}
               {viewMode === "month" && (
                 <View className="flex-row flex-wrap justify-between pb-5">
-                  {months.map((month: any, index: any) => (
+                  {months.map((month, index) => (
                     <TouchableOpacity
                       key={month}
                       onPress={() => handleMonthSelect(index)}
@@ -247,7 +250,7 @@ const UserCalenderShidulModal = ({ visible, onClose }: any) => {
               {/* YEAR VIEW */}
               {viewMode === "year" && (
                 <View className="flex-row flex-wrap justify-between pb-5">
-                  {years.map((year: any) => (
+                  {years.map((year) => (
                     <TouchableOpacity
                       key={year}
                       onPress={() => handleYearSelect(year)}
