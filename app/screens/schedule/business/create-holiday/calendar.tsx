@@ -206,7 +206,7 @@ const Calendar = () => {
 
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* calendar */}
-          <View className="p-4">
+          <View className="my-4 w-[353px] mx-auto">
             {/* Header */}
             <View>
               {/* Days of Week */}
@@ -214,7 +214,7 @@ const Calendar = () => {
                 {daysOfWeek.map((day, index) => (
                   <Text
                     key={index}
-                    className="font-proximanova-semibold text-[#4FB2F3] text-center"
+                    className="font-proximanova-semibold text-[#4FB2F3] w-12 text-center"
                   >
                     {day}
                   </Text>
@@ -227,7 +227,7 @@ const Calendar = () => {
                 {emptyDays.map((_, index) => (
                   <View
                     key={`empty-${index}`}
-                    className="w-9 h-9 mx-1 my-2.5 items-center justify-center rounded-full"
+                    className="w-9 h-9 mx-2.5 my-2.5 items-center justify-center rounded-full"
                   />
                 ))}
 
@@ -235,7 +235,7 @@ const Calendar = () => {
                 {daysInMonth.map((day) => (
                   <TouchableOpacity
                     key={day}
-                    className={`w-9 h-9 mx-1 my-2.5 items-center justify-center rounded-full ${
+                    className={`w-9 h-9 mx-2.5 my-2.5 items-center justify-center rounded-full ${
                       isToday(day)
                         ? "bg-blue-500"
                         : isSelected(day)

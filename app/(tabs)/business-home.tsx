@@ -5,6 +5,7 @@ import BusinessProfile from "@/components/layout/BusinessProfile";
 import BusinessSummary from "@/components/layout/BusinessSummary";
 import FindNewJob from "@/components/layout/FindNewJob";
 import JoinCollegue from "@/components/layout/JoinCollegue";
+import PerformanceTrend from "@/components/layout/PerformanceTrend";
 import ProfileProgress from "@/components/layout/ProfileProgress";
 import QuickAction from "@/components/layout/QuickAction";
 import TodayShiftsSummary from "@/components/layout/TodayShiftsSummary";
@@ -64,6 +65,9 @@ const BusinessHome = () => {
             background={require("@/assets/images/chessboard-bg.svg")}
           />
         </View>
+
+        {/* performance trend */}
+        <PerformanceTrend className="mt-7" />
 
         {/* quick actions */}
         <QuickAction className="mt-7" />
