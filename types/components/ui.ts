@@ -213,6 +213,7 @@ export interface NoTaskCardProps {
 
 export interface ShiftHeaderProps {
   setShowModal: Dispatch<SetStateAction<boolean>>;
+  displayContent?: any;
 }
 
 export interface WorkShiftCardProps {

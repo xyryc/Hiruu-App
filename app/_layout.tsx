@@ -1,9 +1,9 @@
 import ErrorBoundary from "@/components/ui/error/ErrorBoundary";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import "@/utils/i18n";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import "react-native-reanimated";
-import "../utils/i18n";
 import "./global.css";
 import SplashScreen from "./splash";
 

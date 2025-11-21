@@ -204,17 +204,17 @@ const Calendar = () => {
           }
         />
 
-        <ScrollView className=" mt-5" showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false}>
           {/* calendar */}
-          <View className=" p-4">
+          <View className="p-4">
             {/* Header */}
-            <View className="">
+            <View>
               {/* Days of Week */}
-              <View className="flex-row justify-around mt-4 mb-2 ">
+              <View className="flex-row justify-around">
                 {daysOfWeek.map((day, index) => (
                   <Text
                     key={index}
-                    className="font-proximanova-semibold text-[#4FB2F3] w-12 text-center"
+                    className="font-proximanova-semibold text-[#4FB2F3] text-center"
                   >
                     {day}
                   </Text>
@@ -222,17 +222,20 @@ const Calendar = () => {
               </View>
 
               {/* Calendar Grid */}
-              <View className="flex-row flex-wrap">
+              <View className="flex-row flex-wrap mt-4">
                 {/* Empty Days */}
                 {emptyDays.map((_, index) => (
-                  <View key={`empty-${index}`} className="w-14 h-14 m-1" />
+                  <View
+                    key={`empty-${index}`}
+                    className="w-9 h-9 mx-1 my-2.5 items-center justify-center rounded-full"
+                  />
                 ))}
 
                 {/* Days in Month */}
                 {daysInMonth.map((day) => (
                   <TouchableOpacity
                     key={day}
-                    className={`w-14 h-14 m-1  items-center justify-center rounded-full ${
+                    className={`w-9 h-9 mx-1 my-2.5 items-center justify-center rounded-full ${
                       isToday(day)
                         ? "bg-blue-500"
                         : isSelected(day)
@@ -241,13 +244,7 @@ const Calendar = () => {
                     }`}
                   >
                     <Text
-                      className={`font-proximanova-regular ${
-                        isToday(day)
-                          ? "text-white font-bold"
-                          : isHoliday(day)
-                            ? "text-red-500"
-                            : ""
-                      }`}
+                      className={`${isToday(day) ? "text-white font-proximanova-semibold" : isHoliday(day) ? "text-red-500" : ""}`}
                     >
                       {day}
                     </Text>

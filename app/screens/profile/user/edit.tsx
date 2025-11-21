@@ -9,7 +9,7 @@ import DatePicker from "@/components/ui/inputs/DatePicker";
 import EditBadgeModal from "@/components/ui/modals/EditBadgeModal";
 import InterestModal from "@/components/ui/modals/InterestModal";
 import {
-  Foundation,
+  FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
   SimpleLineIcons,
@@ -25,28 +25,41 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const Edit = () => {
   const [isBadgeVisible, setIsBadgeVisible] = useState(false);
   const [visible, setVisible] = useState(false);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const insets = useSafeAreaInsets();
+
   return (
     <SafeAreaView
       className="flex-1 bg-white"
       edges={["left", "right", "bottom"]}
     >
-      <View className="bg-[#E5F4FD] rounded-b-2xl pt-10 px-4">
-        <ScreenHeader
-          className="my-4"
-          onPressBack={() => router.back()}
-          title="Edit Profile"
-          titleClass="text-primary dark:text-dark-primary"
-          iconColor={isDark ? "#fff" : "#111"}
-        />
-      </View>
-      <ScrollView className="bg-white">
+      <ScreenHeader
+        style={{
+          paddingTop: insets.top + 10,
+        }}
+        className="bg-[#E5F4FD] rounded-b-2xl px-4 pb-6"
+        onPressBack={() => router.back()}
+        title="Edit Profile"
+        titleClass="text-primary dark:text-dark-primary"
+        iconColor={isDark ? "#fff" : "#111"}
+      />
+
+      <ScrollView
+        className="bg-white"
+        contentContainerStyle={{
+          paddingTop: 14,
+          paddingBottom: 40,
+        }}
+      >
         <View className="mx-5">
           <View className="flex-row justify-between items-center mb-2.5">
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
@@ -66,12 +79,7 @@ const Edit = () => {
           <View className="mx-5 flex-row justify-between mt-8 items-center">
             <View className="flex-row gap-2.5 items-center">
               <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row items-center justify-center ">
-                <MaterialCommunityIcons
-                  className="rotate-180"
-                  name="medal-outline"
-                  size={16}
-                  color="black"
-                />
+                <FontAwesome6 name="id-badge" size={14} color="black" />
               </View>
               <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
                 Badge
@@ -94,7 +102,11 @@ const Edit = () => {
           <View className="flex-row justify-between items-center mx-5 mt-8 ">
             <View className="flex-row gap-2.5">
               <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
-                <Foundation name="clipboard" size={16} color="black" />
+                <MaterialCommunityIcons
+                  name="file-document-check-outline"
+                  size={16}
+                  color="black"
+                />
               </View>
               <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
                 Short Intro
@@ -117,7 +129,11 @@ const Edit = () => {
           <View className="flex-row justify-between items-center mx-5 mt-8 ">
             <View className="flex-row gap-2.5">
               <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
-                <Foundation name="clipboard" size={16} color="black" />
+                <MaterialCommunityIcons
+                  name="file-document-check-outline"
+                  size={16}
+                  color="black"
+                />
               </View>
               <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
                 Experience
@@ -212,7 +228,11 @@ const Edit = () => {
           <View className="flex-row justify-between items-center mx-5 mt-8 ">
             <View className="flex-row gap-2.5">
               <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
-                <Foundation name="clipboard" size={16} color="black" />
+                <MaterialCommunityIcons
+                  name="file-document-check-outline"
+                  size={16}
+                  color="black"
+                />
               </View>
               <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
                 Interests
@@ -263,7 +283,6 @@ const Edit = () => {
 
         <InterestModal visible={visible} onClose={() => setVisible(false)} />
         {/* Contact Us On */}
-
         <View className="flex-row justify-between items-center mx-5 mt-8 ">
           <View className="flex-row gap-2.5">
             <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">

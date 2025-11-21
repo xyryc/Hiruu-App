@@ -140,10 +140,14 @@ const WeeklySchedule = ({ business }: { business?: boolean }) => {
     <View className="bg-white dark:bg-dark-background rounded-xl p-4 border border-[#EEEEEE]">
       {business && (
         <View className="flex-row justify-between mb-5 rounded-xl">
-          <Text>Available Working Days</Text>
+          <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
+            Available Working Days
+          </Text>
+
           <SimpleLineIcons name="arrow-down" size={16} color="black" />
         </View>
       )}
+
       {Object.keys(schedule).map((day) => renderDayRow(day))}
     </View>
   );

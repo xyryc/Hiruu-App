@@ -37,7 +37,11 @@ const ShiftSchedule = () => {
         displayContent={displayContent}
       />
 
-      <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
+      <ScrollView
+        className="flex-1 px-5"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
         {shifts.map((shift, index) => (
           <ShiftItem
             key={shift.id}
