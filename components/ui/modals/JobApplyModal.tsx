@@ -58,7 +58,7 @@ const JobApplyModal = ({ visible, onClose }: any) => {
   const handleBackToJobBoard = () => {
     handleDone();
     setShowDetails(false);
-    router.replace("/(user)/(tabs)/jobs");
+    router.replace("/(tabs)/user-jobs");
   };
 
   return (
@@ -69,7 +69,7 @@ const JobApplyModal = ({ visible, onClose }: any) => {
       onRequestClose={handleDone}
     >
       <BlurView intensity={80} tint="dark" className="flex-1 justify-end">
-        <View className="bg-white rounded-t-3xl max-h-[45%]">
+        <View className="bg-white rounded-t-3xl">
           {/* Close Button */}
           <View className="absolute -top-24 inset-x-0 items-center pt-4 pb-2">
             <TouchableOpacity onPress={handleDone}>
@@ -154,7 +154,10 @@ const JobApplyModal = ({ visible, onClose }: any) => {
               transform: [{ translateX: slideAnim }],
             }}
           >
-            <SafeAreaView edges={["bottom"]} className="flex-1 px-5 py-7">
+            <SafeAreaView
+              edges={["bottom"]}
+              className="flex-1 px-5 py-7 justify-center"
+            >
               <Image
                 source={require("@/assets/images/complete.svg")}
                 style={{
