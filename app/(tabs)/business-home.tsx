@@ -53,7 +53,7 @@ const BusinessHome = () => {
         <BusinessProfile className="mt-7" />
 
         {/* See Employee rank on board */}
-        <View className="mx-4 mt-8">
+        <View className="mx-4 mt-7">
           <ActionCard
             title="See Employee rank on board"
             buttonTitle="View"
@@ -64,6 +64,7 @@ const BusinessHome = () => {
             background={require("@/assets/images/chessboard-bg.svg")}
           />
         </View>
+
         {/* quick actions */}
         <QuickAction className="mt-7" />
 

@@ -5,18 +5,20 @@ import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 
 const AttendanceSummary = ({ className }: { className: string }) => {
   const screenWidth = Dimensions.get("window").width;
+
   return (
     <View className={className}>
       <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
         Today’s Attendance Summary
       </Text>
+
       <View className="relative mt-4">
         {/* background */}
         <Image
           source={require("@/assets/images/AttendanceSummary.svg")}
           style={{
             width: screenWidth * 0.92,
-            height: 148,
+            height: 141,
           }}
           contentFit="contain"
         />
@@ -44,12 +46,12 @@ const AttendanceSummary = ({ className }: { className: string }) => {
           <Image
             source={require("@/assets/images/dotted-line.svg")}
             contentFit="contain"
-            style={{ width: 350, height: 2, marginTop: 2 }}
+            style={{ width: "100%", height: 1, marginTop: 2 }}
           />
 
           <TouchableOpacity className="flex-row justify-between items-center p-4 ">
             <View className="flex-row items-center  gap-1.5">
-              <View className="h-2 w-2 rounded-full bg-[#F34F4F]" />
+              <View className="h-2 w-2 rounded-full bg-[#F3934F]" />
               <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
                 Late Comers Today
               </Text>
@@ -69,7 +71,7 @@ const AttendanceSummary = ({ className }: { className: string }) => {
           <Image
             source={require("@/assets/images/dotted-line.svg")}
             contentFit="contain"
-            style={{ width: 350, height: 2 }}
+            style={{ width: "100%", height: 1 }}
           />
 
           <TouchableOpacity className="flex-row justify-between items-center p-4 ">
