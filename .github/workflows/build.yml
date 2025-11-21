@@ -1,70 +1,70 @@
-name: Build Android App with Gradle
+name: Build Android APK
 
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: "Build type"
+        required: true
+        default: "release"
+        type: choice
+        options:
+          - release
+          - debug
+
+env:
+  BUILD_TYPE: ${{ github.event.inputs.build_type || 'release' }}
 
 jobs:
   build:
+    name: Build APK
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      # Set up Node.js environment
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: "14" # You can specify the version you use for your app
+          node-version: "18"
+          cache: "npm"
 
-      # Install dependencies
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
       - name: Install dependencies
-        run: |
-          npm install -g expo-cli
-          npm install
+        run: npm ci
 
-      # Set up JDK 11 (required for Gradle and Android build)
-      - name: Set up JDK 11
-        uses: actions/setup-java@v2
-        with:
-          java-version: "11"
-
-      # Install Gradle (if not bundled with the project)
-      - name: Install Gradle
-        run: |
-          wget https://services.gradle.org/distributions/gradle-7.0-bin.zip
-          unzip gradle-7.0-bin.zip
-          sudo mv gradle-7.0 /opt/gradle
-          sudo ln -s /opt/gradle/bin/gradle /usr/bin/gradle
-          gradle -v  # Verify Gradle is installed
-
-      # Set up Android SDK (required for building APK)
-      - name: Set up Android SDK
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jdk
-          sudo apt-get install -y unzip wget
-          wget https://dl.google.com/android/repository/commandlinetools-linux-6609375_latest.zip
-          unzip commandlinetools-linux-6609375_latest.zip -d $HOME/android-sdk
-          echo "export ANDROID_SDK_ROOT=$HOME/android-sdk" >> ~/.bashrc
-          echo "export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/bin" >> ~/.bashrc
-          source ~/.bashrc
-          yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
-
-      # Build APK using Gradle
       - name: Build APK
         run: |
-          cd android
-          ./gradlew clean
-          ./gradlew assembleRelease
+          if [ "$BUILD_TYPE" = "release" ]; then
+            npx expo prebuild --platform android --clean
+            cd android
+            ./gradlew assembleRelease
+          else
+            npx expo prebuild --platform android --clean
+            cd android
+            ./gradlew assembleDebug
+          fi
 
-      # Upload the APK as artifact
-      - name: Upload APK as artifact
-        uses: actions/upload-artifact@v2
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: android-apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+          name: app-${{ env.BUILD_TYPE }}-apk
+          path: |
+            android/app/build/outputs/apk/${{ env.BUILD_TYPE }}/*.apk
+          retention-days: 30
+
+      - name: Get APK info
+        run: |
+          echo "Build completed successfully!"
+          echo "Build type: $BUILD_TYPE"
+          echo "APK files generated:"
+          find android/app/build/outputs/apk/$BUILD_TYPE -name "*.apk" -exec ls -la {} \;
