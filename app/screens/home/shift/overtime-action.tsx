@@ -277,7 +277,7 @@ const OverTimeRequestAction = () => {
         </View>
       </View>
 
-      <View className=" flex-1 bg-white dark:bg-dark-background">
+      <View className=" flex-1 bg-white dark:bg-dark-background ">
         {/* Search Bar */}
         <View className="flex-row items-center border border-b mt-5 rounded-xl pl-3 p-1 border-[#EEEEEE] mx-5">
           <EvilIcons name="search" size={24} color="black" />
