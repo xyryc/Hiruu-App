@@ -3,7 +3,7 @@ name: Build Android App with Gradle
 on:
   push:
     tags:
-      - "v*" # This will trigger the workflow on any tag starting with "v" (e.g., v1.0, v2.0.1)
+      - "v*.*.*"
 
 jobs:
   build:
