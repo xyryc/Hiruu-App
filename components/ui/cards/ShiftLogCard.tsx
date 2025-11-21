@@ -35,8 +35,8 @@ const ShiftLogCard = () => {
         </View>
 
         <View className="border-b border-secondary w-32 relative">
-          <View className="absolute -top-0.5 left-0 h-1 w-1 bg-secondary rounded-full" />
-          <View className="absolute -top-0.5 right-0 h-1 w-1 bg-secondary rounded-full" />
+          <View className="absolute -top-[1.5px] left-0 h-1 w-1 bg-secondary rounded-full" />
+          <View className="absolute -top-[1.5px] right-0 h-1 w-1 bg-secondary rounded-full" />
         </View>
 
         <View>

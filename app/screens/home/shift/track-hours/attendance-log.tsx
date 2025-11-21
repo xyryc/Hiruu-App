@@ -1,13 +1,17 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import AttendanceLogCard from "@/components/ui/cards/AttendanceLogCard";
+import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { ScrollView, Text, View } from "react-native";
+import { useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const AttendanceLog = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const [isModal, setIsModal] = useState(false);
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -15,12 +19,19 @@ const AttendanceLog = () => {
     >
       {/* Header */}
       <ScreenHeader
-        className="mx-5 rounded-3xl"
+        className="mx-5 my-2.5"
         onPressBack={() => router.back()}
         title="Attendance Log"
         titleClass="text-primary dark:text-dark-primary"
         iconColor={isDark ? "#fff" : "#111"}
-        components={<></>}
+        components={
+          <TouchableOpacity
+            className="w-10 h-10 justify-center items-center bg-[#F5F5F5] rounded-full"
+            onPress={() => setIsModal(true)}
+          >
+            <Feather name="filter" size={18} color="#787d7d" />
+          </TouchableOpacity>
+        }
       />
       <View className="mx-5 mt-8 ">
         <ScrollView

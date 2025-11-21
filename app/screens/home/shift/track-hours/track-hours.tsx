@@ -4,6 +4,7 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ActionCard from "@/components/ui/cards/ActionCard";
 import ShiftLogCard from "@/components/ui/cards/ShiftLogCard";
 import TaskCard from "@/components/ui/cards/TaskCard";
+import WorkHoursChart from "@/components/ui/cards/WorkHourChart";
 import TrackHoursFilter from "@/components/ui/modals/TrackHoursFilter";
 import {
   Entypo,
@@ -24,6 +25,7 @@ const TrackHours = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const [isModal, setIsModal] = useState(false);
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -31,24 +33,27 @@ const TrackHours = () => {
     >
       {/* Header */}
       <ScreenHeader
-        className="mx-5 rounded-3xl"
+        className="mx-5 my-2.5"
         onPressBack={() => router.back()}
         title="Track Hours"
         titleClass="text-primary dark:text-dark-primary"
         iconColor={isDark ? "#fff" : "#111"}
         components={
-          <TouchableOpacity onPress={() => setIsModal(true)}>
-            <Feather
-              className="p-2 bg-[#F5F5F5] rounded-full"
-              name="filter"
-              size={24}
-              color="black"
-            />
+          <TouchableOpacity
+            className="w-10 h-10 justify-center items-center bg-[#F5F5F5] rounded-full"
+            onPress={() => setIsModal(true)}
+          >
+            <Feather name="filter" size={18} color="#787d7d" />
           </TouchableOpacity>
         }
       />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="mx-5 mt-8">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 40,
+        }}
+      >
+        <View className="mx-5">
           <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
             This Month’s Overview
           </Text>
@@ -83,11 +88,9 @@ const TrackHours = () => {
 
                 {/* Text Labels */}
                 <Text className="mt-1.5 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                  {" "}
                   Total Hours
                 </Text>
                 <Text className="mt-2.5 font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
-                  {" "}
                   32h 45m
                 </Text>
               </View>
@@ -100,11 +103,9 @@ const TrackHours = () => {
 
                 {/* Text Labels */}
                 <Text className="mt-1.5 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                  {" "}
                   Total Hours
                 </Text>
                 <Text className="mt-2.5 font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
-                  {" "}
                   32h 45m
                 </Text>
               </View>
@@ -115,7 +116,7 @@ const TrackHours = () => {
               <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
                 Status:
               </Text>
-              <StatusBadge status="accepted" label="On Track" />
+              <StatusBadge status="accepted" label="On Track " />
               <StatusBadge status="upcoming" label="Below Target" />
             </View>
           </View>
@@ -135,6 +136,7 @@ const TrackHours = () => {
             className="mt-4"
           />
 
+          {/* missing log activity */}
           <View className="flex-row justify-between mt-8">
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
               Missing log Activities
@@ -146,8 +148,9 @@ const TrackHours = () => {
               See All
             </Link>
           </View>
+
           <ScrollView
-            className="mb-7 mt-4"
+            className="mt-4"
             horizontal={true}
             showsHorizontalScrollIndicator={false}
           >
@@ -194,6 +197,16 @@ const TrackHours = () => {
             />
           </ScrollView>
 
+          {/* work pattern */}
+          <View className="mt-7">
+            <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary mb-6">
+              Your Work Pattern
+            </Text>
+
+            <WorkHoursChart />
+          </View>
+
+          {/* token */}
           <View className="mt-8">
             <ActionCard
               title="Shows  Earned  Tokens  This  Week !"
