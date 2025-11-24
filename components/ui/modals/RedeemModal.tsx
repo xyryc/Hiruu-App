@@ -2,8 +2,7 @@ import { AntDesign, Entypo, FontAwesome6 } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import React, { useState } from "react";
-import { Modal, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import PrimaryButton from "../buttons/PrimaryButton";
 import BusinessDropdown from "../dropdown/BusinessDropdown";
 
@@ -74,7 +73,12 @@ const RedeemModal = ({ visible, onClose, data, namePlate }: any) => {
           </View>
 
           {/* Modal Content */}
-          <SafeAreaView edges={["bottom"]} className="px-5 py-7">
+          <ScrollView
+            className="h-[70%] px-5 py-7"
+            contentContainerStyle={{
+              paddingBottom: 80,
+            }}
+          >
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary text-center">
               {" "}
               Ready to Redeem?{" "}
@@ -93,7 +97,7 @@ const RedeemModal = ({ visible, onClose, data, namePlate }: any) => {
               </View>
             </View>
 
-            <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary text-center px-9 mt-2.5">
+            <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary text-center mt-2.5">
               {" "}
               This action will use your tokens to unlock the selected reward.
               Please confirm to proceed.
@@ -146,6 +150,7 @@ const RedeemModal = ({ visible, onClose, data, namePlate }: any) => {
                 />
               </View>
             )}
+
             <View className="flex-row gap-1.5 items-center">
               <FontAwesome6
                 name="crown"
@@ -157,6 +162,7 @@ const RedeemModal = ({ visible, onClose, data, namePlate }: any) => {
                 {data.listitle}
               </Text>
             </View>
+
             <View className="bg-white rounded-lg ">
               <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary mt-1.5">
                 {" "}
@@ -242,8 +248,9 @@ const RedeemModal = ({ visible, onClose, data, namePlate }: any) => {
                 </>
               )}
             </View>
+
             <PrimaryButton title="Confirm & Apply" className="mt-5" />
-          </SafeAreaView>
+          </ScrollView>
         </View>
       </BlurView>
     </Modal>

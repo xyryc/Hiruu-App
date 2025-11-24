@@ -266,7 +266,10 @@ const UserRewards = () => {
 
               {/* content */}
               <View className="absolute top-0 left-0 w-full">
-                <TouchableOpacity className="flex-row justify-between items-center p-4">
+                <TouchableOpacity
+                  onPress={() => router.push("/screens/rewards/redeem-tokens")}
+                  className="flex-row justify-between items-center p-4"
+                >
                   <View className="flex-row  gap-1.5">
                     <FontAwesome6 name="crown" size={15} color="#4FB2F3" />
                     <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -280,7 +283,10 @@ const UserRewards = () => {
                   />
                 </TouchableOpacity>
 
-                <TouchableOpacity className="flex-row justify-between items-center p-4">
+                <TouchableOpacity
+                  onPress={() => router.push("/screens/rewards/redeem-tokens")}
+                  className="flex-row justify-between items-center p-4"
+                >
                   <View className="flex-row  gap-1.5">
                     <MaterialCommunityIcons
                       name="gift"
@@ -298,7 +304,10 @@ const UserRewards = () => {
                   />
                 </TouchableOpacity>
 
-                <TouchableOpacity className="flex-row justify-between items-center p-4">
+                <TouchableOpacity
+                  onPress={() => router.push("/screens/rewards/redeem-tokens")}
+                  className="flex-row justify-between items-center p-4"
+                >
                   <View className="flex-row  gap-1.5">
                     <Ionicons name="person" size={15} color="#4FB2F3" />
                     <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -312,7 +321,10 @@ const UserRewards = () => {
                   />
                 </TouchableOpacity>
 
-                <TouchableOpacity className="flex-row justify-between items-center p-4">
+                <TouchableOpacity
+                  onPress={() => router.push("/screens/rewards/redeem-tokens")}
+                  className="flex-row justify-between items-center p-4"
+                >
                   <View className="flex-row  gap-1.5">
                     <Ionicons
                       name="person-circle-outline"
@@ -330,7 +342,10 @@ const UserRewards = () => {
                   />
                 </TouchableOpacity>
 
-                <TouchableOpacity className="flex-row justify-between items-center p-4">
+                <TouchableOpacity
+                  onPress={() => router.push("/screens/rewards/redeem-tokens")}
+                  className="flex-row justify-between items-center p-4"
+                >
                   <View className="flex-row  gap-1.5">
                     <FontAwesome name="map-signs" size={15} color="#4FB2F3" />
                     <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
