@@ -37,31 +37,6 @@ const Nameplate = () => {
   const [isActive, setIsActive] = useState("limited time");
 
   return (
-    // <SafeAreaView className="flex-1 bg-[#E5F4FD] dark:bg-dark-background">
-    //   {/* Header */}
-    //   <ScreenHeader
-    //     onPressBack={() => router.back()}
-    //     className="px-5 pb-4 pt-2.5 rounded-b-3xl bg-[#E5F4FD] overflow-hidden"
-    //     title="Buy Nameplate"
-    //     titleClass="text-primary dark:text-dark-primary"
-    //     iconColor={isDark ? "#fff" : "#111111"}
-    //     components={
-    //       <View className="flex-row items-center">
-    //         <Image
-    //           source={require("@/assets/images/hiruu-coin.svg")}
-    //           style={{
-    //             width: 32,
-    //             height: 32,
-    //           }}
-    //           contentFit="contain"
-    //         />
-    //         <View className="px-4 py-2 bg-white -ml-3 -z-10 rounded-r-[40px]">
-    //           <Text className="text-sm font-proximanova-semibold">540</Text>
-    //         </View>
-    //       </View>
-    //     }
-    //   />
-
     <SafeAreaView
       className="flex-1 bg-white"
       edges={["left", "right", "bottom"]}
@@ -93,7 +68,7 @@ const Nameplate = () => {
           {tabs.map((tab, index) => (
             <TouchableOpacity
               key={index}
-              className={`w-1/3   pb-2 ${isActive === tab ? "border-[#11293A] border-b-2" : "border-b-hairline"}`}
+              className={`w-1/3 pb-2 ${isActive === tab ? "border-[#11293A] border-b-2" : "border-b-hairline"}`}
               onPress={() => setIsActive(tab)}
             >
               <Text
@@ -107,8 +82,11 @@ const Nameplate = () => {
       </View>
 
       <ScrollView
-        showsVerticalScrollIndicator={false}
         className="bg-white px-5"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 40,
+        }}
       >
         <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-8">
           Note: Premium Required: Only premium users can use nameplates.
@@ -118,14 +96,6 @@ const Nameplate = () => {
         <TouchableOpacity onPress={modalHandle} className="mt-8">
           <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
             Caffeine Commander
-          </Text>
-
-          <LimitedNamePlateCard variant="variant1" />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={modalHandle} className="mt-5 border">
-          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
-            Checkout Champion
           </Text>
 
           <LimitedNamePlateCard variant="variant2" />
@@ -192,7 +162,15 @@ const Nameplate = () => {
             Flash Delivery
           </Text>
 
-          <LimitedNamePlateCard variant="variant10" />
+          <LimitedNamePlateCard variant="variant1" />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={modalHandle} className="mt-5">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-2.5">
+            Forklift Fury
+          </Text>
+
+          <LimitedNamePlateCard variant="variant11" />
         </TouchableOpacity>
       </ScrollView>
 

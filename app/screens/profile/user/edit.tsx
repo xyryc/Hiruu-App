@@ -65,7 +65,9 @@ const Edit = () => {
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
               Your Nameplate
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push("/screens/profile/nameplate-options")}
+            >
               <Text className="font-proximanova-semibold text-sm text-[#4FB2F3] underline">
                 Edit
               </Text>

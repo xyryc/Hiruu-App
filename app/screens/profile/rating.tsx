@@ -2,14 +2,12 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import RatingBanner from "@/components/ui/cards/RatingBanner";
 import RatingCard from "@/components/ui/cards/RatingCard";
-import RatingStar from "@/components/ui/cards/RatingStar";
 import RatingBar from "@/components/ui/inputs/RatingBar";
 import RatingStarModal from "@/components/ui/modals/RatingStarModal";
-import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Rating = () => {
@@ -27,7 +25,12 @@ const Rating = () => {
       className="flex-1 bg-white dark:bg-dark-background"
       edges={["bottom", "left", "right", "top"]}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 80,
+        }}
+      >
         {/* Header */}
         <ScreenHeader
           onPressBack={() => router.back()}

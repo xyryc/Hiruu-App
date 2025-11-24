@@ -16,4 +16,6 @@ export interface NamePlateCardProps {
 
 export interface LimitedNamePlateCardProps {
   variant: string;
+  onPress?: (event: GestureResponderEvent) => void;
+  isSelected: boolean; // Add this
 }
