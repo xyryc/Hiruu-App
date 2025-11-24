@@ -44,16 +44,9 @@ const ShiftDetails = () => {
 
             <TouchableOpacity
               onPress={() => router.push("/screens/home/qr-scanner")}
-              className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] rounded-full p-2"
+              className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] w-10 h-10 justify-center items-center rounded-full"
             >
-              <Image
-                source={require("@/assets/images/scan.svg")}
-                style={{
-                  width: 24,
-                  height: 24,
-                }}
-                contentFit="contain"
-              />
+              <Ionicons name="qr-code-outline" size={16} color="black" />
             </TouchableOpacity>
           </View>
         }
@@ -63,7 +56,7 @@ const ShiftDetails = () => {
         className="mt-2.5 mx-5"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 40,
+          paddingBottom: 80,
         }}
       >
         {/* timer */}
@@ -292,7 +285,7 @@ const ShiftDetails = () => {
 
       <View className="absolute bottom-0 items-center left-0 right-0 mx-5 py-5 bg-white dark:bg-dark-background">
         <PrimaryButton
-          title="Submit shift Summary"
+          title="Submit Shift Summary"
           onPress={() => router.push("./summary")}
         />
       </View>

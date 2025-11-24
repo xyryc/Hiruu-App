@@ -1,5 +1,11 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import { EvilIcons, Feather, SimpleLineIcons } from "@expo/vector-icons";
+import {
+  Feather,
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+  SimpleLineIcons,
+} from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
@@ -17,22 +23,30 @@ const LeaderboardInfo = () => {
     className,
   }: any) => {
     return (
-      <View className={`flex-row gap-2.5 ${className || ""}`}>
+      <View
+        className={`flex-row gap-2.5 border-b border-[#EEEEEE] pb-2.5 ${className || ""}`}
+      >
         <View className="border border-[#EEEEEE] h-10 w-10 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
           {icon || <SimpleLineIcons name="clock" size={18} color="black" />}
         </View>
-        <View className="flex-1">
+
+        <View className="flex-1 jusce">
           {/* Title and Points */}
-          <View className="flex-row justify-between mt-2">
-            <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+          <View className="flex-row  mt-2">
+            <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary flex-1">
               {title || "Be On Time"}
             </Text>
-            <View className="border border-[#4FB2F34D] rounded-[30px] py-1.5 px-2 bg-[#4fb2f330]">
-              <Text className="text-[#4FB2F3] font-proximanova-regular text-sm">
-                {point || "+40 Points/month"}
+
+            <View className="border-[0.5px] border-[#3EBF5A4D] rounded-full py-1.5 px-2 bg-[#3EBF5A1A]">
+              <Text
+                className="text-[#3EBF5A] font-proximanova-regular text-sm"
+                numberOfLines={1}
+              >
+                {point}
               </Text>
             </View>
           </View>
+
           {/* Subtitle */}
           <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary ">
             {subtitle || "+2 points for every day you arrive on time"}
@@ -57,7 +71,7 @@ const LeaderboardInfo = () => {
       />
 
       {/* rules */}
-      <ScrollView className="mt-7 mx-5">
+      <ScrollView className="mt-7 mx-5" showsVerticalScrollIndicator={false}>
         {/* rules */}
         <View className="bg-[#E5F4FD] rounded-xl p-4">
           {/* Title */}
@@ -87,54 +101,65 @@ const LeaderboardInfo = () => {
           </View>
         </View>
 
+        {/* how to earn */}
+        <View className="mt-6">
+          <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
+            How to Earn Points
+          </Text>
+          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-1.5">
+            Want to be a Top Performer this month? Here's how you collect points
+            based on your shift activity
+          </Text>
+        </View>
+
         {/* card */}
         <View>
           {renderComponent({
+            icon: <SimpleLineIcons name="clock" size={18} color="black" />,
+            title: "Be On Time",
+            subtitle:
+              "Earn +2 points for every day you arrive on time. Show up consistently and rack up points all month long!",
+            point: "Up to +40 Points/month",
             className: "mt-8",
           })}
           {renderComponent({
-            icon: <EvilIcons name="calendar" size={25} color="black" />,
+            icon: <Ionicons name="calendar-outline" size={18} color="black" />,
             title: "Arrive Early",
-            subtitle: "Show up 10+ minutes early",
-            point: "+1 Point/shift",
+            subtitle:
+              "Show up 10+ minutes early for your shift and earn a small bonus for being proactive.",
+            point: "+1 Point/shift ",
             className: "mt-4",
           })}
           {renderComponent({
-            icon: <Feather name="repeat" size={18} color="black" />,
+            icon: <Feather name="repeat" size={16} color="black" />,
             title: "Cover a Teammate's Shift",
-            subtitle: "Accept and complete a swap request",
+            subtitle:
+              "Step in and cover a shift for a teammate to earn extra points and appreciation. Accept a swap request from teammate.",
             point: "+2 Points/shift",
             className: "mt-4",
           })}
           {renderComponent({
-            icon: <EvilIcons name="star" size={24} color="black" />,
-            title: "Get 5-Star Client Feedback",
+            icon: (
+              <MaterialCommunityIcons
+                name="clock-alert-outline"
+                size={18}
+                color="black"
+              />
+            ),
+            title: "Late Arrival",
             subtitle:
-              "Deliver great service that clients love and rate highly. monthly attendance to earn a consistency",
-            point: "+100 Points",
+              "Running late? You won’t lose points, but you’ll miss out on that day’s punctuality bonus.",
+            point: "0 Points",
             className: "mt-4",
           })}
           {renderComponent({
-            icon: <EvilIcons name="check" size={24} color="black" />,
-            title: "Complete All Assigned Tasks",
+            icon: (
+              <FontAwesome name="calendar-times-o" size={16} color="black" />
+            ),
+            title: "Missed Shift",
             subtitle:
-              "Stay on top of your daily duties to earn extra points. monthly attendance to earn a consistency",
-            point: "+120 Points",
-            className: "mt-4",
-          })}
-          {renderComponent({
-            title: "Complete All Assigned Tasks",
-            subtitle:
-              "Stay on top of your daily duties to earn extra points. monthly attendance to earn a consistency",
-            point: "+120 Points",
-            className: "mt-4",
-          })}
-          {renderComponent({
-            icon: <EvilIcons name="close-o" size={24} color="black" />,
-            title: "No Leave in One Month",
-            subtitle:
-              "Maintain perfect monthly attendance to earn a consistency monthly attendance to earn a consistency bonus.",
-            point: "+180 Points",
+              "Missing a scheduled shift without notice will cost you. Always notify your manager ahead of time.",
+            point: "-4 Points/shift",
             className: "mt-4",
           })}
         </View>

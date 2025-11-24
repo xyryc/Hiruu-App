@@ -1,9 +1,12 @@
 import { FindNewJobProps } from "@/types";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
 import ActionCard from "../ui/cards/ActionCard";
 
 const FindNewJob = ({ className, business }: FindNewJobProps) => {
+  const router = useRouter();
+
   return (
     <View className={`${className} px-4`}>
       <Text className="text-xl font-proximanova-semibold mb-4">
@@ -12,6 +15,7 @@ const FindNewJob = ({ className, business }: FindNewJobProps) => {
 
       {/* job listing card */}
       <ActionCard
+        onPress={() => router.push("/(tabs)/user-jobs")}
         title={
           business
             ? "Need more hands? Post  & receiving applicants!"

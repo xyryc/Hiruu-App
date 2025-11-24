@@ -43,7 +43,7 @@ const TrackHours = () => {
             className="w-10 h-10 justify-center items-center bg-[#F5F5F5] rounded-full"
             onPress={() => setIsModal(true)}
           >
-            <Feather name="filter" size={18} color="#787d7d" />
+            <Feather name="filter" size={16} color="#292D32" />
           </TouchableOpacity>
         }
       />

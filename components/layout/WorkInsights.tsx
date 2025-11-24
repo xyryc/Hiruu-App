@@ -1,4 +1,5 @@
 import businesses from "@/assets/data/businesses.json";
+import userData from "@/assets/data/user.json";
 import { WorkInsightsProps } from "@/types";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -35,6 +36,8 @@ const WorkInsights = ({ className, title }: WorkInsightsProps | any) => {
   };
 
   const displayContent = getDisplayContent();
+
+  const user = userData.user;
 
   return (
     <View className={`${className} px-4`}>
@@ -106,7 +109,7 @@ const WorkInsights = ({ className, title }: WorkInsightsProps | any) => {
       </View>
 
       <StatCardSecondary
-        business={true}
+        business={user.role === "business"}
         background={require("@/assets/images/stats-bg2.svg")}
       />
     </View>

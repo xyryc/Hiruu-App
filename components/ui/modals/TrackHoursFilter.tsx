@@ -1,4 +1,4 @@
-import { Entypo } from "@expo/vector-icons";
+import { EvilIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React, { useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -32,7 +32,7 @@ const TrackHoursFilter = ({ visible, onClose }: any) => {
     },
   ];
 
-  const [isSelectTime, setIsSelectTime] = useState<Number>();
+  const [isSelectTime, setIsSelectTime] = useState<Number>(0);
 
   const handleSelected = (index: number) => {
     setIsSelectTime(index);
@@ -54,7 +54,7 @@ const TrackHoursFilter = ({ visible, onClose }: any) => {
           <View className="absolute -top-24 inset-x-0 items-center pt-4 pb-2">
             <TouchableOpacity onPress={handleDone}>
               <View className="bg-[#000] rounded-full p-2.5">
-                <Entypo name="cross" size={30} color="white" />
+                <EvilIcons name="close" size={30} color="white" />
               </View>
             </TouchableOpacity>
           </View>

@@ -1,6 +1,5 @@
 import { ActionCardProps } from "@/types";
 import { Image } from "expo-image";
-import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import SecondaryButton from "../buttons/SecondaryButton";
@@ -19,10 +18,7 @@ const ActionCard = ({
   onPress,
 }: ActionCardProps) => {
   return (
-    <TouchableOpacity
-      onPressOut={() => router.push("/user-jobs")}
-      className="flex-row justify-between items-center p-4 bg-[#4FB2F3] rounded-[14px]"
-    >
+    <TouchableOpacity className="flex-row justify-between items-center p-4 bg-[#4FB2F3] rounded-[14px]">
       <View className="w-8/12">
         <Text className="text-lg font-proximanova-bold text-white">
           {title}

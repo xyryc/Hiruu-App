@@ -58,7 +58,7 @@ const SwapShiftsRequest = () => {
 
         <View className="mt-4">
           <Text className="font-semibold text-primary dark:text-dark-primary mb-4">
-            Select ({selectedUsers.length}/{users.length})
+            Select ({users.length - selectedUsers.length}/{users.length})
           </Text>
 
           {/* user List */}

@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import AttendanceLogCard from "@/components/ui/cards/AttendanceLogCard";
+import TrackHoursFilter from "@/components/ui/modals/TrackHoursFilter";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -29,7 +30,7 @@ const AttendanceLog = () => {
             className="w-10 h-10 justify-center items-center bg-[#F5F5F5] rounded-full"
             onPress={() => setIsModal(true)}
           >
-            <Feather name="filter" size={18} color="#787d7d" />
+            <Feather name="filter" size={16} color="#292D32" />
           </TouchableOpacity>
         }
       />
@@ -102,6 +103,8 @@ const AttendanceLog = () => {
           </View>
         </ScrollView>
       </View>
+
+      <TrackHoursFilter visible={isModal} onClose={() => setIsModal(false)} />
     </SafeAreaView>
   );
 };

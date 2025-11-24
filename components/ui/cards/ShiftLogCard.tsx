@@ -5,7 +5,7 @@ import { Text, View } from "react-native";
 
 const ShiftLogCard = () => {
   return (
-    <View className=" mt-4 border-hairline border-[#7a6b6b] p-4 rounded-xl">
+    <View className="mt-4 border border-[#EEEEEE] p-4 rounded-xl">
       <View className="flex-row gap-4">
         <Ionicons name="calendar" size={22} color="#4FB2F3" />
         <Text className="font-proximanova-semibold text-base text-primary dark:text-dark-primary">
