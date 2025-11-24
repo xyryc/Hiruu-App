@@ -13,7 +13,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 
 const OverTimeRequestAction = () => {
   const { colorScheme } = useColorScheme();
@@ -146,14 +149,15 @@ const OverTimeRequestAction = () => {
   const renderItem = ({ item }: any) => (
     <View
       key={item.date}
-      className="mx-5 border border-[#EEEEEE] mb-3 rounded-3xl p-4"
+      className="mx-5 border border-[#EEEEEE] mb-3 rounded-[14px] p-4"
     >
       {/* Name */}
-      <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary">
+      <Text className="font-proximanova-bold text-base text-primary dark:text-dark-primary mb-2">
         {item.name}
       </Text>
+
       <View className="flex-row justify-between">
-        <Text className="text-primary dark:text-dark-primary font-proximanova-regular text-sm">
+        <Text className="text-secondary dark:text-dark-secondary font-proximanova-regular text-sm">
           Date:
         </Text>
         <Text className="text-primary dark:text-dark-primary font-proximanova-regular text-sm">
@@ -161,7 +165,7 @@ const OverTimeRequestAction = () => {
         </Text>
       </View>
       <View className="flex-row justify-between">
-        <Text className="text-primary dark:text-dark-primary font-proximanova-regular text-sm">
+        <Text className="text-secondary dark:text-dark-secondary font-proximanova-regular text-sm">
           Overtime Start:
         </Text>
         <Text className="text-primary dark:text-dark-primary font-proximanova-regular text-sm">
@@ -169,7 +173,7 @@ const OverTimeRequestAction = () => {
         </Text>
       </View>
       <View className="flex-row justify-between">
-        <Text className="text-primary dark:text-dark-primary font-proximanova-regular text-sm">
+        <Text className="text-secondary dark:text-dark-secondary font-proximanova-regular text-sm">
           Overtime End:
         </Text>
         <Text className="text-primary dark:text-dark-primary font-proximanova-regular text-sm">
@@ -177,7 +181,7 @@ const OverTimeRequestAction = () => {
         </Text>
       </View>
       <View className="flex-row justify-between">
-        <Text className="text-primary dark:text-dark-primary font-proximanova-regular text-sm">
+        <Text className="text-secondary dark:text-dark-secondary font-proximanova-regular text-sm">
           Reason:
         </Text>
         <Text className="text-primary dark:text-dark-primary font-proximanova-regular text-sm">
@@ -185,7 +189,7 @@ const OverTimeRequestAction = () => {
         </Text>
       </View>
       <View className="flex-row justify-between">
-        <Text className="text-primary dark:text-dark-primary font-proximanova-regular text-sm">
+        <Text className="text-secondary dark:text-dark-secondary font-proximanova-regular text-sm">
           Hotel:
         </Text>
         <Text className="text-primary dark:text-dark-primary font-proximanova-regular text-sm">
@@ -195,18 +199,18 @@ const OverTimeRequestAction = () => {
       <View className=" my-4">
         <Image
           source={require("@/assets/images/dotted-line.svg")}
+          style={{ height: 1, width: "100%" }}
           contentFit="contain"
-          style={{ height: 2, width: 295 }}
         />
       </View>
-      <View className="flex-row justify-between">
-        <View className="flex-row gap-4">
+      <View className="flex-row justify-between items-center">
+        <View className="flex-row gap-2">
           <Image
             source="https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg"
-            contentFit="contain"
-            style={{ height: 30, width: 30 }}
+            style={{ height: 30, width: 30, borderRadius: 999 }}
+            contentFit="cover"
           />
-          <Text className="mt-2 font-proximanova-regular text-placeholder dark:text-dark-placeholder">
+          <Text className="mt-2 text-sm font-proximanova-regular text-placeholder dark:text-dark-placeholder">
             {item.hotel}
           </Text>
         </View>
@@ -235,22 +239,27 @@ const OverTimeRequestAction = () => {
       </View>
     </View>
   );
+
   const pendingData = requests.filter(
     (item) => item.status === "pending"
   ).length;
+
+  const insets = useSafeAreaInsets();
 
   return (
     <SafeAreaView
       className="flex-1 bg-white"
       edges={["left", "right", "bottom"]}
     >
-      <View className="bg-[#E5F4FD] rounded-b-2xl pt-10 px-5">
+      <View className="bg-[#E5F4FD] rounded-b-2xl px-5">
         <ScreenHeader
-          className="my-4"
           onPressBack={() => router.back()}
           title="Overtime Request"
           titleClass="text-primary dark:text-dark-primary"
           iconColor={isDark ? "#fff" : "#111"}
+          style={{
+            paddingTop: insets.top,
+          }}
         />
         {/* Tabs */}
         <View className="flex-row mx-5 mt-4 dark:bg-dark-background">
@@ -267,7 +276,7 @@ const OverTimeRequestAction = () => {
                   {tab}
                 </Text>
                 {selectedTab === tab && (
-                  <View className="bg-[#4FB2F3] px-2 py-1 rounded-full">
+                  <View className="bg-[#4FB2F3] rounded-full w-6 h-6 items-center">
                     <Text className="text-white">{pendingData}</Text>
                   </View>
                 )}
@@ -277,7 +286,7 @@ const OverTimeRequestAction = () => {
         </View>
       </View>
 
-      <View className=" flex-1 bg-white dark:bg-dark-background ">
+      <View className="flex-1 bg-white dark:bg-dark-background ">
         {/* Search Bar */}
         <View className="flex-row items-center border border-b mt-5 rounded-xl pl-3 p-1 border-[#EEEEEE] mx-5">
           <EvilIcons name="search" size={24} color="black" />
@@ -303,12 +312,14 @@ const OverTimeRequestAction = () => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => setFilter(item.toLowerCase())}
-                className={`py-2 px-4 border-1 border-[#EEEEEE] text-white rounded-full ${filter == item.toLowerCase() ? " bg-[#11293A]" : ""}`}
+                className={`mr-2 px-4 py-2 border border-[#EEEEEE] text-white rounded-full ${filter == item.toLowerCase() ? " bg-[#11293A]" : ""}`}
               >
                 <Text
-                  className={`text-center font-proximanova-semibold text-sm ${filter == item.toLowerCase() ? "text-white dark:text-dark-primary" : "dark:text-dark-primary text-primary"}`}
+                  className={`text-center text-sm ${filter == item.toLowerCase() ? "font-proximanova-semibold text-white dark:text-dark-primary" : "dark:text-dark-primary text-primary font-proximanova-regular"}`}
                 >
-                  <Text className="capitalize font-proximanova-semibold text-sm">
+                  <Text
+                    className={`capitalize text-sm ${filter == item.toLowerCase() ? "font-proximanova-semibold" : "font-proximanova-regular"}`}
+                  >
                     {item}
                   </Text>
                   ({getFilterCount(item.toLowerCase())})

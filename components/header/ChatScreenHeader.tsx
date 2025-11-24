@@ -1,14 +1,18 @@
 import { Entypo, Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const ChatScreenHeader = () => {
+  const router = useRouter();
+
   return (
     <View className="bg-white px-4 pt-2.5 pb-5 flex-row items-center justify-between border-b border-[#EEEEEE]">
       <View className="flex-row items-center flex-1">
-        <TouchableOpacity className="mr-3">
+        <TouchableOpacity onPress={() => router.back()} className="mr-3">
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
+
         <Text className="text-lg font-proximanova-semibold text-primary">
           Mohammad Anik
         </Text>

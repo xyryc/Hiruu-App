@@ -1,6 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
+import AutoHideTooltip from "@/components/ui/dropdown/AutoHideTooltip";
 import CoinProgressSlider from "@/components/ui/inputs/CoinProgressSlider";
-import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -13,6 +14,7 @@ const challenges = () => {
   const isDark = colorScheme === "dark";
   const tabs = ["One-Time", "Repeatable"];
   const [isActive, setIsActive] = useState("One-Time");
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-dark-background">
@@ -85,7 +87,13 @@ const challenges = () => {
       </View>
 
       {/* challenges list */}
-      <ScrollView showsVerticalScrollIndicator={false} className="mx-5">
+      <ScrollView
+        className="mx-5"
+        contentContainerStyle={{
+          paddingBottom: 40,
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* 1 */}
         <View className="flex-row gap-4 mt-4">
           <View>
@@ -119,12 +127,18 @@ const challenges = () => {
               <View className="px-4 py-1 bg-[#DDF1FF] -ml-3 -z-10 rounded-r-[40px]">
                 <Text className="text-xs font-proximanova-semibold">10</Text>
               </View>
-              <FontAwesome6
-                name="crown"
-                className="ml-2"
-                size={15}
-                color="#4FB2F3"
-              />
+
+              <AutoHideTooltip
+                message="This challenge only can be done in premium business"
+                duration={3000}
+              >
+                <MaterialCommunityIcons
+                  name="crown"
+                  className="ml-2"
+                  size={20}
+                  color="#4FB2F3"
+                />
+              </AutoHideTooltip>
             </View>
             <View className="mt-3.5 flex-1 flex-row items-center gap-3">
               <View className="flex-1">
@@ -181,12 +195,18 @@ const challenges = () => {
               <View className="px-4 py-1 bg-[#DDF1FF] -ml-3 -z-10 rounded-r-[40px]">
                 <Text className="text-xs font-proximanova-semibold">20</Text>
               </View>
-              <FontAwesome6
-                name="crown"
-                className="ml-2"
-                size={15}
-                color="#4FB2F3"
-              />
+
+              <AutoHideTooltip
+                message="This challenge only can be done in premium business"
+                duration={3000}
+              >
+                <MaterialCommunityIcons
+                  name="crown"
+                  className="ml-2"
+                  size={20}
+                  color="#4FB2F3"
+                />
+              </AutoHideTooltip>
             </View>
             <View className="mt-3.5 flex-1 flex-row items-center gap-3">
               <View className="flex-1">
@@ -243,12 +263,18 @@ const challenges = () => {
               <View className="px-4 py-1 bg-[#DDF1FF] -ml-3 -z-10 rounded-r-[40px]">
                 <Text className="text-xs font-proximanova-semibold">20</Text>
               </View>
-              <FontAwesome6
-                name="crown"
-                className="ml-2"
-                size={15}
-                color="#4FB2F3"
-              />
+
+              <AutoHideTooltip
+                message="This challenge only can be done in premium business"
+                duration={3000}
+              >
+                <MaterialCommunityIcons
+                  name="crown"
+                  className="ml-2"
+                  size={20}
+                  color="#4FB2F3"
+                />
+              </AutoHideTooltip>
             </View>
 
             {/*  rank bord line --  */}
@@ -310,12 +336,18 @@ const challenges = () => {
               <View className="px-4 py-1 bg-[#DDF1FF] -ml-3 -z-10 rounded-r-[40px]">
                 <Text className="text-xs font-proximanova-semibold">20</Text>
               </View>
-              <FontAwesome6
-                name="crown"
-                className="ml-2"
-                size={15}
-                color="#4FB2F3"
-              />
+
+              <AutoHideTooltip
+                message="This challenge only can be done in premium business"
+                duration={3000}
+              >
+                <MaterialCommunityIcons
+                  name="crown"
+                  className="ml-2"
+                  size={20}
+                  color="#4FB2F3"
+                />
+              </AutoHideTooltip>
             </View>
             {/*  rank bord line --  */}
 
@@ -371,12 +403,18 @@ const challenges = () => {
               <View className="px-4 py-1 bg-[#DDF1FF] -ml-3 -z-10 rounded-r-[40px]">
                 <Text className="text-xs font-proximanova-semibold">20</Text>
               </View>
-              <FontAwesome6
-                name="crown"
-                className="ml-2"
-                size={15}
-                color="#4FB2F3"
-              />
+
+              <AutoHideTooltip
+                message="This challenge only can be done in premium business"
+                duration={3000}
+              >
+                <MaterialCommunityIcons
+                  name="crown"
+                  className="ml-2"
+                  size={20}
+                  color="#4FB2F3"
+                />
+              </AutoHideTooltip>
             </View>
             <View className="mt-3.5 flex-1 flex-row items-center gap-3">
               <View className="flex-1">

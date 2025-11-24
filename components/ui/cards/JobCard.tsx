@@ -24,7 +24,7 @@ const JobCard = ({ className, status }: JobCardProps) => {
     <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>
       {/* company name */}
       <TouchableOpacity
-        onPress={() => router.push("/(tabs)/user-profile")}
+        onPress={() => router.push("/screens/jobs/user/profile")}
         className="flex-row gap-2.5"
       >
         <Image

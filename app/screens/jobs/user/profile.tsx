@@ -13,7 +13,9 @@ import {
 import { Image } from "expo-image";
 import React, { useState } from "react";
 import {
+  Alert,
   ScrollView,
+  Share,
   StatusBar,
   Text,
   TouchableOpacity,
@@ -23,6 +25,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const JobProfile = () => {
   const [showModal, setShowModal] = useState(false);
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message:
+          "Check out Mohammad Anik's profile on Hiruu!\nhttps://hiruu.com/profile/mohammad-anik",
+        title: "Mohammad Anik's Profile",
+      });
+    } catch (error) {
+      Alert.alert("Error", "Could not share profile");
+    }
+  };
 
   return (
     <SafeAreaView
@@ -36,6 +50,7 @@ const JobProfile = () => {
         title=""
         components={
           <Ionicons
+            onPress={() => handleShare()}
             className="p-2 bg-white rounded-full"
             name="share-outline"
             size={20}
@@ -95,9 +110,9 @@ const JobProfile = () => {
           {/* about the role */}
           <View className="mt-7">
             <View className="flex-row items-center gap-2">
-              <Ionicons
+              <MaterialCommunityIcons
                 className="p-2 bg-[#E5F4FD] rounded-full"
-                name="clipboard-outline"
+                name="file-document-check-outline"
                 size={18}
                 color="black"
               />
@@ -295,8 +310,8 @@ const JobProfile = () => {
           </View>
 
           <PrimaryButton
-            title="Apply This Job"
             className="mt-7"
+            title="Apply This Job"
             onPress={() => setShowModal(true)}
           />
         </ScrollView>

@@ -14,13 +14,32 @@ import {
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  Share,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const BusinessProfile = () => {
   const [selectedTab, setSelectedTab] = useState("about");
   const [togolIsOn, setTogolIsOn] = useState(false);
   console.log(selectedTab);
+
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message:
+          "Check out Mohammad Anik's profile on Hiruu!\nhttps://hiruu.com/profile/mohammad-anik",
+        title: "Mohammad Anik's Profile",
+      });
+    } catch (error) {
+      Alert.alert("Error", "Could not share profile");
+    }
+  };
 
   return (
     <SafeAreaView
@@ -49,7 +68,10 @@ const BusinessProfile = () => {
               <SimpleLineIcons name="pencil" size={16} color="black" />
             </TouchableOpacity>
 
-            <TouchableOpacity className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center">
+            <TouchableOpacity
+              onPress={() => handleShare()}
+              className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
+            >
               <EvilIcons name="share-apple" size={24} color="black" />
             </TouchableOpacity>
 

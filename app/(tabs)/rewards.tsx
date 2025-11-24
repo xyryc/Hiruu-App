@@ -32,6 +32,7 @@ const UserRewards = () => {
       imageSource: require("@/assets/images/reward/complate-profile.svg"),
       border: "#3EBF5A",
       back: "#ECF9EF",
+      route: "/(setup)/user-setup/progress",
     },
     {
       coin: 20,
@@ -40,6 +41,7 @@ const UserRewards = () => {
       imageSource: require("@/assets/images/reward/refer-friend.svg"),
       border: "#F3934F",
       back: "#FEEFE5",
+      route: "screens/profile/settings/refer",
     },
     {
       coin: 30,
@@ -48,6 +50,7 @@ const UserRewards = () => {
       imageSource: require("@/assets/images/reward/refer-business.svg"),
       border: "#788CFF",
       back: "#788CFF10",
+      route: "screens/profile/settings/refer",
     },
   ];
 
@@ -188,12 +191,14 @@ const UserRewards = () => {
               showsHorizontalScrollIndicator={false}
             >
               {cardData.map((card, index) => (
-                <View
+                <TouchableOpacity
                   key={index}
                   style={{
                     width: screenWidth * 0.3,
                   }}
                   className="border-[#EEEEEE] border p-3 rounded-xl mr-1 items-center"
+                  //@ts-ignore
+                  onPress={() => router.push(card.route)}
                 >
                   <View
                     className="h-[72px] w-[63px] border border-b-[3px] justify-between items-center flex-row rounded-xl"
@@ -239,7 +244,7 @@ const UserRewards = () => {
                       color="#4FB2F3"
                     />
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
             </ScrollView>
 
