@@ -111,7 +111,7 @@ const UserRewards = () => {
 
             <View className="bg-[#4FB2F3] p-4 rounded-2xl mt-8">
               <Text className="font-proximanova-semibold text-lg text-[#FFFFFF]">
-                You've Completed 3 Shifts In A Raw!
+                You've Completed 3 Shifts In A Row!
               </Text>
 
               <View className="flex-row gap-2 mt-3">

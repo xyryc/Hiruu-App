@@ -32,7 +32,7 @@ export default function Step5({
         title="Mobile Verification"
         buttonTitle="Skip"
         className="mt-3"
-        onPress={() => router.push("/(profile-setup)/complete")}
+        onPress={() => router.push("/(setup)/user-setup/complete")}
       />
 
       {/* progress details */}

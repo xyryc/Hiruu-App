@@ -1,26 +1,24 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React from "react";
-import { Dimensions, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 const AttendanceSummary = ({ className }: { className: string }) => {
-  const screenWidth = Dimensions.get("window").width;
-
   return (
     <View className={className}>
       <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
         Today’s Attendance Summary
       </Text>
 
-      <View className="relative mt-4">
+      <View className="relative mt-4 overflow-hidden">
         {/* background */}
         <Image
           source={require("@/assets/images/AttendanceSummary.svg")}
           style={{
-            width: screenWidth * 0.92,
+            width: "100%",
             height: 141,
           }}
-          contentFit="contain"
+          contentFit="fill"
         />
 
         {/* content */}
@@ -43,13 +41,17 @@ const AttendanceSummary = ({ className }: { className: string }) => {
               />
             </View>
           </TouchableOpacity>
+
           <Image
             source={require("@/assets/images/dotted-line.svg")}
+            style={{
+              width: "100%",
+              height: 1,
+            }}
             contentFit="contain"
-            style={{ width: "100%", height: 1, marginTop: 2 }}
           />
 
-          <TouchableOpacity className="flex-row justify-between items-center p-4 ">
+          <TouchableOpacity className="flex-row justify-between items-center p-4">
             <View className="flex-row items-center  gap-1.5">
               <View className="h-2 w-2 rounded-full bg-[#F3934F]" />
               <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -70,8 +72,11 @@ const AttendanceSummary = ({ className }: { className: string }) => {
 
           <Image
             source={require("@/assets/images/dotted-line.svg")}
+            style={{
+              width: "100%",
+              height: 1,
+            }}
             contentFit="contain"
-            style={{ width: "100%", height: 1 }}
           />
 
           <TouchableOpacity className="flex-row justify-between items-center p-4 ">

@@ -37,7 +37,7 @@ export default function Step2({
         title="Profile Photo"
         buttonTitle="Skip"
         className="mt-3"
-        onPress={() => router.push("/(profile-setup)/complete")}
+        onPress={() => router.push("/(setup)/user-setup/complete")}
       />
 
       {/* progress details */}

@@ -26,7 +26,7 @@ const LeaderboardInfo = () => {
       <View
         className={`flex-row gap-2.5 border-b border-[#EEEEEE] pb-2.5 ${className || ""}`}
       >
-        <View className="border border-[#EEEEEE] h-10 w-10 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
+        <View className="border-[0.5px] border-[#11293A1A] h-10 w-10 rounded-full bg-[#EEEEEE] flex-row justify-center items-center">
           {icon || <SimpleLineIcons name="clock" size={18} color="black" />}
         </View>
 
@@ -48,7 +48,7 @@ const LeaderboardInfo = () => {
           </View>
 
           {/* Subtitle */}
-          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary ">
+          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-1.5">
             {subtitle || "+2 points for every day you arrive on time"}
           </Text>
         </View>

@@ -33,7 +33,7 @@ export default function Step3({
         title="Work Experience"
         buttonTitle="Skip"
         className="mt-3"
-        onPress={() => router.push("/(profile-setup)/complete")}
+        onPress={() => router.push("/(setup)/user-setup/complete")}
       />
 
       {/* progress details */}

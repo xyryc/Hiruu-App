@@ -31,7 +31,7 @@ export default function Step4({
         title="Interest"
         buttonTitle="Skip"
         className="mt-3"
-        onPress={() => router.push("/(profile-setup)/complete")}
+        onPress={() => router.push("/(setup)/user-setup/complete")}
       />
 
       {/* progress details */}

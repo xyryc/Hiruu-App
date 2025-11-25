@@ -13,14 +13,14 @@ const TodayShiftsSummary = ({ className }: any) => {
   const teamMembers = ["John", "Jane", "Mike", "Sarah", "Tom"];
   return (
     <LinearGradient
-      colors={["#4FB2F350", "#4FB2F320"]}
+      colors={["#4FB2F320", "#4FB2F310"]}
       style={{
         marginHorizontal: 16,
         borderRadius: 16,
         padding: 15,
         overflow: "hidden",
       }}
-      className="border border-[#4FB2F3] mx-5 mt-8"
+      className="border border-[#4FB2F350] mx-5 mt-8"
     >
       <View className={className}>
         <Text className="text-xl font-proximanova-semibold text-black">
@@ -84,9 +84,10 @@ const TodayShiftsSummary = ({ className }: any) => {
 
         <Image
           source={require("@/assets/images/dotted-line.svg")}
-          contentFit="contain"
-          style={{ height: 2, width: 350, marginVertical: 10 }}
+          style={{ height: 1, width: "100%", marginVertical: 10 }}
+          contentFit="cover"
         />
+
         <PrimaryButton title="View Shift Report" />
       </View>
     </LinearGradient>

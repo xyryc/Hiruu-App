@@ -11,11 +11,14 @@ import QuickAction from "@/components/layout/QuickAction";
 import TodayShiftsSummary from "@/components/layout/TodayShiftsSummary";
 import WorkInsights from "@/components/layout/WorkInsights";
 import ActionCard from "@/components/ui/cards/ActionCard";
+import { useRouter } from "expo-router";
 import React from "react";
 import { ScrollView, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const BusinessHome = () => {
+  const router = useRouter();
+
   return (
     <SafeAreaView
       className="flex-1 bg-white dark:bg-dark-background"
@@ -56,6 +59,7 @@ const BusinessHome = () => {
         {/* See Employee rank on board */}
         <View className="mx-4 mt-7">
           <ActionCard
+            onPress={() => router.push("/screens/home/leaderboard")}
             title="See Employee rank on board"
             buttonTitle="View"
             rightImage={require("@/assets/images/rank.svg")}
