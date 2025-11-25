@@ -1,4 +1,4 @@
-import CountryDropdown from "@/components/test/Ciuntry";
+import CountryDropdown from "@/components/ui/modals/CountryDropdown";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React from "react";

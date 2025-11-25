@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
-import { ToggleButton } from "../ui/buttons/ToggleButton";
 import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { ToggleButton } from "../buttons/ToggleButton";
 
 const NotificationPreferencesInpute = ({
   setIsToggle,

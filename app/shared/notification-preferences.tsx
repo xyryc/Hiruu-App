@@ -1,11 +1,10 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import NotificationPreferencesInpute from "@/components/test/NotificationPreferencesInpute";
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import NotificationPreferencesInpute from "@/components/ui/dropdown/NotificationPreferencesInpute";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const NotificationPreferences = () => {

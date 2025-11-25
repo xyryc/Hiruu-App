@@ -1,9 +1,9 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import CheckButton from "@/components/test/CheckButton";
-import RoleSelector from "@/components/test/RoleSelector";
+import CheckButton from "@/components/ui/buttons/CheckButton";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
 import SearchBar from "@/components/ui/inputs/SearchBar";
+import RoleSelector from "@/components/ui/modals/RoleSelector";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";

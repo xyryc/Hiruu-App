@@ -1,18 +1,18 @@
+import businesses from "@/assets/data/businesses.json";
 import ScreenHeader from "@/components/header/ScreenHeader";
+import BusinessPlanChart from "@/components/ui/badges/PricingPlan";
+import GradientButton from "@/components/ui/buttons/GradientButton";
+import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
+import { FontAwesome6, SimpleLineIcons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import BusinessPlanChart from "@/components/test/PricingPlan";
-import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
-import businesses from "@/assets/data/businesses.json";
-import { FontAwesome6, SimpleLineIcons } from "@expo/vector-icons";
-import { Image } from "expo-image";
-import GradientButton from "@/components/ui/buttons/GradientButton";
 
 const BusinessPlan = () => {
   const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
