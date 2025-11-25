@@ -246,7 +246,7 @@ const NamePlateCard = ({ variant, className }: NamePlateCardProps) => {
             <View className="items-start">
               <View className="flex-row gap-1.5 items-center mb-1.5">
                 <Text className="font-proximanova-semibold text-sm text-primary">
-                  Mohammad Anik
+                  Md Talath Un Nabi Anik
                 </Text>
                 <MaterialIcons name="verified" size={18} color="#4F83F3" />
               </View>

@@ -33,8 +33,8 @@ const BusinessProfile = () => {
     try {
       await Share.share({
         message:
-          "Check out Mohammad Anik's profile on Hiruu!\nhttps://hiruu.com/profile/mohammad-anik",
-        title: "Mohammad Anik's Profile",
+          "Check out Md Talath Un Nabi Anik's profile on Hiruu!\nhttps://hiruu.com/profile/mohammad-anik",
+        title: "Md Talath Un Nabi Anik's Profile",
       });
     } catch (error) {
       Alert.alert("Error", "Could not share profile");

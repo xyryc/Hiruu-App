@@ -363,7 +363,7 @@ const profile = () => {
             />
 
             <Text className="font-proximanova-bold text-white">
-              Mohammad Anik
+              Md Talath Un Nabi Anik
             </Text>
           </View>
           <View className="h-10 w-10 bg-white rounded-full flex-row items-center justify-center">

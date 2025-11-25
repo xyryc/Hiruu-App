@@ -14,7 +14,7 @@ const ChatScreenHeader = () => {
         </TouchableOpacity>
 
         <Text className="text-lg font-proximanova-semibold text-primary">
-          Mohammad Anik
+          Md Talath Un Nabi Anik
         </Text>
       </View>
 

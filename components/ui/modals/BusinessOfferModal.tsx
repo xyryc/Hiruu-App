@@ -258,8 +258,8 @@ const BusinessOfferModal = ({ visible, onClose }: any) => {
 
               {/* note */}
               <Text className="w-4/6 mx-auto text-sm font-proximanova-regular text-secondary dark:text-dark-secondary text-center mt-2.5">
-                You sent offer to Mohammad Anik. He may contact you soon. Good
-                luck!
+                You sent offer to Md Talath Un Nabi Anik. He may contact you
+                soon. Good luck!
               </Text>
 
               <View>

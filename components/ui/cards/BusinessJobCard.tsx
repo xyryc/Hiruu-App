@@ -54,7 +54,7 @@ const BusinessJobCard = ({
             </Text>
 
             <Text className="text-sm font-proximanova-regular">
-              Mohammad Anik
+              Md Talath Un Nabi Anik
             </Text>
           </View>
         </View>

@@ -9,6 +9,7 @@ import PerformanceTrend from "@/components/layout/PerformanceTrend";
 import ProfileProgress from "@/components/layout/ProfileProgress";
 import QuickAction from "@/components/layout/QuickAction";
 import TodayShiftsSummary from "@/components/layout/TodayShiftsSummary";
+import TopPerformer from "@/components/layout/TopPerformer";
 import WorkInsights from "@/components/layout/WorkInsights";
 import ActionCard from "@/components/ui/cards/ActionCard";
 import { useRouter } from "expo-router";
@@ -34,7 +35,7 @@ const BusinessHome = () => {
       <ScrollView
         contentContainerStyle={{
           paddingTop: 8,
-          paddingBottom: 40,
+          paddingBottom: 60,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -81,6 +82,9 @@ const BusinessHome = () => {
 
         {/* job Board */}
         <FindNewJob business={true} className="mt-7" />
+
+        {/* Top performers */}
+        <TopPerformer className="mt-7" />
       </ScrollView>
     </SafeAreaView>
   );

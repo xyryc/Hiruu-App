@@ -33,7 +33,7 @@ const WelcomeHeader = ({ className }: WelcomeHeaderProps) => {
 
         <View>
           <Text className="text-sm text-[#7A7A7A] mb-1.5">
-            👋 Hello, Julian Assange
+            👋 Hello, Md Talath Un Nabi Anik
           </Text>
           <Text className="font-proximanova-semibold">
             Ready for today's task?

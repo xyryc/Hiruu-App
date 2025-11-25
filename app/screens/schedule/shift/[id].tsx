@@ -209,7 +209,7 @@ const ShiftDetails = () => {
                 contentFit="cover"
               />
               <Text className="font-proximanova-bold text-white dark:text-dark-secondary">
-                Julian Assange
+                Md Talath Un Nabi Anik
               </Text>
             </View>
 
