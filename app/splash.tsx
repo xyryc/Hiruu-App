@@ -6,21 +6,14 @@ const { width, height } = Dimensions.get("window");
 
 const SplashScreen = () => {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#fff",
-      }}
-    >
+    <View className="flex-1">
       <Image
         style={{
           width: width,
           height: height,
         }}
         source={require("@/assets/images/splash.png")}
-        contentFit="contain"
+        contentFit="fill"
       />
     </View>
   );

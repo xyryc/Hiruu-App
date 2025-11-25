@@ -31,8 +31,8 @@ const WelcomeHeader = ({ className }: WelcomeHeaderProps) => {
           />
         </TouchableOpacity>
 
-        <View>
-          <Text className="text-sm text-[#7A7A7A] mb-1.5">
+        <View className="w-56">
+          <Text className="text-sm text-[#7A7A7A] mb-1.5 " numberOfLines={1}>
             👋 Hello, Md Talath Un Nabi Anik
           </Text>
           <Text className="font-proximanova-semibold">
