@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import "@/utils/i18n";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import "./global.css";
 import SplashScreen from "./splash";
@@ -18,7 +19,19 @@ const AppContent = () => {
     "ProximaNova-Black": require("../assets/fonts/ProximaNova-Black.ttf"),
   });
 
-  if (!fontsLoaded) {
+  const [appIsReady, setAppIsReady] = useState(false);
+
+  useEffect(() => {
+    if (fontsLoaded) {
+      const timer = setTimeout(() => {
+        setAppIsReady(true);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [fontsLoaded]);
+
+  if (!appIsReady) {
     return <SplashScreen />;
   }
 

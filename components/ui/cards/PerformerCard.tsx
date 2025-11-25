@@ -12,7 +12,7 @@ const PerformerCard = () => {
       }}
       className="border border-[#EEEEEE] rounded-xl mt-4 mr-4"
     >
-      <View className="flex-row items-start justify-between p-4">
+      <View className="flex-row items-start justify-between gap-4 p-4">
         <View className="flex-row gap-2.5">
           <Image
             source="https://media.licdn.com/dms/image/v2/D5603AQFMeZ7i9ybZgw/profile-displayphoto-shrink_200_200/B56ZS29wLQHwAY-/0/1738236429558?e=2147483647&v=beta&t=RTX-UGEWSzuEb-Gv2bqXqREzQX15FMKi0TK1HJBAKuE"
