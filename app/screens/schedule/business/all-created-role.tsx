@@ -1,5 +1,5 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import { AntDesign, Entypo } from "@expo/vector-icons";
+import { Entypo, Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
@@ -49,8 +49,13 @@ const AllCreatedRole = () => {
           titleClass="text-primary dark:text-dark-primary"
           iconColor={isDark ? "#fff" : "#111"}
           components={
-            <TouchableOpacity className="h-10 w-10 rounded-full bg-[#FFFFFF] flex-row justify-center items-center ">
-              <AntDesign name="plus" size={24} color="black" />
+            <TouchableOpacity
+              onPress={() =>
+                router.push("/screens/schedule/business/create-role")
+              }
+              className="h-10 w-10 rounded-full bg-[#FFFFFF] flex-row justify-center items-center "
+            >
+              <Feather name="plus" size={24} color="black" />
             </TouchableOpacity>
           }
         />

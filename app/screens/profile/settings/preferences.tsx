@@ -23,6 +23,7 @@ const preferences = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const [showModal, setShowModal] = useState(false);
+  const [schedule, setSchedule] = useState(false);
 
   // language
   const { i18n, t } = useTranslation();
@@ -112,6 +113,7 @@ const preferences = () => {
         />
 
         <SettingsCard
+          click={() => setSchedule(!schedule)}
           icon={
             <MaterialCommunityIcons
               name="calendar-multiselect-outline"
@@ -119,16 +121,19 @@ const preferences = () => {
               color="black"
             />
           }
-          className="mt-4"
+          className="mt-4 pb-4"
           text="Available Working Days"
           arrowIcon={
-            <Entypo name="chevron-thin-down" size={16} color="black" />
+            <Entypo
+              name={schedule ? "chevron-thin-up" : "chevron-thin-down"}
+              size={16}
+              color="black"
+            />
           }
+          border={true}
         />
 
-        <View className="mt-4"></View>
-
-        <WeeklySchedule />
+        {schedule && <WeeklySchedule />}
       </ScrollView>
     </SafeAreaView>
   );

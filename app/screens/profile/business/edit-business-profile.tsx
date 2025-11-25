@@ -181,7 +181,7 @@ const EditBusinessProfile = () => {
             className="mx-5 pt-8"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
-              paddingBottom: 80,
+              paddingBottom: 120,
             }}
           >
             {/* Profile Photo */}
@@ -343,7 +343,7 @@ const EditBusinessProfile = () => {
           </ScrollView>
 
           <PrimaryButton
-            className="absolute bottom-10 mx-5 my-4"
+            className="absolute bottom-0 mt-4 mx-5 "
             title="Save Change"
             onPress={() => router.back()}
           />
