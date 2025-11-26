@@ -1,3 +1,4 @@
+import userData from "@/assets/data/user.json";
 import TitleHeader from "@/components/header/TitleHeader";
 import SocialAuth from "@/components/layout/SocialAuth";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
@@ -17,6 +18,8 @@ import PhoneInput from "react-native-phone-input";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Login = () => {
+  const user = userData.user;
+
   const [selectedTab, setSelectedTab] = useState("Email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,6 +37,14 @@ const Login = () => {
 
     setPhoneNumber(number);
     setIsValidPhone(isValid);
+  };
+
+  const handleLogin = () => {
+    if (user.role === "user") {
+      router.push("/(tabs)/user-home");
+    } else if (user.role === "business") {
+      router.push("/(tabs)/business-home");
+    }
   };
 
   return (
@@ -208,7 +219,7 @@ const Login = () => {
           <PrimaryButton
             className="mb-7"
             title="Log in"
-            onPress={() => router.push("/(tabs)/business-home")}
+            onPress={handleLogin}
           />
 
           {/* OR Divider */}
