@@ -130,6 +130,159 @@ npx expo run:ios
 cd ios && pod install && cd ..
 ```
 
+## 📱 How to build APK
+
+#### Prerequisites
+
+- Android Studio installed
+- Java JDK 17 installed
+- Android SDK configured
+
+### 📲 Safe: Build Unsigned APK Locally (For Development/Testing)
+
+#### Step 1: Prebuild Android Project
+
+```bash
+npx expo prebuild --platform android
+```
+
+This generates the `android/` folder.
+
+#### Step 2: Build Debug APK
+
+```bash
+cd android
+./gradlew assembleDebug
+```
+
+APK location: `android/app/build/outputs/apk/debug/app-debug.apk`
+
+#### Step 3: Build Release APK (Unsigned)
+
+```bash
+cd android
+./gradlew assembleRelease
+```
+
+APK location: `android/app/build/outputs/apk/release/app-release-unsigned.apk`
+
+#### Step 4: Install on Device
+
+```bash
+adb install android/app/build/outputs/apk/debug/app-debug.apk
+```
+
+or find the apk, copy and install it on your phone.
+
+### 📲 Easy: Build APK using Github Workflow
+
+#### Step 1: Check if your project is connected to your git repository
+
+```bash
+git remote -v
+```
+
+You should see an url with your github username.
+
+#### Step 2: Create a new tag (increment the tag version eveytime, duplicate tags are not allowed)
+
+```bash
+git tag v1.x.x
+```
+
+#### Step 3: Push the created tag to trigger APK build using workflow
+
+```bash
+git push origin v1.x.x
+```
+
+#### Step 4: Find the APK
+
+- Go to your repository's **_Actions_** tab.
+- You should see your latest running workflow on top of the list.
+- Click on it and wait for the build to complete.
+- Once completed you should see **_Artifacts_** at the bottom of the screen.
+- Download the file and extract the APK from the zip.
+
+### ⚠️ Caution: Signed APK (For Production)
+
+**_Please do not attempt if you dont understand this step._**
+
+#### Generate Keystore
+
+```bash
+keytool -genkeypair -v -storetype PKCS12 -keystore my-app-key.keystore -alias my-app-alias -keyalg RSA -keysize 2048 -validity 10000
+```
+
+#### Configure gradle.properties
+
+Create/edit `android/gradle.properties`:
+
+```properties
+MYAPP_UPLOAD_STORE_FILE=my-app-key.keystore
+MYAPP_UPLOAD_KEY_ALIAS=my-app-alias
+MYAPP_UPLOAD_STORE_PASSWORD=your_keystore_password
+MYAPP_UPLOAD_KEY_PASSWORD=your_key_password
+```
+
+#### Update android/app/build.gradle
+
+Add signing config:
+
+```gradle
+android {
+    ...
+    signingConfigs {
+        release {
+            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
+                storeFile file(MYAPP_UPLOAD_STORE_FILE)
+                storePassword MYAPP_UPLOAD_STORE_PASSWORD
+                keyAlias MYAPP_UPLOAD_KEY_ALIAS
+                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+            }
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+}
+```
+
+#### Build Signed APK
+
+```bash
+cd android
+./gradlew assembleRelease
+```
+
+Signed APK location: `android/app/build/outputs/apk/release/app-release.apk`
+
+---
+
+### Testing APK
+
+#### Install on Connected Device
+
+```bash
+adb install path/to/your-app.apk
+```
+
+#### Check Device Connection
+
+```bash
+adb devices
+```
+
+#### View Logs
+
+```bash
+adb logcat | grep -i expo
+```
+
 ## 🛠 Available Scripts
 
 | Command                | Description                    |
@@ -233,133 +386,6 @@ npx expo start -c
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf
 sudo sysctl -p
 ```
-
----
-
-## 📱 How to build APK
-
-#### Prerequisites
-
-- Android Studio installed
-- Java JDK 17 installed
-- Android SDK configured
-
-### 📲 Safe: Unsigned APK (For Development/Testing)
-
-#### Step 1: Prebuild Android Project
-
-```bash
-npx expo prebuild --platform android
-```
-
-This generates the `android/` folder.
-
-#### Step 2: Build Debug APK
-
-```bash
-cd android
-./gradlew assembleDebug
-```
-
-APK location: `android/app/build/outputs/apk/debug/app-debug.apk`
-
-#### Step 3: Build Release APK (Unsigned)
-
-```bash
-cd android
-./gradlew assembleRelease
-```
-
-APK location: `android/app/build/outputs/apk/release/app-release-unsigned.apk`
-
-#### Step 4: Install on Device
-
-```bash
-adb install android/app/build/outputs/apk/debug/app-debug.apk
-```
-
-or find the apk, copy and install it on your phone.
-
-### ⚠️ Caution: Signed APK (For Production)
-
-**_Please do not attempt if you dont understand this step._**
-
-#### Generate Keystore
-
-```bash
-keytool -genkeypair -v -storetype PKCS12 -keystore my-app-key.keystore -alias my-app-alias -keyalg RSA -keysize 2048 -validity 10000
-```
-
-#### Configure gradle.properties
-
-Create/edit `android/gradle.properties`:
-
-```properties
-MYAPP_UPLOAD_STORE_FILE=my-app-key.keystore
-MYAPP_UPLOAD_KEY_ALIAS=my-app-alias
-MYAPP_UPLOAD_STORE_PASSWORD=your_keystore_password
-MYAPP_UPLOAD_KEY_PASSWORD=your_key_password
-```
-
-#### Update android/app/build.gradle
-
-Add signing config:
-
-```gradle
-android {
-    ...
-    signingConfigs {
-        release {
-            if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-                storeFile file(MYAPP_UPLOAD_STORE_FILE)
-                storePassword MYAPP_UPLOAD_STORE_PASSWORD
-                keyAlias MYAPP_UPLOAD_KEY_ALIAS
-                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
-            }
-        }
-    }
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
-        }
-    }
-}
-```
-
-#### Build Signed APK
-
-```bash
-cd android
-./gradlew assembleRelease
-```
-
-Signed APK location: `android/app/build/outputs/apk/release/app-release.apk`
-
----
-
-### Testing APK
-
-#### Install on Connected Device
-
-```bash
-adb install path/to/your-app.apk
-```
-
-#### Check Device Connection
-
-```bash
-adb devices
-```
-
-#### View Logs
-
-```bash
-adb logcat | grep -i expo
-```
-
----
 
 ## 📚 Additional Resources
 
