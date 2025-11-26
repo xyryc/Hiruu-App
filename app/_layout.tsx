@@ -25,7 +25,7 @@ const AppContent = () => {
     if (fontsLoaded) {
       const timer = setTimeout(() => {
         setAppIsReady(true);
-      }, 3000);
+      }, 1500);
 
       return () => clearTimeout(timer);
     }
