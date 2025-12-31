@@ -1,12 +1,14 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import SocialAuth from "@/components/layout/SocialAuth";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import { useAuthStore } from "@/stores/authStore";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
+  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -17,7 +19,7 @@ import PhoneInput from "react-native-phone-input";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const SignUp = () => {
-  const [selectedTab, setSelectedTab] = useState("Email");
+  const [selectedTab, setSelectedTab] = useState("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -25,6 +27,9 @@ const SignUp = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isValidPhone, setIsValidPhone] = useState(true);
   const router = useRouter();
+
+  const [fullName, setFullName] = useState("");
+  const { signup, isLoading, error, clearError } = useAuthStore();
 
   let phoneRef: any = null;
 
@@ -34,6 +39,40 @@ const SignUp = () => {
 
     setPhoneNumber(number);
     setIsValidPhone(isValid);
+  };
+
+  const handleSignup = async () => {
+    clearError();
+
+    // Build signup data based on selected tab
+    if (selectedTab === "email") {
+      const signupData = {
+        email,
+        password,
+      };
+
+      try {
+        const response = await signup(signupData);
+        Alert.alert("Success", response.message);
+        // router.push("/(auth)/verify");
+      } catch (error) {
+        Alert.alert("Error", error.message);
+        console.log("Signup error", error);
+      }
+    } else if (selectedTab === "phone") {
+      const signupData = {
+        phoneNumber,
+      };
+
+      try {
+        const response = await signup(signupData);
+        Alert.alert("Success", response.message);
+        // router.push("/(auth)/verify");
+      } catch (error) {
+        Alert.alert("Error", error.message);
+        console.log("Signup error", error);
+      }
+    }
   };
 
   return (
@@ -55,14 +94,14 @@ const SignUp = () => {
           {/* Tab Selector */}
           <View className="flex-row rounded-full mb-8">
             <TouchableOpacity
-              onPress={() => setSelectedTab("Email")}
+              onPress={() => setSelectedTab("email")}
               className={`flex-1 py-3 rounded-full ${
-                selectedTab === "Email" ? "bg-[#11293A]" : "bg-white"
+                selectedTab === "email" ? "bg-[#11293A]" : "bg-white"
               }`}
             >
               <Text
                 className={`text-center text-sm font-proximanova-semibold ${
-                  selectedTab === "Email" ? "text-white" : "text-gray-600"
+                  selectedTab === "email" ? "text-white" : "text-gray-600"
                 }`}
               >
                 Email
@@ -70,16 +109,14 @@ const SignUp = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => setSelectedTab("Phone number")}
+              onPress={() => setSelectedTab("phone")}
               className={`flex-1 py-3 rounded-full ${
-                selectedTab === "Phone number" ? "bg-[#11293A]" : "bg-white"
+                selectedTab === "phone" ? "bg-[#11293A]" : "bg-white"
               }`}
             >
               <Text
                 className={`text-center text-sm font-proximanova-semibold ${
-                  selectedTab === "Phone number"
-                    ? "text-white"
-                    : "text-gray-600"
+                  selectedTab === "phone" ? "text-white" : "text-gray-600"
                 }`}
               >
                 Phone number
@@ -89,7 +126,7 @@ const SignUp = () => {
 
           {/* Form Fields */}
           <View className="h-64 ">
-            {selectedTab === "Email" ? (
+            {selectedTab === "email" ? (
               <View>
                 {/* Email Input */}
                 <View className="relative mb-4">
@@ -208,7 +245,7 @@ const SignUp = () => {
           <PrimaryButton
             className="w-full mb-7"
             title="Sign Up"
-            onPress={() => router.push("/(auth)/verifiy")}
+            onPress={handleSignup}
           />
 
           {/* OR Divider */}

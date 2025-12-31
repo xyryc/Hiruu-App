@@ -51,3 +51,7 @@ keystore.txt
 keystore.properties
 android/keystore.properties
 android/app/release.keystore
+
+
+# env files
+.env

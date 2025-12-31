@@ -5,7 +5,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useRef, useState } from "react";
-import { ScrollView, Text, TextInput, View } from "react-native";
+import {
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Verify = () => {
@@ -105,9 +111,12 @@ const Verify = () => {
         </View>
 
         {/* arrow icon */}
-        <View className="absolute top-3 left-5 z-10">
+        <TouchableOpacity
+          onPress={() => router.back()}
+          className="absolute top-3 left-5 z-10"
+        >
           <Feather name="arrow-left" size={24} color="black" />
-        </View>
+        </TouchableOpacity>
       </LinearGradient>
     </SafeAreaView>
   );
