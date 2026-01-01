@@ -5,6 +5,7 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { t } from "i18next";
 import React, { useRef, useState } from "react";
 import {
   Alert,
@@ -61,10 +62,11 @@ const Verify = () => {
 
     try {
       const response = await verifyOTP(verifyData);
-      Alert.alert("Success", response.message);
-      // router.push("/(setup)/user-setup/progress");
+      Alert.alert(t("common.success"), t("auth.verificationSuccess"));
+      // Navigate based on user setup status
+      router.push("/(setup)/user-setup/progress");
     } catch (error) {
-      Alert.alert("Error", error);
+      Alert.alert(t("common.error"), error.message);
       console.log("Verify error", error);
     }
   };

@@ -68,17 +68,28 @@ export const useAuthStore = create((set) => ({
 
       const result = await response.json();
 
-      if (!response.ok) {
-        const translatedMessage = translateApiMessage(result.message);
+      if (!response.ok || !result.success) {
+        const errorCode = result.error?.code || "UNKNOWN_ERROR";
+        const translatedMessage = translateApiMessage(errorCode);
         throw new Error(translatedMessage);
       }
 
       set({
-        user: result.user,
+        user: {
+          id: result.data.id,
+          email: result.data.email,
+          phoneNumber: result.data.phoneNumber,
+          fullName: result.data.fullName,
+          isVerified: result.data.isVerified,
+          role: result.data.role,
+          businessId: result.data.businessId,
+          businessName: result.data.businessName,
+          roles: result.data.roles,
+        },
         isLoading: false,
       });
 
-      return result;
+      return result.data;
     } catch (error) {
       set({ isLoading: false, error: error });
       throw error;

@@ -30,13 +30,41 @@
   },
 
   "api": {
-    "SUCCESS": "Επιτυχής λειτουργία",
-    "ALREADY_EXIST": "Ο λογαριασμός υπάρχει ήδη. Συνδεθείτε αντί αυτού."
+    "SUCCESS": "Η λειτουργία ολοκληρώθηκε επιτυχώς",
+    "NOT_AUTHENTICATED": "Δεν έχετε πιστοποιηθεί. Παρακαλώ συνδεθείτε.",
+    "USER_NOT_FOUND": "Ο χρήστης δεν βρέθηκε.",
+    "CANNOT_CAST_THIS_ACTION_TO_YOU": "Αυτή η ενέργεια δεν μπορεί να εκτελεστεί σε εσάς.",
+    "CANT_CREATE_MORE_BUSINESS": "Δεν μπορείτε να δημιουργήσετε περισσότερες επιχειρήσεις.",
+    "VERIFY_YOUR_BUSINESS_TO_CREATE_NEW_ONE": "Επαληθεύστε την επιχείρησή σας πριν δημιουργήσετε νέα.",
+    "INVALID_DATA_PROVIDED": "Παρέχονται μη έγκυρα δεδομένα. Ελέγξτε την είσοδό σας.",
+    "BUSINESS_NOT_FOUND": "Η επιχείρηση δεν βρέθηκε.",
+    "BUSINESS_NOT_FOUND_ON_USER": "Δεν βρέθηκε επιχείρηση για αυτόν τον χρήστη.",
+    "YOU_CANT_DO_THIS_ACTION_TO_YOURSELF": "Δεν μπορείτε να εκτελέσετε αυτή την ενέργεια στον εαυτό σας.",
+    "YOU_ARE_NOT_THE_OWNER_OF_THIS_COMPANY": "Δεν είστε ο ιδιοκτήτης αυτής της εταιρείας.",
+    "YOU_ARE_NOT_A_MEMBER_OF_THIS_COMPANY": "Δεν είστε μέλος αυτής της εταιρείας.",
+    "THIS_USER_NOT_BELONG_ON_YOUR_COMPANY": "Αυτός ο χρήστης δεν ανήκει στην εταιρεία σας.",
+    "ONE_TIME_ONLY_ACTION": "Αυτή η ενέργεια μπορεί να εκτελεστεί μόνο μία φορά.",
+    "NOT_FOUND": "Ο πόρος δεν βρέθηκε.",
+    "ALREADY_EXIST": "Ο λογαριασμός υπάρχει ήδη. Συνδεθείτε αντί αυτού.",
+    "THIS_USER_ALREADY_EXIST_IN_YOUR_COMPANY": "Αυτός ο χρήστης υπάρχει ήδη στην εταιρεία σας.",
+    "THIS_INVITE_DONT_BELONG_TO_YOU": "Αυτή η πρόσκληση δεν ανήκει σε εσάς.",
+    "THIS_INVITE_IS_NOT_VALID": "Αυτή η πρόσκληση δεν είναι έγκυρη.",
+    "NO_PERMISSION_FOR_THIS_ACTION": "Δεν έχετε άδεια για αυτή την ενέργεια.",
+    "SUBSCRIPTION_PLAN_ID_NOT_FOUND": "Το πρόγραμμα συνδρομής δεν βρέθηκε.",
+    "USERS_NOT_IN_RELATION": "Οι χρήστες δεν είναι σε σχέση.",
+    "AN_ACTIVE_PLAN_IS_NEEDED_FOR_THIS_ACTION": "Απαιτείται ενεργό πρόγραμμα συνδρομής για αυτή την ενέργεια.",
+    "UNEXPECTED_END_OF_JSON_INPUT": "Σφάλμα δικτύου. Ελέγξτε τη σύνδεσή σας.",
+    "NETWORK_ERROR": "Σφάλμα δικτύου. Ελέγξτε τη σύνδεσή σας."
   },
 
   "validation": {
     "fillAllFields": "Παρακαλώ συμπληρώστε όλα τα πεδία",
     "invalidEmail": "Παρακαλώ εισάγετε μια έγκυρη διεύθυνση email",
-    "passwordTooShort": "Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες"
+    "passwordTooShort": "Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες",
+    "INVALID_DATA_PROVIDED": "Παρέχονται μη έγκυρα δεδομένα. Ελέγξτε την είσοδό σας."
+  },
+
+  "auth": {
+    "verificationSuccess": "Ο λογαριασμός επαληθεύτηκε με επιτυχία!"
   }
 }

@@ -31,12 +31,40 @@
 
   "api": {
     "SUCCESS": "Operation completed successfully",
-    "ALREADY_EXIST": "Account already exists. Please login instead."
+    "NOT_AUTHENTICATED": "You are not authenticated. Please login.",
+    "USER_NOT_FOUND": "User not found.",
+    "CANNOT_CAST_THIS_ACTION_TO_YOU": "This action cannot be performed on you.",
+    "CANT_CREATE_MORE_BUSINESS": "You cannot create more businesses.",
+    "VERIFY_YOUR_BUSINESS_TO_CREATE_NEW_ONE": "Please verify your business before creating a new one.",
+    "INVALID_DATA_PROVIDED": "Invalid data provided. Please check your input.",
+    "BUSINESS_NOT_FOUND": "Business not found.",
+    "BUSINESS_NOT_FOUND_ON_USER": "No business found for this user.",
+    "YOU_CANT_DO_THIS_ACTION_TO_YOURSELF": "You cannot perform this action on yourself.",
+    "YOU_ARE_NOT_THE_OWNER_OF_THIS_COMPANY": "You are not the owner of this company.",
+    "YOU_ARE_NOT_A_MEMBER_OF_THIS_COMPANY": "You are not a member of this company.",
+    "THIS_USER_NOT_BELONG_ON_YOUR_COMPANY": "This user does not belong to your company.",
+    "ONE_TIME_ONLY_ACTION": "This action can only be performed once.",
+    "NOT_FOUND": "Resource not found.",
+    "ALREADY_EXIST": "Account already exists. Please login instead.",
+    "THIS_USER_ALREADY_EXIST_IN_YOUR_COMPANY": "This user already exists in your company.",
+    "THIS_INVITE_DONT_BELONG_TO_YOU": "This invite does not belong to you.",
+    "THIS_INVITE_IS_NOT_VALID": "This invite is not valid.",
+    "NO_PERMISSION_FOR_THIS_ACTION": "You do not have permission for this action.",
+    "SUBSCRIPTION_PLAN_ID_NOT_FOUND": "Subscription plan not found.",
+    "USERS_NOT_IN_RELATION": "Users are not in relation.",
+    "AN_ACTIVE_PLAN_IS_NEEDED_FOR_THIS_ACTION": "An active subscription plan is required for this action.",
+    "UNEXPECTED_END_OF_JSON_INPUT": "Network error. Please check your connection.",
+    "NETWORK_ERROR": "Network error. Please check your connection."
   },
 
   "validation": {
     "fillAllFields": "Please fill in all fields",
     "invalidEmail": "Please enter a valid email address",
-    "passwordTooShort": "Password must be at least 6 characters"
+    "passwordTooShort": "Password must be at least 6 characters",
+    "INVALID_DATA_PROVIDED": "Invalid data provided. Please check your input."
+  },
+
+  "auth": {
+    "verificationSuccess": "Account verified successfully!"
   }
 }
