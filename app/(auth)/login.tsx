@@ -2,12 +2,15 @@ import userData from "@/assets/data/user.json";
 import TitleHeader from "@/components/header/TitleHeader";
 import SocialAuth from "@/components/layout/SocialAuth";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import { useAuthStore } from "@/stores/authStore";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { t } from "i18next";
 import React, { useState } from "react";
 import {
+  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -28,22 +31,74 @@ const Login = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isValidPhone, setIsValidPhone] = useState(true);
   const router = useRouter();
+  const { login, isLoading, error, clearError } = useAuthStore();
 
   let phoneRef: any = null;
 
   const handlePhoneChange = () => {
-    const number = phoneRef.getValue();
-    const isValid = phoneRef.isValidNumber();
+    try {
+      const number = phoneRef.getValue();
+      const isValid = phoneRef.isValidNumber();
 
-    setPhoneNumber(number);
-    setIsValidPhone(isValid);
+      setPhoneNumber(number);
+      setIsValidPhone(isValid);
+    } catch (error) {
+      // Ignore validation errors while typing
+      setIsValidPhone(false);
+    }
   };
 
-  const handleLogin = () => {
-    if (user.role === "user") {
-      router.push("/(tabs)/user-home");
-    } else if (user.role === "business") {
-      router.push("/(tabs)/business-home");
+  const handleLogin = async () => {
+    clearError();
+
+    if (selectedTab === "Email") {
+      if (!email || !password) {
+        Alert.alert(t("common.error"), t("validation.fillAllFields"));
+        return;
+      }
+
+      const loginData = { email, password };
+
+      try {
+        const result = await login(loginData);
+
+        // Navigate based on user role
+        if (result.role === "employee") {
+          router.push("/(tabs)/user-home");
+        } else if (result.role === "business") {
+          router.push("/(tabs)/business-home");
+        }
+      } catch (error) {
+        Alert.alert(t("common.error"), error.message);
+      }
+    } else {
+      if (!phoneNumber) {
+        Alert.alert(t("common.error"), t("validation.fillAllFields"));
+        return;
+      }
+
+      if (!isValidPhone) {
+        Alert.alert(t("common.error"), t("validation.invalidPhone"));
+        return;
+      }
+
+      // Remove '+' from phone number before sending to backend
+      const cleanPhoneNumber = phoneNumber.replace(/^\+/, "");
+      const loginData = { emailOrPhone: cleanPhoneNumber };
+      console.log("login data", loginData);
+
+      try {
+        const result = await login(loginData);
+
+        // Navigate based on user role
+        if (result.role === "employee") {
+          router.push("/(tabs)/user-home");
+        } else if (result.role === "business") {
+          router.push("/(tabs)/business-home");
+        }
+      } catch (error) {
+        Alert.alert(t("common.error"), error.message);
+      }
     }
   };
 
