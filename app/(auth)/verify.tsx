@@ -1,11 +1,13 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import { useAuthStore } from "@/stores/authStore";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useRef, useState } from "react";
 import {
+  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -15,7 +17,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Verify = () => {
+  const params = useLocalSearchParams();
   const router = useRouter();
+  console.log("Verify screen", params);
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 
@@ -42,18 +46,27 @@ const Verify = () => {
 
   const isOtpComplete = otp.every((digit) => digit !== "");
 
-  const handleVerify = () => {
-    if (isOtpComplete) {
-      const otpCode = otp.join("");
-      console.log("OTP:", otpCode);
-      // Add your verification logic here
-      router.push("/(auth)/login");
-    }
-  };
+  const { verifyOTP, isLoading, error, clearError } = useAuthStore();
 
-  const handleResendOtp = () => {
-    // Add resend OTP logic here
-    console.log("Resending OTP...");
+  const handleVerify = async () => {
+    if (!isOtpComplete) return;
+
+    clearError();
+    const otpCode = otp.join("");
+
+    const verifyData = {
+      emailOrPhone: params.email || params.phoneNumber,
+      otpCode,
+    };
+
+    try {
+      const response = await verifyOTP(verifyData);
+      Alert.alert("Success", response.message);
+      // router.push("/(setup)/user-setup/progress");
+    } catch (error) {
+      Alert.alert("Error", error);
+      console.log("Verify error", error);
+    }
   };
 
   return (
@@ -105,8 +118,9 @@ const Verify = () => {
         <View className="mx-5 absolute bottom-28 inset-x-0">
           <PrimaryButton
             className="w-full"
-            title="Verify"
-            onPress={() => router.push("/(setup)/user-setup/progress")}
+            title={isLoading ? "Verifying..." : "Verify"}
+            onPress={handleVerify}
+            loading={isLoading}
           />
         </View>
 

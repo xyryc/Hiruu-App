@@ -54,7 +54,11 @@ const SignUp = () => {
       try {
         const response = await signup(signupData);
         Alert.alert("Success", response.message);
-        // router.push("/(auth)/verify");
+
+        router.push({
+          pathname: "/(auth)/verify",
+          params: { email },
+        });
       } catch (error) {
         Alert.alert("Error", error.message);
         console.log("Signup error", error);
@@ -68,6 +72,11 @@ const SignUp = () => {
         const response = await signup(signupData);
         Alert.alert("Success", response.message);
         // router.push("/(auth)/verify");
+
+        router.push({
+          pathname: "/(auth)/verify",
+          params: { phoneNumber },
+        });
       } catch (error) {
         Alert.alert("Error", error.message);
         console.log("Signup error", error);
@@ -244,8 +253,9 @@ const SignUp = () => {
           {/* Sign Up Button */}
           <PrimaryButton
             className="w-full mb-7"
-            title="Sign Up"
+            title={isLoading ? "Signing up..." : "Sign Up"}
             onPress={handleSignup}
+            loading={isLoading}
           />
 
           {/* OR Divider */}

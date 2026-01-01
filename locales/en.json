@@ -24,5 +24,9 @@
     "jobs": {},
     "profile": {}
   },
-  "common": {}
+  "common": {},
+  "api": {
+    "SUCCESS": "Operation completed successfully",
+    "ALREADY_EXIST": "Account already exists. Please login instead."
+  }
 }
