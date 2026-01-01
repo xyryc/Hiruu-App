@@ -6,6 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { t } from "i18next";
 import React, { useState } from "react";
 import {
   Alert,
@@ -44,42 +45,51 @@ const SignUp = () => {
   const handleSignup = async () => {
     clearError();
 
-    // Build signup data based on selected tab
     if (selectedTab === "email") {
-      const signupData = {
-        email,
-        password,
-      };
+      // Validate email and password
+      if (!email || !password) {
+        Alert.alert(t("common.error"), t("validation.fillAllFields"));
+        return;
+      }
+
+      if (!email.includes("@")) {
+        Alert.alert(t("common.error"), t("validation.invalidEmail"));
+        return;
+      }
+
+      if (password.length < 6) {
+        Alert.alert(t("common.error"), t("validation.passwordTooShort"));
+        return;
+      }
+
+      const signupData = { email, password };
 
       try {
-        const response = await signup(signupData);
-        Alert.alert("Success", response.message);
-
+        const result = await signup(signupData);
         router.push({
           pathname: "/(auth)/verify",
           params: { email },
         });
       } catch (error) {
-        Alert.alert("Error", error.message);
-        console.log("Signup error", error);
+        Alert.alert(t("common.error"), error.message);
       }
     } else if (selectedTab === "phone") {
-      const signupData = {
-        phoneNumber,
-      };
+      // Validate phone number
+      if (!phoneNumber) {
+        Alert.alert(t("common.error"), t("validation.fillAllFields"));
+        return;
+      }
+
+      const signupData = { phoneNumber };
 
       try {
-        const response = await signup(signupData);
-        Alert.alert("Success", response.message);
-        // router.push("/(auth)/verify");
-
+        const result = await signup(signupData);
         router.push({
           pathname: "/(auth)/verify",
           params: { phoneNumber },
         });
       } catch (error) {
-        Alert.alert("Error", error.message);
-        console.log("Signup error", error);
+        Alert.alert(t("common.error"), error.message);
       }
     }
   };

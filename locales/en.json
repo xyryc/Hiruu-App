@@ -24,9 +24,19 @@
     "jobs": {},
     "profile": {}
   },
-  "common": {},
+  "common": {
+    "error": "Error",
+    "success": "Success"
+  },
+
   "api": {
     "SUCCESS": "Operation completed successfully",
     "ALREADY_EXIST": "Account already exists. Please login instead."
+  },
+
+  "validation": {
+    "fillAllFields": "Please fill in all fields",
+    "invalidEmail": "Please enter a valid email address",
+    "passwordTooShort": "Password must be at least 6 characters"
   }
 }
