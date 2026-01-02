@@ -1,9 +1,11 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ProfileImagePicker from "@/components/ui/inputs/ProfileImagePicker";
+import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
+  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -23,7 +25,52 @@ export default function Step2({
   handleBack,
 }: any) {
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [bio, setBio] = useState("");
   const router = useRouter();
+  const { user, updateProfile, isLoading } = useAuthStore();
+
+  // Handle form submission
+  const handleNext = async () => {
+    if (!profileImage && !bio.trim()) {
+      onComplete();
+      return;
+    }
+
+    try {
+      const profileData: any = {};
+
+      // Add intro if provided
+      if (bio.trim()) {
+        profileData.bio = bio.trim();
+      }
+
+      // Add profile image if provided
+      if (profileImage) {
+        const filename = profileImage.split("/").pop();
+        const match = /\.(\w+)$/.exec(filename || "");
+        const type = match ? `image/${match[1]}` : "image/jpeg";
+
+        profileData.profileImage = {
+          uri: profileImage,
+          type: type,
+          name: filename || "profile.jpg",
+        };
+      }
+
+      console.log("Sending Step2 data:", {
+        intro: profileData.intro,
+        hasImage: !!profileData.profileImage,
+      });
+
+      // Call same API as Step1
+      await updateProfile(profileData);
+
+      onComplete();
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to save profile data");
+      console.error("Profile update error:", error);
+    }
+  };
 
   return (
     <AnimatedView
@@ -105,13 +152,20 @@ export default function Step2({
             autoCapitalize="none"
             multiline={true}
             textAlignVertical="top"
+            value={bio}
+            onChangeText={setBio}
           />
         </View>
       </ScrollView>
 
       {/* Button fixed at bottom */}
       <View className="pb-10 pt-4 bg-transparent">
-        <PrimaryButton title="Next" className="w-full" onPress={onComplete} />
+        <PrimaryButton
+          title="Next"
+          className="w-full"
+          onPress={handleNext}
+          loading={isLoading}
+        />
       </View>
     </AnimatedView>
   );

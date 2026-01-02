@@ -277,15 +277,20 @@ export const useAuthStore = create((set, get) => ({
       // Create FormData
       const formData = new FormData();
 
+      // Add all profile data fields directly
       Object.keys(profileData).forEach((key) => {
         const value = profileData[key];
 
         if (value === null || value === undefined) {
-          return;
+          return; // Skip null/undefined
         }
 
-        // Handle objects (e.g., location)
-        if (typeof value === "object" && !(value instanceof Date)) {
+        // Handle file objects (images) - check for uri, type, name
+        if (value.uri && value.type && value.name) {
+          formData.append(key, value as any);
+        }
+        // Handle objects (like location)
+        else if (typeof value === "object" && !(value instanceof Date)) {
           formData.append(key, JSON.stringify(value));
         }
         // Handle dates
@@ -297,11 +302,6 @@ export const useAuthStore = create((set, get) => ({
           formData.append(key, value.toString());
         }
       });
-
-      console.log(
-        "Sending profile FormData with keys:",
-        Object.keys(profileData)
-      );
 
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_API_URL}/profile`,

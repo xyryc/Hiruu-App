@@ -97,16 +97,16 @@ export default function Step1({
         gender: selectedGender,
       };
 
-      console.log(
-        "Sending profile data:",
-        JSON.stringify(profileData, null, 2)
-      );
+      // console.log(
+      //   "Sending profile data:",
+      //   JSON.stringify(profileData, null, 2)
+      // );
 
       // Call API - Pass data directly
       const result = await updateProfile(profileData);
 
       // Success - move to next step
-      console.log("Profile updated:", result);
+      // console.log("Profile updated:", result);
       onComplete();
     } catch (error: any) {
       Alert.alert(
