@@ -263,5 +263,90 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  updateProfile: async (profileData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const { accessToken } = get();
+
+      if (!accessToken) {
+        const errorMessage = translateApiMessage("NO_AUTH_TOKEN");
+        throw new Error(errorMessage);
+      }
+
+      // Create FormData
+      const formData = new FormData();
+
+      Object.keys(profileData).forEach((key) => {
+        const value = profileData[key];
+
+        if (value === null || value === undefined) {
+          return;
+        }
+
+        // Handle objects (e.g., location)
+        if (typeof value === "object" && !(value instanceof Date)) {
+          formData.append(key, JSON.stringify(value));
+        }
+        // Handle dates
+        else if (value instanceof Date) {
+          formData.append(key, value.toISOString());
+        }
+        // Handle primitives
+        else {
+          formData.append(key, value.toString());
+        }
+      });
+
+      console.log(
+        "Sending profile FormData with keys:",
+        Object.keys(profileData)
+      );
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/profile`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            // DO NOT set Content-Type for FormData - browser sets it automatically with boundary
+          },
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        const errorCode = result.error?.code || "UNKNOWN_ERROR";
+        const translatedMessage = translateApiMessage(errorCode);
+        throw new Error(translatedMessage);
+      }
+
+      // Update user data with profile info
+      const currentUser = get().user;
+      const updatedUser = {
+        ...currentUser,
+        ...result.data.profile,
+      };
+
+      // Update storage
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.USER,
+        JSON.stringify(updatedUser)
+      );
+
+      set({
+        user: updatedUser,
+        isLoading: false,
+      });
+
+      return result.data;
+    } catch (error) {
+      set({ isLoading: false, error: error });
+      throw error;
+    }
+  },
+
   clearError: () => set({ error: null }),
 }));

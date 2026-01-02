@@ -24,7 +24,7 @@ const PrimaryButton = ({
         <ActivityIndicator
           size="small"
           color="#ffffff"
-          className="p-2 bg-white rounded-full"
+          className="p-2 bg-black rounded-full"
         />
       ) : (
         <Feather

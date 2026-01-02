@@ -3,9 +3,11 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import DateOfBirthInput from "@/components/ui/inputs/DateOfBirthInput";
 import GenderSelection from "@/components/ui/inputs/GenderSelection";
+import { useAuthStore } from "@/stores/authStore";
 import { GenderOption } from "@/types";
+import { t } from "i18next";
 import { useState } from "react";
-import { ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, ScrollView, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
@@ -19,8 +21,17 @@ export default function Step1({
   onComplete,
   handleBack,
 }: any) {
-  const [value, setValue] = useState(null);
-  const states = [
+  const { user, updateProfile, isLoading } = useAuthStore();
+
+  // Form state
+  const [fullName, setFullName] = useState(user?.fullName || "");
+  const [location, setLocation] = useState(null);
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
+  const [selectedGender, setSelectedGender] = useState<GenderOption | null>(
+    "male"
+  );
+
+  const locations = [
     {
       label: "Central Park, New York, NY",
       value: "Central Park, New York, NY",
@@ -32,12 +43,79 @@ export default function Step1({
     },
   ];
 
-  // dob
-  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
-  // gender
-  const [selectedGender, setSelectedGender] = useState<GenderOption | null>(
-    "male"
-  );
+  // Validation with i18n
+  const validateStep1 = () => {
+    if (!fullName.trim()) {
+      Alert.alert(t("validation.validationError"), t("validation.enterName"));
+      return false;
+    }
+
+    // if (!location) {
+    //   Alert.alert(
+    //     t("validation.validationError"),
+    //     t("validation.selectLocation")
+    //   );
+    //   return false;
+    // }
+
+    if (!dateOfBirth) {
+      Alert.alert(
+        t("validation.validationError"),
+        t("validation.selectDateOfBirth")
+      );
+      return false;
+    }
+
+    if (!selectedGender) {
+      Alert.alert(
+        t("validation.validationError"),
+        t("validation.selectGender")
+      );
+      return false;
+    }
+
+    return true;
+  };
+
+  // Handle form submission
+  const handleNext = async () => {
+    if (!validateStep1()) {
+      return;
+    }
+
+    try {
+      // Prepare data for API - Just the data fields, no step wrapper
+      const profileData = {
+        fullName: fullName.trim(),
+        location: {
+          name: "Central Park",
+          address: "Central Park, New York, NY",
+          latitude: 40.785091,
+          longitude: -73.968285,
+        },
+        dateOfBirth: dateOfBirth?.toISOString(),
+        gender: selectedGender,
+      };
+
+      console.log(
+        "Sending profile data:",
+        JSON.stringify(profileData, null, 2)
+      );
+
+      // Call API - Pass data directly
+      const result = await updateProfile(profileData);
+
+      // Success - move to next step
+      console.log("Profile updated:", result);
+      onComplete();
+    } catch (error: any) {
+      Alert.alert(
+        t("common.error"),
+        error.message || t("user.setup.profileUpdateError")
+      );
+      console.error("Profile update error:", error);
+    }
+  };
 
   return (
     <AnimatedView
@@ -94,6 +172,8 @@ export default function Step1({
             className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm"
             keyboardType="email-address"
             autoCapitalize="none"
+            value={fullName}
+            onChangeText={setFullName}
           />
         </View>
 
@@ -104,17 +184,36 @@ export default function Step1({
           </Text>
 
           <Dropdown
-            data={states}
+            data={locations}
             labelField="label"
             valueField="value"
-            placeholder="Select location"
-            value={value}
-            onChange={(item) => setValue(item.value)}
-            style={styles.dropdown}
-            placeholderStyle={styles.placeholderStyle}
-            selectedTextStyle={styles.selectedTextStyle}
-            containerStyle={styles.containerStyle}
-            itemTextStyle={styles.itemTextStyle}
+            placeholder={t("user.setup.selectLocation")}
+            value={location}
+            onChange={(item) => setLocation(item.value)}
+            style={{
+              backgroundColor: "#ffffff",
+              borderWidth: 1,
+              borderColor: "#EEEEEE",
+              borderRadius: 10,
+              padding: 12,
+            }}
+            placeholderStyle={{
+              fontSize: 14,
+              color: "#9CA3AF",
+            }}
+            selectedTextStyle={{
+              fontSize: 14,
+              color: "#111111",
+            }}
+            containerStyle={{
+              borderRadius: 10,
+              backgroundColor: "white",
+            }}
+            itemTextStyle={{
+              fontSize: 14,
+              color: "#3D3D3D",
+            }}
+            disable={isLoading}
           />
         </View>
 
@@ -151,34 +250,13 @@ export default function Step1({
 
       {/* Button fixed at bottom */}
       <View className="pb-10 pt-4 bg-transparent">
-        <PrimaryButton title="Next" className="w-full" onPress={onComplete} />
+        <PrimaryButton
+          title="Next"
+          className="w-full"
+          onPress={handleNext}
+          loading={isLoading}
+        />
       </View>
     </AnimatedView>
   );
 }
-
-const styles = StyleSheet.create({
-  dropdown: {
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#EEEEEE",
-    borderRadius: 10,
-    padding: 12,
-  },
-  placeholderStyle: {
-    fontSize: 14,
-    color: "#9CA3AF",
-  },
-  selectedTextStyle: {
-    fontSize: 14,
-    color: "#111111",
-  },
-  containerStyle: {
-    borderRadius: 10,
-    backgroundColor: "white",
-  },
-  itemTextStyle: {
-    fontSize: 14,
-    color: "#3D3D3D",
-  },
-});

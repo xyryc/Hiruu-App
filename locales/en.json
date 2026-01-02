@@ -15,6 +15,23 @@
       "appInfo": "App Info",
       "deleteAccount": "Delete Account",
       "logout": "Log Out"
+    },
+    "setup": {
+      "personalDetails": "Personal Details",
+      "yourProgress": "Your Progress",
+      "name": "Name",
+      "location": "Location",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "connectSocials": "Connect Your Socials",
+      "optional": "Optional",
+      "next": "Next",
+      "saving": "Saving...",
+      "selectLocation": "Select location",
+      "enterYourName": "Enter your name",
+      "requiredField": "*",
+      "profileUpdateSuccess": "Profile updated successfully!",
+      "profileUpdateError": "Failed to save profile data"
     }
   },
   "business": {
@@ -54,14 +71,21 @@
     "USERS_NOT_IN_RELATION": "Users are not in relation.",
     "AN_ACTIVE_PLAN_IS_NEEDED_FOR_THIS_ACTION": "An active subscription plan is required for this action.",
     "UNEXPECTED_END_OF_JSON_INPUT": "Network error. Please check your connection.",
-    "NETWORK_ERROR": "Network error. Please check your connection."
+    "NETWORK_ERROR": "Network error. Please check your connection.",
+    "NO_AUTH_TOKEN": "No authentication token found",
+    "UNKNOWN_ERROR": "An unexpected error occurred"
   },
 
   "validation": {
     "fillAllFields": "Please fill in all fields",
     "invalidEmail": "Please enter a valid email address",
     "passwordTooShort": "Password must be at least 6 characters",
-    "INVALID_DATA_PROVIDED": "Invalid data provided. Please check your input."
+    "INVALID_DATA_PROVIDED": "Invalid data provided. Please check your input.",
+    "validationError": "Validation Error",
+    "enterName": "Please enter your name",
+    "selectLocation": "Please select your location",
+    "selectDateOfBirth": "Please select your date of birth",
+    "selectGender": "Please select your gender"
   },
 
   "auth": {
