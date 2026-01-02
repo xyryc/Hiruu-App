@@ -57,10 +57,11 @@ const Login = () => {
         return;
       }
 
-      const loginData = { email, password };
+      const loginData = { emailOrPhone: email, password };
 
       try {
         const result = await login(loginData);
+        console.log("login result", result.role);
 
         // Navigate based on user role
         if (result.role === "employee") {
@@ -82,10 +83,9 @@ const Login = () => {
         return;
       }
 
-      // Remove '+' from phone number before sending to backend
+      // remove '+' from phone number
       const cleanPhoneNumber = phoneNumber.replace(/^\+/, "");
       const loginData = { emailOrPhone: cleanPhoneNumber };
-      console.log("login data", loginData);
 
       try {
         const result = await login(loginData);

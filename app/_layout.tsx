@@ -1,5 +1,6 @@
 import ErrorBoundary from "@/components/ui/error/ErrorBoundary";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { useAuthStore } from "@/stores/authStore";
 import "@/utils/i18n";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -20,15 +21,23 @@ const AppContent = () => {
   });
 
   const [appIsReady, setAppIsReady] = useState(false);
+  const { initializeAuth } = useAuthStore();
 
   useEffect(() => {
-    if (fontsLoaded) {
-      const timer = setTimeout(() => {
-        setAppIsReady(true);
-      }, 1500);
+    const init = async () => {
+      // Initialize auth state from storage
+      await initializeAuth();
 
-      return () => clearTimeout(timer);
-    }
+      if (fontsLoaded) {
+        const timer = setTimeout(() => {
+          setAppIsReady(true);
+        }, 1500);
+
+        return () => clearTimeout(timer);
+      }
+    };
+
+    init();
   }, [fontsLoaded]);
 
   if (!appIsReady) {
@@ -39,6 +48,7 @@ const AppContent = () => {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" />
+      {/* <Stack.Screen name="(setup)" /> */}
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="+not-found" />
     </Stack>

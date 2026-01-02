@@ -36,7 +36,7 @@ export default function Step1({
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   // gender
   const [selectedGender, setSelectedGender] = useState<GenderOption | null>(
-    null
+    "male"
   );
 
   return (
@@ -90,7 +90,7 @@ export default function Step1({
           <Text className="text-sm font-proximanova-semibold mb-2.5">Name</Text>
 
           <TextInput
-            placeholder="Enter Email"
+            placeholder="Enter your name"
             className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm"
             keyboardType="email-address"
             autoCapitalize="none"

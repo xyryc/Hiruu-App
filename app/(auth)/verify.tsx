@@ -20,7 +20,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const Verify = () => {
   const params = useLocalSearchParams();
   const router = useRouter();
-  console.log("Verify screen", params);
+  // console.log("Verify screen", params);
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
 

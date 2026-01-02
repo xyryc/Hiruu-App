@@ -1,5 +1,6 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import { useAuthStore } from "@/stores/authStore";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -9,6 +10,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const Complete = () => {
   const router = useRouter();
+  const { setProfileComplete, user } = useAuthStore();
+
+  const handleComplete = async () => {
+    // Mark profile setup as complete
+    await setProfileComplete(true);
+
+    // Route based on user role
+    if (user?.role === "user") {
+      router.push("/(tabs)/user-home");
+    } else if (user?.role === "business") {
+      router.push("/(tabs)/business-home");
+    }
+  };
 
   return (
     <SafeAreaView className="flex-1" edges={["left", "right", "bottom"]}>
@@ -41,7 +55,7 @@ const Complete = () => {
 
         <View className="absolute bottom-0 inset-x-5">
           <PrimaryButton
-            onPress={() => router.push("/(tabs)/user-home")}
+            onPress={handleComplete}
             className="w-full"
             title="Go to Profile"
           />
