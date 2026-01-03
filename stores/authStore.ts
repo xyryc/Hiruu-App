@@ -66,7 +66,6 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Set profile completion status
   setProfileComplete: async (isComplete) => {
     try {
       await AsyncStorage.setItem(
@@ -348,7 +347,6 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-  // Fetch businesses list
   fetchBusinesses: async () => {
     try {
       const { accessToken } = get();
@@ -384,6 +382,58 @@ export const useAuthStore = create((set, get) => ({
       return businessesArray;
     } catch (error) {
       console.error("Fetch businesses error:", error);
+      throw error;
+    }
+  },
+
+  createCompanyManual: async (companyData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const { accessToken } = get();
+
+      if (!accessToken) {
+        const errorMessage = translateApiMessage("NO_AUTH_TOKEN");
+        throw new Error(errorMessage);
+      }
+
+      // Create FormData
+      const formData = new FormData();
+
+      // Add companyName
+      if (companyData.companyName) {
+        formData.append("companyName", companyData.companyName);
+      }
+
+      // Add logo file
+      if (companyData.logo && companyData.logo.uri) {
+        formData.append("logo", companyData.logo as any);
+      }
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/profile/company/manual`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: formData,
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        const errorCode = result.error?.code || "UNKNOWN_ERROR";
+        const translatedMessage = translateApiMessage(errorCode);
+        throw new Error(translatedMessage);
+      }
+
+      set({ isLoading: false });
+
+      return result.data;
+    } catch (error) {
+      set({ isLoading: false, error: error });
       throw error;
     }
   },

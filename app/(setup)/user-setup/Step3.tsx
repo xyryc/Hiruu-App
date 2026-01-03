@@ -21,6 +21,7 @@ export default function Step3({
   const router = useRouter();
   const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
   const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
+  const [uploading, setUploading] = useState(false);
   const { updateProfile, isLoading } = useAuthStore();
 
   const handleSkip = () => {
