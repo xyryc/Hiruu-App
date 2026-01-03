@@ -1,10 +1,14 @@
+import { useAuthStore } from "@/stores/authStore";
 import {
   Company,
   MultiSelectCompanyDropdownProps,
   WorkExperience,
 } from "@/types";
-import React, { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Modal,
   Platform,
   ScrollView,
@@ -22,17 +26,40 @@ const MultiSelectCompanyDropdown = ({
   onCompaniesChange,
   onWorkExperiencesChange,
 }: MultiSelectCompanyDropdownProps) => {
+  const { fetchBusinesses } = useAuthStore();
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [manualCompanyName, setManualCompanyName] = useState("");
 
-  const companies: Company[] = [
-    { id: "1", name: "Farout Beach Club" },
-    { id: "2", name: "Paradise Holiday" },
-    { id: "3", name: "Space Hotel" },
-    { id: "4", name: "Ocean Resort" },
-    { id: "5", name: "Mountain Lodge" },
-  ];
+  // Fetch companies when component mounts
+  useEffect(() => {
+    loadCompanies();
+  }, []);
+
+  const loadCompanies = async () => {
+    setIsLoadingCompanies(true);
+    try {
+      const businesses = await fetchBusinesses();
+
+      // Transform API data to Company format
+      const transformedCompanies = businesses.map((business: any) => ({
+        id: business.id,
+        name: business.name,
+        logo: business.logo || business.profileImage,
+      }));
+
+      setCompanies(transformedCompanies);
+    } catch (error) {
+      console.error("Failed to load companies:", error);
+      Alert.alert("Error", "Failed to load companies. Please try again.");
+    } finally {
+      setIsLoadingCompanies(false);
+    }
+  };
 
   const filteredCompanies = companies.filter((company) =>
     company.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -164,7 +191,7 @@ const MultiSelectCompanyDropdown = ({
                 {/* Company Header */}
                 <View className="flex-row justify-between items-center mb-4">
                   <Text className="text-base font-proximanova-semibold text-gray-900">
-                    Company Name {selectedCompanies.length > 1 ? index + 1 : ""}
+                    {company.name}
                   </Text>
                   <TouchableOpacity
                     onPress={() => removeCompany(company.id)}
@@ -269,14 +296,29 @@ const MultiSelectCompanyDropdown = ({
               <TouchableOpacity
                 key={company.id}
                 onPress={() => toggleCompanySelection(company)}
-                className="flex-row items-center py-4 px-6 border-b border-gray-50"
+                className="flex-row items-center py-2 px-6 border-b border-gray-50"
               >
-                {/* Company Avatar */}
-                <View className="w-10 h-10 bg-gray-800 rounded-full mr-4 justify-center items-center">
-                  <Text className="text-white text-sm font-proximanova-medium">
-                    {getCompanyInitials(company.name)}
-                  </Text>
-                </View>
+                {/* Company Logo */}
+                {company?.logo ? (
+                  <Image
+                    source={{
+                      uri: `${process.env.EXPO_PUBLIC_API_URL}${company?.logo}`,
+                    }}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: 999,
+                      marginRight: 12,
+                    }}
+                    contentFit="cover"
+                  />
+                ) : (
+                  <View className="w-10 h-10 bg-gray-800 rounded-full mr-3 justify-center items-center">
+                    <Text className="text-white text-sm font-proximanova-medium">
+                      {getCompanyInitials(company.name)}
+                    </Text>
+                  </View>
+                )}
 
                 {/* Company Name */}
                 <Text className="text-base text-gray-900 flex-1">
@@ -299,41 +341,39 @@ const MultiSelectCompanyDropdown = ({
                 </View>
               </TouchableOpacity>
             ))}
-
-            {/* Add Company Manually */}
-            <View className="p-6 border-t border-gray-200">
-              <TouchableOpacity className="flex-row items-center mb-4">
-                <View className="w-10 h-10 bg-gray-400 rounded-full mr-4 justify-center items-center">
-                  <Text className="text-white text-lg">📷</Text>
-                </View>
-                <Text className="text-base text-gray-900 font-proximanova-medium">
-                  Add Company Manually
-                </Text>
-              </TouchableOpacity>
-
-              <View className="flex-row items-center space-x-3">
-                <View className="flex-1">
-                  <TextInput
-                    className="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-sm"
-                    placeholder="Type Here..."
-                    value={manualCompanyName}
-                    onChangeText={setManualCompanyName}
-                  />
-                </View>
-                <TouchableOpacity
-                  onPress={addManualCompany}
-                  disabled={!manualCompanyName.trim()}
-                  className={`px-6 py-3 rounded-xl ${
-                    manualCompanyName.trim() ? "bg-blue-500" : "bg-gray-300"
-                  }`}
-                >
-                  <Text className="text-white font-proximanova-medium">
-                    Add
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
           </ScrollView>
+
+          {/* Add Company Manually */}
+          <View className="p-6 border-t border-gray-200">
+            <TouchableOpacity className="flex-row items-center mb-4">
+              <View className="w-10 h-10 bg-[#11293A] rounded-full mr-4 justify-center items-center">
+                <Ionicons name="camera-outline" size={20} color="white" />
+              </View>
+              <Text className="text-base text-gray-900 font-proximanova-medium flex-1">
+                Add Company Manually
+              </Text>
+            </TouchableOpacity>
+
+            <View className="flex-row items-center space-x-3">
+              <View className="flex-1">
+                <TextInput
+                  className="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-sm"
+                  placeholder="Type Here..."
+                  value={manualCompanyName}
+                  onChangeText={setManualCompanyName}
+                />
+              </View>
+              <TouchableOpacity
+                onPress={addManualCompany}
+                disabled={!manualCompanyName.trim()}
+                className={`px-6 py-3 rounded-xl ${
+                  manualCompanyName.trim() ? "bg-blue-500" : "bg-gray-300"
+                }`}
+              >
+                <Text className="text-white font-proximanova-medium">Add</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </SafeAreaView>
       </Modal>
     </View>

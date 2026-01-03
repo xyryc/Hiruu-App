@@ -58,7 +58,7 @@ export default function Step2({
       }
 
       console.log("Sending Step2 data:", {
-        intro: profileData.intro,
+        bio: profileData.bio,
         hasImage: !!profileData.profileImage,
       });
 

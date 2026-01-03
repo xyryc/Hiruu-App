@@ -348,5 +348,45 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
+  // Fetch businesses list
+  fetchBusinesses: async () => {
+    try {
+      const { accessToken } = get();
+
+      if (!accessToken) {
+        throw new Error("No authentication token found");
+      }
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/workforce/business/all`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok || !result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to fetch businesses";
+        // console.error("API Error:", errorMsg, result);
+        throw new Error(errorMsg);
+      }
+
+      // Convert object to array
+      const businessesArray = Object.values(result.data);
+
+      return businessesArray;
+    } catch (error) {
+      console.error("Fetch businesses error:", error);
+      throw error;
+    }
+  },
+
   clearError: () => set({ error: null }),
 }));

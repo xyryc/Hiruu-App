@@ -1,10 +1,11 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import MultiSelectCompanyDropdown from "@/components/ui/inputs/MultiSelectCompanyDropdown";
+import { useAuthStore } from "@/stores/authStore";
 import { Company, WorkExperience } from "@/types";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 
@@ -20,6 +21,38 @@ export default function Step3({
   const router = useRouter();
   const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
   const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
+  const { updateProfile, isLoading } = useAuthStore();
+
+  const handleSkip = () => {
+    onComplete();
+  };
+
+  const handleNext = async () => {
+    // Skip if no work experience added
+    if (workExperiences.length === 0) {
+      onComplete();
+      return;
+    }
+
+    try {
+      // Transform work experiences for API
+      const profileData = {
+        workExperience: workExperiences.map((exp) => ({
+          businessId: exp.companyId,
+          position: exp.position,
+          startDate: exp.startDate,
+          endDate: exp.endDate,
+          currentlyWorking: exp.currentlyWorking,
+        })),
+      };
+
+      await updateProfile(profileData);
+      onComplete();
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to save work experience");
+      console.error("Work experience save error:", error);
+    }
+  };
 
   return (
     <AnimatedView
@@ -33,7 +66,7 @@ export default function Step3({
         title="Work Experience"
         buttonTitle="Skip"
         className="mt-3"
-        onPress={() => router.push("/(setup)/user-setup/complete")}
+        onPress={handleSkip}
       />
 
       {/* progress details */}
@@ -66,7 +99,7 @@ export default function Step3({
       {/* main content */}
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 300 }}
         className="flex-1"
       >
         {/* company  */}
@@ -86,7 +119,12 @@ export default function Step3({
 
       {/* Button fixed at bottom */}
       <View className="pb-10 pt-4 bg-transparent">
-        <PrimaryButton title="Next" className="w-full" onPress={onComplete} />
+        <PrimaryButton
+          title="Next"
+          className="w-full"
+          onPress={handleNext}
+          loading={isLoading}
+        />
       </View>
     </AnimatedView>
   );
