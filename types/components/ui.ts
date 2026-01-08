@@ -65,20 +65,21 @@ export interface Company {
   name: string;
 }
 
-export interface WorkExperience {
-  companyId: string;
-  companyName: string;
+export interface Companies {
+  id: string;
+  name: string;
+  logo: string;
   startDate: string;
   endDate: string;
   jobTitle: string;
-  isCurrentJob: boolean;
+  isCurrentlyWorking: boolean;
 }
 
 export interface MultiSelectCompanyDropdownProps {
   selectedCompanies: Company[];
-  workExperiences: WorkExperience[];
+  workExperiences: Companies[];
   onCompaniesChange: (companies: Company[]) => void;
-  onWorkExperiencesChange: (experiences: WorkExperience[]) => void;
+  onWorkExperiencesChange: (experiences: Companies[]) => void;
 }
 
 export interface HomeHeaderProps {

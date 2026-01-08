@@ -1,9 +1,5 @@
 import { useAuthStore } from "@/stores/authStore";
-import {
-  Company,
-  MultiSelectCompanyDropdownProps,
-  WorkExperience,
-} from "@/types";
+import { Companies, Company, MultiSelectCompanyDropdownProps } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
@@ -89,9 +85,10 @@ const MultiSelectCompanyDropdown = ({
     } else {
       // Add company and create new work experience
       const updatedCompanies = [...selectedCompanies, company];
-      const newExperience: WorkExperience = {
+      const newExperience: Companies = {
         companyId: company.id,
         companyName: company.name,
+        logo: company.logo,
         startDate: "",
         endDate: "",
         jobTitle: "",
@@ -156,9 +153,10 @@ const MultiSelectCompanyDropdown = ({
       setCompanies([...companies, newCompany]);
 
       const updatedCompanies = [...selectedCompanies, newCompany];
-      const newExperience: WorkExperience = {
+      const newExperience: Companies = {
         companyId: newCompany.id,
         companyName: newCompany.name,
+        logo: newCompany.logo,
         startDate: "",
         endDate: "",
         jobTitle: "",
@@ -183,7 +181,7 @@ const MultiSelectCompanyDropdown = ({
 
   const updateWorkExperience = (
     companyId: string,
-    field: keyof WorkExperience,
+    field: keyof Companies,
     value: any
   ) => {
     const updatedExperiences = workExperiences.map((exp) =>

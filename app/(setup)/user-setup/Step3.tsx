@@ -38,17 +38,20 @@ export default function Step3({
     try {
       // Transform work experiences for API
       const profileData = {
-        workExperience: workExperiences.map((exp) => ({
-          businessId: exp.companyId,
-          position: exp.position,
-          startDate: exp.startDate,
-          endDate: exp.endDate,
-          currentlyWorking: exp.currentlyWorking,
+        companies: workExperiences.map((exp) => ({
+          id: exp.companyId,
+          name: exp.companyName,
+          // logo: exp.logo,
+          startDate: exp.startDate || null,
+          endDate: exp.endDate || null,
+          jobTitle: exp.jobTitle || null,
+          isCurrentlyWorking: exp.currentlyWorking || false,
         })),
       };
 
       await updateProfile(profileData);
       onComplete();
+      // console.log("from step 3", profileData);
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to save work experience");
       console.error("Work experience save error:", error);
