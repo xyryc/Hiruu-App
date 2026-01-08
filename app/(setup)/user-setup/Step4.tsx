@@ -1,9 +1,11 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import InterestSelection from "@/components/ui/inputs/InterestSelection";
+import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "expo-router";
+import { t } from "i18next";
 import { useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 
@@ -18,6 +20,27 @@ export default function Step4({
 }: any) {
   const router = useRouter();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const { updateProfile, isLoading } = useAuthStore();
+
+  const handleNext = async () => {
+    if (selectedInterests.length === 0) {
+      return;
+    }
+
+    try {
+      const profileData = { interests: selectedInterests };
+
+      await updateProfile(profileData);
+      // onComplete();
+      console.log("from step4", profileData);
+    } catch (error: any) {
+      Alert.alert(
+        t("common.error"),
+        error.message || t("user.setup.profileUpdateError")
+      );
+      console.error("Profile update error:", error);
+    }
+  };
 
   return (
     <AnimatedView
@@ -76,7 +99,12 @@ export default function Step4({
 
       {/* Button fixed at bottom */}
       <View className="pb-10 pt-4 bg-transparent">
-        <PrimaryButton title="Next" className="w-full" onPress={onComplete} />
+        <PrimaryButton
+          title="Next"
+          className="w-full"
+          onPress={handleNext}
+          loading={isLoading}
+        />
       </View>
     </AnimatedView>
   );

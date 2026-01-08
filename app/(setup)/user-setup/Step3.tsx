@@ -4,6 +4,7 @@ import MultiSelectCompanyDropdown from "@/components/ui/inputs/MultiSelectCompan
 import { useAuthStore } from "@/stores/authStore";
 import { Company, WorkExperience } from "@/types";
 import { useRouter } from "expo-router";
+import { t } from "i18next";
 import { useState } from "react";
 import { Alert, ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
@@ -53,8 +54,11 @@ export default function Step3({
       onComplete();
       // console.log("from step 3", profileData);
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to save work experience");
-      console.error("Work experience save error:", error);
+      Alert.alert(
+        t("common.error"),
+        error.message || t("user.setup.profileUpdateError")
+      );
+      console.error("Profile update error:", error);
     }
   };
 

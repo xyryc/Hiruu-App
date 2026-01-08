@@ -3,6 +3,7 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ProfileImagePicker from "@/components/ui/inputs/ProfileImagePicker";
 import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "expo-router";
+import { t } from "i18next";
 import { useState } from "react";
 import {
   Alert,
@@ -67,7 +68,10 @@ export default function Step2({
 
       onComplete();
     } catch (error: any) {
-      Alert.alert("Error", error.message || "Failed to save profile data");
+      Alert.alert(
+        t("common.error"),
+        error.message || t("user.setup.profileUpdateError")
+      );
       console.error("Profile update error:", error);
     }
   };
