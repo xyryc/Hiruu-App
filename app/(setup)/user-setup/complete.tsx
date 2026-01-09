@@ -10,18 +10,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const Complete = () => {
   const router = useRouter();
-  const { setProfileComplete, user } = useAuthStore();
+  const { setProfileComplete } = useAuthStore();
 
   const handleComplete = async () => {
     // Mark profile setup as complete
     await setProfileComplete(true);
 
-    // Route based on user role
-    if (user?.role === "user") {
-      router.push("/(tabs)/user-home");
-    } else if (user?.role === "business") {
-      router.push("/(tabs)/business-home");
-    }
+    // route to home
+    router.replace("/(tabs)/home");
   };
 
   return (

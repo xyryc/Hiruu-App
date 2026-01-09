@@ -64,11 +64,7 @@ const Login = () => {
         console.log("login result", result.role);
 
         // Navigate based on user role
-        if (result.role === "employee") {
-          router.push("/(tabs)/user-home");
-        } else if (result.role === "business") {
-          router.push("/(tabs)/business-home");
-        }
+        router.replace("/(tabs)/home");
       } catch (error) {
         Alert.alert(t("common.error"), error.message);
       }
@@ -83,19 +79,14 @@ const Login = () => {
         return;
       }
 
-      // remove '+' from phone number
-      const cleanPhoneNumber = phoneNumber.replace(/^\+/, "");
-      const loginData = { emailOrPhone: cleanPhoneNumber };
+      const loginData = { emailOrPhone: phoneNumber };
+      console.log("login data", phoneNumber, loginData);
 
       try {
         const result = await login(loginData);
 
-        // Navigate based on user role
-        if (result.role === "employee") {
-          router.push("/(tabs)/user-home");
-        } else if (result.role === "business") {
-          router.push("/(tabs)/business-home");
-        }
+        // route to home
+        router.replace("/(tabs)/home");
       } catch (error) {
         Alert.alert(t("common.error"), error.message);
       }
@@ -275,6 +266,7 @@ const Login = () => {
             className="mb-7"
             title="Log in"
             onPress={handleLogin}
+            loading={isLoading}
           />
 
           {/* OR Divider */}

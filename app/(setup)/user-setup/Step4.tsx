@@ -31,8 +31,8 @@ export default function Step4({
       const profileData = { interests: selectedInterests };
 
       await updateProfile(profileData);
-      // onComplete();
-      console.log("from step4", profileData);
+      onComplete();
+      // console.log("from step4", profileData);
     } catch (error: any) {
       Alert.alert(
         t("common.error"),

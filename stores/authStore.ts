@@ -217,7 +217,7 @@ export const useAuthStore = create((set, get) => ({
       };
 
       // Check if profile is complete from API response or assume true for login
-      const profileComplete = result.data.isProfileComplete ?? true;
+      // const profileComplete = result.data.isProfileComplete ?? true;
 
       // Persist to storage
       await get().persistAuthData(

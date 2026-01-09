@@ -20,6 +20,7 @@ export default function Step5({
   const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+
   return (
     <AnimatedView
       entering={FadeIn.duration(300)}
