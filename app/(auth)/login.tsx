@@ -61,7 +61,7 @@ const Login = () => {
 
       try {
         const result = await login(loginData);
-        console.log("login result", result.role);
+        console.log("login result", result);
 
         // Navigate based on user role
         router.replace("/(tabs)/home");

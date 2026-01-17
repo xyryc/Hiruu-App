@@ -6,7 +6,6 @@ const STORAGE_KEYS = {
   USER: "auth_user",
   ACCESS_TOKEN: "auth_access_token",
   REFRESH_TOKEN: "auth_refresh_token",
-  PROFILE_COMPLETE: "auth_profile_complete",
 };
 
 export const useAuthStore = create((set, get) => ({
@@ -15,66 +14,56 @@ export const useAuthStore = create((set, get) => ({
   refreshToken: null,
   isLoading: false,
   error: null,
-  isProfileComplete: false,
   isInitialized: false,
 
-  // Initialize auth state from storage
+  // Add this function to persist auth data to AsyncStorage
+  persistAuthData: async (user, accessToken, refreshToken) => {
+    try {
+      const promises = [
+        AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user)),
+      ];
+
+      if (accessToken) {
+        promises.push(
+          AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken),
+        );
+      }
+
+      if (refreshToken) {
+        promises.push(
+          AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken),
+        );
+      }
+
+      await Promise.all(promises);
+    } catch (error) {
+      console.error("Failed to persist auth data:", error);
+      throw error;
+    }
+  },
+
+  // Add this function to initialize auth state from storage on app start
   initializeAuth: async () => {
     try {
-      const [user, accessToken, refreshToken, profileComplete] =
-        await Promise.all([
-          AsyncStorage.getItem(STORAGE_KEYS.USER),
-          AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN),
-          AsyncStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN),
-          AsyncStorage.getItem(STORAGE_KEYS.PROFILE_COMPLETE),
-        ]);
+      const [user, accessToken, refreshToken] = await Promise.all([
+        AsyncStorage.getItem(STORAGE_KEYS.USER),
+        AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN),
+        AsyncStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN),
+      ]);
 
-      set({
-        user: user ? JSON.parse(user) : null,
-        accessToken: accessToken || null,
-        refreshToken: refreshToken || null,
-        isProfileComplete: profileComplete === "true",
-        isInitialized: true,
-      });
+      if (user) {
+        set({
+          user: JSON.parse(user),
+          accessToken: accessToken || null,
+          refreshToken: refreshToken || null,
+          isInitialized: true,
+        });
+      } else {
+        set({ isInitialized: true });
+      }
     } catch (error) {
       console.error("Failed to initialize auth:", error);
       set({ isInitialized: true });
-    }
-  },
-
-  // Persist auth data to storage
-  persistAuthData: async (
-    userData,
-    accessToken,
-    refreshToken,
-    profileComplete
-  ) => {
-    try {
-      await Promise.all([
-        AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(userData)),
-        accessToken &&
-          AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken),
-        refreshToken &&
-          AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken),
-        AsyncStorage.setItem(
-          STORAGE_KEYS.PROFILE_COMPLETE,
-          String(profileComplete)
-        ),
-      ]);
-    } catch (error) {
-      console.error("Failed to persist auth data:", error);
-    }
-  },
-
-  setProfileComplete: async (isComplete) => {
-    try {
-      await AsyncStorage.setItem(
-        STORAGE_KEYS.PROFILE_COMPLETE,
-        String(isComplete)
-      );
-      set({ isProfileComplete: isComplete });
-    } catch (error) {
-      console.error("Failed to update profile completion:", error);
     }
   },
 
@@ -88,7 +77,7 @@ export const useAuthStore = create((set, get) => ({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
-        }
+        },
       );
 
       const result = await response.json();
@@ -116,7 +105,7 @@ export const useAuthStore = create((set, get) => ({
         userData,
         result.data.accessToken,
         result.data.refreshToken,
-        false
+        false,
       );
 
       set({
@@ -144,7 +133,7 @@ export const useAuthStore = create((set, get) => ({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
-        }
+        },
       );
 
       const result = await response.json();
@@ -193,7 +182,7 @@ export const useAuthStore = create((set, get) => ({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
-        }
+        },
       );
 
       const result = await response.json();
@@ -204,34 +193,16 @@ export const useAuthStore = create((set, get) => ({
         throw new Error(translatedMessage);
       }
 
-      const userData = {
-        id: result.data.id,
-        email: result.data.email,
-        phoneNumber: result.data.phoneNumber,
-        fullName: result.data.fullName,
-        isVerified: result.data.isVerified,
-        role: result.data.role,
-        businessId: result.data.businessId,
-        businessName: result.data.businessName,
-        roles: result.data.roles,
-      };
-
-      // Check if profile is complete from API response or assume true for login
-      // const profileComplete = result.data.isProfileComplete ?? true;
-
-      // Persist to storage
       await get().persistAuthData(
-        userData,
+        result.data,
         result.data.accessToken,
         result.data.refreshToken,
-        profileComplete
       );
 
       set({
-        user: userData,
+        user: result.data,
         accessToken: result.data.accessToken,
         refreshToken: result.data.refreshToken,
-        isProfileComplete: profileComplete,
         isLoading: false,
       });
 
@@ -311,7 +282,7 @@ export const useAuthStore = create((set, get) => ({
             // DO NOT set Content-Type for FormData - browser sets it automatically with boundary
           },
           body: formData,
-        }
+        },
       );
 
       const result = await response.json();
@@ -332,7 +303,7 @@ export const useAuthStore = create((set, get) => ({
       // Update storage
       await AsyncStorage.setItem(
         STORAGE_KEYS.USER,
-        JSON.stringify(updatedUser)
+        JSON.stringify(updatedUser),
       );
 
       set({
@@ -362,7 +333,7 @@ export const useAuthStore = create((set, get) => ({
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       );
 
       const result = await response.json();
@@ -418,7 +389,7 @@ export const useAuthStore = create((set, get) => ({
             Authorization: `Bearer ${accessToken}`,
           },
           body: formData,
-        }
+        },
       );
 
       const result = await response.json();
