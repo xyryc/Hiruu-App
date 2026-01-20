@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ProfileImagePicker from "@/components/ui/inputs/ProfileImagePicker";
-import { useAuthStore } from "@/stores/authStore";
+import { useStore } from "@/stores/store";
 import { useRouter } from "expo-router";
 import { t } from "i18next";
 import { useState } from "react";
@@ -28,7 +28,7 @@ export default function Step2({
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [bio, setBio] = useState("");
   const router = useRouter();
-  const { user, updateProfile, isLoading } = useAuthStore();
+  const { user, updateProfile, isLoading } = useStore();
 
   // Handle form submission
   const handleNext = async () => {
@@ -70,7 +70,7 @@ export default function Step2({
     } catch (error: any) {
       Alert.alert(
         t("common.error"),
-        error.message || t("user.setup.profileUpdateError")
+        error.message || t("user.setup.profileUpdateError"),
       );
       console.error("Profile update error:", error);
     }

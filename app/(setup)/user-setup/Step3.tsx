@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import MultiSelectCompanyDropdown from "@/components/ui/inputs/MultiSelectCompanyDropdown";
-import { useAuthStore } from "@/stores/authStore";
+import { useStore } from "@/stores/store";
 import { Company, WorkExperience } from "@/types";
 import { useRouter } from "expo-router";
 import { t } from "i18next";
@@ -23,7 +23,7 @@ export default function Step3({
   const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
   const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
   const [uploading, setUploading] = useState(false);
-  const { updateProfile, isLoading } = useAuthStore();
+  const { updateProfile, isLoading } = useStore();
 
   const handleSkip = () => {
     onComplete();
@@ -56,7 +56,7 @@ export default function Step3({
     } catch (error: any) {
       Alert.alert(
         t("common.error"),
-        error.message || t("user.setup.profileUpdateError")
+        error.message || t("user.setup.profileUpdateError"),
       );
       console.error("Profile update error:", error);
     }

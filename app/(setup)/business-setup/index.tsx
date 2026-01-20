@@ -1,12 +1,14 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
+import { useStore } from "@/stores/store";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { t } from "i18next";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -29,6 +31,8 @@ const BusinessSetup = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
+  const { createBusinessProfile, error, isCreatingProfile } = useStore();
+
   // profile and cover photo
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
@@ -36,7 +40,7 @@ const BusinessSetup = () => {
 
   const handleImageSelection = async (
     type: "profile" | "cover",
-    result: ImagePicker.ImagePickerResult
+    result: ImagePicker.ImagePickerResult,
   ) => {
     if (!result.canceled && result.assets[0]) {
       setUploading(true);
@@ -63,7 +67,7 @@ const BusinessSetup = () => {
     if (status !== "granted") {
       Alert.alert(
         "Permission required",
-        "Sorry, we need camera roll permissions to make this work!"
+        "Sorry, we need camera roll permissions to make this work!",
       );
       return false;
     }
@@ -89,7 +93,7 @@ const BusinessSetup = () => {
     if (status !== "granted") {
       Alert.alert(
         "Permission required",
-        "Sorry, we need camera permissions to take photos!"
+        "Sorry, we need camera permissions to take photos!",
       );
       return;
     }
@@ -132,7 +136,7 @@ const BusinessSetup = () => {
           text: "Cancel",
           style: "cancel",
         },
-      ]
+      ],
     );
   };
 
@@ -183,6 +187,42 @@ const BusinessSetup = () => {
       value: "central park South, New York, NY",
     },
   ];
+
+  // business name
+  const [businessName, setBusinessName] = useState("");
+
+  // about
+  const [about, setAbout] = useState("");
+
+  const handleCreateBusiness = () => {
+    const payload = {
+      profilePhoto: profileImage,
+      coverPhoto: coverImage,
+      phoneNumber,
+      businessName,
+      location: {
+        name: "Central Park",
+        address: "Central Park, New York, NY",
+        latitude: 40.785091,
+        longitude: -73.968285,
+      },
+      about,
+      socialMedia: [
+        {
+          platform: "Facebook",
+          username: "@paradise_hotel",
+          url: "https://facebook.com/paradise",
+        },
+      ],
+    };
+
+    console.log("create business", payload);
+    try {
+      createBusinessProfile(payload);
+    } catch (error) {
+      Alert.alert(t("common.error"), error.message);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -336,6 +376,7 @@ const BusinessSetup = () => {
             </Text>
 
             <TextInput
+              onChangeText={setBusinessName}
               placeholder="Enter your business name"
               className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm"
               keyboardType="email-address"
@@ -371,6 +412,7 @@ const BusinessSetup = () => {
             </Text>
 
             <TextInput
+              onChangeText={setAbout}
               placeholder="Type here..."
               className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm h-20"
               autoCapitalize="none"
@@ -391,9 +433,11 @@ const BusinessSetup = () => {
 
         {/* button */}
         <PrimaryButton
-          onPress={() => router.push("/(tabs)/business-home")}
+          // onPress={() => router.push("/(tabs)/business-home")}
+          onPress={handleCreateBusiness}
           title="Create Profile"
           className="mx-5 my-4"
+          loading={isCreatingProfile}
         />
       </LinearGradient>
     </SafeAreaView>

@@ -73,7 +73,8 @@
     "UNEXPECTED_END_OF_JSON_INPUT": "Network error. Please check your connection.",
     "NETWORK_ERROR": "Network error. Please check your connection.",
     "NO_AUTH_TOKEN": "No authentication token found",
-    "UNKNOWN_ERROR": "An unexpected error occurred"
+    "UNKNOWN_ERROR": "An unexpected error occurred",
+    "BUSINESS_WITH_THIS_NAME_ALREADY_EXISTS": "Business with this name already exist"
   },
 
   "validation": {

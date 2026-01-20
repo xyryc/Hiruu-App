@@ -1,4 +1,4 @@
-import { useAuthStore } from "@/stores/authStore";
+import { useStore } from "@/stores/store";
 import { Companies, Company, MultiSelectCompanyDropdownProps } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -24,7 +24,7 @@ const MultiSelectCompanyDropdown = ({
   onCompaniesChange,
   onWorkExperiencesChange,
 }: MultiSelectCompanyDropdownProps) => {
-  const { fetchBusinesses, createCompanyManual } = useAuthStore();
+  const { fetchBusinesses, createCompanyManual } = useStore();
   const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -61,7 +61,7 @@ const MultiSelectCompanyDropdown = ({
   };
 
   const filteredCompanies = companies.filter((company) =>
-    company.name.toLowerCase().includes(searchQuery.toLowerCase())
+    company.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const isCompanySelected = (companyId: string) => {
@@ -74,10 +74,10 @@ const MultiSelectCompanyDropdown = ({
     if (isSelected) {
       // Remove company and its work experience
       const updatedCompanies = selectedCompanies.filter(
-        (c) => c.id !== company.id
+        (c) => c.id !== company.id,
       );
       const updatedExperiences = workExperiences.filter(
-        (exp) => exp.companyId !== company.id
+        (exp) => exp.companyId !== company.id,
       );
 
       onCompaniesChange(updatedCompanies);
@@ -174,7 +174,7 @@ const MultiSelectCompanyDropdown = ({
       console.error("Error creating company:", error);
       Alert.alert(
         "Error",
-        error.message || "Failed to add company. Please try again."
+        error.message || "Failed to add company. Please try again.",
       );
     }
   };
@@ -182,20 +182,20 @@ const MultiSelectCompanyDropdown = ({
   const updateWorkExperience = (
     companyId: string,
     field: keyof Companies,
-    value: any
+    value: any,
   ) => {
     const updatedExperiences = workExperiences.map((exp) =>
-      exp.companyId === companyId ? { ...exp, [field]: value } : exp
+      exp.companyId === companyId ? { ...exp, [field]: value } : exp,
     );
     onWorkExperiencesChange(updatedExperiences);
   };
 
   const removeCompany = (companyId: string) => {
     const updatedCompanies = selectedCompanies.filter(
-      (c) => c.id !== companyId
+      (c) => c.id !== companyId,
     );
     const updatedExperiences = workExperiences.filter(
-      (exp) => exp.companyId !== companyId
+      (exp) => exp.companyId !== companyId,
     );
 
     onCompaniesChange(updatedCompanies);
@@ -233,7 +233,7 @@ const MultiSelectCompanyDropdown = ({
         <ScrollView showsVerticalScrollIndicator={false}>
           {selectedCompanies.map((company, index) => {
             const experience = workExperiences.find(
-              (exp) => exp.companyId === company.id
+              (exp) => exp.companyId === company.id,
             );
             if (!experience) return null;
 

@@ -36,9 +36,9 @@ const QrGenerate = () => {
   // Create a deep link URL instead of JSON
   // This will open your app with the invitation details
   const deepLinkUrl = `hirru://join?business=${encodeURIComponent(
-    employeeInfo.businessName
+    employeeInfo.businessName,
   )}&code=${employeeInfo.code}&employee=${encodeURIComponent(
-    employeeInfo.name
+    employeeInfo.name,
   )}&type=employee_join`;
 
   // Copy code to clipboard function
@@ -91,7 +91,7 @@ const QrGenerate = () => {
         Alert.alert(
           "QR Code Captured",
           "QR code is ready. You can take a screenshot to save it.",
-          [{ text: "OK", style: "default" }]
+          [{ text: "OK", style: "default" }],
         );
       }
     } catch (error) {
@@ -105,7 +105,7 @@ const QrGenerate = () => {
             text: "OK",
             style: "default",
           },
-        ]
+        ],
       );
     } finally {
       setIsGenerating(false);

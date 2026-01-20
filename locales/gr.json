@@ -73,7 +73,8 @@
     "UNEXPECTED_END_OF_JSON_INPUT": "Σφάλμα δικτύου. Ελέγξτε τη σύνδεσή σας.",
     "NETWORK_ERROR": "Σφάλμα δικτύου. Ελέγξτε τη σύνδεσή σας.",
     "NO_AUTH_TOKEN": "Δεν βρέθηκε διακριτικό ελέγχου ταυτότητας",
-    "UNKNOWN_ERROR": "Παρουσιάστηκε απροσδόκητο σφάλμα"
+    "UNKNOWN_ERROR": "Παρουσιάστηκε απροσδόκητο σφάλμα",
+    "BUSINESS_WITH_THIS_NAME_ALREADY_EXISTS": ""
   },
 
   "validation": {

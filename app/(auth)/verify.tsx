@@ -1,6 +1,6 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import { useAuthStore } from "@/stores/authStore";
+import { useStore } from "@/stores/store";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -47,7 +47,7 @@ const Verify = () => {
 
   const isOtpComplete = otp.every((digit) => digit !== "");
 
-  const { verifyOTP, isLoading, error, clearError } = useAuthStore();
+  const { verifyOTP, isLoading, error, clearError } = useStore();
 
   const handleVerify = async () => {
     if (!isOtpComplete) return;

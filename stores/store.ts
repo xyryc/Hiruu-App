@@ -8,7 +8,7 @@ const STORAGE_KEYS = {
   REFRESH_TOKEN: "auth_refresh_token",
 };
 
-export const useAuthStore = create((set, get) => ({
+export const useStore = create((set, get) => ({
   user: null,
   accessToken: null,
   refreshToken: null,
@@ -405,6 +405,94 @@ export const useAuthStore = create((set, get) => ({
       return result.data;
     } catch (error) {
       set({ isLoading: false, error: error });
+      throw error;
+    }
+  },
+
+  createBusinessProfile: async (payload) => {
+    set({ isLoading: true, error: null });
+
+    console.log("API URL:", `${process.env.EXPO_PUBLIC_API_URL}`);
+
+    try {
+      // Create FormData for the request
+      const formData = new FormData();
+      const { accessToken } = get();
+
+      // Add text fields
+      Object.keys(payload).forEach((key) => {
+        if (key !== "profilePhoto" && key !== "coverPhoto") {
+          // Handle complex objects like location
+          if (typeof payload[key] === "object" && payload[key] !== null) {
+            formData.append(key, JSON.stringify(payload[key]));
+          } else {
+            formData.append(key, payload[key]);
+          }
+        }
+      });
+
+      // Add image files if they exist
+      if (payload.profilePhoto) {
+        const profilePhotoFile = {
+          uri: payload.profilePhoto,
+          type: "image/jpeg",
+          name: "profilePhoto.jpg",
+        };
+        formData.append("profilePhoto", profilePhotoFile);
+      }
+
+      if (payload.coverPhoto) {
+        const coverPhotoFile = {
+          uri: payload.coverPhoto,
+          type: "image/jpeg",
+          name: "coverPhoto.jpg",
+        };
+        formData.append("coverPhoto", coverPhotoFile);
+      }
+
+      console.log("form data", formData);
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/profile/company`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: formData,
+        },
+      );
+
+      const result = await response.json();
+
+      console.log("Response status:", response.status);
+      console.log("Response data:", result);
+
+      if (!response.ok) {
+        const errorCode = result.error?.code || "UNKNOWN_ERROR";
+        const translatedMessage = translateApiMessage(errorCode);
+
+        throw new Error(translatedMessage);
+      }
+
+      if (result.success) {
+        set({
+          userBusiness: result.data.business,
+          isLoading: false,
+        });
+
+        return result;
+      } else {
+        throw new Error(
+          result.message?.code || "Failed to create business profile",
+        );
+      }
+    } catch (error) {
+      console.error("Error in createBusinessProfile:", error);
+      set({
+        isLoading: false,
+        error: error instanceof Error ? error : new Error(String(error)),
+      });
       throw error;
     }
   },

@@ -1,6 +1,6 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import { useAuthStore } from "@/stores/authStore";
+import { useStore } from "@/stores/store";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const Complete = () => {
   const router = useRouter();
-  const { setProfileComplete } = useAuthStore();
+  const { setProfileComplete } = useStore();
 
   const handleComplete = async () => {
     // Mark profile setup as complete

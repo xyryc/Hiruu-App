@@ -3,7 +3,7 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import DateOfBirthInput from "@/components/ui/inputs/DateOfBirthInput";
 import GenderSelection from "@/components/ui/inputs/GenderSelection";
-import { useAuthStore } from "@/stores/authStore";
+import { useStore } from "@/stores/store";
 import { GenderOption } from "@/types";
 import { t } from "i18next";
 import { useState } from "react";
@@ -21,14 +21,14 @@ export default function Step1({
   onComplete,
   handleBack,
 }: any) {
-  const { user, updateProfile, isLoading } = useAuthStore();
+  const { user, updateProfile, isLoading } = useStore();
 
   // Form state
   const [fullName, setFullName] = useState(user?.fullName || "");
   const [location, setLocation] = useState(null);
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const [selectedGender, setSelectedGender] = useState<GenderOption | null>(
-    "male"
+    "male",
   );
 
   const locations = [
@@ -61,7 +61,7 @@ export default function Step1({
     if (!dateOfBirth) {
       Alert.alert(
         t("validation.validationError"),
-        t("validation.selectDateOfBirth")
+        t("validation.selectDateOfBirth"),
       );
       return false;
     }
@@ -69,7 +69,7 @@ export default function Step1({
     if (!selectedGender) {
       Alert.alert(
         t("validation.validationError"),
-        t("validation.selectGender")
+        t("validation.selectGender"),
       );
       return false;
     }
@@ -111,7 +111,7 @@ export default function Step1({
     } catch (error: any) {
       Alert.alert(
         t("common.error"),
-        error.message || t("user.setup.profileUpdateError")
+        error.message || t("user.setup.profileUpdateError"),
       );
       console.error("Profile update error:", error);
     }

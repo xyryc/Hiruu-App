@@ -23,6 +23,7 @@ const QrScanner = () => {
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
+  const [flashMode, setFlashMode] = useState<"off" | "on" | "auto">("off");
 
   useEffect(() => {
     if (permission && !permission.granted) {
@@ -53,30 +54,8 @@ const QrScanner = () => {
     setIsModalVisible(false);
   };
 
-  const toggleCameraFacing = () => {
-    setFacing((current) => (current === "back" ? "front" : "back"));
-  };
-
-  const handleOpenScanner = () => {
-    if (!permission) {
-      Alert.alert("Error", "Camera permission not determined");
-      return;
-    }
-
-    if (!permission.granted) {
-      Alert.alert(
-        "Camera Permission Required",
-        "This app needs camera access to scan QR codes",
-        [
-          { text: "Cancel", style: "cancel" },
-          { text: "Allow", onPress: requestPermission },
-        ]
-      );
-      return;
-    }
-
-    resetScanner();
-    setIsModalVisible(true);
+  const toggleFlash = () => {
+    setFlashMode((prev) => (prev === "on" ? "off" : "on"));
   };
 
   if (!permission) {
@@ -118,6 +97,7 @@ const QrScanner = () => {
               barcodeScannerSettings={{
                 barcodeTypes: ["qr", "pdf417", "ean13", "upc_e"],
               }}
+              enableTorch={flashMode === "on"}
             >
               {/* Scanner Frame Overlay */}
               <View className="flex-1 justify-center items-center bg-black/30">
@@ -151,17 +131,27 @@ const QrScanner = () => {
         {/* Scanner Controls */}
         <View className="flex-row justify-between items-center space-x-8 w-full">
           {/* Flash Toggle */}
-          <TouchableOpacity className="items-center">
-            <View className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full items-center justify-center">
-              <Feather name="zap" size={24} color={isDark ? "#fff" : "#111"} />
+          <TouchableOpacity className="items-center" onPress={toggleFlash}>
+            <View
+              className={`w-16 h-16 rounded-full items-center justify-center ${
+                flashMode === "on"
+                  ? "bg-yellow-400"
+                  : "bg-gray-200 dark:bg-gray-700"
+              }`}
+            >
+              <Feather
+                name="zap"
+                size={24}
+                color={flashMode === "on" ? "#000" : isDark ? "#fff" : "#111"}
+              />
             </View>
             <Text className="text-gray-600 dark:text-gray-300 mt-2 text-xs">
-              Flash
+              Flash {flashMode === "on" ? "ON" : "OFF"}
             </Text>
           </TouchableOpacity>
 
           {/* Camera Flip */}
-          <TouchableOpacity
+          {/* <TouchableOpacity
             className="items-center"
             onPress={toggleCameraFacing}
           >
@@ -171,7 +161,7 @@ const QrScanner = () => {
             <Text className="text-gray-600 dark:text-gray-300 mt-2 text-xs">
               Flip Camera
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           {/* Gallery */}
           <TouchableOpacity className="items-center">

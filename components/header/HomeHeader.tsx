@@ -1,5 +1,5 @@
-import { user } from "@/assets/data/user.json";
 import { HomeHeaderProps } from "@/types";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React from "react";
@@ -52,11 +52,7 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
 
         {/* scanner */}
         <TouchableOpacity
-          onPress={
-            user.role !== "user"
-              ? () => router.push("/screens/home/business/qr-generate")
-              : () => router.push("/screens/home/qr-scanner")
-          }
+          onPress={() => router.push("/screens/home/qr-scanner")}
           className="h-10 w-10 bg-[#F5F5F5] border-[0.5px] border-[#b2b1b185] rounded-full items-center justify-center"
         >
           <Image
@@ -67,6 +63,13 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
             }}
             contentFit="contain"
           />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => router.push("/screens/home/business/qr-generate")}
+          className="h-10 w-10 bg-[#F5F5F5] border-[0.5px] border-[#b2b1b185] rounded-full items-center justify-center"
+        >
+          <Ionicons name="qr-code-outline" size={18} color="black" />
         </TouchableOpacity>
       </View>
     </View>

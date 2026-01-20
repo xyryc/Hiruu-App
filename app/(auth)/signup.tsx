@@ -1,7 +1,7 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import SocialAuth from "@/components/layout/SocialAuth";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import { useAuthStore } from "@/stores/authStore";
+import { useStore } from "@/stores/store";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -30,7 +30,7 @@ const SignUp = () => {
   const router = useRouter();
 
   const [fullName, setFullName] = useState("");
-  const { signup, isLoading, error, clearError } = useAuthStore();
+  const { signup, isLoading, error, clearError } = useStore();
 
   let phoneRef: any = null;
 
