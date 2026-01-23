@@ -465,8 +465,8 @@ export const useStore = create((set, get) => ({
 
       const result = await response.json();
 
-      console.log("Response status:", response.status);
-      console.log("Response data:", result);
+      // console.log("Response status:", response.status);
+      // console.log("Response data:", result);
 
       if (!response.ok) {
         const errorCode = result.error?.code || "UNKNOWN_ERROR";

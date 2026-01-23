@@ -219,7 +219,9 @@ const BusinessSetup = () => {
     console.log("create business", payload);
     try {
       createBusinessProfile(payload);
-    } catch (error) {
+      Alert.alert(t("common.success"));
+      router.replace("/(tabs)/home");
+    } catch (error: any) {
       Alert.alert(t("common.error"), error.message);
     }
   };
