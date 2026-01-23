@@ -1,7 +1,9 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import { Feather } from "@expo/vector-icons";
 import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
+import { decode } from "jsqr";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
 import {
@@ -68,6 +70,73 @@ const QrScanner = () => {
       </SafeAreaView>
     );
   }
+
+  const pickImageFromGallery = async () => {
+    // Request media library permission
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission Denied",
+        "Permission to access media library is required to select images.",
+      );
+      return;
+    }
+
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const imageUri = result.assets[0].uri;
+
+        // Load the image and scan for QR codes
+        const image = new Image();
+        image.onload = () => {
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d");
+
+          if (context) {
+            canvas.width = image.width;
+            canvas.height = image.height;
+
+            context.drawImage(image, 0, 0);
+            const imageData = context.getImageData(
+              0,
+              0,
+              canvas.width,
+              canvas.height,
+            );
+
+            const code = decode(
+              imageData.data,
+              imageData.width,
+              imageData.height,
+            );
+
+            if (code) {
+              setScannedData(code.data);
+              setIsModalVisible(true);
+            } else {
+              Alert.alert(
+                "No QR Code Found",
+                "No QR code was detected in the selected image.",
+              );
+            }
+          }
+        };
+
+        image.src = imageUri;
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
+      Alert.alert("Error", "An error occurred while selecting the image.");
+    }
+  };
 
   return (
     <SafeAreaView
@@ -150,21 +219,11 @@ const QrScanner = () => {
             </Text>
           </TouchableOpacity>
 
-          {/* Camera Flip */}
-          {/* <TouchableOpacity
-            className="items-center"
-            onPress={toggleCameraFacing}
-          >
-            <View className="w-16 h-16 bg-primary dark:bg-dark-primary rounded-full items-center justify-center">
-              <Feather name="refresh-ccw" size={24} color="white" />
-            </View>
-            <Text className="text-gray-600 dark:text-gray-300 mt-2 text-xs">
-              Flip Camera
-            </Text>
-          </TouchableOpacity> */}
-
           {/* Gallery */}
-          <TouchableOpacity className="items-center">
+          <TouchableOpacity
+            className="items-center"
+            onPress={pickImageFromGallery}
+          >
             <View className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full items-center justify-center">
               <Feather
                 name="image"
@@ -177,16 +236,6 @@ const QrScanner = () => {
             </Text>
           </TouchableOpacity>
         </View>
-
-        {/* Manual Entry Option */}
-        <TouchableOpacity
-          className="mt-8"
-          //   onPress={() => router.push("/screens/home/business/manual-entry")}
-        >
-          <Text className="text-primary dark:text-dark-primary text-lg font-semibold">
-            Enter code manually
-          </Text>
-        </TouchableOpacity>
       </View>
 
       {/* Scan Result Modal */}
