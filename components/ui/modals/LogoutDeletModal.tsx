@@ -1,11 +1,21 @@
+import { useStore } from '@/stores/store';
 import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
+import { useRouter } from 'expo-router';
 import React from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const LogoutDeletModal = ({ visible, onClose, data }: any) => {
+  const router = useRouter()
+  const { logout } = useStore()
+
+  const handleLogout = async () => {
+    await logout()
+    router.replace("/welcome")
+  }
+
   const handleDone = () => {
     onClose();
   };
@@ -52,7 +62,7 @@ const LogoutDeletModal = ({ visible, onClose, data }: any) => {
                 className="border border-[#11111133] rounded-full py-3.5 w-[48%] items-center"
               >
                 <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
-                  Cansel
+                  Cancel
                 </Text>
               </TouchableOpacity>
 
@@ -61,6 +71,7 @@ const LogoutDeletModal = ({ visible, onClose, data }: any) => {
                 style={{
                   backgroundColor: data?.buttonColor,
                 }}
+                onPress={handleLogout}
               >
                 <Text className="font-proximanova-semibold text-white">
                   Yes, {data?.buttonName}

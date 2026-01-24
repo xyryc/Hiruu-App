@@ -497,36 +497,6 @@ export const useStore = create((set, get) => ({
     }
   },
 
-  joinBusiness: async (businessId, inviteCode) => {
-    try {
-      set({ loading: true, error: null });
-
-      const res = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/workforce/business/joinbusiness?businessid=${businessId}&inviteCode=${inviteCode}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}` if needed
-          },
-        }
-      );
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to join business");
-      }
-
-      set({ loading: false });
-    } catch (err: any) {
-      set({
-        loading: false,
-        error: err.message || "Something went wrong",
-      });
-      throw err;
-    }
-  },
-
   generateBusinessCode: async (businessId) => {
     try {
       set({ loading: true, error: null });
@@ -562,6 +532,36 @@ export const useStore = create((set, get) => ({
       throw err;
     }
 
+  },
+
+  joinBusiness: async (businessId, inviteCode) => {
+    try {
+      set({ loading: true, error: null });
+
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/workforce/business/joinbusiness?businessid=${businessId}&inviteCode=${inviteCode}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${token}` if needed
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to join business");
+      }
+
+      set({ loading: false });
+    } catch (err: any) {
+      set({
+        loading: false,
+        error: err.message || "Something went wrong",
+      });
+      throw err;
+    }
   },
 
   clearError: () => set({ error: null }),
