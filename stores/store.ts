@@ -219,14 +219,14 @@ export const useStore = create((set, get) => ({
         AsyncStorage.removeItem(STORAGE_KEYS.USER),
         AsyncStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN),
         AsyncStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN),
-        AsyncStorage.removeItem(STORAGE_KEYS.PROFILE_COMPLETE),
+
       ]);
 
       set({
         user: null,
         accessToken: null,
         refreshToken: null,
-        isProfileComplete: false,
+
       });
     } catch (error) {
       console.error("Failed to logout:", error);
@@ -495,6 +495,73 @@ export const useStore = create((set, get) => ({
       });
       throw error;
     }
+  },
+
+  joinBusiness: async (businessId, inviteCode) => {
+    try {
+      set({ loading: true, error: null });
+
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/workforce/business/joinbusiness?businessid=${businessId}&inviteCode=${inviteCode}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            // Authorization: `Bearer ${token}` if needed
+          },
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to join business");
+      }
+
+      set({ loading: false });
+    } catch (err: any) {
+      set({
+        loading: false,
+        error: err.message || "Something went wrong",
+      });
+      throw err;
+    }
+  },
+
+  generateBusinessCode: async (businessId) => {
+    try {
+      set({ loading: true, error: null });
+
+      const { accessToken } = get();
+
+      const res = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/colleagues-jobs/colleague-code/generate`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({ businessId })
+        }
+      );
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to generate code");
+      }
+
+      const result = await res.json();
+      set({ loading: false });
+
+      return result.data; // Return the generated code data
+    } catch (err: any) {
+      set({
+        loading: false,
+        error: err.message || "Something went wrong",
+      });
+      throw err;
+    }
+
   },
 
   clearError: () => set({ error: null }),

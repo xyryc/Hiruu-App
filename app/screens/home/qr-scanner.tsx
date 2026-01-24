@@ -1,9 +1,9 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
+import { useStore } from '@/stores/store';
 import { Feather } from "@expo/vector-icons";
-import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { Camera, CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import { decode } from "jsqr";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
 import {
@@ -27,7 +27,10 @@ const QrScanner = () => {
   const [scanned, setScanned] = useState(false);
   const [flashMode, setFlashMode] = useState<"off" | "on" | "auto">("off");
 
+  const { joinBusiness, loading } = useStore();
+
   useEffect(() => {
+
     if (permission && !permission.granted) {
       requestPermission();
     }
@@ -72,13 +75,12 @@ const QrScanner = () => {
   }
 
   const pickImageFromGallery = async () => {
-    // Request media library permission
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (status !== "granted") {
       Alert.alert(
         "Permission Denied",
-        "Permission to access media library is required to select images.",
+        "Permission to access media library is required."
       );
       return;
     }
@@ -86,57 +88,54 @@ const QrScanner = () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: false,
-        aspect: [4, 3],
         quality: 1,
       });
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const imageUri = result.assets[0].uri;
+      if (result.canceled || !result.assets?.length) return;
 
-        // Load the image and scan for QR codes
-        const image = new Image();
-        image.onload = () => {
-          const canvas = document.createElement("canvas");
-          const context = canvas.getContext("2d");
+      const imageUri = result.assets[0].uri;
 
-          if (context) {
-            canvas.width = image.width;
-            canvas.height = image.height;
+      const scannedResults = await Camera.scanFromURLAsync(imageUri, [
+        "qr",
+        "pdf417",
+        "ean13",
+        "upc_e",
+      ]);
 
-            context.drawImage(image, 0, 0);
-            const imageData = context.getImageData(
-              0,
-              0,
-              canvas.width,
-              canvas.height,
-            );
-
-            const code = decode(
-              imageData.data,
-              imageData.width,
-              imageData.height,
-            );
-
-            if (code) {
-              setScannedData(code.data);
-              setIsModalVisible(true);
-            } else {
-              Alert.alert(
-                "No QR Code Found",
-                "No QR code was detected in the selected image.",
-              );
-            }
-          }
-        };
-
-        image.src = imageUri;
+      if (scannedResults.length > 0) {
+        setScannedData(scannedResults[0].data);
+        setIsModalVisible(true);
+        setScanned(true);
+      } else {
+        Alert.alert(
+          "No QR Code Found",
+          "No QR code was detected in the selected image."
+        );
       }
     } catch (error) {
-      console.error("Error picking image:", error);
-      Alert.alert("Error", "An error occurred while selecting the image.");
+      console.error("Gallery scan error:", error);
+      Alert.alert("Error", "Failed to scan QR code from image.");
     }
   };
+
+  const parseJoinBusinessQR = (data: string) => {
+    try {
+      const url = new URL(data);
+
+      const businessId = url.searchParams.get("businessid");
+      const inviteCode = url.searchParams.get("inviteCode");
+
+      if (!businessId || !inviteCode) {
+        throw new Error("Invalid QR code");
+      }
+
+      return { businessId, inviteCode };
+    } catch {
+      return null;
+    }
+  };
+
+
 
   return (
     <SafeAreaView
@@ -202,11 +201,10 @@ const QrScanner = () => {
           {/* Flash Toggle */}
           <TouchableOpacity className="items-center" onPress={toggleFlash}>
             <View
-              className={`w-16 h-16 rounded-full items-center justify-center ${
-                flashMode === "on"
-                  ? "bg-yellow-400"
-                  : "bg-gray-200 dark:bg-gray-700"
-              }`}
+              className={`w-16 h-16 rounded-full items-center justify-center ${flashMode === "on"
+                ? "bg-yellow-400"
+                : "bg-gray-200 dark:bg-gray-700"
+                }`}
             >
               <Feather
                 name="zap"
@@ -268,13 +266,40 @@ const QrScanner = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => {
-                  setIsModalVisible(false);
-                  // Handle the scanned data here
-                  if (scannedData) {
-                    Alert.alert("Success", "QR code processed successfully");
+                onPress={async () => {
+                  if (!scannedData) return;
+
+                  const parsed = parseJoinBusinessQR(scannedData);
+
+                  if (!parsed) {
+                    Alert.alert("Invalid QR", "This QR code is not valid for joining a business.");
+                    return;
+                  }
+
+                  try {
+                    await joinBusiness(parsed.businessId, parsed.inviteCode);
+
+                    Alert.alert(
+                      "Success",
+                      "You joined the business successfully!",
+                      [
+                        {
+                          text: "OK",
+                          onPress: () => {
+                            resetScanner();
+                            router.replace("/(tabs)/home"); // or wherever
+                          },
+                        },
+                      ]
+                    );
+                  } catch (err: any) {
+                    Alert.alert(
+                      "Error",
+                      err?.message || "Failed to join business"
+                    );
                   }
                 }}
+
                 className="flex-1 bg-primary dark:bg-dark-primary rounded-full py-3"
               >
                 <Text className="text-white text-center font-semibold">

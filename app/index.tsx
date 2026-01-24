@@ -38,7 +38,7 @@ export default function Index() {
     //   return <Redirect href="/(tabs)/business-home" />;
     // }
 
-    <Redirect href="/(tabs)/home" />;
+    return <Redirect href="/(tabs)/home" />;
   }
 
   // Not logged in, show welcome screen

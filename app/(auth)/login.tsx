@@ -1,4 +1,3 @@
-import userData from "@/assets/data/user.json";
 import TitleHeader from "@/components/header/TitleHeader";
 import SocialAuth from "@/components/layout/SocialAuth";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
@@ -21,8 +20,6 @@ import PhoneInput from "react-native-phone-input";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Login = () => {
-  const user = userData.user;
-
   const [selectedTab, setSelectedTab] = useState("Email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -113,14 +110,12 @@ const Login = () => {
           <View className="flex-row rounded-full mb-8">
             <TouchableOpacity
               onPress={() => setSelectedTab("Email")}
-              className={`flex-1 py-3 rounded-full ${
-                selectedTab === "Email" ? "bg-[#11293A]" : "bg-white"
-              }`}
+              className={`flex-1 py-3 rounded-full ${selectedTab === "Email" ? "bg-[#11293A]" : "bg-white"
+                }`}
             >
               <Text
-                className={`text-center text-sm font-proximanova-semibold ${
-                  selectedTab === "Email" ? "text-white" : "text-gray-600"
-                }`}
+                className={`text-center text-sm font-proximanova-semibold ${selectedTab === "Email" ? "text-white" : "text-gray-600"
+                  }`}
               >
                 Email
               </Text>
@@ -128,16 +123,14 @@ const Login = () => {
 
             <TouchableOpacity
               onPress={() => setSelectedTab("Phone number")}
-              className={`flex-1 py-3 rounded-full ${
-                selectedTab === "Phone number" ? "bg-[#11293A]" : "bg-white"
-              }`}
+              className={`flex-1 py-3 rounded-full ${selectedTab === "Phone number" ? "bg-[#11293A]" : "bg-white"
+                }`}
             >
               <Text
-                className={`text-center text-sm font-proximanova-semibold ${
-                  selectedTab === "Phone number"
-                    ? "text-white"
-                    : "text-gray-600"
-                }`}
+                className={`text-center text-sm font-proximanova-semibold ${selectedTab === "Phone number"
+                  ? "text-white"
+                  : "text-gray-600"
+                  }`}
               >
                 Phone number
               </Text>
@@ -198,9 +191,8 @@ const Login = () => {
                     className="flex-row items-center gap-1.5"
                   >
                     <View
-                      className={`w-4 h-4 border-2 rounded ${
-                        rememberMe ? "bg-[#11293A]" : "border-[#7A7A7A]"
-                      }`}
+                      className={`w-4 h-4 border-2 rounded ${rememberMe ? "bg-[#11293A]" : "border-[#7A7A7A]"
+                        }`}
                     >
                       {rememberMe && (
                         <Ionicons name="checkmark" size={10} color="white" />

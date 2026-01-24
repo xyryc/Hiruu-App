@@ -1,6 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ShareVia from "@/components/ui/modals/ShareVia";
+import { useStore } from '@/stores/store';
 import { Feather, Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
 import { Image } from "expo-image";
@@ -8,7 +9,7 @@ import * as MediaLibrary from "expo-media-library";
 import { router } from "expo-router";
 import * as Sharing from "expo-sharing";
 import { useColorScheme } from "nativewind";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -26,25 +27,39 @@ const QrGenerate = () => {
   const isDark = colorScheme === "dark";
   const qrCodeContainerRef = useRef<View>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [deepLinkUrl, setDeepLinkUrl] = useState("")
+  const [businessName, setBusinessName] = useState("")
+  const [inviteCode, setInviteCode] = useState("")
 
-  const employeeInfo = {
-    name: "Favour",
-    code: "895641",
-    businessName: "Houghton",
-  };
+  const { user, generateBusinessCode, isLoading } = useStore()
+  // console.log('From generate', user.businessId)
+
+  const generatedeepLinkUrl = async () => {
+    const result = await generateBusinessCode(user?.businessId)
+    setDeepLinkUrl(result?.joinUrl)
+    // setBusinessName(result?.businessName)
+    setInviteCode(result?.inviteCode)
+    console.log('code:', result)
+  }
+
+  useEffect(() => {
+    generatedeepLinkUrl()
+  }, [user?.businessId])
+
+
 
   // Create a deep link URL instead of JSON
   // This will open your app with the invitation details
-  const deepLinkUrl = `hirru://join?business=${encodeURIComponent(
-    employeeInfo.businessName,
-  )}&code=${employeeInfo.code}&employee=${encodeURIComponent(
-    employeeInfo.name,
-  )}&type=employee_join`;
+  //  const deepLinkUrl = `hirru://join?business=${encodeURIComponent(
+  //     employeeInfo.businessName,
+  //   )}&code=${employeeInfo.code}&employee=${encodeURIComponent(
+  //     employeeInfo.name,
+  //   )}&type=employee_join`;
 
   // Copy code to clipboard function
   const copyToClipboard = async () => {
     try {
-      await Clipboard.setStringAsync(employeeInfo.code);
+      await Clipboard.setStringAsync(inviteCode);
       Alert.alert("Copied!", "Code has been copied to clipboard");
     } catch (error) {
       console.error("Error copying to clipboard:", error);
@@ -154,7 +169,7 @@ const QrGenerate = () => {
               style={{ height: 80, width: 80 }}
             />
             <Text className="mt-2.5 font-proximanova-semibold text-primary dark:text-dark-primary">
-              {employeeInfo.businessName}
+              Farout Beach
             </Text>
           </View>
 
@@ -164,29 +179,35 @@ const QrGenerate = () => {
             ref={qrCodeContainerRef}
             collapsable={false}
           >
-            <QRCode
-              value={deepLinkUrl}
-              logoSVG={require("@/assets/images/hiruu-logo.svg")}
-              size={200}
-              logoSize={30}
-              color={isDark ? "#FFFFFF" : "#000000"}
-              backgroundColor={isDark ? "#1F2937" : "#FFFFFF"}
-              quietZone={0}
-              ecl="M"
-            />
+            {isLoading || !deepLinkUrl ?
+              <View className="flex-1 items-center justify-center">
+                <ActivityIndicator size="small" />
+              </View>
+              :
+              <QRCode
+                value={deepLinkUrl || "https://hiruu.com"} // Fallback to prevent empty string error
+                logoSVG={require("@/assets/images/hiruu-logo.svg")}
+                size={200}
+                logoSize={30}
+                color={isDark ? "#FFFFFF" : "#000000"}
+                backgroundColor={isDark ? "#1F2937" : "#FFFFFF"}
+                quietZone={0}
+                ecl="M"
+              />
+            }
           </View>
 
           <Text
             className="capitalize font-proximanova-regular text-sm text-primary dark:text-dark-primary mt-4"
             numberOfLines={1}
           >
-            Scan to join {employeeInfo.businessName}
+            Scan to join Far out Beach
           </Text>
 
           {/* Code Display with Copy Functionality */}
           <View className="bg-[#FFFFFF] rounded-full mt-4 py-2 px-8 flex-row items-center gap-4 active:bg-gray-100">
             <Text className="font-proximanova-semibold text-base text-primary dark:text-dark-primary">
-              Code: {employeeInfo.code}
+              Code: {inviteCode}
             </Text>
             <TouchableOpacity onPress={copyToClipboard}>
               <Ionicons name="copy-outline" size={20} color="black" />
@@ -200,7 +221,7 @@ const QrGenerate = () => {
             Scan QR Code
           </Text>
           <Text className="mt-2.5 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary text-center">
-            Scan the QR code to join {employeeInfo.businessName} on Hirru
+            Scan the QR code to join Far out Beach on Hirru
           </Text>
         </View>
         <ShareVia visible={isModal} onClose={() => setIsModal(false)} />
