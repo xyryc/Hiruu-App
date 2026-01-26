@@ -537,6 +537,7 @@ export const useStore = create((set, get) => ({
   joinBusiness: async (businessId, inviteCode) => {
     try {
       set({ loading: true, error: null });
+      const { accessToken } = get();
 
       const res = await fetch(
         `${process.env.EXPO_PUBLIC_API_URL}/workforce/business/joinbusiness?businessid=${businessId}&inviteCode=${inviteCode}`,
@@ -544,8 +545,9 @@ export const useStore = create((set, get) => ({
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${token}` if needed
+            Authorization: `Bearer ${accessToken}`
           },
+          body: JSON.stringify({ businessId, inviteCode })
         }
       );
 
@@ -554,7 +556,11 @@ export const useStore = create((set, get) => ({
         throw new Error(errorData.message || "Failed to join business");
       }
 
+      const result = await res.json();
+
       set({ loading: false });
+
+      return result.data;
     } catch (err: any) {
       set({
         loading: false,

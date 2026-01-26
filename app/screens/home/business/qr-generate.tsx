@@ -29,15 +29,19 @@ const QrGenerate = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [deepLinkUrl, setDeepLinkUrl] = useState("")
   const [businessName, setBusinessName] = useState("")
+  const [businessLogoUrl, setBusinessLogoUrl] = useState("")
+
   const [inviteCode, setInviteCode] = useState("")
 
   const { user, generateBusinessCode, isLoading } = useStore()
+
   // console.log('From generate', user.businessId)
 
   const generatedeepLinkUrl = async () => {
     const result = await generateBusinessCode(user?.businessId)
     setDeepLinkUrl(result?.joinUrl)
-    // setBusinessName(result?.businessName)
+    setBusinessName(result?.businessName)
+    setBusinessLogoUrl(result?.businessLogoUrl)
     setInviteCode(result?.inviteCode)
     console.log('code:', result)
   }
@@ -45,7 +49,6 @@ const QrGenerate = () => {
   useEffect(() => {
     generatedeepLinkUrl()
   }, [user?.businessId])
-
 
 
   // Create a deep link URL instead of JSON
@@ -129,6 +132,8 @@ const QrGenerate = () => {
 
   const [isModal, setIsModal] = useState(false);
 
+
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -164,12 +169,12 @@ const QrGenerate = () => {
           {/* Employee Info Card */}
           <View className="items-center -top-8">
             <Image
-              source={require("@/assets/images/reward/nameplate-profile.png")}
+              source={`${process.env.EXPO_PUBLIC_API_URL}${businessLogoUrl}`}
               contentFit="contain"
-              style={{ height: 80, width: 80 }}
+              style={{ height: 80, width: 80, borderRadius: 999 }}
             />
             <Text className="mt-2.5 font-proximanova-semibold text-primary dark:text-dark-primary">
-              Farout Beach
+              {businessName}
             </Text>
           </View>
 
@@ -201,7 +206,7 @@ const QrGenerate = () => {
             className="capitalize font-proximanova-regular text-sm text-primary dark:text-dark-primary mt-4"
             numberOfLines={1}
           >
-            Scan to join Far out Beach
+            Scan to join {businessName}
           </Text>
 
           {/* Code Display with Copy Functionality */}
@@ -221,7 +226,7 @@ const QrGenerate = () => {
             Scan QR Code
           </Text>
           <Text className="mt-2.5 font-proximanova-regular text-sm text-secondary dark:text-dark-secondary text-center">
-            Scan the QR code to join Far out Beach on Hirru
+            Scan the QR code to join {businessName} on Hirru
           </Text>
         </View>
         <ShareVia visible={isModal} onClose={() => setIsModal(false)} />

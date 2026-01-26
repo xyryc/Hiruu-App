@@ -270,14 +270,15 @@ const QrScanner = () => {
                   if (!scannedData) return;
 
                   const parsed = parseJoinBusinessQR(scannedData);
+                  console.log(parsed)
 
                   if (!parsed) {
                     Alert.alert("Invalid QR", "This QR code is not valid for joining a business.");
                     return;
                   }
-
                   try {
-                    await joinBusiness(parsed.businessId, parsed.inviteCode);
+                    const result = await joinBusiness(parsed.businessId, parsed.inviteCode);
+                    console.log("join result", result)
 
                     Alert.alert(
                       "Success",
