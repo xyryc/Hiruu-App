@@ -135,8 +135,6 @@ const QrScanner = () => {
     }
   };
 
-
-
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"

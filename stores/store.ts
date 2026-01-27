@@ -570,5 +570,41 @@ export const useStore = create((set, get) => ({
     }
   },
 
+  // getTodaysShift: async() => {
+  //   try {
+  //     set({ loading: true, error: null });
+  //     const { accessToken } = get();
+
+  //     const res = await fetch(
+  //       `${process.env.EXPO_PUBLIC_API_URL}/workforce/business/joinbusiness?businessid=${businessId}&inviteCode=${inviteCode}`,
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //           Authorization: `Bearer ${accessToken}`
+  //         },
+  //         body: JSON.stringify({ businessId, inviteCode })
+  //       }
+  //     );
+
+  //     if (!res.ok) {
+  //       const errorData = await res.json();
+  //       throw new Error(errorData.message || "Failed to join business");
+  //     }
+
+  //     const result = await res.json();
+
+  //     set({ loading: false });
+
+  //     return result.data;
+  //   } catch (err: any) {
+  //     set({
+  //       loading: false,
+  //       error: err.message || "Something went wrong",
+  //     });
+  //     throw err;
+  //   }
+  // },
+
   clearError: () => set({ error: null }),
 }));
