@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "10f14356-4f14-4f40-8669-e5534bc5c588",
     "name": "HiruuBackend - API",
-    "description": "Comprehensive Postman collection for InDesk Healthcare Management API v1.0.0\n\nThis collection includes all available endpoints for:\n- Authentication & User Management\n- Clinic Management & Purchases\n- Client & Appointment Management\n- Assessment & Forms\n- Invoicing & Subscriptions\n- Analytics & Reporting\n- Third-party Integrations\n- Settings & Issue Tracking\n\nBase URL: {{baseUrl}}\nAuthentication: Bearer Token (JWT)\n\nEnvironment Variables Required:\n- baseUrl: API base URL (e.g., http://localhost:3000)\n- authToken: JWT access token for authenticated requests",
+    "description": "Comprehensive Postman collection for InDesk Healthcare Management API v1.0.0\n\nThis collection includes all available endpoints for:\n\n- Authentication & User Management\n    \n- Clinic Management & Purchases\n    \n- Client & Appointment Management\n    \n- Assessment & Forms\n    \n- Invoicing & Subscriptions\n    \n- Analytics & Reporting\n    \n- Third-party Integrations\n    \n- Settings & Issue Tracking\n    \n\nBase URL: {{baseUrl}}  \nAuthentication: Bearer Token (JWT)\n\nEnvironment Variables Required:\n\n- baseUrl: API base URL (e.g., [http://localhost:3000](http://localhost:3000))\n    \n- authToken: JWT access token for authenticated requests",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "50558747",
     "_collection_link": "https://go.postman.co/collection/50558747-10f14356-4f14-4f40-8669-e5534bc5c588?source=collection_link"
@@ -27,7 +27,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"1qazxsw2\",\n    \"role\": \"user\"\n    \n}",
+                  "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"password123\",\n  \"role\": \"user\",\n  \"fcmToken\": \"optional-fcm-token\"\n}\n\n\n// {\n//   \"phoneNumber\": \"1234567890\",\n//   \"countryCode\": \"+1\",\n//   \"role\": \"user\",\n//   \"fcmToken\": \"optional-fcm-token\"\n// }\n",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -48,7 +48,7 @@
               },
               "response": [
                 {
-                  "name": "Register",
+                  "name": "Email Signup",
                   "originalRequest": {
                     "method": "POST",
                     "header": [
@@ -60,7 +60,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n    \"firstName\": \"Jaime\",\n    \"lastName\": \"Johnson\",\n    \"email\": \"provider@example.com\",\n    \"password\": \"1qazxsw2\",\n    \"role\": \"provider\"\n    \n}",
+                      "raw": "{\n    \"email\": \"anik@example.com\",\n    \"password\": \"1qazxsw2\"\n}",
                       "options": {
                         "raw": {
                           "language": "json"
@@ -78,13 +78,25 @@
                       ]
                     }
                   },
-                  "status": "Bad Request",
-                  "code": 400,
-                  "_postman_previewlanguage": "Text",
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
                   "header": [
                     {
-                      "key": "Date",
-                      "value": "Tue, 13 Jan 2026 23:26:52 GMT"
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "http://localhost:3000"
+                    },
+                    {
+                      "key": "Vary",
+                      "value": "Origin"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Credentials",
+                      "value": "true"
                     },
                     {
                       "key": "Content-Type",
@@ -92,87 +104,106 @@
                     },
                     {
                       "key": "Content-Length",
-                      "value": "391"
+                      "value": "108"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"6c-7LymVPX/bsfbcHRVZXDaV1MMhaE\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 02 Feb 2026 18:15:19 GMT"
                     },
                     {
                       "key": "Connection",
                       "value": "keep-alive"
                     },
                     {
-                      "key": "Server",
-                      "value": "cloudflare"
-                    },
-                    {
-                      "key": "CF-Ray",
-                      "value": "9bd8a9326ad19ec8-DAC"
-                    },
-                    {
-                      "key": "CF-Cache-Status",
-                      "value": "DYNAMIC"
-                    },
-                    {
-                      "key": "Access-Control-Allow-Origin",
-                      "value": "*"
-                    },
-                    {
-                      "key": "ETag",
-                      "value": "W/\"187-j/JvKsF7hEpajhx3kh+0xKBydu0\""
-                    },
-                    {
-                      "key": "Strict-Transport-Security",
-                      "value": "max-age=31536000; includeSubDomains"
-                    },
-                    {
-                      "key": "Vary",
-                      "value": "Accept-Encoding"
-                    },
-                    {
-                      "key": "content-security-policy",
-                      "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                    },
-                    {
-                      "key": "cross-origin-opener-policy",
-                      "value": "same-origin"
-                    },
-                    {
-                      "key": "cross-origin-resource-policy",
-                      "value": "same-origin"
-                    },
-                    {
-                      "key": "origin-agent-cluster",
-                      "value": "?1"
-                    },
-                    {
-                      "key": "referrer-policy",
-                      "value": "no-referrer"
-                    },
-                    {
-                      "key": "x-content-type-options",
-                      "value": "nosniff"
-                    },
-                    {
-                      "key": "x-dns-prefetch-control",
-                      "value": "off"
-                    },
-                    {
-                      "key": "x-download-options",
-                      "value": "noopen"
-                    },
-                    {
-                      "key": "x-frame-options",
-                      "value": "SAMEORIGIN"
-                    },
-                    {
-                      "key": "x-permitted-cross-domain-policies",
-                      "value": "none"
-                    },
-                    {
-                      "key": "x-xss-protection",
-                      "value": "0"
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
                     }
                   ],
                   "cookie": [],
-                  "body": "{\n    \"code\": 400,\n    \"message\": \"Email already taken\",\n    \"stack\": \"Error: Email already taken\\n    at Object.register (C:\\\\Users\\\\xd\\\\Desktop\\\\projects\\\\InDesk-backend-api\\\\src\\\\modules\\\\auth\\\\auth.service.ts:36:11)\\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\\n    at async C:\\\\Users\\\\xd\\\\Desktop\\\\projects\\\\InDesk-backend-api\\\\src\\\\modules\\\\auth\\\\auth.controller.ts:13:3\"\n}"
+                  "body": "{\n    \"success\": true,\n    \"message\": \"auth_registration_success\",\n    \"statusCode\": 201,\n    \"data\": null,\n    \"debug\": {\n        \"otp\": \"969549\"\n    }\n}"
+                },
+                {
+                  "name": "Mobile Signup",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"phoneNumber\": \"9999999999\",\n    \"countryCode\": \"+9\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/register",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "http://localhost:3000"
+                    },
+                    {
+                      "key": "Vary",
+                      "value": "Origin"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Credentials",
+                      "value": "true"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "114"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"72-PluNxHkcImB/HFtAzKICbtZ3bH4\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 02 Feb 2026 18:17:18 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"auth_phone_registration_success\",\n    \"statusCode\": 201,\n    \"data\": null,\n    \"debug\": {\n        \"otp\": \"906365\"\n    }\n}"
                 }
               ]
             },
@@ -224,7 +255,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"email\": \"anik@example.com\",\n    \"password\": \"1qazxsw2\"\n}",
+                  "raw": "{\n  \"phoneNumber\": \"1234567890\",\n  \"countryCode\": \"+1\",\n  \"rememberMe\": false,\n  \"fcmToken\": \"optional-fcm-token\"\n}\n\n// {\n//   \"email\": \"user@example.com\",\n//   \"password\": \"password123\",\n//   \"rememberMe\": false,\n//   \"fcmToken\": \"optional-fcm-token\"\n// }\n\n",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -245,7 +276,7 @@
               },
               "response": [
                 {
-                  "name": "Login",
+                  "name": "Email Login",
                   "originalRequest": {
                     "method": "POST",
                     "header": [
@@ -257,7 +288,7 @@
                     ],
                     "body": {
                       "mode": "raw",
-                      "raw": "{\n    \"email\": \"provider@example.com\",\n    \"password\": \"1qazxsw2\"\n}",
+                      "raw": "{\n    \"email\": \"anik@example.com\",\n    \"password\": \"1qazxsw2\"\n}",
                       "options": {
                         "raw": {
                           "language": "json"
@@ -275,105 +306,264 @@
                       ]
                     }
                   },
-                  "status": "OK",
-                  "code": 200,
-                  "_postman_previewlanguage": "Text",
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
                   "header": [
                     {
-                      "key": "Date",
-                      "value": "Tue, 13 Jan 2026 23:27:05 GMT"
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "http://localhost:3000"
+                    },
+                    {
+                      "key": "Vary",
+                      "value": "Origin"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Credentials",
+                      "value": "true"
                     },
                     {
                       "key": "Content-Type",
                       "value": "application/json; charset=utf-8"
                     },
                     {
-                      "key": "Transfer-Encoding",
-                      "value": "chunked"
+                      "key": "Content-Length",
+                      "value": "1487"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"5cf-BGrOST7Q6bvIyywxVjRXDwHNfT8\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 02 Feb 2026 18:17:52 GMT"
                     },
                     {
                       "key": "Connection",
                       "value": "keep-alive"
                     },
                     {
-                      "key": "Server",
-                      "value": "cloudflare"
-                    },
-                    {
-                      "key": "CF-Ray",
-                      "value": "9bd8a98778ee9ec8-DAC"
-                    },
-                    {
-                      "key": "CF-Cache-Status",
-                      "value": "DYNAMIC"
-                    },
-                    {
-                      "key": "Access-Control-Allow-Origin",
-                      "value": "*"
-                    },
-                    {
-                      "key": "Content-Encoding",
-                      "value": "gzip"
-                    },
-                    {
-                      "key": "ETag",
-                      "value": "W/\"447-tXRFO3XYpjYZ4Gf99n7xp+yCdLk\""
-                    },
-                    {
-                      "key": "Strict-Transport-Security",
-                      "value": "max-age=31536000; includeSubDomains"
-                    },
-                    {
-                      "key": "Vary",
-                      "value": "Accept-Encoding"
-                    },
-                    {
-                      "key": "content-security-policy",
-                      "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                    },
-                    {
-                      "key": "cross-origin-opener-policy",
-                      "value": "same-origin"
-                    },
-                    {
-                      "key": "cross-origin-resource-policy",
-                      "value": "same-origin"
-                    },
-                    {
-                      "key": "origin-agent-cluster",
-                      "value": "?1"
-                    },
-                    {
-                      "key": "referrer-policy",
-                      "value": "no-referrer"
-                    },
-                    {
-                      "key": "x-content-type-options",
-                      "value": "nosniff"
-                    },
-                    {
-                      "key": "x-dns-prefetch-control",
-                      "value": "off"
-                    },
-                    {
-                      "key": "x-download-options",
-                      "value": "noopen"
-                    },
-                    {
-                      "key": "x-frame-options",
-                      "value": "SAMEORIGIN"
-                    },
-                    {
-                      "key": "x-permitted-cross-domain-policies",
-                      "value": "none"
-                    },
-                    {
-                      "key": "x-xss-protection",
-                      "value": "0"
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
                     }
                   ],
                   "cookie": [],
-                  "body": "{\n    \"status\": 200,\n    \"message\": \"Login successful\",\n    \"response\": {\n        \"data\": {\n            \"id\": \"eaa5aa2c-740a-4383-9157-afda58296113\",\n            \"firstName\": \"Jaime\",\n            \"lastName\": \"Johnson\",\n            \"email\": \"provider@example.com\",\n            \"role\": \"provider\",\n            \"avatar\": \"/uploads/users/user.png\",\n            \"isEmailVerified\": true,\n            \"fcmToken\": \"optional-firebase-token\",\n            \"phoneNumber\": null,\n            \"countryCode\": null,\n            \"isRestricted\": false,\n            \"restrictionReason\": null,\n            \"bio\": null,\n            \"isOnline\": false,\n            \"lastSeen\": null,\n            \"lastLoginAt\": \"2026-01-13T21:56:31.197Z\",\n            \"createdAt\": \"2026-01-13T21:56:31.197Z\",\n            \"updatedAt\": \"2026-01-13T22:58:22.688Z\"\n        },\n        \"tokens\": {\n            \"access\": {\n                \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJlYWE1YWEyYy03NDBhLTQzODMtOTE1Ny1hZmRhNTgyOTYxMTMiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzY4MzQ2ODIyLCJleHAiOjE3Njg2MDYwMjJ9.ZEVB06XTzXkKDJLgF_mF2n-feUryT2viT-oEaRQFlZE\",\n                \"expiresAt\": \"2026-01-16T23:27:02.156Z\"\n            },\n            \"refresh\": {\n                \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJlYWE1YWEyYy03NDBhLTQzODMtOTE1Ny1hZmRhNTgyOTYxMTMiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc2ODM0NjgyMiwiZXhwIjoxNzcwOTM4ODIyfQ.eaBtIKPIP7cRDPB5RNB379N1n6SCMZbRZmUbSw2DSkA\",\n                \"expiresAt\": \"2026-02-12T23:27:02.152Z\"\n            }\n        }\n    }\n}"
+                  "body": "{\n    \"success\": true,\n    \"message\": \"auth_login_success\",\n    \"statusCode\": 200,\n    \"data\": {\n        \"id\": \"dca65853-baac-4b97-9fd9-7971f539d529\",\n        \"email\": \"anik@example.com\",\n        \"name\": null,\n        \"avatar\": \"/uploads/users/user.png\",\n        \"role\": \"user\",\n        \"isEmailVerified\": true,\n        \"isNumberVerified\": false,\n        \"isDeleted\": false,\n        \"deletedAt\": null,\n        \"deletedBy\": null,\n        \"fcmToken\": null,\n        \"phoneNumber\": null,\n        \"countryCode\": null,\n        \"isRestricted\": false,\n        \"bio\": null,\n        \"address\": null,\n        \"dateOfBirth\": null,\n        \"gender\": null,\n        \"social\": null,\n        \"interest\": [],\n        \"isOnline\": false,\n        \"lastSeen\": null,\n        \"lastLoginAt\": \"2026-02-02T18:15:52.273Z\",\n        \"createdAt\": \"2026-02-02T18:15:19.241Z\",\n        \"updatedAt\": \"2026-02-02T18:15:52.273Z\",\n        \"onboarding\": 0,\n        \"referralCode\": \"309959\",\n        \"walletId\": \"37a09793-aaf2-40b5-a480-56a29f901bd8\",\n        \"appearanceId\": null\n    },\n    \"tokens\": {\n        \"access\": {\n            \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkY2E2NTg1My1iYWFjLTRiOTctOWZkOS03OTcxZjUzOWQ1MjkiLCJ0eXBlIjoiYWNjZXNzIiwianRpIjoiMDA0MTViZDEzMTUxNTlmOWZmNjU3MjQ2NjcwMTVkOGYiLCJpYXQiOjE3NzAwNTYyNzIsImV4cCI6MTc3MDMxNTQ3MiwiYXVkIjoiaGlydXUtYXBwIiwiaXNzIjoiaGlydXUtYXBpIn0.1EPjnZ3vPsRRJu6Pex-hsAPK4sjZxqby07nvdxgdh48\",\n            \"expiresAt\": \"2026-02-05T18:17:52.666Z\"\n        },\n        \"refresh\": {\n            \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkY2E2NTg1My1iYWFjLTRiOTctOWZkOS03OTcxZjUzOWQ1MjkiLCJ0eXBlIjoicmVmcmVzaCIsImp0aSI6IjRjY2I4NDM2NWM2ZWQxZjEwYjhjZDkwMzk4ZjIwYzMzIiwiaWF0IjoxNzcwMDU2MjcyLCJleHAiOjE3NzI2NDgyNzIsImF1ZCI6ImhpcnV1LWFwcCIsImlzcyI6ImhpcnV1LWFwaSJ9.7W7psagSBfmzKm9BWcYCeX2gRCIwkHBcEv0UxKrs8b0\",\n            \"expiresAt\": \"2026-02-09T18:17:52.666Z\"\n        }\n    }\n}"
+                },
+                {
+                  "name": "Login Request Phone",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"phoneNumber\": \"9999999999\",\n    \"countryCode\": \"+9\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/login",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "http://localhost:3000"
+                    },
+                    {
+                      "key": "Vary",
+                      "value": "Origin"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Credentials",
+                      "value": "true"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "102"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"66-fPssN1bTpDekR5Dv0eUaL3r43Qo\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 02 Feb 2026 18:23:15 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"auth_phone_otp_sent\",\n    \"statusCode\": 200,\n    \"data\": null,\n    \"debug\": {\n        \"otp\": \"714295\"\n    }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Phone Otp Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {\r",
+                      "    const response = pm.response.json();\r",
+                      "    console.log(response)\r",
+                      "    const role = response.data.role;\r",
+                      "    pm.collectionVariables.set('accessToken', response.tokens.access.token);\r",
+                      "    pm.environment.set('accessToken', response.tokens.access.token);\r",
+                      "    pm.collectionVariables.set('refreshToken', response.tokens.refresh.token);\r",
+                      "    pm.collectionVariables.set(`${role}AccessToken`,response.tokens.access.token);\r",
+                      "    pm.collectionVariables.set(`${role}RefreshToken`,response.tokens.refresh.token);\r",
+                      "}\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"phoneNumber\": \"9999999999\",\r\n    \"countryCode\": \"+9\",\r\n    \"otp\": \"993274\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/verify-phone-otp",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "verify-phone-otp"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Phone Otp Login",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"phoneNumber\": \"9999999999\",\r\n    \"countryCode\": \"+9\",\r\n    \"otp\": \"714295\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/verify-phone-otp",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "verify-phone-otp"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "http://localhost:3000"
+                    },
+                    {
+                      "key": "Vary",
+                      "value": "Origin"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Credentials",
+                      "value": "true"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "1422"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"58e-lw08yQZyxb6uWHCPaibzfvRwn8Q\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 02 Feb 2026 18:24:10 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"auth_phone_verification_success\",\n    \"statusCode\": 200,\n    \"data\": {\n        \"id\": \"3fdcc28d-3bea-48a0-b8b1-2d2a97a996a5\",\n        \"email\": \"9999999999@phone.local\",\n        \"name\": null,\n        \"avatar\": \"/uploads/users/user.png\",\n        \"role\": \"user\",\n        \"isEmailVerified\": true,\n        \"isNumberVerified\": false,\n        \"phoneNumber\": \"9999999999\",\n        \"countryCode\": \"+9\",\n        \"isRestricted\": false,\n        \"bio\": null,\n        \"address\": null,\n        \"dateOfBirth\": null,\n        \"gender\": null,\n        \"social\": null,\n        \"interest\": [],\n        \"isOnline\": false,\n        \"lastSeen\": null,\n        \"lastLoginAt\": \"2026-02-02T18:17:18.817Z\",\n        \"createdAt\": \"2026-02-02T18:17:18.817Z\",\n        \"updatedAt\": \"2026-02-02T18:24:10.636Z\",\n        \"onboarding\": 0,\n        \"walletId\": \"45e786ce-fb61-407b-84a6-0283321bd411\",\n        \"appearanceId\": null\n    },\n    \"tokens\": {\n        \"access\": {\n            \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzZmRjYzI4ZC0zYmVhLTQ4YTAtYjhiMS0yZDJhOTdhOTk2YTUiLCJ0eXBlIjoiYWNjZXNzIiwianRpIjoiMjc2Mzc1YzYxOGI0YTdmMDI4MTMyMWEwYWEwMGNiMWQiLCJpYXQiOjE3NzAwNTY2NTAsImV4cCI6MTc3MDMxNTg1MCwiYXVkIjoiaGlydXUtYXBwIiwiaXNzIjoiaGlydXUtYXBpIn0.0IqQqOI1HWuhICK6jI9TurRfhGCuDQv6rlhCcvF6-Vg\",\n            \"expiresAt\": \"2026-02-05T18:24:10.640Z\"\n        },\n        \"refresh\": {\n            \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIzZmRjYzI4ZC0zYmVhLTQ4YTAtYjhiMS0yZDJhOTdhOTk2YTUiLCJ0eXBlIjoicmVmcmVzaCIsImp0aSI6ImY1YTAxNzhmMzU4NGI5OTA3N2YwMTE2NjNkZjdmNGE0IiwiaWF0IjoxNzcwMDU2NjUwLCJleHAiOjE3NzI2NDg2NTAsImF1ZCI6ImhpcnV1LWFwcCIsImlzcyI6ImhpcnV1LWFwaSJ9.EGgg4j3xZ9alwHM-mjij5HgGxIaYNtvhXv2wB34THIg\",\n            \"expiresAt\": \"2026-02-09T18:24:10.640Z\"\n        }\n    }\n}"
                 }
               ]
             },
@@ -424,7 +614,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"provider\": \"google\",\n    \"oauthId\": \"udhehfueh\"\n}",
+                  "raw": "{\n  \"provider\": \"google\",\n  \"oauthId\": \"google-user-id\",\n  \"fcmToken\": \"optional-fcm-token\"\n}\n",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -493,7 +683,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"email\": \"anik@example.com\",\n    \"code\": \"014042\"\n}",
+                  "raw": "{\n    \"email\": \"anik@example.com\",\n    \"code\": \"969549\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -512,7 +702,87 @@
                 },
                 "description": "Verify email with OTP"
               },
-              "response": []
+              "response": [
+                {
+                  "name": "Email Verified",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"email\": \"anik@example.com\",\n    \"code\": \"969549\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/verify-account",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "verify-account"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "http://localhost:3000"
+                    },
+                    {
+                      "key": "Vary",
+                      "value": "Origin"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Credentials",
+                      "value": "true"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "1398"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"576-wRXWAmTlwXGr13WwoXVGuufPwwA\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 02 Feb 2026 18:15:52 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"auth_account_verified\",\n    \"statusCode\": 200,\n    \"data\": {\n        \"id\": \"dca65853-baac-4b97-9fd9-7971f539d529\",\n        \"email\": \"anik@example.com\",\n        \"name\": null,\n        \"avatar\": \"/uploads/users/user.png\",\n        \"role\": \"user\",\n        \"isEmailVerified\": true,\n        \"isNumberVerified\": false,\n        \"phoneNumber\": null,\n        \"countryCode\": null,\n        \"isRestricted\": false,\n        \"bio\": null,\n        \"address\": null,\n        \"dateOfBirth\": null,\n        \"gender\": null,\n        \"social\": null,\n        \"interest\": [],\n        \"isOnline\": false,\n        \"lastSeen\": null,\n        \"lastLoginAt\": \"2026-02-02T18:15:19.241Z\",\n        \"createdAt\": \"2026-02-02T18:15:19.241Z\",\n        \"updatedAt\": \"2026-02-02T18:15:52.264Z\",\n        \"onboarding\": 0,\n        \"walletId\": \"37a09793-aaf2-40b5-a480-56a29f901bd8\",\n        \"appearanceId\": null\n    },\n    \"tokens\": {\n        \"access\": {\n            \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkY2E2NTg1My1iYWFjLTRiOTctOWZkOS03OTcxZjUzOWQ1MjkiLCJ0eXBlIjoiYWNjZXNzIiwianRpIjoiY2FjYzQ4NGMyYWI4ZTJlZTc4MGMzNzhhNzFkZTg4ODYiLCJpYXQiOjE3NzAwNTYxNTIsImV4cCI6MTc3MDMxNTM1MiwiYXVkIjoiaGlydXUtYXBwIiwiaXNzIjoiaGlydXUtYXBpIn0.d7mkgMxiw-HyxuI2ly9-pOMDLx22zw55OUdW3AWWtxI\",\n            \"expiresAt\": \"2026-02-05T18:15:52.267Z\"\n        },\n        \"refresh\": {\n            \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkY2E2NTg1My1iYWFjLTRiOTctOWZkOS03OTcxZjUzOWQ1MjkiLCJ0eXBlIjoicmVmcmVzaCIsImp0aSI6ImQ0MjlmMGY4ZjdhZWE2NDM5Mzc1ZTllNTc2OWE1MGUxIiwiaWF0IjoxNzcwMDU2MTUyLCJleHAiOjE3NzI2NDgxNTIsImF1ZCI6ImhpcnV1LWFwcCIsImlzcyI6ImhpcnV1LWFwaSJ9.UmXyV1dlaGjOTLrZqmLDTBDcYIqrDfYxBiDD-NAAFs4\",\n            \"expiresAt\": \"2026-02-09T18:15:52.267Z\"\n        }\n    }\n}"
+                }
+              ]
             },
             {
               "name": "Refresh Tokens",
@@ -536,6 +806,13 @@
                     "type": "text/javascript",
                     "packages": {},
                     "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [],
+                    "type": "text/javascript"
                   }
                 }
               ],
@@ -584,7 +861,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"email\": \"signer@example.com\"\n}",
+                  "raw": "{\n    \"phoneNumber\": \"9999999999\",\n    \"countryCode\": \"+9\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -603,7 +880,87 @@
                 },
                 "description": "Request password reset"
               },
-              "response": []
+              "response": [
+                {
+                  "name": "Reset Password Email",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"email\": \"anik@example.com\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/forgot-password",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "forgot-password"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "http://localhost:3000"
+                    },
+                    {
+                      "key": "Vary",
+                      "value": "Origin"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Credentials",
+                      "value": "true"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "106"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"6a-8bJeYDeVRJsAMGFDT64TsgTwZ4U\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 02 Feb 2026 18:56:42 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"otp_password_reset_sent\",\n    \"statusCode\": 200,\n    \"data\": null,\n    \"debug\": {\n        \"otp\": \"264752\"\n    }\n}"
+                }
+              ]
             },
             {
               "name": "Reset Password",
@@ -618,7 +975,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"email\": \"signer@example.com\",\n    \"otp\": \"123456\",\n    \"password\": \"NewPass!23\"\n}",
+                  "raw": "{\n    \"email\": \"anik@example.com\",\n    \"otp\": \"264752\",\n    \"password\": \"whatever12\"\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -637,7 +994,87 @@
                 },
                 "description": "Reset password"
               },
-              "response": []
+              "response": [
+                {
+                  "name": "Reset Password Email",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"email\": \"anik@example.com\",\n    \"otp\": \"264752\",\n    \"password\": \"whatever12\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/reset-password",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "reset-password"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "http://localhost:3000"
+                    },
+                    {
+                      "key": "Vary",
+                      "value": "Origin"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Credentials",
+                      "value": "true"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "85"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"55-ERfS1omcVCoYhsgJAYnHmg14vvA\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 02 Feb 2026 18:57:10 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"auth_password_reset_success\",\n    \"statusCode\": 200,\n    \"data\": null\n}"
+                }
+              ]
             },
             {
               "name": "Change Password",
@@ -652,7 +1089,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"oldPassword\": \"NewPass!23\",\n    \"newPassword\": \"1qazxsw2\"\n}",
+                  "raw": "{\n  \"oldPassword\": \"currentpassword\",\n  \"newPassword\": \"newpassword123\"\n}\n",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -686,7 +1123,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"oldPassword\": \"NewPass!23\",\n    \"newPassword\": \"1qazxsw2\"\n}",
+                  "raw": "{\n  \"type\": \"email\" //can be email,phone and both\n}\n",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -728,9 +1165,9 @@
                   }
                 },
                 "url": {
-                  "raw": "{{BASE_URL}}/auth/logout",
+                  "raw": "{{baseUrl}}/auth/logout",
                   "host": [
-                    "{{BASE_URL}}"
+                    "{{baseUrl}}"
                   ],
                   "path": [
                     "auth",
@@ -748,7 +1185,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"email\": \"user@gmail.com\"\r\n}",
+                  "raw": "{\r\n  \"email\": \"user@example.com\"\r\n}\r\n",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -769,10 +1206,73 @@
               "response": []
             },
             {
-              "name": "New Request",
+              "name": "Delete Me",
               "request": {
-                "method": "GET",
-                "header": []
+                "method": "DELETE",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"password\": \"currentpassword\"\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/delete-me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "delete-me"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Link Auth (Google/Apple)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"provider\": \"google\",   // Can be google,apple\r\n  \"oauthId\": \"google-user-id\",\r\n  \"password\": \"currentpassword\",\r\n  \"fcmToken\": \"optional-fcm-token\"\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/link-oauth",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "link-oauth"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Resend Phone OTP",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"phoneNumber\": \"1234567890\",\r\n  \"countryCode\": \"+1\"\r\n}\r\n",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
               },
               "response": []
             }
@@ -2832,7 +3332,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:3000"
+      "value": "https://persistent-joel-alert-advised.trycloudflare.com/api/v1"
     },
     {
       "key": "accessToken",

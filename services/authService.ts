@@ -1,3 +1,4 @@
+import { translateApiMessage } from '@/utils/apiMessages';
 import axiosInstance from '@/utils/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -407,7 +408,15 @@ class AuthService {
         if (error.response?.data) {
             const errorData = error.response.data;
             // Use the message from your API response format
-            return new Error(errorData.message || 'An error occurred');
+            if (typeof errorData.message === 'string' && errorData.message.trim().length > 0) {
+                return new Error(translateApiMessage(errorData.message));
+            }
+
+            if (Array.isArray(errorData.data) && errorData.data.length > 0) {
+                return new Error(String(errorData.data[0]));
+            }
+
+            return new Error('An error occurred');
         }
         return new Error(error.message || 'Network error occurred');
     }

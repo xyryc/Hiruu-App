@@ -55,13 +55,18 @@ const Verify = () => {
     clearError();
     const otpCode = otp.join("");
 
-    const result = await verifyAccount({
-      email: params.email as string,
-      code: otpCode,
-    });
+    try {
+      const result = await verifyAccount({
+        email: params.email as string,
+        code: otpCode,
+      });
 
-    if (result?.success) {
-      router.push("/(setup)/user-setup/progress");
+      if (result?.success) {
+        router.push("/(setup)/user-setup/progress");
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t("common.error");
+      Alert.alert(t("common.error"), message);
     }
   };
 
