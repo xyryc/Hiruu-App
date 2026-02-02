@@ -66,13 +66,14 @@ export interface Company {
 }
 
 export interface Companies {
-  id: string;
-  name: string;
-  logo: string;
-  startDate: string;
-  endDate: string;
-  jobTitle: string;
-  isCurrentlyWorking: boolean;
+  companyId: string;
+  companyName: string;
+  logo?: string;
+  startDate?: string | Date | null;
+  endDate?: string | Date | null;
+  position?: string;
+  description?: string;
+  isCurrent?: boolean;
 }
 
 export interface MultiSelectCompanyDropdownProps {

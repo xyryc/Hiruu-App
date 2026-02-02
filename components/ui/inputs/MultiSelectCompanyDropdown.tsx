@@ -97,8 +97,9 @@ const MultiSelectCompanyDropdown = ({
         logo: company.logo,
         startDate: "",
         endDate: "",
-        jobTitle: "",
-        isCurrentJob: false,
+        position: "",
+        description: "",
+        isCurrent: false,
       };
       const updatedExperiences = [...workExperiences, newExperience];
 
@@ -165,8 +166,9 @@ const MultiSelectCompanyDropdown = ({
         logo: newCompany.logo,
         startDate: "",
         endDate: "",
-        jobTitle: "",
-        isCurrentJob: false,
+        position: "",
+        description: "",
+        isCurrent: false,
       };
       const updatedExperiences = [...workExperiences, newExperience];
 
@@ -273,12 +275,12 @@ const MultiSelectCompanyDropdown = ({
                       <DateOfBirthInput
                         value={
                           experience.startDate
-                            ? new Date(experience.startDate)
-                            : null
-                        }
-                        onDateChange={(date) =>
-                          updateWorkExperience(company.id, "startDate", date)
-                        }
+                        ? new Date(experience.startDate)
+                        : null
+                    }
+                    onDateChange={(date) =>
+                      updateWorkExperience(company.id, "startDate", date)
+                    }
                       />
                     </View>
 
@@ -287,12 +289,12 @@ const MultiSelectCompanyDropdown = ({
                       <DateOfBirthInput
                         value={
                           experience.endDate
-                            ? new Date(experience.endDate)
-                            : null
-                        }
-                        onDateChange={(date) =>
-                          updateWorkExperience(company.id, "endDate", date)
-                        }
+                        ? new Date(experience.endDate)
+                        : null
+                    }
+                    onDateChange={(date) =>
+                      updateWorkExperience(company.id, "endDate", date)
+                    }
                       />
                     </View>
                   </View>
@@ -306,9 +308,9 @@ const MultiSelectCompanyDropdown = ({
                   <TextInput
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm"
                     placeholder="Enter your Role"
-                    value={experience.jobTitle}
+                    value={experience.position}
                     onChangeText={(text) =>
-                      updateWorkExperience(company.id, "jobTitle", text)
+                      updateWorkExperience(company.id, "position", text)
                     }
                   />
                 </View>

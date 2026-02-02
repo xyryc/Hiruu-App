@@ -40,12 +40,18 @@ export default function Step3({
       // Transform work experiences for API
       const profileData = {
         experiences: workExperiences.map((exp) => ({
-          companyId: exp.id,
-          position: exp.jobTitle || null,
-          description: null,
-          startDate: exp.startDate || null,
-          endDate: exp.endDate || null,
-          isCurrent: exp.isCurrentlyWorking || false,
+          companyId: exp.companyId,
+          position: exp.position || null,
+          description: exp.description || null,
+          startDate:
+            exp.startDate instanceof Date
+              ? exp.startDate.toISOString()
+              : exp.startDate || null,
+          endDate:
+            exp.endDate instanceof Date
+              ? exp.endDate.toISOString()
+              : exp.endDate || null,
+          isCurrent: exp.isCurrent || false,
         })),
       };
 
