@@ -28,7 +28,7 @@ const Login = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isValidPhone, setIsValidPhone] = useState(true);
   const router = useRouter();
-  const { login, isLoading, error, clearError } = useStore();
+  const { login, isLoading, clearError } = useStore();
 
   let phoneRef: any = null;
 
@@ -54,39 +54,17 @@ const Login = () => {
         return;
       }
 
-      const loginData = { emailOrPhone: email, password };
+      const result = await login({ email, password });
 
-      try {
-        const result = await login(loginData);
-        console.log("login result", result);
-
-        // Navigate based on user role
+      if (result?.success) {
         router.replace("/(tabs)/home");
-      } catch (error) {
-        Alert.alert(t("common.error"), error.message);
       }
     } else {
-      if (!phoneNumber) {
-        Alert.alert(t("common.error"), t("validation.fillAllFields"));
-        return;
-      }
-
-      if (!isValidPhone) {
-        Alert.alert(t("common.error"), t("validation.invalidPhone"));
-        return;
-      }
-
-      const loginData = { emailOrPhone: phoneNumber };
-      console.log("login data", phoneNumber, loginData);
-
-      try {
-        const result = await login(loginData);
-
-        // route to home
-        router.replace("/(tabs)/home");
-      } catch (error) {
-        Alert.alert(t("common.error"), error.message);
-      }
+      // Temporarily disabled until phone login endpoint is clarified
+      Alert.alert(
+        t("common.error"),
+        "Phone login is temporarily unavailable. Please use email login."
+      );
     }
   };
 

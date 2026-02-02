@@ -47,7 +47,7 @@ const Verify = () => {
 
   const isOtpComplete = otp.every((digit) => digit !== "");
 
-  const { verifyOTP, isLoading, error, clearError } = useStore();
+  const { verifyAccount, resendOTP, isLoading, clearError } = useStore();
 
   const handleVerify = async () => {
     if (!isOtpComplete) return;
@@ -55,19 +55,23 @@ const Verify = () => {
     clearError();
     const otpCode = otp.join("");
 
-    const verifyData = {
-      emailOrPhone: params.email || params.phoneNumber,
-      otpCode,
-    };
+    const result = await verifyAccount({
+      email: params.email as string,
+      code: otpCode,
+    });
 
-    try {
-      const response = await verifyOTP(verifyData);
-      Alert.alert(t("common.success"), t("auth.verificationSuccess"));
-      // Navigate based on user setup status
+    if (result?.success) {
       router.push("/(setup)/user-setup/progress");
-    } catch (error) {
-      Alert.alert(t("common.error"), error.message);
-      console.log("Verify error", error);
+    }
+  };
+
+  const handleResendOTP = async () => {
+    if (!params.email) return;
+
+    const result = await resendOTP({ email: params.email as string });
+
+    if (result?.success) {
+      Alert.alert(t("common.success"), "OTP sent successfully!");
     }
   };
 
@@ -84,7 +88,7 @@ const Verify = () => {
           <TitleHeader
             className="mt-28 mb-7"
             title="Verify OTP Now"
-            subtitle="Onetime OTP has been sent to your registered email or phone number"
+            subtitle={`Onetime OTP has been sent to your registered ${params.email ? 'email' : 'phone number'}`}
           />
 
           {/* OTP Input Boxes */}
@@ -94,11 +98,10 @@ const Verify = () => {
                 key={index}
                 //@ts-ignore
                 ref={(ref) => (inputRefs.current[index] = ref)}
-                className={`w-14 h-14 border rounded-[10px] text-center text-lg place-items-center ${
-                  digit
-                    ? "border-gray-300 bg-white"
-                    : "border-[#EEEEEE] bg-white"
-                }`}
+                className={`w-14 h-14 border rounded-[10px] text-center text-lg place-items-center ${digit
+                  ? "border-gray-300 bg-white"
+                  : "border-[#EEEEEE] bg-white"
+                  }`}
                 value={digit}
                 onChangeText={(value) => handleOtpChange(value, index)}
                 onKeyPress={({ nativeEvent }) =>
@@ -114,6 +117,16 @@ const Verify = () => {
           <Text className="text-xs mt-4 text-[#7D7D7D]">
             *Do Not Communicate this code to stranger
           </Text>
+
+          {/* Resend OTP */}
+          <View className="mt-6 flex-row justify-center">
+            <Text className="text-sm text-[#7D7D7D]">Didn't receive the code? </Text>
+            <TouchableOpacity onPress={handleResendOTP} disabled={isLoading}>
+              <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
+                Resend OTP
+              </Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
 
         {/* Sign Up Button */}

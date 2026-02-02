@@ -1,0 +1,2866 @@
+{
+  "info": {
+    "_postman_id": "10f14356-4f14-4f40-8669-e5534bc5c588",
+    "name": "HiruuBackend - API",
+    "description": "Comprehensive Postman collection for InDesk Healthcare Management API v1.0.0\n\nThis collection includes all available endpoints for:\n- Authentication & User Management\n- Clinic Management & Purchases\n- Client & Appointment Management\n- Assessment & Forms\n- Invoicing & Subscriptions\n- Analytics & Reporting\n- Third-party Integrations\n- Settings & Issue Tracking\n\nBase URL: {{baseUrl}}\nAuthentication: Bearer Token (JWT)\n\nEnvironment Variables Required:\n- baseUrl: API base URL (e.g., http://localhost:3000)\n- authToken: JWT access token for authenticated requests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50558747",
+    "_collection_link": "https://go.postman.co/collection/50558747-10f14356-4f14-4f40-8669-e5534bc5c588?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "common",
+      "item": [
+        {
+          "name": "Auth",
+          "item": [
+            {
+              "name": "Register",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"1qazxsw2\",\n    \"role\": \"user\"\n    \n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/register",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "register"
+                  ]
+                },
+                "description": "Register a new user"
+              },
+              "response": [
+                {
+                  "name": "Register",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"firstName\": \"Jaime\",\n    \"lastName\": \"Johnson\",\n    \"email\": \"provider@example.com\",\n    \"password\": \"1qazxsw2\",\n    \"role\": \"provider\"\n    \n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/register",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "register"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "Date",
+                      "value": "Tue, 13 Jan 2026 23:26:52 GMT"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "391"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Server",
+                      "value": "cloudflare"
+                    },
+                    {
+                      "key": "CF-Ray",
+                      "value": "9bd8a9326ad19ec8-DAC"
+                    },
+                    {
+                      "key": "CF-Cache-Status",
+                      "value": "DYNAMIC"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"187-j/JvKsF7hEpajhx3kh+0xKBydu0\""
+                    },
+                    {
+                      "key": "Strict-Transport-Security",
+                      "value": "max-age=31536000; includeSubDomains"
+                    },
+                    {
+                      "key": "Vary",
+                      "value": "Accept-Encoding"
+                    },
+                    {
+                      "key": "content-security-policy",
+                      "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+                    },
+                    {
+                      "key": "cross-origin-opener-policy",
+                      "value": "same-origin"
+                    },
+                    {
+                      "key": "cross-origin-resource-policy",
+                      "value": "same-origin"
+                    },
+                    {
+                      "key": "origin-agent-cluster",
+                      "value": "?1"
+                    },
+                    {
+                      "key": "referrer-policy",
+                      "value": "no-referrer"
+                    },
+                    {
+                      "key": "x-content-type-options",
+                      "value": "nosniff"
+                    },
+                    {
+                      "key": "x-dns-prefetch-control",
+                      "value": "off"
+                    },
+                    {
+                      "key": "x-download-options",
+                      "value": "noopen"
+                    },
+                    {
+                      "key": "x-frame-options",
+                      "value": "SAMEORIGIN"
+                    },
+                    {
+                      "key": "x-permitted-cross-domain-policies",
+                      "value": "none"
+                    },
+                    {
+                      "key": "x-xss-protection",
+                      "value": "0"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"code\": 400,\n    \"message\": \"Email already taken\",\n    \"stack\": \"Error: Email already taken\\n    at Object.register (C:\\\\Users\\\\xd\\\\Desktop\\\\projects\\\\InDesk-backend-api\\\\src\\\\modules\\\\auth\\\\auth.service.ts:36:11)\\n    at processTicksAndRejections (node:internal/process/task_queues:103:5)\\n    at async C:\\\\Users\\\\xd\\\\Desktop\\\\projects\\\\InDesk-backend-api\\\\src\\\\modules\\\\auth\\\\auth.controller.ts:13:3\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "    const response = pm.response.json();",
+                      "    console.log(response)",
+                      "    const role = response.data.role;",
+                      "    pm.collectionVariables.set('accessToken', response.tokens.access.token);",
+                      "    pm.environment.set('accessToken', response.tokens.access.token);",
+                      "    pm.collectionVariables.set('refreshToken', response.tokens.refresh.token);",
+                      "    pm.collectionVariables.set(`${role}AccessToken`,response.tokens.access.token);",
+                      "    pm.collectionVariables.set(`${role}RefreshToken`,response.tokens.refresh.token);",
+                      "}",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"anik@example.com\",\n    \"password\": \"1qazxsw2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "Login and save token"
+              },
+              "response": [
+                {
+                  "name": "Login",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"email\": \"provider@example.com\",\n    \"password\": \"1qazxsw2\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/auth/login",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "auth",
+                        "login"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "Text",
+                  "header": [
+                    {
+                      "key": "Date",
+                      "value": "Tue, 13 Jan 2026 23:27:05 GMT"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Server",
+                      "value": "cloudflare"
+                    },
+                    {
+                      "key": "CF-Ray",
+                      "value": "9bd8a98778ee9ec8-DAC"
+                    },
+                    {
+                      "key": "CF-Cache-Status",
+                      "value": "DYNAMIC"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Encoding",
+                      "value": "gzip"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"447-tXRFO3XYpjYZ4Gf99n7xp+yCdLk\""
+                    },
+                    {
+                      "key": "Strict-Transport-Security",
+                      "value": "max-age=31536000; includeSubDomains"
+                    },
+                    {
+                      "key": "Vary",
+                      "value": "Accept-Encoding"
+                    },
+                    {
+                      "key": "content-security-policy",
+                      "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+                    },
+                    {
+                      "key": "cross-origin-opener-policy",
+                      "value": "same-origin"
+                    },
+                    {
+                      "key": "cross-origin-resource-policy",
+                      "value": "same-origin"
+                    },
+                    {
+                      "key": "origin-agent-cluster",
+                      "value": "?1"
+                    },
+                    {
+                      "key": "referrer-policy",
+                      "value": "no-referrer"
+                    },
+                    {
+                      "key": "x-content-type-options",
+                      "value": "nosniff"
+                    },
+                    {
+                      "key": "x-dns-prefetch-control",
+                      "value": "off"
+                    },
+                    {
+                      "key": "x-download-options",
+                      "value": "noopen"
+                    },
+                    {
+                      "key": "x-frame-options",
+                      "value": "SAMEORIGIN"
+                    },
+                    {
+                      "key": "x-permitted-cross-domain-policies",
+                      "value": "none"
+                    },
+                    {
+                      "key": "x-xss-protection",
+                      "value": "0"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"status\": 200,\n    \"message\": \"Login successful\",\n    \"response\": {\n        \"data\": {\n            \"id\": \"eaa5aa2c-740a-4383-9157-afda58296113\",\n            \"firstName\": \"Jaime\",\n            \"lastName\": \"Johnson\",\n            \"email\": \"provider@example.com\",\n            \"role\": \"provider\",\n            \"avatar\": \"/uploads/users/user.png\",\n            \"isEmailVerified\": true,\n            \"fcmToken\": \"optional-firebase-token\",\n            \"phoneNumber\": null,\n            \"countryCode\": null,\n            \"isRestricted\": false,\n            \"restrictionReason\": null,\n            \"bio\": null,\n            \"isOnline\": false,\n            \"lastSeen\": null,\n            \"lastLoginAt\": \"2026-01-13T21:56:31.197Z\",\n            \"createdAt\": \"2026-01-13T21:56:31.197Z\",\n            \"updatedAt\": \"2026-01-13T22:58:22.688Z\"\n        },\n        \"tokens\": {\n            \"access\": {\n                \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJlYWE1YWEyYy03NDBhLTQzODMtOTE1Ny1hZmRhNTgyOTYxMTMiLCJ0eXBlIjoiYWNjZXNzIiwiaWF0IjoxNzY4MzQ2ODIyLCJleHAiOjE3Njg2MDYwMjJ9.ZEVB06XTzXkKDJLgF_mF2n-feUryT2viT-oEaRQFlZE\",\n                \"expiresAt\": \"2026-01-16T23:27:02.156Z\"\n            },\n            \"refresh\": {\n                \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiJlYWE1YWEyYy03NDBhLTQzODMtOTE1Ny1hZmRhNTgyOTYxMTMiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTc2ODM0NjgyMiwiZXhwIjoxNzcwOTM4ODIyfQ.eaBtIKPIP7cRDPB5RNB379N1n6SCMZbRZmUbSw2DSkA\",\n                \"expiresAt\": \"2026-02-12T23:27:02.152Z\"\n            }\n        }\n    }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Google/Apple Oauth",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    const response = pm.response.json().response;",
+                      "    const role = response.data.role;",
+                      "    pm.collectionVariables.set('accessToken', response.tokens.access.token);",
+                      "    pm.environment.set('accessToken', response.tokens.access.token);",
+                      "    pm.collectionVariables.set('refreshToken', response.tokens.refresh.token);",
+                      "    pm.collectionVariables.set(`${role}AccessToken`,response.tokens.access.token);",
+                      "    pm.collectionVariables.set(`${role}RefreshToken`,response.tokens.refresh.token);",
+                      "}",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"provider\": \"google\",\n    \"oauthId\": \"udhehfueh\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/login/oauth",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login",
+                    "oauth"
+                  ]
+                },
+                "description": "Login and save token"
+              },
+              "response": []
+            },
+            {
+              "name": "Verify Account",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    const response = pm.response.json().response;",
+                      "    const role = response.data.role;",
+                      "    pm.collectionVariables.set('accessToken', response.tokens.access.token);",
+                      "    pm.environment.set('accessToken', response.tokens.access.token);",
+                      "    pm.collectionVariables.set('refreshToken', response.tokens.refresh.token);",
+                      "    pm.collectionVariables.set(`${role}AccessToken`,response.tokens.access.token);",
+                      "    pm.collectionVariables.set(`${role}RefreshToken`,response.tokens.refresh.token);",
+                      "}",
+                      "",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                },
+                {
+                  "listen": "prerequest",
+                  "script": {
+                    "exec": [
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"anik@example.com\",\n    \"code\": \"014042\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/verify-account",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "verify-account"
+                  ]
+                },
+                "description": "Verify email with OTP"
+              },
+              "response": []
+            },
+            {
+              "name": "Refresh Tokens",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {\r",
+                      "    const response = pm.response.json().response;\r",
+                      "    const role = response.data.role;\r",
+                      "    pm.collectionVariables.set('accessToken', response.tokens.access.token);\r",
+                      "    pm.environment.set('accessToken', response.tokens.access.token);\r",
+                      "    pm.collectionVariables.set('refreshToken', response.tokens.refresh.token);\r",
+                      "    pm.collectionVariables.set(`${role}AccessToken`,response.tokens.access.token);\r",
+                      "    pm.collectionVariables.set(`${role}RefreshToken`,response.tokens.refresh.token);\r",
+                      "}\r",
+                      "\r",
+                      ""
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/refresh-tokens",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "refresh-tokens"
+                  ]
+                },
+                "description": "Get new access token"
+              },
+              "response": []
+            },
+            {
+              "name": "Forgot Password",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"signer@example.com\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/forgot-password",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "forgot-password"
+                  ]
+                },
+                "description": "Request password reset"
+              },
+              "response": []
+            },
+            {
+              "name": "Reset Password",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"email\": \"signer@example.com\",\n    \"otp\": \"123456\",\n    \"password\": \"NewPass!23\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/reset-password",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "reset-password"
+                  ]
+                },
+                "description": "Reset password"
+              },
+              "response": []
+            },
+            {
+              "name": "Change Password",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"oldPassword\": \"NewPass!23\",\n    \"newPassword\": \"1qazxsw2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/change-password",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "change-password"
+                  ]
+                },
+                "description": "Reset password"
+              },
+              "response": []
+            },
+            {
+              "name": "Verify Account (LoggedIn)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"oldPassword\": \"NewPass!23\",\n    \"newPassword\": \"1qazxsw2\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/req-verify-account",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "req-verify-account"
+                  ]
+                },
+                "description": "Reset password"
+              },
+              "response": []
+            },
+            {
+              "name": "Logout",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"refreshToken\": \"{{refreshToken}}\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{BASE_URL}}/auth/logout",
+                  "host": [
+                    "{{BASE_URL}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "logout"
+                  ]
+                },
+                "description": "Logout"
+              },
+              "response": []
+            },
+            {
+              "name": "Re-Send OTP",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"email\": \"user@gmail.com\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/auth/resend-otp",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "resend-otp"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "New Request",
+              "request": {
+                "method": "GET",
+                "header": []
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "profile",
+          "item": [
+            {
+              "name": "Update Profile",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "name",
+                      "value": "Anik",
+                      "type": "text",
+                      "uuid": "047b70cf-21a4-4369-ae8e-32627079f527"
+                    },
+                    {
+                      "key": "avatar",
+                      "type": "file",
+                      "uuid": "310f12d2-d544-486d-83e6-78e39bd3b052",
+                      "src": "/C:/Users/xd/Desktop/profile.png"
+                    },
+                    {
+                      "key": "onboarding",
+                      "value": "2",
+                      "type": "text",
+                      "uuid": "1f421d95-fbae-469b-89c0-549ec485fa64"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "profile"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Profile",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "name",
+                      "value": "Updated for a While",
+                      "type": "text",
+                      "uuid": "047b70cf-21a4-4369-ae8e-32627079f527"
+                    },
+                    {
+                      "key": "avatar",
+                      "type": "file",
+                      "uuid": "310f12d2-d544-486d-83e6-78e39bd3b052",
+                      "src": "/C:/Users/xd/Pictures/Screenshots/Screenshot 2025-12-06 000809.png"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/users/profile",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "users",
+                    "profile"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{accessToken}}",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "provider",
+      "item": []
+    },
+    {
+      "name": "user",
+      "item": [
+        {
+          "name": "recruitment",
+          "item": [
+            {
+              "name": "Get All Job Post",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment/public",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment",
+                    "public"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "search",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "salaryType",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "isActive",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "skills",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "recruitment applications",
+          "item": [
+            {
+              "name": "Apply for Job",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"recruitmentId\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment-application",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment-application"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get application by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment-application/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment-application",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Withdraw application (user only)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment-application/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment-application",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get all applications for a business",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment-application/business/{{businessId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment-application",
+                    "business",
+                    "{{businessId}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "status",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "recruitmentId",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "userId",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update application status (approve/reject)",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"recruitmentId\": \"string\",\r\n  \"status\": \"pending\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment-application/business/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment-application",
+                    "business",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get current user applications",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment-application/my-applications",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment-application",
+                    "my-applications"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "status",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "recruitmentId",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "userId",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "business",
+          "item": [
+            {
+              "name": "Join a business using OTP invitation code",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"invitationCode\": \"123456\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/employment/join",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "join"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "employment",
+          "item": [
+            {
+              "name": "Get Employment History",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/employment/my-employments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "my-employments"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "shifts",
+          "item": [
+            {
+              "name": "Get all user shifts across all businesses by date with status filtering",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/shift-assignment/my-shifts",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-assignment",
+                    "my-shifts"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "date",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "dateFrom",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "dateTo",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "status",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "swapStatus",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "businessId",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "user-business",
+      "item": [
+        {
+          "name": "bussiness",
+          "item": [
+            {
+              "name": "Create Business",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "name",
+                      "value": "Clown Cloferriuhf8uwehi",
+                      "type": "text",
+                      "uuid": "047b70cf-21a4-4369-ae8e-32627079f527"
+                    },
+                    {
+                      "key": "description",
+                      "value": "A family-owned restaurant serving authentic Italian cuisine",
+                      "type": "text",
+                      "uuid": "c8944a4a-cc9b-4520-89f6-c0a6cf3e5e55"
+                    },
+                    {
+                      "key": "address",
+                      "value": "123 Main St, Downtown, City, State 12345",
+                      "type": "text"
+                    },
+                    {
+                      "key": "phoneNumber",
+                      "value": "555-123-4567",
+                      "type": "text"
+                    },
+                    {
+                      "key": "countryCode",
+                      "value": "+1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "email",
+                      "value": "contact@acmerestaurant.com",
+                      "type": "text"
+                    },
+                    {
+                      "key": "website",
+                      "value": "https://www.acmerestaurant.com",
+                      "type": "text"
+                    },
+                    {
+                      "key": "logo",
+                      "type": "file",
+                      "uuid": "310f12d2-d544-486d-83e6-78e39bd3b052",
+                      "src": "/C:/Users/xd/Pictures/Screenshots/Screenshot 2025-12-08 021108.png"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/business",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "business"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All User Business",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "name",
+                      "value": "Updated for a While",
+                      "type": "text",
+                      "uuid": "047b70cf-21a4-4369-ae8e-32627079f527"
+                    },
+                    {
+                      "key": "avatar",
+                      "type": "file",
+                      "uuid": "310f12d2-d544-486d-83e6-78e39bd3b052",
+                      "src": "/C:/Users/xd/Pictures/Screenshots/Screenshot 2025-12-06 000809.png"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/business/my-businesses",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "business",
+                    "my-businesses"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Single Business",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "name",
+                      "value": "Clown Cloferriuhf8uwehi",
+                      "type": "text",
+                      "uuid": "047b70cf-21a4-4369-ae8e-32627079f527"
+                    },
+                    {
+                      "key": "description",
+                      "value": "A family-owned restaurant serving authentic Italian cuisine",
+                      "type": "text",
+                      "uuid": "c8944a4a-cc9b-4520-89f6-c0a6cf3e5e55"
+                    },
+                    {
+                      "key": "address",
+                      "value": "123 Main St, Downtown, City, State 12345",
+                      "type": "text"
+                    },
+                    {
+                      "key": "phoneNumber",
+                      "value": "555-123-4567",
+                      "type": "text"
+                    },
+                    {
+                      "key": "countryCode",
+                      "value": "+1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "email",
+                      "value": "contact@acmerestaurant.com",
+                      "type": "text"
+                    },
+                    {
+                      "key": "website",
+                      "value": "https://www.acmerestaurant.com",
+                      "type": "text"
+                    },
+                    {
+                      "key": "logo",
+                      "type": "file",
+                      "uuid": "310f12d2-d544-486d-83e6-78e39bd3b052",
+                      "src": "/C:/Users/xd/Pictures/Screenshots/Screenshot 2025-12-08 021108.png"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/business",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "business"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "employment",
+          "item": [
+            {
+              "name": "Get all employees in a business with filtering",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/employment/businesses/{{businessId}}/employees",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "businesses",
+                    "{{businessId}}",
+                    "employees"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "status",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "roleId",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "search",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "sortBy",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": null,
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Invitation OTP",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"roleId\": \"uuid-role-id\",\r\n  \"type\": \"email\",\r\n  \"maxUses\": 1,\r\n  \"expiresInHours\": 24,\r\n  \"recipientEmail\": \"employee@example.com\",\r\n  \"recipientPhone\": \"+1234567890\",\r\n  \"recipientName\": \"John Doe\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/employment/businesses/{{businessId}}/invitations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "businesses",
+                    "{{businessId}}",
+                    "invitations"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Invitation Token",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/employment/businesses/{{businessId}}/invitations",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "businesses",
+                    "{{businessId}}",
+                    "invitations"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": "",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "status",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "type",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get single employment details",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/employment/employees/:employmentId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "employees",
+                    ":employmentId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "employmentId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update employment details",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"roleId\": \"role-uuid-here\",\r\n  \"status\": \"active\",\r\n  \"salaryType\": \"hourly\",\r\n  \"salaryRate\": 15.5,\r\n  \"startDate\": \"2024-01-01T00:00:00.000Z\",\r\n  \"endDate\": \"2024-12-31T00:00:00.000Z\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/employment/employees/:employmentId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "employees",
+                    ":employmentId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "employmentId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Archive/delete an employment (soft delete)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/employment/employees/:employmentId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "employees",
+                    ":employmentId"
+                  ],
+                  "variable": [
+                    {
+                      "key": "employmentId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reactivate a terminated/resigned employment",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/employment/employees/{{employmentId}}/reactivate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "employees",
+                    "{{employmentId}}",
+                    "reactivate"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Terminate an employment",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"reason\": \"Performance issues\",\r\n  \"notes\": \"Employee was given multiple warnings but performance did not improve\",\r\n  \"effectiveDate\": \"2024-01-15T00:00:00.000Z\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/employment/employees/{{employmentId}}/terminate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "employees",
+                    "{{employmentId}}",
+                    "terminate"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Revoke a business OTP invitation",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/employment/invitations/:invitationId/revoke",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "invitations",
+                    ":invitationId",
+                    "revoke"
+                  ],
+                  "variable": [
+                    {
+                      "key": "invitationId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User Employment History",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/employment/users/:userId/history",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "employment",
+                    "users",
+                    ":userId",
+                    "history"
+                  ],
+                  "variable": [
+                    {
+                      "key": "userId",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "roles",
+          "item": [
+            {
+              "name": "Create Business Roles",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Senior Manager\",\r\n    \"description\": \"Senior manager with advanced operational permissions\",\r\n    \"permissions\": {\r\n        \"people.employees\": 2,\r\n        \"business.overview\": 1,\r\n        \"schedule\": 3\r\n    }\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/{{businessId}}/roles",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "businesses",
+                    "{{businessId}}",
+                    "roles"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Modify Business Role",
+              "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "{{accessToken}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"name\": \"Senior Manager\",\r\n    \"description\": \"Senior manager with advanced operational permissions\",\r\n    \"permissions\": {\r\n        \"people.employees\": 2,\r\n        \"business.overview\": 1,\r\n        \"schedule\": 3\r\n    }\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/{{businessId}}/roles/{{roleId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "businesses",
+                    "{{businessId}}",
+                    "roles",
+                    "{{roleId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Role to Employment (Multiple)",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"roleId\": \"{{roleId}}\",\r\n  \"employmentIds\": [\"emp-1\", \"emp-2\", \"emp-3\"]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/{{businessId}}/roles/assign",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "businesses",
+                    "{{businessId}}",
+                    "roles",
+                    "assign"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Role to Single Employment",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/{{businessId}}/roles/assign/{{employmentId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "businesses",
+                    "{{businessId}}",
+                    "roles",
+                    "assign",
+                    "{{employmentId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Business Role by ID",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"Manager\",\r\n  \"description\": \"Team manager with operational permissions\",\r\n  \"permissions\": [\r\n    \"CAN_MANAGE_SHIFTS\",\r\n    \"CAN_APPROVE_LEAVE\",\r\n    \"CAN_VIEW_REPORTS\"\r\n  ]\r\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/{{businessId}}/roles/{{roleId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "businesses",
+                    "{{businessId}}",
+                    "roles",
+                    "{{roleId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get  All Business Roles",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/{{businessId}}/roles",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "businesses",
+                    "{{businessId}}",
+                    "roles"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Business Role",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/{{businessId}}/roles/{{roleId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "businesses",
+                    "{{businessId}}",
+                    "roles",
+                    "{{roleId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Available Permissions",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "name",
+                      "value": "Clown Cloferriuhf8uwehi",
+                      "type": "text",
+                      "uuid": "047b70cf-21a4-4369-ae8e-32627079f527"
+                    },
+                    {
+                      "key": "description",
+                      "value": "A family-owned restaurant serving authentic Italian cuisine",
+                      "type": "text",
+                      "uuid": "c8944a4a-cc9b-4520-89f6-c0a6cf3e5e55"
+                    },
+                    {
+                      "key": "address",
+                      "value": "123 Main St, Downtown, City, State 12345",
+                      "type": "text"
+                    },
+                    {
+                      "key": "phoneNumber",
+                      "value": "555-123-4567",
+                      "type": "text"
+                    },
+                    {
+                      "key": "countryCode",
+                      "value": "+1",
+                      "type": "text"
+                    },
+                    {
+                      "key": "email",
+                      "value": "contact@acmerestaurant.com",
+                      "type": "text"
+                    },
+                    {
+                      "key": "website",
+                      "value": "https://www.acmerestaurant.com",
+                      "type": "text"
+                    },
+                    {
+                      "key": "logo",
+                      "type": "file",
+                      "uuid": "310f12d2-d544-486d-83e6-78e39bd3b052",
+                      "src": "/C:/Users/xd/Pictures/Screenshots/Screenshot 2025-12-08 021108.png"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/{{businessId}}/roles/permissions",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "businesses",
+                    "{{businessId}}",
+                    "roles",
+                    "permissions"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Business Role Statics",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/businesses/{{businessId}}/roles/statistics",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "businesses",
+                    "{{businessId}}",
+                    "roles",
+                    "statistics"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "recruitment",
+          "item": [
+            {
+              "name": "Create Job Posting",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"Hiring for Manager\",\r\n  \"description\": \"operational fpr manager\",\r\n  \"requiredSkills\": [\r\n    \"string\"\r\n  ],\r\n  \"salaryType\": \"hourly\",\r\n  \"salaryUnit\": 14,\r\n  \"numberOfOpenings\": 10\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment/{{businessId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment",
+                    "{{businessId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Job Posting",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment/{{businessId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment",
+                    "{{businessId}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "search",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "salaryType",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "isActive",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "skills",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Job Posting by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Job Posting",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\",\r\n  \"requiredSkills\": [\r\n    \"string\"\r\n  ],\r\n  \"salaryType\": \"monthly\",\r\n  \"salaryUnit\": 0,\r\n  \"numberOfOpenings\": 0\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Job Posting",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Toggle Active Status Job Posting",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment/{{businessId}}/:id/toggle-status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment",
+                    "{{businessId}}",
+                    ":id",
+                    "toggle-status"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "recruitment applications",
+          "item": [
+            {
+              "name": "Delete application (business only)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment-application/business/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment-application",
+                    "business",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get application statistics for a business",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/recruitment-application/business/{{businessId}}/stats",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "recruitment-application",
+                    "business",
+                    "{{businessId}}",
+                    "stats"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "shift template",
+          "item": [
+            {
+              "name": "Create a new shift template",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/shift-template/{{businessId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-template",
+                    "{{businessId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get all shift templates for a business",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/shift-template/{{businessId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-template",
+                    "{{businessId}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "limit",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "search",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "pattern",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "dayOfWeek",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "isActive",
+                      "value": null,
+                      "disabled": true
+                    },
+                    {
+                      "key": "isOvertime",
+                      "value": null,
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get shift template by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/shift-template/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-template",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update shift template",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"name\": \"string\",\r\n  \"description\": \"string\",\r\n  \"startTime\": \"string\",\r\n  \"endTime\": \"string\",\r\n  \"breakDuration\": [\r\n    {\r\n      \"startTime\": \"string\",\r\n      \"endTime\": \"string\"\r\n    }\r\n  ],\r\n  \"roleRequirements\": [\r\n    {\r\n      \"roleId\": \"string\",\r\n      \"count\": 0,\r\n      \"roleName\": \"string\"\r\n    }\r\n  ],\r\n  \"isOvertime\": true,\r\n  \"pattern\": \"daily\",\r\n  \"daysOfWeek\": [\r\n    \"monday\"\r\n  ],\r\n  \"maxEmployees\": 0,\r\n  \"minEmployees\": 0,\r\n  \"lateArrivalGrace\": 0,\r\n  \"earlyLeaveGrace\": 0\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/shift-template/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-template",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete shift template (soft delete)",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/shift-template/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-template",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Toggle Shift Status",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/v1/shift-template/{{businessId}}/:id/toggle-status",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "v1",
+                    "shift-template",
+                    "{{businessId}}",
+                    ":id",
+                    "toggle-status"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get shift template statistics for a business",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/shift-template/{{businessId}}/stats",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-template",
+                    "{{businessId}}",
+                    "stats"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "shift assignment",
+          "item": [
+            {
+              "name": "Create a new shift assignment",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"employmentId\": \"string\",\r\n  \"shiftTemplateId\": \"string\",\r\n  \"date\": \"string\",\r\n  \"notes\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/shift-assignment/{{businessId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-assignment",
+                    "{{businessId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get all shift assignments for a business",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/shift-assignment/{{businessId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-assignment",
+                    "{{businessId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get shift assignment by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/shift-assignment/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-assignment",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update shift assignment",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/shift-assignment/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-assignment",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete shift assignment",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/shift-assignment/{{businessId}}/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-assignment",
+                    "{{businessId}}",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "key": "id",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Create Multiple Shift Assignment",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"employmentIds\": [\r\n    \"string\"\r\n  ],\r\n  \"shiftTemplateId\": \"string\",\r\n  \"date\": \"string\",\r\n  \"notes\": \"string\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/shift-assignment/{{businessId}}/bulk",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "shift-assignment",
+                    "{{businessId}}",
+                    "bulk"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "{{userAccessToken}}",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "New Request",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://eliteinternational.netlify.app/admin/debug",
+          "protocol": "https",
+          "host": [
+            "eliteinternational",
+            "netlify",
+            "app"
+          ],
+          "path": [
+            "admin",
+            "debug"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "userAccessToken",
+      "value": ""
+    },
+    {
+      "key": "userRefreshToken",
+      "value": ""
+    },
+    {
+      "key": "businessId",
+      "value": ""
+    },
+    {
+      "key": "adminAccessToken",
+      "value": ""
+    },
+    {
+      "key": "adminRefreshToken",
+      "value": ""
+    }
+  ]
+}

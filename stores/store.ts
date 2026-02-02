@@ -1,5 +1,9 @@
+import { authService, ChangePasswordData, ForgotPasswordData, LoginData, OAuthData, RegisterData, ResendOTPData, ResetPasswordData, VerifyAccountData } from "@/services/authService";
+import { profileService, UpdateProfileData } from "@/services/profileService";
 import { translateApiMessage } from "@/utils/apiMessages";
+import axiosInstance from "@/utils/axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AxiosError } from "axios";
 import { create } from "zustand";
 
 const STORAGE_KEYS = {
@@ -8,7 +12,66 @@ const STORAGE_KEYS = {
   REFRESH_TOKEN: "auth_refresh_token",
 };
 
-export const useStore = create((set, get) => ({
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  avatar: string;
+  isEmailVerified: boolean;
+  fcmToken?: string;
+  phoneNumber?: string;
+  countryCode?: string;
+  isRestricted: boolean;
+  restrictionReason?: string;
+  bio?: string;
+  isOnline: boolean;
+  lastSeen?: string;
+  lastLoginAt: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface StoreState {
+  user: User | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  isLoading: boolean;
+  error: Error | null;
+  isInitialized: boolean;
+  isProfileComplete?: boolean;
+  userBusiness?: any;
+  loading?: boolean;
+
+  // Auth methods
+  initializeAuth: () => Promise<void>;
+  register: (data: RegisterData) => Promise<any>;
+  login: (data: LoginData) => Promise<any>;
+  oauthLogin: (data: OAuthData) => Promise<any>;
+  verifyAccount: (data: VerifyAccountData) => Promise<any>;
+  forgotPassword: (data: ForgotPasswordData) => Promise<any>;
+  resetPassword: (data: ResetPasswordData) => Promise<any>;
+  changePassword: (data: ChangePasswordData) => Promise<any>;
+  requestVerifyAccount: () => Promise<any>;
+  resendOTP: (data: ResendOTPData) => Promise<any>;
+  logout: () => Promise<void>;
+
+  // Profile methods
+  updateProfile: (profileData: UpdateProfileData) => Promise<any>;
+  getProfile: () => Promise<any>;
+
+  // Business methods (keeping existing ones)
+  fetchBusinesses: () => Promise<any>;
+  createCompanyManual: (companyData: any) => Promise<any>;
+  createBusinessProfile: (payload: any) => Promise<any>;
+  generateBusinessCode: (businessId: string) => Promise<any>;
+  joinBusiness: (businessId: string, inviteCode: string) => Promise<any>;
+
+  clearError: () => void;
+}
+
+export const useStore = create<StoreState>((set, get) => ({
   user: null,
   accessToken: null,
   refreshToken: null,
@@ -16,46 +79,16 @@ export const useStore = create((set, get) => ({
   error: null,
   isInitialized: false,
 
-  // Add this function to persist auth data to AsyncStorage
-  persistAuthData: async (user, accessToken, refreshToken) => {
-    try {
-      const promises = [
-        AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(user)),
-      ];
-
-      if (accessToken) {
-        promises.push(
-          AsyncStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken),
-        );
-      }
-
-      if (refreshToken) {
-        promises.push(
-          AsyncStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken),
-        );
-      }
-
-      await Promise.all(promises);
-    } catch (error) {
-      console.error("Failed to persist auth data:", error);
-      throw error;
-    }
-  },
-
-  // Add this function to initialize auth state from storage on app start
+  // Initialize auth state from storage on app start
   initializeAuth: async () => {
     try {
-      const [user, accessToken, refreshToken] = await Promise.all([
-        AsyncStorage.getItem(STORAGE_KEYS.USER),
-        AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN),
-        AsyncStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN),
-      ]);
+      const authData = await authService.getStoredAuthData();
 
-      if (user) {
+      if (authData.user && authData.accessToken) {
         set({
-          user: JSON.parse(user),
-          accessToken: accessToken || null,
-          refreshToken: refreshToken || null,
+          user: authData.user,
+          accessToken: authData.accessToken,
+          refreshToken: authData.refreshToken,
           isInitialized: true,
         });
       } else {
@@ -67,257 +100,298 @@ export const useStore = create((set, get) => ({
     }
   },
 
-  signup: async (data) => {
+  // Register a new user
+  register: async (data: RegisterData) => {
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/auth/signup`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        },
-      );
+      const response = await authService.register(data);
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        const errorCode = result.error?.code || "UNKNOWN_ERROR";
-        const translatedMessage = translateApiMessage(errorCode);
-        throw new Error(translatedMessage);
+      // For registration, we might not get tokens immediately (need verification)
+      // Store user data if available
+      if (response.data) {
+        await AsyncStorage.setItem('auth_user', JSON.stringify(response.data));
+        set({
+          user: response.data,
+          isLoading: false,
+        });
+      } else {
+        // Registration successful but no user data yet (needs verification)
+        set({ isLoading: false });
       }
 
-      const userData = {
-        id: result.data.id,
-        email: result.data.email,
-        phoneNumber: result.data.phoneNumber,
-        fullName: result.data.fullName,
-        isVerified: result.data.isVerified,
-        role: result.data.role,
-        businessId: result.data.businessId,
-        businessName: result.data.businessName,
-        roles: result.data.roles,
-      };
+      // Store tokens if available
+      if (response.tokens) {
+        await authService.storeAuthData(response);
+        set({
+          accessToken: response.tokens.access.token,
+          refreshToken: response.tokens.refresh.token,
+        });
+      }
 
-      // Persist to storage (profile not complete yet)
-      await get().persistAuthData(
-        userData,
-        result.data.accessToken,
-        result.data.refreshToken,
-        false,
-      );
-
-      set({
-        user: userData,
-        accessToken: result.data.accessToken,
-        refreshToken: result.data.refreshToken,
-        isProfileComplete: false,
-        isLoading: false,
-      });
-
-      return result.data;
+      return response;
     } catch (error) {
-      set({ isLoading: false, error: error });
-      throw error;
+      const finalError = error instanceof Error ? error : new Error('Registration failed');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
     }
   },
 
-  verifyOTP: async (data) => {
+  // Login user
+  login: async (data: LoginData) => {
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/auth/verify-otp`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        },
-      );
+      const response = await authService.login(data);
 
-      const result = await response.json();
+      // Store auth data if login was successful
+      if (response.data && response.tokens) {
+        await authService.storeAuthData(response);
 
-      if (!response.ok || !result.success) {
-        const errorCode = result.error?.code || "UNKNOWN_ERROR";
-        const translatedMessage = translateApiMessage(errorCode);
-        throw new Error(translatedMessage);
+        set({
+          user: response.data,
+          accessToken: response.tokens.access.token,
+          refreshToken: response.tokens.refresh.token,
+          isLoading: false,
+        });
+      } else {
+        set({ isLoading: false });
       }
 
-      const userData = {
-        id: result.data.id,
-        email: result.data.email,
-        phoneNumber: result.data.phoneNumber,
-        fullName: result.data.fullName,
-        isVerified: result.data.isVerified,
-        role: result.data.role,
-        businessId: result.data.businessId,
-        businessName: result.data.businessName,
-        roles: result.data.roles,
-      };
-
-      // Persist to storage (profile not complete yet - user needs to complete setup)
-      await get().persistAuthData(userData, null, null, false);
-
-      set({
-        user: userData,
-        isProfileComplete: false,
-        isLoading: false,
-      });
-
-      return result.data;
+      return response;
     } catch (error) {
-      set({ isLoading: false, error: error });
-      throw error;
+      const finalError = error instanceof Error ? error : new Error('Login failed');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
     }
   },
 
-  login: async (data) => {
+  // OAuth login (Google/Apple)
+  oauthLogin: async (data: OAuthData) => {
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        },
-      );
+      const response = await authService.oauthLogin(data);
 
-      const result = await response.json();
+      // Store auth data if login was successful
+      if (response.data && response.tokens) {
+        await authService.storeAuthData(response);
 
-      if (!response.ok || !result.success) {
-        const errorCode = result.error?.code || "UNKNOWN_ERROR";
-        const translatedMessage = translateApiMessage(errorCode);
-        throw new Error(translatedMessage);
+        set({
+          user: response.data,
+          accessToken: response.tokens.access.token,
+          refreshToken: response.tokens.refresh.token,
+          isLoading: false,
+        });
+      } else {
+        set({ isLoading: false });
       }
 
-      await get().persistAuthData(
-        result.data,
-        result.data.accessToken,
-        result.data.refreshToken,
-      );
-
-      set({
-        user: result.data,
-        accessToken: result.data.accessToken,
-        refreshToken: result.data.refreshToken,
-        isLoading: false,
-      });
-
-      return result.data;
+      return response;
     } catch (error) {
-      set({ isLoading: false, error: error });
-      throw error;
+      const finalError = error instanceof Error ? error : new Error('OAuth login failed');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
     }
   },
 
+  // Verify account with OTP
+  verifyAccount: async (data: VerifyAccountData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await authService.verifyAccount(data);
+
+      // Store auth data if verification was successful and we get tokens
+      if (response.data && response.tokens) {
+        await authService.storeAuthData(response);
+
+        set({
+          user: response.data,
+          accessToken: response.tokens.access.token,
+          refreshToken: response.tokens.refresh.token,
+          isLoading: false,
+        });
+      } else if (response.data) {
+        // User verified but no tokens yet
+        await AsyncStorage.setItem('auth_user', JSON.stringify(response.data));
+        set({
+          user: response.data,
+          isLoading: false,
+        });
+      } else {
+        set({ isLoading: false });
+      }
+
+      return response;
+    } catch (error) {
+      const finalError = error instanceof Error ? error : new Error('Account verification failed');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
+    }
+  },
+
+  // Forgot password
+  forgotPassword: async (data: ForgotPasswordData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await authService.forgotPassword(data);
+      set({ isLoading: false });
+      return response;
+    } catch (error) {
+      const finalError = error instanceof Error ? error : new Error('Password reset request failed');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
+    }
+  },
+
+  // Reset password
+  resetPassword: async (data: ResetPasswordData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await authService.resetPassword(data);
+      set({ isLoading: false });
+      return response;
+    } catch (error) {
+      const finalError = error instanceof Error ? error : new Error('Password reset failed');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
+    }
+  },
+
+  // Change password
+  changePassword: async (data: ChangePasswordData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await authService.changePassword(data);
+      set({ isLoading: false });
+      return response;
+    } catch (error) {
+      const finalError = error instanceof Error ? error : new Error('Password change failed');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
+    }
+  },
+
+  // Request account verification (for logged-in users)
+  requestVerifyAccount: async () => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await authService.requestVerifyAccount();
+      set({ isLoading: false });
+      return response;
+    } catch (error) {
+      const finalError = error instanceof Error ? error : new Error('Verification request failed');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
+    }
+  },
+
+  // Resend OTP
+  resendOTP: async (data: ResendOTPData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await authService.resendOTP(data);
+      set({ isLoading: false });
+      return response;
+    } catch (error) {
+      const finalError = error instanceof Error ? error : new Error('OTP resend failed');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
+    }
+  },
+
+  // Logout user
   logout: async () => {
     try {
-      await Promise.all([
-        AsyncStorage.removeItem(STORAGE_KEYS.USER),
-        AsyncStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN),
-        AsyncStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN),
+      const { refreshToken } = get();
 
-      ]);
+      if (refreshToken) {
+        await authService.logout(refreshToken);
+      }
+
+      // Clear stored data
+      await authService.clearAuthData();
 
       set({
         user: null,
         accessToken: null,
         refreshToken: null,
-
       });
     } catch (error) {
       console.error("Failed to logout:", error);
+      // Even if logout API fails, clear local data
+      await authService.clearAuthData();
+      set({
+        user: null,
+        accessToken: null,
+        refreshToken: null,
+      });
     }
   },
 
-  updateProfile: async (profileData) => {
+  // Update user profile
+  updateProfile: async (profileData: UpdateProfileData) => {
     set({ isLoading: true, error: null });
 
     try {
-      const { accessToken } = get();
+      const response = await profileService.updateProfile(profileData);
 
-      if (!accessToken) {
-        const errorMessage = translateApiMessage("NO_AUTH_TOKEN");
-        throw new Error(errorMessage);
-      }
-
-      // Create FormData
-      const formData = new FormData();
-
-      // Add all profile data fields directly
-      Object.keys(profileData).forEach((key) => {
-        const value = profileData[key];
-
-        if (value === null || value === undefined) {
-          return; // Skip null/undefined
-        }
-
-        // Handle file objects (images) - check for uri, type, name
-        if (value.uri && value.type && value.name) {
-          formData.append(key, value as any);
-        }
-        // Handle objects (like location)
-        else if (typeof value === "object" && !(value instanceof Date)) {
-          formData.append(key, JSON.stringify(value));
-        }
-        // Handle dates
-        else if (value instanceof Date) {
-          formData.append(key, value.toISOString());
-        }
-        // Handle primitives
-        else {
-          formData.append(key, value.toString());
-        }
-      });
-
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/profile`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            // DO NOT set Content-Type for FormData - browser sets it automatically with boundary
-          },
-          body: formData,
-        },
-      );
-
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        const errorCode = result.error?.code || "UNKNOWN_ERROR";
-        const translatedMessage = translateApiMessage(errorCode);
-        throw new Error(translatedMessage);
-      }
-
-      // Update user data with profile info
+      // Update user data in store (assuming profile service returns similar format)
       const currentUser = get().user;
       const updatedUser = {
         ...currentUser,
-        ...result.data.profile,
+        ...response.data, // Adjust based on actual profile response format
       };
 
       // Update storage
-      await AsyncStorage.setItem(
-        STORAGE_KEYS.USER,
-        JSON.stringify(updatedUser),
-      );
+      await AsyncStorage.setItem('auth_user', JSON.stringify(updatedUser));
 
       set({
         user: updatedUser,
         isLoading: false,
       });
 
-      return result.data;
+      return response;
     } catch (error) {
-      set({ isLoading: false, error: error });
-      throw error;
+      const finalError = error instanceof Error ? error : new Error('Profile update failed');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
     }
   },
 
+  // Get user profile
+  getProfile: async () => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await profileService.getProfile();
+
+      // Update user data in store (assuming profile service returns similar format)
+      const updatedUser = response.data; // Adjust based on actual profile response format
+
+      // Update storage
+      await AsyncStorage.setItem('auth_user', JSON.stringify(updatedUser));
+
+      set({
+        user: updatedUser,
+        isLoading: false,
+      });
+
+      return response;
+    } catch (error) {
+      const finalError = error instanceof Error ? error : new Error('Failed to fetch profile');
+      set({ isLoading: false, error: finalError });
+      throw finalError;
+    }
+  },
+
+  // Business methods (keeping existing implementations)
   fetchBusinesses: async () => {
     try {
       const { accessToken } = get();
@@ -326,24 +400,19 @@ export const useStore = create((set, get) => ({
         throw new Error("No authentication token found");
       }
 
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/workforce/business/all`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+      const response = await axiosInstance.get("/workforce/business/all", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+      });
 
-      const result = await response.json();
+      const result = response.data;
 
-      if (!response.ok || !result.success) {
+      if (!result.success) {
         const errorMsg =
           result.error?.message ||
           result.message?.code ||
           "Failed to fetch businesses";
-        // console.error("API Error:", errorMsg, result);
         throw new Error(errorMsg);
       }
 
@@ -381,20 +450,15 @@ export const useStore = create((set, get) => ({
         formData.append("logo", companyData.logo as any);
       }
 
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/profile/company/manual`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: formData,
+      const response = await axiosInstance.post("/profile/company/manual", formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+      });
 
-      const result = await response.json();
+      const result = response.data;
 
-      if (!response.ok || !result.success) {
+      if (!result.success) {
         const errorCode = result.error?.code || "UNKNOWN_ERROR";
         const translatedMessage = translateApiMessage(errorCode);
         throw new Error(translatedMessage);
@@ -404,8 +468,13 @@ export const useStore = create((set, get) => ({
 
       return result.data;
     } catch (error) {
-      set({ isLoading: false, error: error });
-      throw error;
+      const axiosError = error as AxiosError<any>;
+      const errorCode = axiosError.response?.data?.error?.code || "UNKNOWN_ERROR";
+      const translatedMessage = translateApiMessage(errorCode);
+      const finalError = new Error(translatedMessage);
+
+      set({ isLoading: false, error: finalError });
+      throw finalError;
     }
   },
 
@@ -437,7 +506,7 @@ export const useStore = create((set, get) => ({
           uri: payload.profilePhoto,
           type: "image/jpeg",
           name: "profilePhoto.jpg",
-        };
+        } as any;
         formData.append("profilePhoto", profilePhotoFile);
       }
 
@@ -446,34 +515,19 @@ export const useStore = create((set, get) => ({
           uri: payload.coverPhoto,
           type: "image/jpeg",
           name: "coverPhoto.jpg",
-        };
+        } as any;
         formData.append("coverPhoto", coverPhotoFile);
       }
 
       console.log("form data", formData);
 
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/profile/company`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: formData,
+      const response = await axiosInstance.post("/profile/company", formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      );
+      });
 
-      const result = await response.json();
-
-      // console.log("Response status:", response.status);
-      // console.log("Response data:", result);
-
-      if (!response.ok) {
-        const errorCode = result.error?.code || "UNKNOWN_ERROR";
-        const translatedMessage = translateApiMessage(errorCode);
-
-        throw new Error(translatedMessage);
-      }
+      const result = response.data;
 
       if (result.success) {
         set({
@@ -489,11 +543,16 @@ export const useStore = create((set, get) => ({
       }
     } catch (error) {
       console.error("Error in createBusinessProfile:", error);
+      const axiosError = error as AxiosError<any>;
+      const errorCode = axiosError.response?.data?.error?.code || "UNKNOWN_ERROR";
+      const translatedMessage = translateApiMessage(errorCode);
+      const finalError = new Error(translatedMessage);
+
       set({
         isLoading: false,
-        error: error instanceof Error ? error : new Error(String(error)),
+        error: finalError,
       });
-      throw error;
+      throw finalError;
     }
   },
 
@@ -503,33 +562,29 @@ export const useStore = create((set, get) => ({
 
       const { accessToken } = get();
 
-      const res = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/colleagues-jobs/colleague-code/generate`,
+      const response = await axiosInstance.post(
+        "/colleagues-jobs/colleague-code/generate",
+        { businessId },
         {
-          method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify({ businessId })
         }
       );
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to generate code");
-      }
-
-      const result = await res.json();
+      const result = response.data;
       set({ loading: false });
 
       return result.data; // Return the generated code data
     } catch (err: any) {
+      const axiosError = err as AxiosError<any>;
+      const errorMessage = axiosError.response?.data?.message || axiosError.message || "Something went wrong";
+
       set({
         loading: false,
-        error: err.message || "Something went wrong",
+        error: new Error(errorMessage),
       });
-      throw err;
+      throw new Error(errorMessage);
     }
 
   },
@@ -539,72 +594,32 @@ export const useStore = create((set, get) => ({
       set({ loading: true, error: null });
       const { accessToken } = get();
 
-      const res = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/workforce/business/joinbusiness?businessid=${businessId}&inviteCode=${inviteCode}`,
+      const response = await axiosInstance.post(
+        `/workforce/business/joinbusiness?businessid=${businessId}&inviteCode=${inviteCode}`,
+        { businessId, inviteCode },
         {
-          method: "POST",
           headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${accessToken}`,
           },
-          body: JSON.stringify({ businessId, inviteCode })
         }
       );
 
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Failed to join business");
-      }
-
-      const result = await res.json();
+      const result = response.data;
 
       set({ loading: false });
 
       return result.data;
     } catch (err: any) {
+      const axiosError = err as AxiosError<any>;
+      const errorMessage = axiosError.response?.data?.message || axiosError.message || "Something went wrong";
+
       set({
         loading: false,
-        error: err.message || "Something went wrong",
+        error: new Error(errorMessage),
       });
-      throw err;
+      throw new Error(errorMessage);
     }
   },
-
-  // getTodaysShift: async() => {
-  //   try {
-  //     set({ loading: true, error: null });
-  //     const { accessToken } = get();
-
-  //     const res = await fetch(
-  //       `${process.env.EXPO_PUBLIC_API_URL}/workforce/business/joinbusiness?businessid=${businessId}&inviteCode=${inviteCode}`,
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //           Authorization: `Bearer ${accessToken}`
-  //         },
-  //         body: JSON.stringify({ businessId, inviteCode })
-  //       }
-  //     );
-
-  //     if (!res.ok) {
-  //       const errorData = await res.json();
-  //       throw new Error(errorData.message || "Failed to join business");
-  //     }
-
-  //     const result = await res.json();
-
-  //     set({ loading: false });
-
-  //     return result.data;
-  //   } catch (err: any) {
-  //     set({
-  //       loading: false,
-  //       error: err.message || "Something went wrong",
-  //     });
-  //     throw err;
-  //   }
-  // },
 
   clearError: () => set({ error: null }),
 }));

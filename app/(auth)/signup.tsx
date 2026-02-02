@@ -29,8 +29,7 @@ const SignUp = () => {
   const [isValidPhone, setIsValidPhone] = useState(true);
   const router = useRouter();
 
-  const [fullName, setFullName] = useState("");
-  const { signup, isLoading, error, clearError } = useStore();
+  const { register, isLoading, clearError } = useStore();
 
   let phoneRef: any = null;
 
@@ -62,35 +61,25 @@ const SignUp = () => {
         return;
       }
 
-      const signupData = { email, password };
+      const result = await register({
+        email,
+        password,
+        role: 'user' as const
+      });
 
-      try {
-        const result = await signup(signupData);
+      if (result?.success) {
         router.push({
           pathname: "/(auth)/verify",
           params: { email },
         });
-      } catch (error) {
-        Alert.alert(t("common.error"), error.message);
       }
     } else if (selectedTab === "phone") {
-      // Validate phone number
-      if (!phoneNumber) {
-        Alert.alert(t("common.error"), t("validation.fillAllFields"));
-        return;
-      }
-
-      const signupData = { phoneNumber };
-
-      try {
-        const result = await signup(signupData);
-        router.push({
-          pathname: "/(auth)/verify",
-          params: { phoneNumber },
-        });
-      } catch (error) {
-        Alert.alert(t("common.error"), error.message);
-      }
+      // Temporarily disabled until phone verification endpoint is clarified
+      Alert.alert(
+        t("common.error"),
+        "Phone registration is temporarily unavailable. Please use email registration."
+      );
+      return;
     }
   };
 
@@ -114,14 +103,12 @@ const SignUp = () => {
           <View className="flex-row rounded-full mb-8">
             <TouchableOpacity
               onPress={() => setSelectedTab("email")}
-              className={`flex-1 py-3 rounded-full ${
-                selectedTab === "email" ? "bg-[#11293A]" : "bg-white"
-              }`}
+              className={`flex-1 py-3 rounded-full ${selectedTab === "email" ? "bg-[#11293A]" : "bg-white"
+                }`}
             >
               <Text
-                className={`text-center text-sm font-proximanova-semibold ${
-                  selectedTab === "email" ? "text-white" : "text-gray-600"
-                }`}
+                className={`text-center text-sm font-proximanova-semibold ${selectedTab === "email" ? "text-white" : "text-gray-600"
+                  }`}
               >
                 Email
               </Text>
@@ -129,14 +116,12 @@ const SignUp = () => {
 
             <TouchableOpacity
               onPress={() => setSelectedTab("phone")}
-              className={`flex-1 py-3 rounded-full ${
-                selectedTab === "phone" ? "bg-[#11293A]" : "bg-white"
-              }`}
+              className={`flex-1 py-3 rounded-full ${selectedTab === "phone" ? "bg-[#11293A]" : "bg-white"
+                }`}
             >
               <Text
-                className={`text-center text-sm font-proximanova-semibold ${
-                  selectedTab === "phone" ? "text-white" : "text-gray-600"
-                }`}
+                className={`text-center text-sm font-proximanova-semibold ${selectedTab === "phone" ? "text-white" : "text-gray-600"
+                  }`}
               >
                 Phone number
               </Text>
@@ -197,9 +182,8 @@ const SignUp = () => {
                     className="flex-row items-center gap-1.5"
                   >
                     <View
-                      className={`w-4 h-4 border-2 rounded ${
-                        rememberMe ? "bg-[#11293A]" : "border-[#7A7A7A]"
-                      }`}
+                      className={`w-4 h-4 border-2 rounded ${rememberMe ? "bg-[#11293A]" : "border-[#7A7A7A]"
+                        }`}
                     >
                       {rememberMe && (
                         <Ionicons name="checkmark" size={10} color="white" />
