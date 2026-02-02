@@ -1,19 +1,56 @@
 import axiosInstance from '@/utils/axios';
 
+export interface AddressData {
+    address?: string;
+    latitude?: number;
+    longitude?: number;
+    placeId?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+}
+
+export interface SocialData {
+    facebook?: string;
+    twitter?: string;
+    instagram?: string;
+    linkedin?: string;
+    whatsapp?: string;
+    telegram?: string;
+    other?: string;
+}
+
+export interface ExperienceData {
+    companyId: string;
+    position?: string;
+    description?: string;
+    startDate?: string;
+    endDate?: string;
+    isCurrent?: boolean;
+}
+
 export interface UpdateProfileData {
     name?: string;
+    email?: string;
+    bio?: string;
+    address?: AddressData;
+    dateOfBirth?: string;
+    gender?: "male" | "female" | "other";
+    interest?: string[];
+    phoneNumber?: string;
+    countryCode?: string;
+    fcmToken?: string;
+    onboarding?: number;
+    social?: SocialData;
+    experiences?: ExperienceData[];
     avatar?: {
         uri: string;
         type: string;
         name: string;
     };
-    onboarding?: number;
+    // Legacy/compat fields that still exist in the UI/store
     firstName?: string;
     lastName?: string;
-    phoneNumber?: string;
-    countryCode?: string;
-    bio?: string;
-    fcmToken?: string;
 }
 
 export interface ProfileResponse {
@@ -49,6 +86,7 @@ class ProfileService {
     async updateProfile(data: UpdateProfileData): Promise<ProfileResponse> {
         try {
             const formData = new FormData();
+            let hasFile = false;
 
             // Add all profile data fields
             Object.keys(data).forEach((key) => {
@@ -60,6 +98,7 @@ class ProfileService {
 
                 // Handle file objects (images)
                 if (typeof value === 'object' && 'uri' in value && 'type' in value && 'name' in value) {
+                    hasFile = true;
                     formData.append(key, value as any);
                 }
                 // Handle objects
@@ -76,11 +115,9 @@ class ProfileService {
                 }
             });
 
-            const response = await axiosInstance.patch('/users/profile', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
+            const response = hasFile
+                ? await axiosInstance.patch('/users/profile', formData)
+                : await axiosInstance.patch('/users/profile', data);
 
             const result = response.data;
 

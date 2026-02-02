@@ -24,7 +24,7 @@ export default function Step1({
   const { user, updateProfile, isLoading } = useStore();
 
   // Form state
-  const [fullName, setFullName] = useState(user?.fullName || "");
+  const [fullName, setFullName] = useState("John Doe");
   const [location, setLocation] = useState(null);
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const [selectedGender, setSelectedGender] = useState<GenderOption | null>(
@@ -86,10 +86,9 @@ export default function Step1({
     try {
       // Prepare data for API - Just the data fields, no step wrapper
       const profileData = {
-        fullName: fullName.trim(),
-        location: {
-          name: "Central Park",
-          address: "Central Park, New York, NY",
+        name: fullName.trim(),
+        address: {
+          address: location || "Central Park, New York, NY",
           latitude: 40.785091,
           longitude: -73.968285,
         },
@@ -116,6 +115,10 @@ export default function Step1({
       console.error("Profile update error:", error);
     }
   };
+
+
+
+
 
   return (
     <AnimatedView

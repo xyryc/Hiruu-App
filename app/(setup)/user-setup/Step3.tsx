@@ -39,14 +39,13 @@ export default function Step3({
     try {
       // Transform work experiences for API
       const profileData = {
-        companies: workExperiences.map((exp) => ({
-          id: exp.companyId,
-          name: exp.companyName,
-          // logo: exp.logo,
+        experiences: workExperiences.map((exp) => ({
+          companyId: exp.id,
+          position: exp.jobTitle || null,
+          description: null,
           startDate: exp.startDate || null,
           endDate: exp.endDate || null,
-          jobTitle: exp.jobTitle || null,
-          isCurrentlyWorking: exp.currentlyWorking || false,
+          isCurrent: exp.isCurrentlyWorking || false,
         })),
       };
 

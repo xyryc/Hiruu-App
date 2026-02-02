@@ -28,7 +28,7 @@ export default function Step4({
     }
 
     try {
-      const profileData = { interests: selectedInterests };
+      const profileData = { interest: selectedInterests };
 
       await updateProfile(profileData);
       onComplete();

@@ -3,10 +3,11 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import OTPInput from "@/components/ui/inputs/OTPInput";
 import PhoneNumberInput from "@/components/ui/inputs/PhoneNumberInput";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import { useStore } from "@/stores/store";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -18,8 +19,15 @@ export default function Step5({
   handleBack,
 }: any) {
   const router = useRouter();
+  const { user } = useStore();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+
+  useEffect(() => {
+    if (user?.isNumberVerified) {
+      onComplete();
+    }
+  }, [onComplete, user?.isNumberVerified]);
 
   return (
     <AnimatedView

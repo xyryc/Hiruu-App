@@ -61,17 +61,23 @@ const SignUp = () => {
         return;
       }
 
-      const result = await register({
-        email,
-        password,
-        role: 'user' as const
-      });
-
-      if (result?.success) {
-        router.push({
-          pathname: "/(auth)/verify",
-          params: { email },
+      try {
+        const result = await register({
+          email,
+          password,
+          role: "user" as const,
         });
+
+        if (result?.success) {
+          router.push({
+            pathname: "/(auth)/verify",
+            params: { email },
+          });
+        }
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : t("common.error");
+        Alert.alert(t("common.error"), message);
       }
     } else if (selectedTab === "phone") {
       // Temporarily disabled until phone verification endpoint is clarified

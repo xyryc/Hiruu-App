@@ -10,6 +10,7 @@ const STORAGE_KEYS = {
   USER: "auth_user",
   ACCESS_TOKEN: "auth_access_token",
   REFRESH_TOKEN: "auth_refresh_token",
+  PROFILE_COMPLETE: "profile_complete",
 };
 
 interface User {
@@ -20,6 +21,7 @@ interface User {
   role: string;
   avatar: string;
   isEmailVerified: boolean;
+  isNumberVerified?: boolean;
   fcmToken?: string;
   phoneNumber?: string;
   countryCode?: string;
@@ -31,6 +33,7 @@ interface User {
   lastLoginAt: string;
   createdAt: string;
   updatedAt: string;
+  onboarding?: number;
 }
 
 interface StoreState {
@@ -69,6 +72,7 @@ interface StoreState {
   joinBusiness: (businessId: string, inviteCode: string) => Promise<any>;
 
   clearError: () => void;
+  setProfileComplete: (isComplete: boolean) => Promise<void>;
 }
 
 export const useStore = create<StoreState>((set, get) => ({
@@ -78,21 +82,26 @@ export const useStore = create<StoreState>((set, get) => ({
   isLoading: false,
   error: null,
   isInitialized: false,
+  isProfileComplete: false,
 
   // Initialize auth state from storage on app start
   initializeAuth: async () => {
     try {
       const authData = await authService.getStoredAuthData();
+      const profileCompleteStr = await AsyncStorage.getItem(STORAGE_KEYS.PROFILE_COMPLETE);
+      const profileComplete =
+        profileCompleteStr !== null ? profileCompleteStr === "true" : false;
 
       if (authData.user && authData.accessToken) {
         set({
           user: authData.user,
           accessToken: authData.accessToken,
           refreshToken: authData.refreshToken,
+          isProfileComplete: profileComplete,
           isInitialized: true,
         });
       } else {
-        set({ isInitialized: true });
+        set({ isInitialized: true, isProfileComplete: false });
       }
     } catch (error) {
       console.error("Failed to initialize auth:", error);
@@ -317,20 +326,24 @@ export const useStore = create<StoreState>((set, get) => ({
 
       // Clear stored data
       await authService.clearAuthData();
+      await AsyncStorage.removeItem(STORAGE_KEYS.PROFILE_COMPLETE);
 
       set({
         user: null,
         accessToken: null,
         refreshToken: null,
+        isProfileComplete: false,
       });
     } catch (error) {
       console.error("Failed to logout:", error);
       // Even if logout API fails, clear local data
       await authService.clearAuthData();
+      await AsyncStorage.removeItem(STORAGE_KEYS.PROFILE_COMPLETE);
       set({
         user: null,
         accessToken: null,
         refreshToken: null,
+        isProfileComplete: false,
       });
     }
   },
@@ -622,4 +635,12 @@ export const useStore = create<StoreState>((set, get) => ({
   },
 
   clearError: () => set({ error: null }),
+
+  setProfileComplete: async (isComplete: boolean) => {
+    await AsyncStorage.setItem(
+      STORAGE_KEYS.PROFILE_COMPLETE,
+      isComplete ? "true" : "false"
+    );
+    set({ isProfileComplete: isComplete });
+  },
 }));

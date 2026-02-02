@@ -35,6 +35,12 @@ axiosInstance.interceptors.request.use(
         delete config.headers['Content-Type'];
       }
 
+      // utils/axios.ts inside request interceptor before return config
+      console.log("API URL:", process.env.EXPO_PUBLIC_API_URL);
+      console.log("Request:", config.url);
+      console.log("Has token:", !!(await AsyncStorage.getItem("auth_access_token")));
+
+
       return config;
     } catch (error) {
       console.error('Request interceptor error:', error);

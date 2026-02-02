@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 
 export default function Index() {
-  const { user, isInitialized, initializeAuth } = useStore();
+  const { user, isInitialized, initializeAuth, isProfileComplete } = useStore();
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -26,10 +26,10 @@ export default function Index() {
 
   // User is logged in
   if (user) {
-    // Check if user verified but hasn't completed profile setup
-    // if (user.isVerified && !isProfileComplete) {
-    //   return <Redirect href="/(setup)/user-setup/progress" />;
-    // }
+    // Route to profile setup until user completes or skips it
+    if (!isProfileComplete) {
+      return <Redirect href="/(setup)/user-setup/progress" />;
+    }
 
     // User has completed profile, route based on role
     // if (user.role === "user") {

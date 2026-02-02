@@ -13,17 +13,15 @@ const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const requestPermissions = async () => {
+  const requestCameraPermission = async () => {
     if (Platform.OS !== "web") {
-      const { status: mediaLibraryStatus } =
-        await MediaLibrary.requestPermissionsAsync();
       const { status: cameraStatus } =
         await ImagePicker.requestCameraPermissionsAsync();
 
-      if (mediaLibraryStatus !== "granted" || cameraStatus !== "granted") {
+      if (cameraStatus !== "granted") {
         Alert.alert(
           "Permissions Required",
-          "Please grant camera and photo library permissions to upload images."
+          "Please grant camera permission to take a photo."
         );
         return false;
       }
@@ -31,10 +29,23 @@ const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({
     return true;
   };
 
-  const showImagePicker = async () => {
-    const hasPermissions = await requestPermissions();
-    if (!hasPermissions) return;
+  const requestLibraryPermission = async () => {
+    if (Platform.OS !== "web") {
+      const { status: mediaLibraryStatus } =
+        await MediaLibrary.requestPermissionsAsync();
 
+      if (mediaLibraryStatus !== "granted") {
+        Alert.alert(
+          "Permissions Required",
+          "Please grant photo library permission to choose an image."
+        );
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const showImagePicker = () => {
     Alert.alert("Select Image", "Choose how you want to select an image", [
       {
         text: "Camera",
@@ -54,6 +65,9 @@ const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({
   const openCamera = async () => {
     setIsLoading(true);
     try {
+      const hasPermission = await requestCameraPermission();
+      if (!hasPermission) return;
+
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
@@ -74,6 +88,9 @@ const ProfileImagePicker: React.FC<ProfileImagePickerProps> = ({
   const openImageLibrary = async () => {
     setIsLoading(true);
     try {
+      const hasPermission = await requestLibraryPermission();
+      if (!hasPermission) return;
+
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,

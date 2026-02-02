@@ -51,7 +51,7 @@ export default function Step2({
         const match = /\.(\w+)$/.exec(filename || "");
         const type = match ? `image/${match[1]}` : "image/jpeg";
 
-        profileData.profileImage = {
+        profileData.avatar = {
           uri: profileImage,
           type: type,
           name: filename || "profile.jpg",
@@ -60,7 +60,7 @@ export default function Step2({
 
       console.log("Sending Step2 data:", {
         bio: profileData.bio,
-        hasImage: !!profileData.profileImage,
+        hasImage: !!profileData.avatar,
       });
 
       // Call same API as Step1
