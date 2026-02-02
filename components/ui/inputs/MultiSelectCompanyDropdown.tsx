@@ -371,7 +371,9 @@ const MultiSelectCompanyDropdown = ({
                   {company?.logo ? (
                     <Image
                       source={{
-                        uri: `${process.env.EXPO_PUBLIC_API_URL}${company?.logo}`,
+                        uri: company.logo.startsWith("http")
+                          ? company.logo
+                          : `${process.env.EXPO_PUBLIC_API_URL}${company.logo}`,
                       }}
                       style={{
                         width: 40,

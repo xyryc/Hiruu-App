@@ -432,19 +432,12 @@ export const useStore = create<StoreState>((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const { accessToken } = get();
-
-      if (!accessToken) {
-        const errorMessage = translateApiMessage("NO_AUTH_TOKEN");
-        throw new Error(errorMessage);
-      }
-
       // Create FormData
       const formData = new FormData();
 
-      // Add companyName
+      // Add name
       if (companyData.companyName) {
-        formData.append("companyName", companyData.companyName);
+        formData.append("name", companyData.companyName);
       }
 
       // Add logo file
@@ -452,28 +445,34 @@ export const useStore = create<StoreState>((set, get) => ({
         formData.append("logo", companyData.logo as any);
       }
 
-      const response = await axiosInstance.post("/profile/company/manual", formData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+      const baseUrl = process.env.EXPO_PUBLIC_API_URL;
+      if (!baseUrl) {
+        throw new Error("API URL not configured");
+      }
+
+      const accessToken = await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+      const response = await fetch(`${baseUrl}/companies`, {
+        method: "POST",
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+        body: formData,
       });
 
-      const result = response.data;
+      const result = await response.json();
 
-      if (!result.success) {
-        const errorCode = result.error?.code || "UNKNOWN_ERROR";
-        const translatedMessage = translateApiMessage(errorCode);
-        throw new Error(translatedMessage);
+      if (!response.ok) {
+        throw new Error(result?.message || "Failed to add company");
       }
 
       set({ isLoading: false });
 
-      return result.data;
+      return result.data ?? result;
     } catch (error) {
       const axiosError = error as AxiosError<any>;
-      const errorCode = axiosError.response?.data?.error?.code || "UNKNOWN_ERROR";
-      const translatedMessage = translateApiMessage(errorCode);
-      const finalError = new Error(translatedMessage);
+      const errorMessage =
+        axiosError.response?.data?.message ||
+        axiosError.message ||
+        translateApiMessage("UNKNOWN_ERROR");
+      const finalError = new Error(errorMessage);
 
       set({ isLoading: false, error: finalError });
       throw finalError;

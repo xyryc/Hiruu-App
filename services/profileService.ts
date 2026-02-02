@@ -1,4 +1,5 @@
 import axiosInstance from '@/utils/axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface AddressData {
     address?: string;
@@ -115,10 +116,29 @@ class ProfileService {
                 }
             });
 
-            const response = hasFile
-                ? await axiosInstance.patch('/users/profile', formData)
-                : await axiosInstance.patch('/users/profile', data);
+            if (hasFile) {
+                const baseUrl = process.env.EXPO_PUBLIC_API_URL;
+                if (!baseUrl) {
+                    throw new Error('API URL not configured');
+                }
 
+                const accessToken = await AsyncStorage.getItem('auth_access_token');
+                const response = await fetch(`${baseUrl}/users/profile`, {
+                    method: 'PATCH',
+                    headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (!response.ok || !result?.success) {
+                    throw new Error(result?.message || 'Profile update failed');
+                }
+
+                return result;
+            }
+
+            const response = await axiosInstance.patch('/users/profile', data);
             const result = response.data;
 
             // Check if update was successful
