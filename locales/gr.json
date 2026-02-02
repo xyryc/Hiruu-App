@@ -47,6 +47,9 @@
   },
 
   "api": {
+    "auth_email_already_taken": "Το email χρησιμοποιείται ήδη.",
+    "bad_request": "Λάθος αίτημα.",
+    "auth_registration_success": "Η εγγραφή ολοκληρώθηκε με επιτυχία.",
     "SUCCESS": "Η λειτουργία ολοκληρώθηκε επιτυχώς",
     "NOT_AUTHENTICATED": "Δεν έχετε πιστοποιηθεί. Παρακαλώ συνδεθείτε.",
     "USER_NOT_FOUND": "Ο χρήστης δεν βρέθηκε.",

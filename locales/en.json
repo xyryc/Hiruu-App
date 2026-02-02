@@ -47,6 +47,9 @@
   },
 
   "api": {
+    "auth_email_already_taken": "Email is already taken.",
+    "bad_request": "Bad request.",
+    "auth_registration_success": "Registration successful.",
     "SUCCESS": "Operation completed successfully",
     "NOT_AUTHENTICATED": "You are not authenticated. Please login.",
     "USER_NOT_FOUND": "User not found.",
