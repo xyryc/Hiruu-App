@@ -39,10 +39,18 @@ const MultiSelectCompanyDropdown = ({
     loadCompanies();
   }, []);
 
-  const loadCompanies = async () => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadCompanies(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const loadCompanies = async (query = "") => {
     setIsLoadingCompanies(true);
     try {
-      const businesses = await fetchBusinesses();
+      const businesses = await fetchBusinesses(query);
 
       // Transform API data to Company format
       const transformedCompanies = businesses.map((business: any) => ({
@@ -60,9 +68,7 @@ const MultiSelectCompanyDropdown = ({
     }
   };
 
-  const filteredCompanies = companies.filter((company) =>
-    company.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredCompanies = companies;
 
   const isCompanySelected = (companyId: string) => {
     return selectedCompanies.some((company) => company.id === companyId);

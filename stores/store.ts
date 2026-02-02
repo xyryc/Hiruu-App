@@ -65,7 +65,7 @@ interface StoreState {
   getProfile: () => Promise<any>;
 
   // Business methods (keeping existing ones)
-  fetchBusinesses: () => Promise<any>;
+  fetchBusinesses: (search?: string) => Promise<any>;
   createCompanyManual: (companyData: any) => Promise<any>;
   createBusinessProfile: (payload: any) => Promise<any>;
   generateBusinessCode: (businessId: string) => Promise<any>;
@@ -405,18 +405,10 @@ export const useStore = create<StoreState>((set, get) => ({
   },
 
   // Business methods (keeping existing implementations)
-  fetchBusinesses: async () => {
+  fetchBusinesses: async (search = "") => {
     try {
-      const { accessToken } = get();
-
-      if (!accessToken) {
-        throw new Error("No authentication token found");
-      }
-
-      const response = await axiosInstance.get("/workforce/business/all", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+      const response = await axiosInstance.get("/companies", {
+        params: { search },
       });
 
       const result = response.data;
@@ -429,10 +421,7 @@ export const useStore = create<StoreState>((set, get) => ({
         throw new Error(errorMsg);
       }
 
-      // Convert object to array
-      const businessesArray = Object.values(result.data);
-
-      return businessesArray;
+      return result.data;
     } catch (error) {
       console.error("Fetch businesses error:", error);
       throw error;
