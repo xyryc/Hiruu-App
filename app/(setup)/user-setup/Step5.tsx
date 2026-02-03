@@ -2,12 +2,13 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import OTPInput from "@/components/ui/inputs/OTPInput";
 import PhoneNumberInput from "@/components/ui/inputs/PhoneNumberInput";
+import { useStore } from "@/stores/store";
 import { useRouter } from "expo-router";
+import { t } from "i18next";
 import { useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
-import { useStore } from "@/stores/store";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -19,15 +20,85 @@ export default function Step5({
   handleBack,
 }: any) {
   const router = useRouter();
-  const { user } = useStore();
+  const { user, addContact, verifyAccount, isLoading } = useStore();
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const [otpSent, setOtpSent] = useState(false);
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isOtpVerified, setIsOtpVerified] = useState(false);
+
 
   useEffect(() => {
     if (user?.isNumberVerified) {
-      onComplete();
+      setIsOtpVerified(true);
     }
   }, [onComplete, user?.isNumberVerified]);
+
+  const getPhonePayload = () => {
+    const trimmed = phoneNumber.trim();
+    if (!trimmed || !countryCode) {
+      return { countryCode: "", phoneNumber: "" };
+    }
+
+    const ccDigits = countryCode.replace(/\D/g, "");
+    const numberOnly = trimmed.replace(/\D/g, "");
+    const phoneOnly = numberOnly.startsWith(ccDigits)
+      ? numberOnly.slice(ccDigits.length)
+      : numberOnly;
+
+    return { countryCode, phoneNumber: phoneOnly };
+  };
+
+  const handleSendOtp = async () => {
+    const parsed = getPhonePayload();
+    if (!parsed.phoneNumber || !parsed.countryCode) {
+      Alert.alert(t("common.error"), "Please enter a valid phone number.");
+      return;
+    }
+
+    try {
+      setIsVerifyingOtp(true);
+      console.log("send otp", parsed)
+      await addContact(parsed);
+      setOtpSent(true);
+      Alert.alert(t("common.success"), "OTP sent successfully!");
+    } catch (error: any) {
+      Alert.alert(t("common.error"), error.message || t("common.error"));
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    const otpCode = otp.join("");
+    if (otpCode.length !== 6) {
+      Alert.alert(t("common.error"), "Please enter the 6-digit OTP.");
+      return;
+    }
+
+    try {
+      setIsVerifyingOtp(true);
+      const parsed = getPhonePayload();
+      if (!parsed.phoneNumber || !parsed.countryCode) {
+        Alert.alert(t("common.error"), "Please enter a valid phone number.");
+        return;
+      }
+      console.log("verify code", parsed.phoneNumber, parsed.countryCode, otpCode)
+
+      await verifyAccount({
+        phoneNumber: parsed.phoneNumber,
+        countryCode: parsed.countryCode,
+        code: otpCode,
+      });
+      setIsOtpVerified(true);
+      Alert.alert(t("common.success"), "Phone number verified!");
+    } catch (error: any) {
+      Alert.alert(t("common.error"), error.message || t("common.error"));
+    } finally {
+      setIsVerifyingOtp(false);
+    }
+  };
 
   return (
     <AnimatedView
@@ -82,18 +153,45 @@ export default function Step5({
           <PhoneNumberInput
             phoneNumber={phoneNumber}
             setPhoneNumber={setPhoneNumber}
+            setCountryCode={setCountryCode}
           />
         </View>
 
         <View className="mt-4">
-          <Text className="text-sm mb-2 text-[#7A7A7A]">OTP input</Text>
-          <OTPInput otp={otp} setOtp={setOtp} />
+          <PrimaryButton
+            title={otpSent ? "Resend OTP" : "Send OTP"}
+            onPress={handleSendOtp}
+            loading={isVerifyingOtp}
+            className="w-full"
+          />
         </View>
+
+        {otpSent && (
+          <View className="mt-4">
+            <Text className="text-sm mb-2 text-[#7D7D7D]">OTP input</Text>
+            <OTPInput otp={otp} setOtp={setOtp} />
+
+            <View className="mt-4">
+              <PrimaryButton
+                title={isOtpVerified ? "Verified" : "Verify OTP"}
+                onPress={handleVerifyOtp}
+                loading={isVerifyingOtp}
+                className="w-full"
+              />
+            </View>
+          </View>
+        )}
       </ScrollView>
 
       {/* Button fixed at bottom */}
       <View className="pb-10 pt-4 bg-transparent">
-        <PrimaryButton title="Next" className="w-full" onPress={onComplete} />
+        <PrimaryButton
+          title="Next"
+          className="w-full"
+          onPress={onComplete}
+          loading={isLoading}
+          disabled={!isOtpVerified || isVerifyingOtp}
+        />
       </View>
     </AnimatedView>
   );

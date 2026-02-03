@@ -47,6 +47,7 @@
   },
 
   "api": {
+    "otp_invalid_code": "Invalid OTP code.",
     "auth_account_verified": "Account verified successfully!",
     "auth_email_already_taken": "Email is already taken.",
     "bad_request": "Bad request.",

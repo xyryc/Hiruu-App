@@ -47,6 +47,7 @@
   },
 
   "api": {
+    "otp_invalid_code": "Λάθος κωδικός OTP.",
     "auth_account_verified": "Ο λογαριασμός επαληθεύτηκε με επιτυχία!",
     "auth_email_already_taken": "Το email χρησιμοποιείται ήδη.",
     "bad_request": "Λάθος αίτημα.",

@@ -2,15 +2,23 @@ import React, { useState } from "react";
 import { Text, View } from "react-native";
 import PhoneInput from "react-native-phone-input";
 
-const PhoneNumberInput = ({ phoneNumber, setPhoneNumber }: any) => {
+const PhoneNumberInput = ({
+  phoneNumber,
+  setPhoneNumber,
+  setCountryCode,
+}: any) => {
   let phoneRef: any = null;
   const [isValidPhone, setIsValidPhone] = useState(true);
 
   const handlePhoneChange = () => {
     const number = phoneRef.getValue();
     const isValid = phoneRef.isValidNumber();
+    const countryCode = phoneRef.getCountryCode();
 
     setPhoneNumber(number);
+    if (setCountryCode) {
+      setCountryCode(countryCode ? `+${countryCode}` : "");
+    }
     setIsValidPhone(isValid);
   };
 

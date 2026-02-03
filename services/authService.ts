@@ -31,7 +31,9 @@ export interface OAuthData {
 }
 
 export interface VerifyAccountData {
-    email: string;
+    email?: string;
+    phoneNumber?: string;
+    countryCode?: string;
     code: string;
 }
 
@@ -54,6 +56,12 @@ export interface ChangePasswordData {
 
 export interface ResendOTPData {
     email: string;
+}
+
+export interface AddContactData {
+    phoneNumber: string;
+    countryCode: string;
+    otp?: string;
 }
 
 // Updated to match your actual API response format
@@ -300,6 +308,24 @@ class AuthService {
 
             if (!result.success) {
                 throw new Error(result.message || 'OTP resend failed');
+            }
+
+            return result;
+        } catch (error: any) {
+            throw this.handleError(error);
+        }
+    }
+
+    /**
+     * Add/verify contact number (OTP flow)
+     */
+    async addContact(data: AddContactData): Promise<SimpleResponse> {
+        try {
+            const response = await axiosInstance.post('/auth/add-contact', data);
+            const result = response.data;
+
+            if (!result.success) {
+                throw new Error(result.message || 'Add contact failed');
             }
 
             return result;

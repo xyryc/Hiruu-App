@@ -1,4 +1,4 @@
-import { authService, ChangePasswordData, ForgotPasswordData, LoginData, OAuthData, RegisterData, ResendOTPData, ResetPasswordData, VerifyAccountData } from "@/services/authService";
+import { AddContactData, authService, ChangePasswordData, ForgotPasswordData, LoginData, OAuthData, RegisterData, ResendOTPData, ResetPasswordData, VerifyAccountData } from "@/services/authService";
 import { profileService, UpdateProfileData } from "@/services/profileService";
 import { translateApiMessage } from "@/utils/apiMessages";
 import axiosInstance from "@/utils/axios";
@@ -58,6 +58,7 @@ interface StoreState {
   changePassword: (data: ChangePasswordData) => Promise<any>;
   requestVerifyAccount: () => Promise<any>;
   resendOTP: (data: ResendOTPData) => Promise<any>;
+  addContact: (data: AddContactData) => Promise<any>;
   logout: () => Promise<void>;
 
   // Profile methods
@@ -345,6 +346,22 @@ export const useStore = create<StoreState>((set, get) => ({
         refreshToken: null,
         isProfileComplete: false,
       });
+    }
+  },
+
+  // Add contact number (OTP flow)
+  addContact: async (data: AddContactData) => {
+    set({ isLoading: true, error: null });
+
+    try {
+      const response = await authService.addContact(data);
+      set({ isLoading: false });
+      return response;
+    } catch (error) {
+      const finalError =
+        error instanceof Error ? error : new Error("Add contact failed");
+      set({ isLoading: false, error: finalError });
+      throw finalError;
     }
   },
 

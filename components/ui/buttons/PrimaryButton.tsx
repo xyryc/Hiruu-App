@@ -9,14 +9,19 @@ const PrimaryButton = ({
   onPress,
   iconSize = 24,
   loading,
+  disabled,
 }: PrimaryButtonProps) => {
+  const isDisabled = Boolean(loading || disabled);
+
   return (
     <TouchableOpacity
       onPress={onPress}
-      disabled={loading}
-      className={`${className} p-0.5 bg-[#11293A] rounded-full flex-row items-center justify-center pl-10`}
+      disabled={isDisabled}
+      className={`${className} p-0.5 rounded-full flex-row items-center justify-center pl-10 ${isDisabled ? "bg-gray-300" : "bg-[#11293A]"}`}
     >
-      <Text className="font-proximanova-semibold text-white text-center flex-1">
+      <Text
+        className={`font-proximanova-semibold text-center flex-1 ${isDisabled ? "text-gray-600" : "text-white"}`}
+      >
         {title}
       </Text>
 
@@ -30,8 +35,8 @@ const PrimaryButton = ({
         <Feather
           name="arrow-right"
           size={iconSize}
-          color="#000000"
-          className="p-2 bg-white rounded-full"
+          color={isDisabled ? "#6B7280" : "#000000"}
+          className={`p-2 rounded-full ${isDisabled ? "bg-gray-200" : "bg-white"}`}
         />
       )}
     </TouchableOpacity>
