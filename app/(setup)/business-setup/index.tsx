@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { t } from "i18next";
 import React, { useState } from "react";
+import { toast } from "sonner-native";
 import {
   ActivityIndicator,
   Alert,
@@ -218,15 +219,15 @@ const BusinessSetup = () => {
   const handleCreateBusiness = async () => {
     const phonePayload = getPhonePayload();
     if (!businessName.trim()) {
-      Alert.alert(t("common.error"), "Business name is required.");
+      toast.error("Business name is required.");
       return;
     }
     if (!phonePayload.phoneNumber || !phonePayload.countryCode) {
-      Alert.alert(t("common.error"), "Please enter a valid phone number.");
+      toast.error("Please enter a valid phone number.");
       return;
     }
     if (!email.trim()) {
-      Alert.alert(t("common.error"), "Email is required.");
+      toast.error("Email is required.");
       return;
     }
 
@@ -245,10 +246,10 @@ const BusinessSetup = () => {
       const result = await createBusinessProfile(payload);
       const messageKey = result?.message || "business_created_successfully";
       const messageText = translateApiMessage(messageKey);
-      Alert.alert(t("common.success"), messageText);
+      toast.success(messageText);
       router.replace("/(tabs)/home");
     } catch (error: any) {
-      Alert.alert(t("common.error"), error.message || t("common.error"));
+      toast.error(error.message || t("common.error"));
     }
   };
 

@@ -55,7 +55,7 @@ const WelcomeHeader = ({ className }: WelcomeHeaderProps) => {
           contentFit="contain"
         />
         <View className="px-5 py-2 bg-[#DDF1FF] -ml-4 -z-10 rounded-r-[40px]">
-          <Text className="text-sm font-proximanova-semibold">05</Text>
+          <Text className="text-sm font-proximanova-semibold">200</Text>
         </View>
       </TouchableOpacity>
     </View>
