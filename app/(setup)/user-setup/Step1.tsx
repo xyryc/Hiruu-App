@@ -94,6 +94,7 @@ export default function Step1({
         },
         dateOfBirth: dateOfBirth?.toISOString(),
         gender: selectedGender,
+        onboarding: 1,
       };
 
       // console.log(

@@ -53,6 +53,7 @@ export default function Step3({
               : exp.endDate || null,
           isCurrent: exp.isCurrent || false,
         })),
+        onboarding: 3,
       };
 
       await updateProfile(profileData);

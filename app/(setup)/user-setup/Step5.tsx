@@ -20,20 +20,23 @@ export default function Step5({
   handleBack,
 }: any) {
   const router = useRouter();
-  const { user, addContact, verifyAccount, isLoading } = useStore();
+  const { user, addContact, verifyAccount, updateProfile, isLoading } = useStore();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [otpSent, setOtpSent] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
+  const [onboardingSent, setOnboardingSent] = useState(false);
 
 
   useEffect(() => {
-    if (user?.isNumberVerified) {
+    if (user?.isNumberVerified && !onboardingSent) {
       setIsOtpVerified(true);
+      updateProfile({ onboarding: 5 }).catch(() => undefined);
+      setOnboardingSent(true);
     }
-  }, [onComplete, user?.isNumberVerified]);
+  }, [onboardingSent, updateProfile, user?.isNumberVerified]);
 
   const getPhonePayload = () => {
     const trimmed = phoneNumber.trim();
@@ -92,6 +95,10 @@ export default function Step5({
         code: otpCode,
       });
       setIsOtpVerified(true);
+      if (!onboardingSent) {
+        await updateProfile({ onboarding: 5 });
+        setOnboardingSent(true);
+      }
       Alert.alert(t("common.success"), "Phone number verified!");
     } catch (error: any) {
       Alert.alert(t("common.error"), error.message || t("common.error"));

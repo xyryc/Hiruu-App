@@ -57,6 +57,7 @@ export default function Step2({
           name: filename || "profile.jpg",
         };
       }
+      profileData.onboarding = 2;
 
       console.log("Sending Step2 data:", {
         bio: profileData.bio,
