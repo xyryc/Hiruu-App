@@ -51,7 +51,7 @@ const UserHome = () => {
         {/* find new job */}
         <FindNewJob className="mt-7" />
 
-        {/* do you  manage a business */}
+        {/* create business */}
         <BusinessProfile className="mt-7" />
 
         {/* your todays shift */}

@@ -2,6 +2,7 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import { useStore } from "@/stores/store";
+import { translateApiMessage } from "@/utils/apiMessages";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
@@ -31,7 +32,7 @@ const BusinessSetup = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const { createBusinessProfile, error, isCreatingProfile } = useStore();
+  const { createBusinessProfile, isLoading } = useStore();
 
   // profile and cover photo
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -123,14 +124,14 @@ const BusinessSetup = () => {
           onPress: () => takePhoto(type),
         },
         ...((type === "profile" && profileImage) ||
-        (type === "cover" && coverImage)
+          (type === "cover" && coverImage)
           ? [
-              {
-                text: "Remove Photo",
-                style: "destructive",
-                onPress: () => removeImage(type),
-              },
-            ]
+            {
+              text: "Remove Photo",
+              style: "destructive",
+              onPress: () => removeImage(type),
+            },
+          ]
           : []),
         {
           text: "Cancel",
@@ -162,6 +163,7 @@ const BusinessSetup = () => {
 
   // phone number
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("");
   const [isValidPhone, setIsValidPhone] = useState(true);
 
   let phoneRef: any = null;
@@ -169,8 +171,10 @@ const BusinessSetup = () => {
   const handlePhoneChange = () => {
     const number = phoneRef.getValue();
     const isValid = phoneRef.isValidNumber();
+    const cc = phoneRef.getCountryCode();
 
     setPhoneNumber(number);
+    setCountryCode(cc ? `+${cc}` : "");
     setIsValidPhone(isValid);
   };
 
@@ -193,36 +197,58 @@ const BusinessSetup = () => {
 
   // about
   const [about, setAbout] = useState("");
+  const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState("");
 
-  const handleCreateBusiness = () => {
+  const getPhonePayload = () => {
+    const trimmed = phoneNumber.trim();
+    if (!trimmed || !countryCode) {
+      return { countryCode: "", phoneNumber: "" };
+    }
+
+    const ccDigits = countryCode.replace(/\D/g, "");
+    const numberOnly = trimmed.replace(/\D/g, "");
+    const phoneOnly = numberOnly.startsWith(ccDigits)
+      ? numberOnly.slice(ccDigits.length)
+      : numberOnly;
+
+    return { countryCode, phoneNumber: phoneOnly };
+  };
+
+  const handleCreateBusiness = async () => {
+    const phonePayload = getPhonePayload();
+    if (!businessName.trim()) {
+      Alert.alert(t("common.error"), "Business name is required.");
+      return;
+    }
+    if (!phonePayload.phoneNumber || !phonePayload.countryCode) {
+      Alert.alert(t("common.error"), "Please enter a valid phone number.");
+      return;
+    }
+    if (!email.trim()) {
+      Alert.alert(t("common.error"), "Email is required.");
+      return;
+    }
+
     const payload = {
-      profilePhoto: profileImage,
-      coverPhoto: coverImage,
-      phoneNumber,
-      businessName,
-      location: {
-        name: "Central Park",
-        address: "Central Park, New York, NY",
-        latitude: 40.785091,
-        longitude: -73.968285,
-      },
-      about,
-      socialMedia: [
-        {
-          platform: "Facebook",
-          username: "@paradise_hotel",
-          url: "https://facebook.com/paradise",
-        },
-      ],
+      name: businessName.trim(),
+      description: about.trim(),
+      address: value || "Central Park, New York, NY",
+      phoneNumber: phonePayload.phoneNumber,
+      countryCode: phonePayload.countryCode,
+      email: email.trim(),
+      website: website.trim(),
+      logo: profileImage,
     };
 
-    console.log("create business", payload);
     try {
-      createBusinessProfile(payload);
-      Alert.alert(t("common.success"));
+      const result = await createBusinessProfile(payload);
+      const messageKey = result?.message || "business_created_successfully";
+      const messageText = translateApiMessage(messageKey);
+      Alert.alert(t("common.success"), messageText);
       router.replace("/(tabs)/home");
     } catch (error: any) {
-      Alert.alert(t("common.error"), error.message);
+      Alert.alert(t("common.error"), error.message || t("common.error"));
     }
   };
 
@@ -386,6 +412,33 @@ const BusinessSetup = () => {
             />
           </View>
 
+          {/* email */}
+          <View className="mt-7">
+            <Text className="text-sm font-proximanova-semibold mb-2.5">
+              Business Email
+            </Text>
+            <TextInput
+              onChangeText={setEmail}
+              placeholder="Enter business email"
+              className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+
+          {/* website */}
+          <View className="mt-7">
+            <Text className="text-sm font-proximanova-semibold mb-2.5">
+              Website
+            </Text>
+            <TextInput
+              onChangeText={setWebsite}
+              placeholder="https://example.com"
+              className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm"
+              autoCapitalize="none"
+            />
+          </View>
+
           {/* location*/}
           <View className="mt-7">
             <Text className="text-sm font-proximanova-semibold mb-2.5">
@@ -439,7 +492,7 @@ const BusinessSetup = () => {
           onPress={handleCreateBusiness}
           title="Create Profile"
           className="mx-5 my-4"
-          loading={isCreatingProfile}
+          loading={isLoading}
         />
       </LinearGradient>
     </SafeAreaView>

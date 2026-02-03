@@ -499,77 +499,55 @@ export const useStore = create<StoreState>((set, get) => ({
   createBusinessProfile: async (payload) => {
     set({ isLoading: true, error: null });
 
-    console.log("API URL:", `${process.env.EXPO_PUBLIC_API_URL}`);
-
     try {
-      // Create FormData for the request
+      const baseUrl = process.env.EXPO_PUBLIC_API_URL;
+      if (!baseUrl) {
+        throw new Error("API URL not configured");
+      }
+
+      const accessToken = await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+
       const formData = new FormData();
-      const { accessToken } = get();
+      if (payload.name) formData.append("name", payload.name);
+      if (payload.description) formData.append("description", payload.description);
+      if (payload.address) formData.append("address", payload.address);
+      if (payload.phoneNumber) formData.append("phoneNumber", payload.phoneNumber);
+      if (payload.countryCode) formData.append("countryCode", payload.countryCode);
+      if (payload.email) formData.append("email", payload.email);
+      if (payload.website) formData.append("website", payload.website);
 
-      // Add text fields
-      Object.keys(payload).forEach((key) => {
-        if (key !== "profilePhoto" && key !== "coverPhoto") {
-          // Handle complex objects like location
-          if (typeof payload[key] === "object" && payload[key] !== null) {
-            formData.append(key, JSON.stringify(payload[key]));
-          } else {
-            formData.append(key, payload[key]);
-          }
-        }
+      if (payload.logo) {
+        const logoFile = {
+          uri: payload.logo,
+          type: "image/jpeg",
+          name: "logo.jpg",
+        } as any;
+        formData.append("logo", logoFile);
+      }
+
+      const response = await fetch(`${baseUrl}/business`, {
+        method: "POST",
+        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+        body: formData,
       });
 
-      // Add image files if they exist
-      if (payload.profilePhoto) {
-        const profilePhotoFile = {
-          uri: payload.profilePhoto,
-          type: "image/jpeg",
-          name: "profilePhoto.jpg",
-        } as any;
-        formData.append("profilePhoto", profilePhotoFile);
+      const result = await response.json();
+
+      if (!response.ok || !result?.success) {
+        const messageKey = result?.message || "UNKNOWN_ERROR";
+        throw new Error(translateApiMessage(messageKey));
       }
-
-      if (payload.coverPhoto) {
-        const coverPhotoFile = {
-          uri: payload.coverPhoto,
-          type: "image/jpeg",
-          name: "coverPhoto.jpg",
-        } as any;
-        formData.append("coverPhoto", coverPhotoFile);
-      }
-
-      console.log("form data", formData);
-
-      const response = await axiosInstance.post("/profile/company", formData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      const result = response.data;
-
-      if (result.success) {
-        set({
-          userBusiness: result.data.business,
-          isLoading: false,
-        });
-
-        return result;
-      } else {
-        throw new Error(
-          result.message?.code || "Failed to create business profile",
-        );
-      }
-    } catch (error) {
-      console.error("Error in createBusinessProfile:", error);
-      const axiosError = error as AxiosError<any>;
-      const errorCode = axiosError.response?.data?.error?.code || "UNKNOWN_ERROR";
-      const translatedMessage = translateApiMessage(errorCode);
-      const finalError = new Error(translatedMessage);
 
       set({
+        userBusiness: result.data?.business ?? result.data ?? null,
         isLoading: false,
-        error: finalError,
       });
+
+      return result;
+    } catch (error) {
+      const finalError =
+        error instanceof Error ? error : new Error("Failed to create business");
+      set({ isLoading: false, error: finalError });
       throw finalError;
     }
   },
