@@ -4,15 +4,19 @@ import { useStore } from "@/stores/store";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { StatusBar, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 const Complete = () => {
   const router = useRouter();
   const { setProfileComplete } = useStore();
+  const insets = useSafeAreaInsets();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleComplete = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     // Mark profile setup as complete
     await setProfileComplete(true);
 
@@ -29,10 +33,11 @@ const Complete = () => {
         locations={[0, 0.38]}
         style={{
           flex: 1,
-          justifyContent: "center",
+          justifyContent: "space-between",
+          paddingBottom: Math.max(insets.bottom, 16),
         }}
       >
-        <View className="px-5 ">
+        <View className="px-5 pt-12 flex-1 justify-center">
           <Image
             source={require("@/assets/images/complete.svg")}
             style={{
@@ -49,11 +54,13 @@ const Complete = () => {
           />
         </View>
 
-        <View className="absolute bottom-0 inset-x-5">
+        <View className="px-5 pb-4">
           <PrimaryButton
             onPress={handleComplete}
             className="w-full"
             title="Go to Profile"
+            loading={isSubmitting}
+            disabled={isSubmitting}
           />
         </View>
       </LinearGradient>
