@@ -18,6 +18,7 @@ import {
 } from "react-native";
 import PhoneInput from "react-native-phone-input";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const SignUp = () => {
   const [selectedTab, setSelectedTab] = useState("email");
@@ -77,7 +78,7 @@ const SignUp = () => {
       } catch (error) {
         const message =
           error instanceof Error ? error.message : t("common.error");
-        Alert.alert(t("common.error"), message);
+        toast.error(message);
       }
     } else if (selectedTab === "phone") {
       // Temporarily disabled until phone verification endpoint is clarified

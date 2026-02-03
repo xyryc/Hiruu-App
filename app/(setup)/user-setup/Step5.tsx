@@ -6,9 +6,10 @@ import { useStore } from "@/stores/store";
 import { useRouter } from "expo-router";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import { toast } from "sonner-native";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -56,7 +57,7 @@ export default function Step5({
   const handleSendOtp = async () => {
     const parsed = getPhonePayload();
     if (!parsed.phoneNumber || !parsed.countryCode) {
-      Alert.alert(t("common.error"), "Please enter a valid phone number.");
+      toast.error("Please enter a valid phone number.");
       return;
     }
 
@@ -65,9 +66,9 @@ export default function Step5({
       console.log("send otp", parsed)
       await addContact(parsed);
       setOtpSent(true);
-      Alert.alert(t("common.success"), "OTP sent successfully!");
+      toast.success("OTP sent successfully!");
     } catch (error: any) {
-      Alert.alert(t("common.error"), error.message || t("common.error"));
+      toast.error(error.message || t("common.error"));
     } finally {
       setIsVerifyingOtp(false);
     }
@@ -76,7 +77,7 @@ export default function Step5({
   const handleVerifyOtp = async () => {
     const otpCode = otp.join("");
     if (otpCode.length !== 6) {
-      Alert.alert(t("common.error"), "Please enter the 6-digit OTP.");
+      toast.error("Please enter the 6-digit OTP.");
       return;
     }
 
@@ -84,7 +85,7 @@ export default function Step5({
       setIsVerifyingOtp(true);
       const parsed = getPhonePayload();
       if (!parsed.phoneNumber || !parsed.countryCode) {
-        Alert.alert(t("common.error"), "Please enter a valid phone number.");
+        toast.error("Please enter a valid phone number.");
         return;
       }
       console.log("verify code", parsed.phoneNumber, parsed.countryCode, otpCode)
@@ -99,9 +100,9 @@ export default function Step5({
         await updateProfile({ onboarding: 5 });
         setOnboardingSent(true);
       }
-      Alert.alert(t("common.success"), "Phone number verified!");
+      toast.success("Phone number verified!");
     } catch (error: any) {
-      Alert.alert(t("common.error"), error.message || t("common.error"));
+      toast.error(error.message || t("common.error"));
     } finally {
       setIsVerifyingOtp(false);
     }

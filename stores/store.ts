@@ -555,23 +555,14 @@ export const useStore = create<StoreState>((set, get) => ({
   generateBusinessCode: async (businessId) => {
     try {
       set({ loading: true, error: null });
-
-      const { accessToken } = get();
-
       const response = await axiosInstance.post(
-        "/colleagues-jobs/colleague-code/generate",
-        { businessId },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
+        `/employment/businesses/${businessId}/invitations`
       );
 
       const result = response.data;
       set({ loading: false });
 
-      return result.data; // Return the generated code data
+      return result.data; // { code, expiresAt, maxUses }
     } catch (err: any) {
       const axiosError = err as AxiosError<any>;
       const errorMessage = axiosError.response?.data?.message || axiosError.message || "Something went wrong";

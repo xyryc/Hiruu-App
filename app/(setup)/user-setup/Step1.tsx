@@ -11,6 +11,7 @@ import { Alert, ScrollView, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import { toast } from "sonner-native";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -109,10 +110,7 @@ export default function Step1({
       // console.log("Profile updated:", result);
       onComplete();
     } catch (error: any) {
-      Alert.alert(
-        t("common.error"),
-        error.message || t("user.setup.profileUpdateError"),
-      );
+      toast.error(error.message || t("user.setup.profileUpdateError"));
       console.error("Profile update error:", error);
     }
   };

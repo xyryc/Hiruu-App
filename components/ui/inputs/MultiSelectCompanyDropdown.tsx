@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateOfBirthInput from "./DateOfBirthInput";
+import { toast } from "sonner-native";
 
 const MultiSelectCompanyDropdown = ({
   selectedCompanies,
@@ -62,7 +63,7 @@ const MultiSelectCompanyDropdown = ({
       setCompanies(transformedCompanies);
     } catch (error) {
       console.error("Failed to load companies:", error);
-      Alert.alert("Error", "Failed to load companies. Please try again.");
+      toast.error("Failed to load companies. Please try again.");
     } finally {
       setIsLoadingCompanies(false);
     }
@@ -177,13 +178,10 @@ const MultiSelectCompanyDropdown = ({
       setManualCompanyName("");
       setManualCompanyLogo(null);
 
-      Alert.alert("Success", "Company added successfully!");
+      toast.success("Company added successfully!");
     } catch (error) {
       console.error("Error creating company:", error);
-      Alert.alert(
-        "Error",
-        error.message || "Failed to add company. Please try again.",
-      );
+      toast.error(error.message || "Failed to add company. Please try again.");
     }
   };
 

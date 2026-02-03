@@ -6,7 +6,6 @@ import { useRouter } from "expo-router";
 import { t } from "i18next";
 import { useState } from "react";
 import {
-  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -15,6 +14,7 @@ import {
 } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import { toast } from "sonner-native";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -69,10 +69,7 @@ export default function Step2({
 
       onComplete();
     } catch (error: any) {
-      Alert.alert(
-        t("common.error"),
-        error.message || t("user.setup.profileUpdateError"),
-      );
+      toast.error(error.message || t("user.setup.profileUpdateError"));
       console.error("Profile update error:", error);
     }
   };

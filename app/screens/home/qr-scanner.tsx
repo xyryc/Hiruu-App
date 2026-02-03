@@ -15,6 +15,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const QrScanner = () => {
   const { colorScheme } = useColorScheme();
@@ -278,24 +279,11 @@ const QrScanner = () => {
                     const result = await joinBusiness(parsed.businessId, parsed.inviteCode);
                     console.log("join result", result)
 
-                    Alert.alert(
-                      "Success",
-                      "You joined the business successfully!",
-                      [
-                        {
-                          text: "OK",
-                          onPress: () => {
-                            resetScanner();
-                            router.replace("/(tabs)/home"); // or wherever
-                          },
-                        },
-                      ]
-                    );
+                    toast.success("You joined the business successfully!");
+                    resetScanner();
+                    router.replace("/(tabs)/home");
                   } catch (err: any) {
-                    Alert.alert(
-                      "Error",
-                      err?.message || "Failed to join business"
-                    );
+                    toast.error(err?.message || "Failed to join business");
                   }
                 }}
 

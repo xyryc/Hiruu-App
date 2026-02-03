@@ -6,9 +6,10 @@ import { Company, WorkExperience } from "@/types";
 import { useRouter } from "expo-router";
 import { t } from "i18next";
 import { useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
+import { toast } from "sonner-native";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -60,10 +61,7 @@ export default function Step3({
       onComplete();
       // console.log("from step 3", profileData);
     } catch (error: any) {
-      Alert.alert(
-        t("common.error"),
-        error.message || t("user.setup.profileUpdateError"),
-      );
+      toast.error(error.message || t("user.setup.profileUpdateError"));
       console.error("Profile update error:", error);
     }
   };

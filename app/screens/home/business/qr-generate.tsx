@@ -32,17 +32,20 @@ const QrGenerate = () => {
   const [businessLogoUrl, setBusinessLogoUrl] = useState("")
 
   const [inviteCode, setInviteCode] = useState("")
+  const { user, userBusiness, generateBusinessCode, isLoading } = useStore()
 
-  const { user, generateBusinessCode, isLoading } = useStore()
-
-  // console.log('From generate', user.businessId)
+  // console.log('From generate', user)
 
   const generatedeepLinkUrl = async () => {
+    if (!user?.businessId) return;
     const result = await generateBusinessCode(user?.businessId)
-    setDeepLinkUrl(result?.joinUrl)
-    setBusinessName(result?.businessName)
-    setBusinessLogoUrl(result?.businessLogoUrl)
-    setInviteCode(result?.inviteCode)
+    const invite = result?.code || ""
+    setInviteCode(invite)
+    setDeepLinkUrl(
+      invite ? `hirru://join?businessid=${user.businessId}&inviteCode=${invite}` : ""
+    )
+    setBusinessName(userBusiness?.name || "")
+    setBusinessLogoUrl(userBusiness?.logo || "")
     console.log('code:', result)
   }
 
@@ -168,11 +171,17 @@ const QrGenerate = () => {
         <View className="bg-[#E5F4FD] dark:bg-dark-card mt-20 rounded-2xl pb-3 items-center shadow-sm border border-[#EEEEEE] dark:border-gray-800">
           {/* Employee Info Card */}
           <View className="items-center -top-8">
-            <Image
-              source={`${process.env.EXPO_PUBLIC_API_URL}${businessLogoUrl}`}
-              contentFit="contain"
-              style={{ height: 80, width: 80, borderRadius: 999 }}
-            />
+            {businessLogoUrl ? (
+              <Image
+                source={
+                  businessLogoUrl.startsWith("http")
+                    ? businessLogoUrl
+                    : `${process.env.EXPO_PUBLIC_API_URL}${businessLogoUrl}`
+                }
+                contentFit="contain"
+                style={{ height: 80, width: 80, borderRadius: 999 }}
+              />
+            ) : null}
             <Text className="mt-2.5 font-proximanova-semibold text-primary dark:text-dark-primary">
               {businessName}
             </Text>

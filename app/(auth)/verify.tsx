@@ -8,7 +8,6 @@ import { StatusBar } from "expo-status-bar";
 import { t } from "i18next";
 import React, { useRef, useState } from "react";
 import {
-  Alert,
   ScrollView,
   Text,
   TextInput,
@@ -16,6 +15,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const Verify = () => {
   const params = useLocalSearchParams();
@@ -66,7 +66,7 @@ const Verify = () => {
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : t("common.error");
-      Alert.alert(t("common.error"), message);
+      toast.error(message);
     }
   };
 
@@ -76,7 +76,7 @@ const Verify = () => {
     const result = await resendOTP({ email: params.email as string });
 
     if (result?.success) {
-      Alert.alert(t("common.success"), "OTP sent successfully!");
+      toast.success("OTP sent successfully!");
     }
   };
 
