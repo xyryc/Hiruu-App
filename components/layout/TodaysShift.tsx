@@ -1,9 +1,9 @@
-import businesses from "@/assets/data/businesses.json";
+import { useStore } from "@/stores/store";
 import { TodaysShiftProps } from "@/types";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import ActionCard from "../ui/cards/ActionCard";
 import NoTaskCard from "../ui/cards/NoTaskCard";
@@ -13,7 +13,31 @@ import BusinessSelectionModal from "../ui/modals/BusinessSelectionModal";
 const TodaysShift = ({ className }: TodaysShiftProps) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
+  const [businesses, setBusinesses] = useState<any[]>([]);
   const router = useRouter();
+  const { getMyBusinesses } = useStore();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadBusinesses = async () => {
+      try {
+        const data = await getMyBusinesses();
+        if (isMounted) {
+          setBusinesses(data || []);
+        }
+      } catch {
+        if (isMounted) {
+          setBusinesses([]);
+        }
+      }
+    };
+
+    loadBusinesses();
+    return () => {
+      isMounted = false;
+    };
+  }, [getMyBusinesses]);
 
   const handleLogin = () => {
     console.log("Login pressed");
@@ -29,6 +53,7 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
       );
       return { type: "single", content: selectedBusiness };
     }
+    return { type: "multi", content: `${selectedBusinesses.length} Selected` };
   };
 
   const displayContent = getDisplayContent();
@@ -42,18 +67,34 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
 
         <TouchableOpacity
           onPress={() => setShowModal(true)}
-          className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
+          className="bg-[#E5F4FD] flex-row items-center p-1 rounded-[26px]"
         >
           {displayContent?.type === "all" ? (
             <View className="pl-2.5 py-1.5">
               <Text className="font-semibold text-sm text-primary">All</Text>
             </View>
+          ) : displayContent?.type === "single" ? (
+            <View className="">
+              {displayContent?.content?.logo || displayContent?.content?.imageUrl ? (
+                <Image
+                  source={displayContent?.content?.logo || displayContent?.content?.imageUrl}
+                  style={{ width: 30, height: 30, borderRadius: 999 }}
+                  contentFit="cover"
+                />
+              ) : (
+                <View className="pl-2.5 py-1.5">
+                  <Text className="font-semibold text-sm text-primary">
+                    {displayContent?.content?.name || "Selected"}
+                  </Text>
+                </View>
+              )}
+            </View>
           ) : (
-            <Image
-              source={displayContent?.content?.imageUrl}
-              style={{ width: 30, height: 30, borderRadius: 999 }}
-              contentFit="cover"
-            />
+            <View className="pl-2.5 py-1.5">
+              <Text className="font-semibold text-sm text-primary">
+                {displayContent?.content}
+              </Text>
+            </View>
           )}
 
           <SimpleLineIcons
@@ -69,7 +110,13 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
       <BusinessSelectionModal
         visible={showModal}
         onClose={() => setShowModal(false)}
-        businesses={businesses}
+        businesses={businesses.map((b) => ({
+          id: b.id,
+          name: b.name,
+          address: b.address,
+          imageUrl: b.logo,
+          logo: b.logo,
+        }))}
         selectedBusinesses={selectedBusinesses}
         onSelectionChange={setSelectedBusinesses}
       />

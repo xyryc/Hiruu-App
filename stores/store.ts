@@ -79,6 +79,7 @@ interface StoreState {
 
   // Business methods (keeping existing ones)
   fetchBusinesses: (search?: string) => Promise<any>;
+  getMyBusinesses: () => Promise<any>;
   createCompanyManual: (companyData: any) => Promise<any>;
   createBusinessProfile: (payload: any) => Promise<any>;
   generateBusinessCode: (businessId: string) => Promise<any>;
@@ -433,7 +434,7 @@ export const useStore = create<StoreState>((set, get) => ({
     }
   },
 
-  // Business methods (keeping existing implementations)
+  // Business methods
   fetchBusinesses: async (search = "") => {
     try {
       const response = await axiosInstance.get("/companies", {
@@ -453,6 +454,26 @@ export const useStore = create<StoreState>((set, get) => ({
       return result.data;
     } catch (error) {
       console.error("Fetch businesses error:", error);
+      throw error;
+    }
+  },
+
+  getMyBusinesses: async () => {
+    try {
+      const response = await axiosInstance.get("/business/my-businesses");
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to fetch businesses";
+        throw new Error(errorMsg);
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error("Fetch my businesses error:", error);
       throw error;
     }
   },
