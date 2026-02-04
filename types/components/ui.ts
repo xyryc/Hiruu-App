@@ -90,6 +90,9 @@ export interface HomeHeaderProps {
 
 export interface WelcomeHeaderProps {
   className?: string;
+  name?: string;
+  avatar?: any;
+  coins?: number;
 }
 
 export interface JoinCollegueProps {

@@ -15,13 +15,49 @@ import TopPerformer from "@/components/layout/TopPerformer";
 import Widgets from "@/components/layout/Widgets";
 import WorkInsights from "@/components/layout/WorkInsights";
 import ActionCard from "@/components/ui/cards/ActionCard";
+import { profileService } from "@/services/profileService";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, StatusBar, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserHome = () => {
   const router = useRouter();
+  const [profileData, setProfileData] = useState<any>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProfile = async () => {
+      try {
+        const result = await profileService.getProfile();
+        if (isMounted) {
+          setProfileData(result.data);
+        }
+      } catch {
+        // Silent fail to keep home fast/stable.
+      }
+    };
+
+    loadProfile();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL || "";
+  const baseImageUrl = apiUrl.replace(/\/api\/v1\/?$/, "");
+  const avatarUri =
+    profileData?.avatar && typeof profileData.avatar === "string"
+      ? profileData.avatar.startsWith("http")
+        ? profileData.avatar
+        : `${baseImageUrl}${profileData.avatar}`
+      : null;
+  const welcomeName = profileData?.name || profileData?.email || "User";
+  const welcomeAvatar = avatarUri
+    ? { uri: avatarUri }
+    : "https://upload.wikimedia.org/wikipedia/commons/7/7b/Julian_Assange_at_2025_Cannes_The_Six_Billion_Dollar_Man_Photocall_3_%28cropped%29.jpg";
+  const welcomeCoins = profileData?.wallet?.coins ?? 0;
 
   return (
     <SafeAreaView
@@ -33,7 +69,12 @@ const UserHome = () => {
       {/* these sections will render dynamically based on permissions set by business */}
       <HomeHeader className="mt-2.5 mb-5" />
 
-      <WelcomeHeader className="pb-5" />
+      <WelcomeHeader
+        className="pb-5"
+        name={welcomeName}
+        avatar={welcomeAvatar}
+        coins={welcomeCoins}
+      />
 
       {/* main content */}
       <ScrollView
