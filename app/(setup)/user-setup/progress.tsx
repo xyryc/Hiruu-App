@@ -1,8 +1,9 @@
 import { getStepName } from "@/constants/Steps";
+import { useStore } from "@/stores/store";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 import { SlideInRight } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -18,6 +19,20 @@ const ProgressFlow = () => {
   const [direction, setDirection] = useState("forward");
   const progress = currentStep / totalSteps;
   const router = useRouter();
+  const { user } = useStore();
+
+  useEffect(() => {
+    const onboarding = typeof user?.onboarding === "number" ? user.onboarding : 0;
+
+    if (onboarding >= totalSteps) {
+      router.replace("/(tabs)/home");
+      return;
+    }
+
+    const nextStep = Math.min(Math.max(onboarding + 1, 1), totalSteps);
+    setDirection("forward");
+    setCurrentStep(nextStep);
+  }, [router, totalSteps, user?.onboarding]);
 
   const getAnimationStyle = (step: number) => {
     if (step === currentStep) {

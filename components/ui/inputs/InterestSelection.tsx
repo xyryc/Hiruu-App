@@ -111,6 +111,9 @@ const InterestsSelection: React.FC<InterestsSelectionProps> = ({
                       className={`w-16 h-16 rounded-full items-center justify-center
                         ${selected && `border border-primary`}
                         ${interest.color}`}
+                      style={{
+                        borderRadius: 999
+                      }}
                     >
                       <Text className="text-2xl">{interest.icon}</Text>
                     </View>
@@ -127,9 +130,8 @@ const InterestsSelection: React.FC<InterestsSelectionProps> = ({
 
                   {/* Label */}
                   <Text
-                    className={`text-xs text-center mt-2 font-proximanova-medium ${
-                      selected ? "text-gray-900" : "text-gray-600"
-                    }`}
+                    className={`text-xs text-center mt-2 font-proximanova-medium ${selected ? "text-gray-900" : "text-gray-600"
+                      }`}
                   >
                     {interest.name}
                   </Text>

@@ -69,9 +69,9 @@ const UserHome = () => {
         showsVerticalScrollIndicator={false}
       >
         {/* profile progress */}
-        {profileData?.onboarding !== 5 && (
-          <ProfileProgress onboarding={profileData?.onboarding} className='mb-7' />
-        )}
+        {/* {profileData?.onboarding !== 5 && (
+        )} */}
+        <ProfileProgress onboarding={profileData?.onboarding} className='mb-7' />
 
         {/* join your collegues */}
         <JoinCollegue />
