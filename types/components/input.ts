@@ -12,6 +12,9 @@ export interface AttachmentUploadProps {
 export interface NamePlateCardProps {
   variant: string;
   className?: string;
+  name?: string;
+  address?: string;
+  profileImage?: any;
 }
 
 export interface LimitedNamePlateCardProps {

@@ -4,7 +4,13 @@ import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Text, View } from "react-native";
 
-const NamePlateCard = ({ variant, className }: NamePlateCardProps) => {
+const NamePlateCard = ({
+  variant,
+  className,
+  name = "User",
+  address = "Location unavailable",
+  profileImage = require("@/assets/images/reward/nameplate-profile.png"),
+}: NamePlateCardProps) => {
   const getGradientColors = () => {
     switch (variant) {
       case "variant1":
@@ -232,7 +238,7 @@ const NamePlateCard = ({ variant, className }: NamePlateCardProps) => {
               }}
             >
               <Image
-                source="https://i0.wp.com/www.splento.com/blog/wp-content/uploads/2024/10/confident-young-african-american-business-woman-in-2024-04-26-18-20-12-utc-scaled.jpg?ssl=1"
+                source={profileImage}
                 style={{
                   width: 75,
                   height: 75,
@@ -246,7 +252,7 @@ const NamePlateCard = ({ variant, className }: NamePlateCardProps) => {
             <View className="items-start">
               <View className="flex-row gap-1.5 items-center mb-1.5">
                 <Text className="font-proximanova-semibold text-sm text-primary">
-                  Md Talath Un Nabi Anik
+                  {name}
                 </Text>
                 <MaterialIcons name="verified" size={18} color="#4F83F3" />
               </View>
@@ -254,7 +260,7 @@ const NamePlateCard = ({ variant, className }: NamePlateCardProps) => {
               <View className="flex-row items-center gap-1 mb-1.5">
                 <SimpleLineIcons name="location-pin" size={14} color="black" />
                 <Text className="font-proximanova-regular text-xs text-primary">
-                  New york, North Bergen
+                  {address}
                 </Text>
               </View>
 

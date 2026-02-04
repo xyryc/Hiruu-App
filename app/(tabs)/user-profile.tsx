@@ -86,6 +86,12 @@ const profile = () => {
         : `${baseImageUrl}${profileData.avatar}`
       : null;
   const displayName = profileData?.name || profileData?.email || "User";
+  const namePlateName = profileData?.name || profileData?.email || "User";
+  const namePlateAddress =
+    profileData?.address?.address || "Location unavailable";
+  const namePlateImage = avatarUri
+    ? { uri: avatarUri }
+    : require("@/assets/images/reward/nameplate-profile.png");
   const bioText = profileData?.bio || "No bio yet.";
   const shortBio =
     bioText.length > 140 ? `${bioText.slice(0, 140)}...` : bioText;
@@ -165,7 +171,12 @@ const profile = () => {
           onPress={() => router.push("/screens/profile/rating")}
           className="mx-5 mt-3.5"
         >
-          <NamePlateCard variant="variant4" />
+          <NamePlateCard
+            variant="variant4"
+            name={namePlateName}
+            address={namePlateAddress}
+            profileImage={namePlateImage}
+          />
         </TouchableOpacity>
 
         {/* Badge item */}
