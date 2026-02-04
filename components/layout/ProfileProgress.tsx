@@ -3,18 +3,18 @@ import React from "react";
 import { Text, View } from "react-native";
 import ProgressCard from "../ui/cards/ProgressCard";
 
-const ProfileProgress = ({ className }: ProfileProgressProps) => {
+const ProfileProgress = ({ className, onboarding }: ProfileProgressProps) => {
   return (
     <View className={`${className} px-4`}>
       <View className="flex-row items-center gap-1.5 mb-4">
         <Text className="text-xl font-proximanova-semibold">Welcome to</Text>
         <Text className="text-xl font-proximanova-semibold text-[#4FB2F3]">
-          hiruu
+          Hiruu
         </Text>
       </View>
 
       {/* progress card */}
-      <ProgressCard />
+      <ProgressCard onboarding={onboarding} />
     </View>
   );
 };

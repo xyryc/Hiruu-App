@@ -32,7 +32,7 @@ const WelcomeHeader = ({
 
         <View className="w-56">
           <Text className="text-sm text-[#7A7A7A] mb-1.5 " numberOfLines={1}>
-            👋 Hello, {name}
+            👋 Hello, {name || "User"}
           </Text>
           <Text className="font-proximanova-semibold">
             Ready for today's task?
@@ -55,7 +55,7 @@ const WelcomeHeader = ({
         />
         <View className="px-5 py-2 bg-[#DDF1FF] -ml-4 -z-10 rounded-r-[40px]">
           <Text className="text-sm font-proximanova-semibold">
-            {coins}
+            {coins ?? 0}
           </Text>
         </View>
       </TouchableOpacity>

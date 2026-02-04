@@ -1,13 +1,21 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from 'expo-router';
-import React, { useState } from "react";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
 import PrimaryButton from "../buttons/PrimaryButton";
 
-const ProgressCard = () => {
-  const [progress, setProgress] = useState(80);
+type ProgressCardProps = {
+  onboarding?: number | null;
+};
+
+const ProgressCard = ({ onboarding }: ProgressCardProps) => {
+  const totalSteps = 5;
+  const safeStep =
+    typeof onboarding === "number" && onboarding >= 0 ? onboarding : 0;
+  const clampedStep = Math.min(safeStep, totalSteps);
+  const progress = Math.round((clampedStep / totalSteps) * 100);
   const router = useRouter()
 
   // Color mapping based on progress

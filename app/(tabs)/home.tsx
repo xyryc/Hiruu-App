@@ -45,19 +45,6 @@ const UserHome = () => {
     };
   }, []);
 
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL || "";
-  const baseImageUrl = apiUrl.replace(/\/api\/v1\/?$/, "");
-  const avatarUri =
-    profileData?.avatar && typeof profileData.avatar === "string"
-      ? profileData.avatar.startsWith("http")
-        ? profileData.avatar
-        : `${baseImageUrl}${profileData.avatar}`
-      : null;
-  const welcomeName = profileData?.name || profileData?.email || "User";
-  const welcomeAvatar = avatarUri
-    ? { uri: avatarUri }
-    : "https://upload.wikimedia.org/wikipedia/commons/7/7b/Julian_Assange_at_2025_Cannes_The_Six_Billion_Dollar_Man_Photocall_3_%28cropped%29.jpg";
-  const welcomeCoins = profileData?.wallet?.coins ?? 0;
 
   return (
     <SafeAreaView
@@ -71,23 +58,23 @@ const UserHome = () => {
 
       <WelcomeHeader
         className="pb-5"
-        name={welcomeName}
-        avatar={welcomeAvatar}
-        coins={welcomeCoins}
+        name={profileData?.name || profileData?.email}
+        avatar={profileData?.avatar}
+        coins={profileData?.wallet?.coins}
       />
 
       {/* main content */}
       <ScrollView
-        contentContainerStyle={{
-          paddingTop: 8,
-        }}
+
         showsVerticalScrollIndicator={false}
       >
         {/* profile progress */}
-        <ProfileProgress />
+        {profileData?.onboarding !== 5 && (
+          <ProfileProgress onboarding={profileData?.onboarding} className='mb-7' />
+        )}
 
         {/* join your collegues */}
-        <JoinCollegue className="mt-7" />
+        <JoinCollegue />
 
         {/* find new job */}
         <FindNewJob className="mt-7" />

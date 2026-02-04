@@ -124,6 +124,7 @@ export interface BusinessProfileProps {
 
 export interface ProfileProgressProps {
   className?: string;
+  onboarding?: number | null;
 }
 
 export interface TodaysShiftProps {
