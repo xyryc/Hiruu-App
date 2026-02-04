@@ -531,11 +531,25 @@ export const useStore = create<StoreState>((set, get) => ({
         body: formData,
       });
 
-      const result = await response.json();
+      const rawText = await response.text();
+      let result: any = null;
+      try {
+        result = rawText ? JSON.parse(rawText) : null;
+      } catch {
+        result = null;
+      }
 
       if (!response.ok || !result?.success) {
         const messageKey = result?.message || "UNKNOWN_ERROR";
-        throw new Error(translateApiMessage(messageKey));
+        const validation = Array.isArray(result?.data)
+          ? result.data.join("\n")
+          : null;
+        const message = validation || translateApiMessage(messageKey);
+        console.error("Create business failed:", {
+          status: response.status,
+          body: rawText,
+        });
+        throw new Error(message);
       }
 
       set({

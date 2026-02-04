@@ -11,7 +11,6 @@ import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { t } from "i18next";
 import React, { useState } from "react";
-import { toast } from "sonner-native";
 import {
   ActivityIndicator,
   Alert,
@@ -28,6 +27,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const BusinessSetup = () => {
   const router = useRouter();
@@ -249,6 +249,7 @@ const BusinessSetup = () => {
       toast.success(messageText);
       router.replace("/(tabs)/home");
     } catch (error: any) {
+      console.log("create business error", error)
       toast.error(error.message || t("common.error"));
     }
   };
