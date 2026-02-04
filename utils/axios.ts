@@ -36,9 +36,9 @@ axiosInstance.interceptors.request.use(
       }
 
       // utils/axios.ts inside request interceptor before return config
-      console.log("API URL:", process.env.EXPO_PUBLIC_API_URL);
-      console.log("Request:", config.url);
-      console.log("Has token:", !!(await AsyncStorage.getItem("auth_access_token")));
+      // console.log("API URL:", process.env.EXPO_PUBLIC_API_URL);
+      // console.log("Request:", config.url);
+      // console.log("Has token:", !!(await AsyncStorage.getItem("auth_access_token")));
 
 
       return config;

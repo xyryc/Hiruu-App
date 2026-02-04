@@ -3,7 +3,6 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import MultiSelectCompanyDropdown from "@/components/ui/inputs/MultiSelectCompanyDropdown";
 import { useStore } from "@/stores/store";
 import { Company, WorkExperience } from "@/types";
-import { useRouter } from "expo-router";
 import { t } from "i18next";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
@@ -20,10 +19,8 @@ export default function Step3({
   onComplete,
   handleBack,
 }: any) {
-  const router = useRouter();
   const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
   const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
-  const [uploading, setUploading] = useState(false);
   const { updateProfile, isLoading } = useStore();
 
   const handleSkip = () => {
