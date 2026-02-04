@@ -71,7 +71,7 @@ const UserHome = () => {
 
         {/* ============== merged ============= */}
         {/* profile progress */}
-        <ProfileProgress />
+        {/* <ProfileProgress /> */}
 
         {/* Business Summary */}
         <BusinessSummary className="mt-8" />

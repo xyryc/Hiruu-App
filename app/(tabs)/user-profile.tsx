@@ -7,6 +7,7 @@ import StatCardPrimary from "@/components/ui/cards/StatCardPrimary";
 import Dropdown from "@/components/ui/dropdown/DropDown";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import ColorPickerModal from "@/components/ui/modals/ColorPickerModal";
+import { profileService } from "@/services/profileService";
 import {
   Feather,
   FontAwesome6,
@@ -16,13 +17,15 @@ import {
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const profile = () => {
   const [showText, setShowText] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState("");
+  const [profileData, setProfileData] = useState<any>(null);
   const issues = [
     { label: "Missed Punch", value: "Missed Punch" },
     { label: "Late arrival", value: "Late arrival" },
@@ -42,6 +45,26 @@ const profile = () => {
     "#fff",
   ]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProfile = async () => {
+      try {
+        const result = await profileService.getProfile();
+        if (isMounted) {
+          setProfileData(result.data);
+        }
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load profile");
+      }
+    };
+
+    loadProfile();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   const handleColorSelect = (color: string | string[]) => {
     if (Array.isArray(color)) {
       // Handle gradient
@@ -53,6 +76,22 @@ const profile = () => {
       setProfileColor(color);
     }
   };
+
+  const apiUrl = process.env.EXPO_PUBLIC_API_URL || "";
+  const baseImageUrl = apiUrl.replace(/\/api\/v1\/?$/, "");
+  const avatarUri =
+    profileData?.avatar && typeof profileData.avatar === "string"
+      ? profileData.avatar.startsWith("http")
+        ? profileData.avatar
+        : `${baseImageUrl}${profileData.avatar}`
+      : null;
+  const displayName = profileData?.name || profileData?.email || "User";
+  const bioText = profileData?.bio || "No bio yet.";
+  const shortBio =
+    bioText.length > 140 ? `${bioText.slice(0, 140)}...` : bioText;
+  const interests: string[] = Array.isArray(profileData?.interest)
+    ? profileData.interest
+    : [];
 
   return (
     <DynamicBackground
@@ -177,18 +216,15 @@ const profile = () => {
 
         <View className="mx-5 mt-4">
           <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-            Join the core team at Space Hotel, a unique dining experience known
-            for its space-themed interiors and premium service
-            {showText || "........"}
-            {showText &&
-              "Join the core team at Space Hotel, a unique dining experience known for its space-themed interiors and premium service"}
-            {"   "}
-            <Text
-              onPress={() => setShowText(!showText)}
-              className="font-proximanova-semibold text-sm text-[#11293A]"
-            >
-              {showText ? "See less" : "Read More"}
-            </Text>
+            {showText ? bioText : shortBio}
+            {bioText.length > 140 && (
+              <Text
+                onPress={() => setShowText(!showText)}
+                className="font-proximanova-semibold text-sm text-[#11293A]"
+              >
+                {showText ? "See less" : "Read More"}
+              </Text>
+            )}
           </Text>
         </View>
 
@@ -284,38 +320,20 @@ const profile = () => {
         </View>
 
         <View className="flex-row justify-between mx-5 mt-4">
-          <View>
-            <View className="w-16 h-16 rounded-full items-center justify-center bg-gray-200 p-2.5">
-              <Text className="text-2xl">⚽</Text>
-            </View>
-            <Text className="text-center text-xs  mt-2 font-proximanova-medium">
-              Sports
-            </Text>
-          </View>
-          <View>
-            <View className="w-16 h-16 rounded-full items-center justify-center bg-green-100 p-2.5">
-              <Text className="text-2xl">🎵</Text>
-            </View>
-            <Text className="text-center text-xs  mt-2 font-proximanova-medium">
-              Music
-            </Text>
-          </View>
-          <View>
-            <View className="w-16 h-16 rounded-full items-center justify-center bg-yellow-100 p-2.5">
-              <Text className="text-2xl">📷</Text>
-            </View>
-            <Text className="text-center text-xs  mt-2 font-proximanova-medium">
-              Photography
-            </Text>
-          </View>
-          <View>
-            <View className="w-16 h-16 rounded-full items-center justify-center bg-orange-100 p-2.5">
-              <Text className="text-2xl">🎨</Text>
-            </View>
-            <Text className="text-center text-xs  mt-2 font-proximanova-medium">
-              Art
-            </Text>
-          </View>
+          {(interests.length ? interests.slice(0, 4) : ["No interests"]).map(
+            (item, index) => (
+              <View key={`${item}-${index}`}>
+                <View className="w-16 h-16 rounded-full items-center justify-center bg-gray-200 p-2.5">
+                  <Text className="text-xl">
+                    {item === "No interests" ? "—" : item[0]?.toUpperCase()}
+                  </Text>
+                </View>
+                <Text className="text-center text-xs mt-2 font-proximanova-medium">
+                  {item}
+                </Text>
+              </View>
+            )
+          )}
         </View>
 
         <View className="mx-5 mt-8 flex-row justify-between items-center">

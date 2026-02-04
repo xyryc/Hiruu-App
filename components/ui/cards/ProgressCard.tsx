@@ -1,5 +1,6 @@
 import { FontAwesome } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter } from 'expo-router';
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { AnimatedCircularProgress } from "react-native-circular-progress";
@@ -7,6 +8,7 @@ import PrimaryButton from "../buttons/PrimaryButton";
 
 const ProgressCard = () => {
   const [progress, setProgress] = useState(80);
+  const router = useRouter()
 
   // Color mapping based on progress
   const getTintColor = (fill: number) => {
@@ -96,6 +98,7 @@ const ProgressCard = () => {
           className="mt-2.5 w-full"
           title="Complete Profile"
           iconSize={18}
+          onPress={() => router.push("/(setup)/user-setup/progress")}
         />
       </View>
     </View>
