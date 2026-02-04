@@ -553,7 +553,7 @@ export const useStore = create<StoreState>((set, get) => ({
       }
 
       set({
-        userBusiness: result.data?.business ?? result.data ?? null,
+        userBusiness: result.data ?? null,
         isLoading: false,
       });
 

@@ -34,15 +34,16 @@ const QrGenerate = () => {
   const [inviteCode, setInviteCode] = useState("")
   const { user, userBusiness, generateBusinessCode, isLoading } = useStore()
 
-  // console.log('From generate', user)
+
 
   const generatedeepLinkUrl = async () => {
-    if (!user?.businessId) return;
-    const result = await generateBusinessCode(user?.businessId)
+    const businessId = userBusiness?.id;
+    if (!businessId) return;
+    const result = await generateBusinessCode(businessId)
     const invite = result?.code || ""
     setInviteCode(invite)
     setDeepLinkUrl(
-      invite ? `hirru://join?businessid=${user.businessId}&inviteCode=${invite}` : ""
+      invite ? `hirru://join?businessid=${businessId}&inviteCode=${invite}` : ""
     )
     setBusinessName(userBusiness?.name || "")
     setBusinessLogoUrl(userBusiness?.logo || "")
@@ -51,7 +52,7 @@ const QrGenerate = () => {
 
   useEffect(() => {
     generatedeepLinkUrl()
-  }, [user?.businessId])
+  }, [userBusiness?.id])
 
 
   // Create a deep link URL instead of JSON
