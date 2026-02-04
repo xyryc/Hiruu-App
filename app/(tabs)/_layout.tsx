@@ -1,13 +1,35 @@
-import userData from "@/assets/data/user.json";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Octicons from "@expo/vector-icons/Octicons";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View } from "react-native";
+import { profileService } from "@/services/profileService";
 
 export default function TabLayout() {
-  const user = userData.user;
+  const [profileData, setProfileData] = useState<any>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProfile = async () => {
+      try {
+        const result = await profileService.getProfile();
+        if (isMounted) {
+          setProfileData(result.data);
+        }
+      } catch {
+        // Keep defaults if profile can't load.
+      }
+    };
+
+    loadProfile();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const isOwner = (profileData?.ownedBusinesses?.length || 0) > 0;
 
   return (
     <Tabs
@@ -84,7 +106,7 @@ export default function TabLayout() {
         name="user-schedule"
         options={{
           title: "",
-          href: user.role === "user" ? undefined : null, // Hide if not business
+          href: isOwner ? null : undefined,
           tabBarIcon: () => (
             <View className="bg-[#4FB2F3] h-14 w-14 rounded-full items-center justify-center border-2 border-[#4FB2F34D]">
               <Ionicons name="calendar" size={24} color="white" />
@@ -97,7 +119,7 @@ export default function TabLayout() {
         name="business-schedule"
         options={{
           title: "",
-          href: user.role === "business" ? undefined : null, // Hide if not business
+          href: isOwner ? undefined : null,
           tabBarIcon: () => (
             <View className="bg-[#4FB2F3] h-14 w-14 rounded-full items-center justify-center">
               <Ionicons name="calendar" size={24} color="white" />
@@ -111,7 +133,7 @@ export default function TabLayout() {
         name="user-jobs"
         options={{
           title: "Jobs",
-          href: user.role === "user" ? undefined : null, // Hide if not user
+          href: isOwner ? null : undefined,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "briefcase" : "briefcase-outline"}
@@ -126,7 +148,7 @@ export default function TabLayout() {
         name="business-jobs"
         options={{
           title: "Jobs",
-          href: user.role === "business" ? undefined : null, // Hide if not business
+          href: isOwner ? undefined : null,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "briefcase" : "briefcase-outline"}
@@ -142,7 +164,7 @@ export default function TabLayout() {
         name="user-profile"
         options={{
           title: "Profile",
-          href: user.role === "user" ? undefined : null, // Hide if not user
+          href: isOwner ? null : undefined,
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome
               name={focused ? "user" : "user-o"}
@@ -157,7 +179,7 @@ export default function TabLayout() {
         name="business-profile"
         options={{
           title: "Profile",
-          href: user.role === "business" ? undefined : null, // Hide if not business
+          href: isOwner ? undefined : null,
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome
               name={focused ? "user" : "user-o"}
