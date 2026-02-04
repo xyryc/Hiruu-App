@@ -4,6 +4,7 @@ import MultiSelectCompanyDropdown from "@/components/ui/inputs/MultiSelectCompan
 import { useStore } from "@/stores/store";
 import { Company, WorkExperience } from "@/types";
 import { t } from "i18next";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import * as Progress from "react-native-progress";
@@ -19,12 +20,13 @@ export default function Step3({
   onComplete,
   handleBack,
 }: any) {
+  const router = useRouter();
   const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
   const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
   const { updateProfile, isLoading } = useStore();
 
   const handleSkip = () => {
-    onComplete();
+    router.replace("/(tabs)/home");
   };
 
   const handleNext = async () => {

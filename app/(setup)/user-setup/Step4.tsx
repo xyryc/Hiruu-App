@@ -52,7 +52,7 @@ export default function Step4({
         title="Interest"
         buttonTitle="Skip"
         className="mt-3"
-        onPress={() => router.push("/(setup)/user-setup/complete")}
+        onPress={() => router.replace("/(tabs)/home")}
       />
 
       {/* progress details */}
