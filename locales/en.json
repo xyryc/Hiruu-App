@@ -21,6 +21,7 @@
     "error": "Error"
   },
   "api": {
+    "business_created_successfully": "Business created successfully.",
     "UNKNOWN_ERROR": "An unexpected error occurred"
   },
   "validation": {

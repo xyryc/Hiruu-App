@@ -32,9 +32,7 @@ const QrGenerate = () => {
   const [businessLogoUrl, setBusinessLogoUrl] = useState("")
 
   const [inviteCode, setInviteCode] = useState("")
-  const { user, userBusiness, generateBusinessCode, isLoading } = useStore()
-
-
+  const { userBusiness, generateBusinessCode, isLoading } = useStore()
 
   const generatedeepLinkUrl = async () => {
     const businessId = userBusiness?.id;

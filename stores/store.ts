@@ -1,5 +1,17 @@
-import { AddContactData, authService, ChangePasswordData, ForgotPasswordData, LoginData, OAuthData, RegisterData, ResendOTPData, ResetPasswordData, VerifyAccountData } from "@/services/authService";
-import { profileService, UpdateProfileData } from "@/services/profileService";
+import { authService } from "@/services/authService";
+import { profileService } from "@/services/profileService";
+import {
+  AddContactData,
+  ChangePasswordData,
+  ForgotPasswordData,
+  LoginData,
+  OAuthData,
+  RegisterData,
+  ResendOTPData,
+  ResetPasswordData,
+  UpdateProfileData,
+  VerifyAccountData,
+} from "@/types";
 import { translateApiMessage } from "@/utils/apiMessages";
 import axiosInstance from "@/utils/axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";

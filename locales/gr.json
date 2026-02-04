@@ -21,6 +21,7 @@
     "error": "Σφάλμα"
   },
   "api": {
+    "business_created_successfully": "Η επιχείρηση δημιουργήθηκε με επιτυχία.",
     "UNKNOWN_ERROR": "Παρουσιάστηκε απροσδόκητο σφάλμα"
   },
   "validation": {
