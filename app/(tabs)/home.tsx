@@ -8,14 +8,13 @@ import ProfileProgress from "@/components/layout/ProfileProgress";
 import TodaysShift from '@/components/layout/TodaysShift';
 import Widgets from "@/components/layout/Widgets";
 import { profileService } from "@/services/profileService";
-import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserHome = () => {
-  const router = useRouter();
   const [profileData, setProfileData] = useState<any>(null);
+
 
   useEffect(() => {
     let isMounted = true;
@@ -71,7 +70,9 @@ const UserHome = () => {
         <FindNewJob className="mt-7" />
 
         {/* create business */}
-        <BusinessProfile className="mt-7" />
+        {(profileData?.ownedBusinesses?.length ?? 0) === 0 && (
+          <BusinessProfile className="mt-7" />
+        )}
 
         {/* your todays shift */}
         <TodaysShift className="mt-7" />

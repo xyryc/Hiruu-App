@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/authStore";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 import { SlideInRight } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -20,6 +20,7 @@ const ProgressFlow = () => {
   const progress = currentStep / totalSteps;
   const router = useRouter();
   const { user } = useAuthStore();
+  const initializedFromOnboarding = useRef(false);
 
   useEffect(() => {
     const onboarding = typeof user?.onboarding === "number" ? user.onboarding : 0;
@@ -29,9 +30,12 @@ const ProgressFlow = () => {
       return;
     }
 
-    const nextStep = Math.min(Math.max(onboarding || 1, 1), totalSteps);
-    setDirection("forward");
-    setCurrentStep(nextStep);
+    if (!initializedFromOnboarding.current) {
+      const nextStep = Math.min(Math.max(onboarding + 1, 1), totalSteps);
+      setDirection("forward");
+      setCurrentStep(nextStep);
+      initializedFromOnboarding.current = true;
+    }
   }, [router, totalSteps, user?.onboarding]);
 
   const getAnimationStyle = (step: number) => {

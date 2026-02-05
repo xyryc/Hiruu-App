@@ -39,7 +39,7 @@ const InterestsSelection: React.FC<InterestsSelectionProps> = ({
     { id: "reading", name: "Reading", icon: "📚", color: "bg-green-200" },
     { id: "poetry", name: "Poetry", icon: "📄", color: "bg-yellow-200" },
     { id: "drawing", name: "Drawing", icon: "✏️", color: "bg-pink-100" },
-    { id: "climbing", name: "Climbing", icon: "🧗", color: "bg-brown-100" },
+    { id: "climbing", name: "Climbing", icon: "🧗", color: "bg-red-100" },
     { id: "cooking", name: "Cooking", icon: "🔍", color: "bg-orange-200" },
     { id: "nature", name: "Nature", icon: "🌳", color: "bg-green-300" },
     { id: "painting", name: "Painting", icon: "🖌️", color: "bg-blue-200" },
@@ -108,12 +108,8 @@ const InterestsSelection: React.FC<InterestsSelectionProps> = ({
                   {/* Icon Circle */}
                   <View className="relative">
                     <View
-                      className={`w-16 h-16 rounded-full items-center justify-center
-                        ${selected && `border border-primary`}
-                        ${interest.color}`}
-                      style={{
-                        borderRadius: 999
-                      }}
+                      className={`w-16 h-16 rounded-full items-center justify-center overflow-hidden
+                        ${selected && `border border-primary`} ${interest.color}`}
                     >
                       <Text className="text-2xl">{interest.icon}</Text>
                     </View>

@@ -19,6 +19,7 @@ import {
 import PhoneInput from "react-native-phone-input";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
+import { translateApiMessage } from "@/utils/apiMessages";
 
 const SignUp = () => {
   const [selectedTab, setSelectedTab] = useState("email");
@@ -76,9 +77,8 @@ const SignUp = () => {
           });
         }
       } catch (error) {
-        const message =
-          error instanceof Error ? error.message : t("common.error");
-        toast.error(message);
+        const messageKey = error instanceof Error ? error.message : "UNKNOWN_ERROR";
+        toast.error(translateApiMessage(messageKey));
       }
     } else if (selectedTab === "phone") {
       // Temporarily disabled until phone verification endpoint is clarified
