@@ -1,13 +1,9 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ProfileResponse, UpdateProfileData } from '@/types';
 import axiosInstance from '@/utils/axios';
-
-// Types moved to types/api/user.ts
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class ProfileService {
-    /**
-     * Update user profile
-     */
+    // Update user profile
     async updateProfile(data: UpdateProfileData): Promise<ProfileResponse> {
         try {
             const formData = new FormData();
@@ -76,9 +72,7 @@ class ProfileService {
         }
     }
 
-    /**
-     * Get user profile
-     */
+    // Get user profile
     async getProfile(): Promise<ProfileResponse> {
         try {
             const response = await axiosInstance.get('/users/profile');
@@ -95,9 +89,7 @@ class ProfileService {
         }
     }
 
-    /**
-     * Handle API errors
-     */
+    // Handle API errors
     private handleError(error: any): Error {
         if (error.response?.data) {
             const errorData = error.response.data;

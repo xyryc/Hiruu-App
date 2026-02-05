@@ -22,11 +22,8 @@ const STORAGE_KEYS = {
     REFRESH_TOKEN: 'auth_refresh_token',
 };
 
-// Types moved to types/api/auth.ts
 class AuthService {
-    /**
-     * Register a new user
-     */
+    // Register a new user
     async register(data: RegisterData): Promise<AuthResponse> {
         try {
             const response = await axiosInstance.post('/auth/register', data);
@@ -43,9 +40,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Login user with email and password
-     */
+    // Login user with email and password
     async login(data: LoginData): Promise<AuthResponse> {
         try {
             const response = await axiosInstance.post('/auth/login', data);
@@ -62,9 +57,7 @@ class AuthService {
         }
     }
 
-    /**
-     * OAuth login (Google/Apple)
-     */
+    // OAuth login (Google/Apple)
     async oauthLogin(data: OAuthData): Promise<AuthResponse> {
         try {
             const response = await axiosInstance.post('/auth/login/oauth', data);
@@ -80,9 +73,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Verify account with OTP
-     */
+    // Verify account with OTP
     async verifyAccount(data: VerifyAccountData): Promise<AuthResponse> {
         try {
             const response = await axiosInstance.post('/auth/verify-account', data);
@@ -98,9 +89,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Refresh access token
-     */
+    // Refresh access token
     async refreshTokens(refreshToken: string): Promise<RefreshTokenResponse> {
         try {
             const response = await axiosInstance.post('/auth/refresh-tokens', {
@@ -118,9 +107,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Request password reset
-     */
+    // Request password reset
     async forgotPassword(data: ForgotPasswordData): Promise<SimpleResponse> {
         try {
             const response = await axiosInstance.post('/auth/forgot-password', data);
@@ -136,9 +123,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Reset password with OTP
-     */
+    /// Reset password with OTP
     async resetPassword(data: ResetPasswordData): Promise<SimpleResponse> {
         try {
             const response = await axiosInstance.post('/auth/reset-password', data);
@@ -154,9 +139,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Change password (authenticated user)
-     */
+    // Change password (authenticated user)
     async changePassword(data: ChangePasswordData): Promise<SimpleResponse> {
         try {
             const response = await axiosInstance.post('/auth/change-password', data);
@@ -172,9 +155,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Request account verification (for logged-in users)
-     */
+    // Request account verification (for logged-in users)
     async requestVerifyAccount(): Promise<SimpleResponse> {
         try {
             const response = await axiosInstance.post('/auth/req-verify-account');
@@ -190,9 +171,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Resend OTP
-     */
+    // Resend OTP
     async resendOTP(data: ResendOTPData): Promise<SimpleResponse> {
         try {
             const response = await axiosInstance.post('/auth/resend-otp', data);
@@ -208,9 +187,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Add/verify contact number (OTP flow)
-     */
+    // Add/verify contact number (OTP flow)
     async addContact(data: AddContactData): Promise<SimpleResponse> {
         try {
             const response = await axiosInstance.post('/auth/add-contact', data);
@@ -226,9 +203,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Logout user
-     */
+    // Logout user
     async logout(refreshToken: string): Promise<SimpleResponse> {
         try {
             const response = await axiosInstance.post('/auth/logout', {
@@ -246,9 +221,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Store authentication data in AsyncStorage
-     */
+    // Store authentication data in AsyncStorage
     async storeAuthData(authResponse: AuthResponse): Promise<void> {
         try {
             const promises = [];
@@ -273,9 +246,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Clear authentication data from AsyncStorage
-     */
+    // Clear authentication data from AsyncStorage
     async clearAuthData(): Promise<void> {
         try {
             await AsyncStorage.multiRemove([
@@ -289,9 +260,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Get stored authentication data
-     */
+    // Get stored authentication data
     async getStoredAuthData(): Promise<{
         user: any | null;
         accessToken: string | null;
@@ -319,9 +288,7 @@ class AuthService {
         }
     }
 
-    /**
-     * Handle API errors
-     */
+    // Handle API errors
     private handleError(error: any): Error {
         if (error.response?.data) {
             const errorData = error.response.data;

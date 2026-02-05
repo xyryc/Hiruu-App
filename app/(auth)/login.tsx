@@ -2,14 +2,14 @@ import TitleHeader from "@/components/header/TitleHeader";
 import SocialAuth from "@/components/layout/SocialAuth";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { useAuthStore } from "@/stores/authStore";
+import { translateApiMessage } from "@/utils/apiMessages";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { t } from "i18next";
-import { translateApiMessage } from "@/utils/apiMessages";
-import { toast } from "sonner-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -20,8 +20,10 @@ import {
 } from "react-native";
 import PhoneInput from "react-native-phone-input";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const Login = () => {
+  const lastEmailKey = "auth:last_login_email";
   const [selectedTab, setSelectedTab] = useState("Email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,6 +35,21 @@ const Login = () => {
   const { login, isLoading, clearError } = useAuthStore();
 
   let phoneRef: any = null;
+
+  useEffect(() => {
+    const loadLastEmail = async () => {
+      try {
+        const savedEmail = await AsyncStorage.getItem(lastEmailKey);
+        if (savedEmail) {
+          setEmail(savedEmail);
+        }
+      } catch {
+        // no-op
+      }
+    };
+
+    loadLastEmail();
+  }, []);
 
   const handlePhoneChange = () => {
     try {
@@ -60,6 +77,9 @@ const Login = () => {
         const result = await login({ email, password });
 
         if (result?.success) {
+          if (email) {
+            await AsyncStorage.setItem(lastEmailKey, email);
+          }
           toast.success(t("common.success", "Success"));
           router.replace("/(tabs)/home");
         }
