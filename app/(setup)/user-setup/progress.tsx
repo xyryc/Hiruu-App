@@ -29,7 +29,7 @@ const ProgressFlow = () => {
       return;
     }
 
-    const nextStep = Math.min(Math.max(onboarding + 1, 1), totalSteps);
+    const nextStep = Math.min(Math.max(onboarding || 1, 1), totalSteps);
     setDirection("forward");
     setCurrentStep(nextStep);
   }, [router, totalSteps, user?.onboarding]);

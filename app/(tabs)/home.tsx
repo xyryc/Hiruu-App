@@ -1,24 +1,16 @@
 import HomeHeader from "@/components/header/HomeHeader";
 import WelcomeHeader from "@/components/header/WelcomeHeader";
-import AttendanceSummary from "@/components/layout/AttendanceSummary";
 import BusinessProfile from "@/components/layout/BusinessProfile";
-import BusinessSummary from "@/components/layout/BusinessSummary";
 import EngagementPerks from "@/components/layout/EngagementPerks";
 import FindNewJob from "@/components/layout/FindNewJob";
 import JoinCollegue from "@/components/layout/JoinCollegue";
-import PerformanceTrend from "@/components/layout/PerformanceTrend";
 import ProfileProgress from "@/components/layout/ProfileProgress";
-import QuickAction from "@/components/layout/QuickAction";
-import TodayShiftsSummary from "@/components/layout/TodayShiftsSummary";
-import TodaysShift from "@/components/layout/TodaysShift";
-import TopPerformer from "@/components/layout/TopPerformer";
+import TodaysShift from '@/components/layout/TodaysShift';
 import Widgets from "@/components/layout/Widgets";
-import WorkInsights from "@/components/layout/WorkInsights";
-import ActionCard from "@/components/ui/cards/ActionCard";
 import { profileService } from "@/services/profileService";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, StatusBar, View } from "react-native";
+import { ScrollView, StatusBar } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserHome = () => {
@@ -65,13 +57,12 @@ const UserHome = () => {
 
       {/* main content */}
       <ScrollView
-
         showsVerticalScrollIndicator={false}
       >
         {/* profile progress */}
-        {/* {profileData?.onboarding !== 5 && (
-        )} */}
-        <ProfileProgress onboarding={profileData?.onboarding} className='mb-7' />
+        {profileData?.onboarding !== 5 && (
+          <ProfileProgress onboarding={profileData?.onboarding} className='mb-7' />
+        )}
 
         {/* join your collegues */}
         <JoinCollegue />
@@ -86,10 +77,10 @@ const UserHome = () => {
         <TodaysShift className="mt-7" />
 
         {/* quick actions */}
-        <QuickAction className="mt-7" />
+        {/* <QuickAction className="mt-7" /> */}
 
         {/* work insights */}
-        <WorkInsights className="mt-7" />
+        {/* <WorkInsights className="mt-7" /> */}
 
         {/* engagement & perks */}
         <EngagementPerks className="mt-7" />
@@ -102,22 +93,16 @@ const UserHome = () => {
         {/* <ProfileProgress /> */}
 
         {/* Business Summary */}
-        <BusinessSummary className="mt-8" />
+        {/* <BusinessSummary className="mt-8" /> */}
 
         {/* Today’s Shifts Summary */}
-        <TodayShiftsSummary />
+        {/* <TodayShiftsSummary /> */}
 
         {/* Today’s Attendance Summary */}
-        <AttendanceSummary className="mx-5 mt-8" />
-
-        {/* join your collegues */}
-        <JoinCollegue className="mt-7" />
-
-        {/* do you  manage a business */}
-        <BusinessProfile className="mt-7" />
+        {/* <AttendanceSummary className="mx-5 mt-8" /> */}
 
         {/* See Employee rank on board */}
-        <View className="mx-4 mt-7">
+        {/* <View className="mx-4 mt-7">
           <ActionCard
             onPress={() => router.push("/screens/home/leaderboard")}
             title="See Employee rank on board"
@@ -128,22 +113,22 @@ const UserHome = () => {
             imageHeight={95}
             background={require("@/assets/images/chessboard-bg.svg")}
           />
-        </View>
+        </View> */}
 
         {/* performance trend */}
-        <PerformanceTrend className="mt-7" />
+        {/* <PerformanceTrend className="mt-7" /> */}
 
         {/* quick actions */}
-        <QuickAction className="mt-7" />
+        {/* <QuickAction className="mt-7" /> */}
 
         {/* Team Insights */}
-        <WorkInsights title="Team Insights" className="mt-7" />
+        {/* <WorkInsights title="Team Insights" className="mt-7" /> */}
 
         {/* job Board */}
-        <FindNewJob business={true} className="mt-7" />
+        {/* <FindNewJob business={true} className="mt-7" /> */}
 
         {/* Top performers */}
-        <TopPerformer className="mt-7" />
+        {/* <TopPerformer className="mt-7" /> */}
       </ScrollView>
     </SafeAreaView>
   );
