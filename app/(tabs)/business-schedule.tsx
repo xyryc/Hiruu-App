@@ -4,7 +4,7 @@ import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModa
 import { useStore } from "@/stores/store";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
+import { RelativePathString, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
   ScrollView,
@@ -27,6 +27,8 @@ const BusinessScheduleScreen = () => {
     setSelectedBusinesses,
     getMyBusinesses,
   } = useStore();
+
+  console.log("selected business", selectedBusinesses)
 
   useEffect(() => {
     let isMounted = true;
@@ -136,13 +138,22 @@ const BusinessScheduleScreen = () => {
     },
   ];
 
+  const checkAndNavigate = (route: RelativePathString) => {
+    if (selectedBusinesses.length === 0) {
+      setShowModal(true)
+    } else {
+      router.push(route)
+    }
+  }
+
   const menuItems = [
     {
       id: 1,
       title: "Create Role",
       icon: "create-outline",
       onPress: () => {
-        router.push("/screens/schedule/business/all-created-role");
+        checkAndNavigate("/screens/schedule/business/all-created-role" as RelativePathString)
+        // router.push("/screens/schedule/business/all-created-role");
       },
     },
     {
@@ -150,8 +161,8 @@ const BusinessScheduleScreen = () => {
       title: "Create Template",
       icon: "document-text-outline",
       onPress: () => {
-        // console.log("Navigate to Create Template");
-        router.push("/screens/schedule/business/create-template");
+        checkAndNavigate("/screens/schedule/business/create-template" as RelativePathString)
+        // router.push("/screens/schedule/business/create-template");
       },
     },
     {
@@ -159,7 +170,8 @@ const BusinessScheduleScreen = () => {
       title: "Weekly Schedule",
       icon: "calendar-outline",
       onPress: () => {
-        router.push("/screens/schedule/business/weekly-schedule");
+        checkAndNavigate("/screens/schedule/business/weekly-schedule" as RelativePathString)
+        // router.push("/screens/schedule/business/weekly-schedule");
       },
     },
     {
@@ -167,7 +179,8 @@ const BusinessScheduleScreen = () => {
       title: "Saved Shift Template",
       icon: "document-attach-outline",
       onPress: () => {
-        router.push("/screens/schedule/business/saved-shift-template");
+        checkAndNavigate("/screens/schedule/business/saved-shift-template" as RelativePathString)
+        // router.push("/screens/schedule/business/saved-shift-template");
       },
     },
   ];
