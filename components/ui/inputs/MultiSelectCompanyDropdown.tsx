@@ -16,8 +16,8 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import DateOfBirthInput from "./DateOfBirthInput";
 import { toast } from "sonner-native";
+import DateOfBirthInput from "./DateOfBirthInput";
 
 const MultiSelectCompanyDropdown = ({
   selectedCompanies,
@@ -273,12 +273,12 @@ const MultiSelectCompanyDropdown = ({
                       <DateOfBirthInput
                         value={
                           experience.startDate
-                        ? new Date(experience.startDate)
-                        : null
-                    }
-                    onDateChange={(date) =>
-                      updateWorkExperience(company.id, "startDate", date)
-                    }
+                            ? new Date(experience.startDate)
+                            : null
+                        }
+                        onDateChange={(date) =>
+                          updateWorkExperience(company.id, "startDate", date)
+                        }
                       />
                     </View>
 
@@ -287,12 +287,12 @@ const MultiSelectCompanyDropdown = ({
                       <DateOfBirthInput
                         value={
                           experience.endDate
-                        ? new Date(experience.endDate)
-                        : null
-                    }
-                    onDateChange={(date) =>
-                      updateWorkExperience(company.id, "endDate", date)
-                    }
+                            ? new Date(experience.endDate)
+                            : null
+                        }
+                        onDateChange={(date) =>
+                          updateWorkExperience(company.id, "endDate", date)
+                        }
                       />
                     </View>
                   </View>
@@ -398,11 +398,10 @@ const MultiSelectCompanyDropdown = ({
 
                   {/* Selection Indicator */}
                   <View
-                    className={`w-6 h-6 rounded-full border-2 ${
-                      isCompanySelected(company.id)
-                        ? "bg-blue-500 border-blue-500"
-                        : "border-gray-300"
-                    } justify-center items-center`}
+                    className={`w-6 h-6 rounded-full border-2 ${isCompanySelected(company.id)
+                      ? "bg-blue-500 border-blue-500"
+                      : "border-gray-300"
+                      } justify-center items-center`}
                   >
                     {isCompanySelected(company.id) && (
                       <Text className="text-white text-xs font-proximanova-bold">
@@ -456,11 +455,10 @@ const MultiSelectCompanyDropdown = ({
                 <TouchableOpacity
                   onPress={addManualCompany}
                   disabled={!manualCompanyName.trim() || !manualCompanyLogo}
-                  className={`px-6 py-3 rounded-xl ${
-                    manualCompanyName.trim() && manualCompanyLogo
-                      ? "bg-blue-500"
-                      : "bg-gray-300"
-                  }`}
+                  className={`px-6 py-3 rounded-xl ${manualCompanyName.trim() && manualCompanyLogo
+                    ? "bg-blue-500"
+                    : "bg-gray-300"
+                    }`}
                 >
                   <Text className="text-white font-proximanova-medium">
                     Add
