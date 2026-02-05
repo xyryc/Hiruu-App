@@ -1,12 +1,14 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import { useBusinessStore } from "@/stores/businessStore";
+import { translateApiMessage } from "@/utils/apiMessages";
 import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -22,15 +24,50 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const EditBusinessProfile = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
+  const { selectedBusinesses, updateMyBusinessProfile, isLoading, getBusinessProfile } =
+    useBusinessStore();
+  const businessId = selectedBusinesses[0];
 
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [businessName, setBusinessName] = useState("");
+  const [about, setAbout] = useState("");
+  const [loadingProfile, setLoadingProfile] = useState(false);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProfile = async () => {
+      if (!businessId) return;
+      try {
+        setLoadingProfile(true);
+        const data = await getBusinessProfile(businessId);
+        if (!isMounted) return;
+        setBusinessName(data?.name || "");
+        setAbout(data?.description || "");
+        setProfileImage(data?.logo || null);
+        setCoverImage(data?.coverPhoto || null);
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load business profile");
+      } finally {
+        if (isMounted) {
+          setLoadingProfile(false);
+        }
+      }
+    };
+
+    loadProfile();
+    return () => {
+      isMounted = false;
+    };
+  }, [businessId, getBusinessProfile]);
 
   const requestPermissions = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -117,14 +154,14 @@ const EditBusinessProfile = () => {
           onPress: () => takePhoto(type),
         },
         ...((type === "profile" && profileImage) ||
-        (type === "cover" && coverImage)
+          (type === "cover" && coverImage)
           ? [
-              {
-                text: "Remove Photo",
-                style: "destructive",
-                onPress: () => removeImage(type),
-              },
-            ]
+            {
+              text: "Remove Photo",
+              style: "destructive",
+              onPress: () => removeImage(type),
+            },
+          ]
           : []),
         {
           text: "Cancel",
@@ -154,6 +191,29 @@ const EditBusinessProfile = () => {
     ]);
   };
 
+  const handleSave = async () => {
+    if (!businessId) {
+      toast.error("No business selected.");
+      return;
+    }
+
+    const payload = {
+      name: businessName.trim(),
+      description: about.trim(),
+      logo: profileImage,
+      coverPhoto: coverImage,
+    };
+
+    try {
+      const result = await updateMyBusinessProfile(businessId, payload);
+      const messageKey = result?.message || "business_updated_successfully";
+      toast.success(translateApiMessage(messageKey));
+      router.back();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update business");
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -181,24 +241,24 @@ const EditBusinessProfile = () => {
             className="mx-5 pt-8"
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{
-              paddingBottom: 120,
+              paddingBottom: 600,
             }}
           >
             {/* Profile Photo */}
             <View className="items-center">
               <View className="bg-[#ffffff] h-[119px] w-[119px] flex-row justify-center items-center rounded-full relative">
-                {uploading ? (
+                {uploading || loadingProfile ? (
                   <View className="h-32 w-32 rounded-full bg-gray-200 items-center justify-center">
                     <ActivityIndicator size="large" color="#4FB2F3" />
                   </View>
                 ) : (
                   <Image
                     source={
-                      profileImage || require("@/assets/images/reward/user.svg")
+                      profileImage || require("@/assets/images/placeholder.png")
                     }
-                    contentFit="cover"
                     style={{ height: 116, width: 116, borderRadius: 100 }}
                     transition={300}
+                    contentFit="cover"
                   />
                 )}
 
@@ -226,7 +286,7 @@ const EditBusinessProfile = () => {
                 {coverImage ? "Cover Photo" : "Upload Cover Photo"}
               </Text>
               <View className="relative">
-                {uploading ? (
+                {uploading || loadingProfile ? (
                   <View className="w-full h-32 bg-gray-200 rounded-xl items-center justify-center">
                     <ActivityIndicator size="large" color="#4FB2F3" />
                     <Text className="text-gray-500 mt-2">Uploading...</Text>
@@ -285,6 +345,8 @@ const EditBusinessProfile = () => {
                 className="w-full pl-3 pr-4 py-4 bg-white border mt-2.5 border-[#EEEEEE] rounded-xl text-[#7A7A7A]"
                 keyboardType="default"
                 autoCapitalize="none"
+                value={businessName}
+                onChangeText={setBusinessName}
               />
             </View>
 
@@ -338,6 +400,8 @@ const EditBusinessProfile = () => {
                 numberOfLines={6}
                 textAlignVertical="top"
                 style={{ minHeight: 120 }}
+                value={about}
+                onChangeText={setAbout}
               />
             </View>
           </ScrollView>
@@ -345,7 +409,8 @@ const EditBusinessProfile = () => {
           <PrimaryButton
             className="absolute bottom-0 mt-4 mx-5 "
             title="Save Change"
-            onPress={() => router.back()}
+            onPress={handleSave}
+            loading={isLoading}
           />
         </LinearGradient>
       </SafeAreaView>

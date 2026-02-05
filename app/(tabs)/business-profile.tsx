@@ -34,8 +34,6 @@ const BusinessProfile = () => {
   const { selectedBusinesses, getBusinessProfile } = useBusinessStore();
   const businessId = selectedBusinesses[0];
 
-  console.log("business data", businessData)
-
   useEffect(() => {
     let isMounted = true;
 
