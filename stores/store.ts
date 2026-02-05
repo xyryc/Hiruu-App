@@ -58,6 +58,9 @@ interface StoreState {
   isProfileComplete?: boolean;
   userBusiness?: any;
   loading?: boolean;
+  myBusinesses: any[];
+  myBusinessesLoading: boolean;
+  selectedBusinesses: string[];
 
   // Auth methods
   initializeAuth: () => Promise<void>;
@@ -79,7 +82,8 @@ interface StoreState {
 
   // Business methods (keeping existing ones)
   fetchBusinesses: (search?: string) => Promise<any>;
-  getMyBusinesses: () => Promise<any>;
+  getMyBusinesses: (force?: boolean) => Promise<any>;
+  setSelectedBusinesses: (ids: string[]) => void;
   createCompanyManual: (companyData: any) => Promise<any>;
   createBusinessProfile: (payload: any) => Promise<any>;
   generateBusinessCode: (businessId: string) => Promise<any>;
@@ -97,6 +101,9 @@ export const useStore = create<StoreState>((set, get) => ({
   error: null,
   isInitialized: false,
   isProfileComplete: false,
+  myBusinesses: [],
+  myBusinessesLoading: false,
+  selectedBusinesses: [],
 
   // Initialize auth state from storage on app start
   initializeAuth: async () => {
@@ -458,8 +465,14 @@ export const useStore = create<StoreState>((set, get) => ({
     }
   },
 
-  getMyBusinesses: async () => {
+  getMyBusinesses: async (force = false) => {
     try {
+      const { myBusinesses } = get();
+      if (!force && myBusinesses.length > 0) {
+        return myBusinesses;
+      }
+
+      set({ myBusinessesLoading: true });
       const response = await axiosInstance.get("/business/my-businesses");
       const result = response.data;
 
@@ -471,12 +484,21 @@ export const useStore = create<StoreState>((set, get) => ({
         throw new Error(errorMsg);
       }
 
+      set({
+        myBusinesses: result.data || [],
+        myBusinessesLoading: false,
+      });
+
       return result.data;
     } catch (error) {
+      set({ myBusinessesLoading: false });
       console.error("Fetch my businesses error:", error);
       throw error;
     }
   },
+
+  setSelectedBusinesses: (ids) => set({ selectedBusinesses: ids }),
+
 
   createCompanyManual: async (companyData) => {
     set({ isLoading: true, error: null });

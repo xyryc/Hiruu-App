@@ -1,9 +1,17 @@
+import { useStore } from "@/stores/store";
 import { BusinessSelectionModalProps } from "@/types";
 import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
-import React, { useEffect, useState } from "react";
-import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect } from "react";
+import {
+  ActivityIndicator,
+  Modal,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
@@ -13,46 +21,46 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
   selectedBusinesses,
   onSelectionChange,
 }) => {
-  const [localSelection, setLocalSelection] =
-    useState<string[]>(selectedBusinesses);
+  const { myBusinesses, myBusinessesLoading, getMyBusinesses } = useStore();
+  const displayedBusinesses =
+    businesses.length > 0 ? businesses : myBusinesses;
 
   // Determine if "All" is selected
   const isAllSelected =
-    localSelection.length === 0 || localSelection.length === businesses.length;
+    selectedBusinesses.length === 0 ||
+    selectedBusinesses.length === displayedBusinesses.length;
 
   useEffect(() => {
-    setLocalSelection(selectedBusinesses);
-  }, [selectedBusinesses]);
+    if (!visible) return;
+    if (businesses.length > 0) return;
+    getMyBusinesses().catch(() => undefined);
+  }, [businesses.length, getMyBusinesses, visible]);
 
   const toggleSelectAll = () => {
-    if (isAllSelected) {
-      // If all selected, do nothing or keep all selected
-      setLocalSelection([]);
-    } else {
-      // Select all
-      setLocalSelection([]);
-    }
+    onSelectionChange([]);
   };
 
   const toggleBusiness = (businessId: string) => {
     // If clicking on already selected single business, switch to "All"
-    if (localSelection.length === 1 && localSelection[0] === businessId) {
-      setLocalSelection([]);
+    if (
+      selectedBusinesses.length === 1 &&
+      selectedBusinesses[0] === businessId
+    ) {
+      onSelectionChange([]);
     } else {
       // Select only this business
-      setLocalSelection([businessId]);
+      onSelectionChange([businessId]);
     }
   };
 
   const handleDone = () => {
-    onSelectionChange(localSelection);
     onClose();
   };
 
   const isSelected = (businessId: string) => {
     // If empty array, "All" is selected, so all businesses appear selected
-    if (localSelection.length === 0) return true;
-    return localSelection.includes(businessId);
+    if (selectedBusinesses.length === 0) return true;
+    return selectedBusinesses.includes(businessId);
   };
 
   return (
@@ -63,7 +71,7 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
       onRequestClose={onClose}
     >
       <BlurView intensity={80} tint="dark" className="flex-1 justify-end">
-        <View className="bg-white rounded-t-3xl max-h-[45%]">
+        <View className="bg-white rounded-t-3xl max-h-[55%]">
           {/* Close Button */}
           <View className="absolute -top-24 inset-x-0 items-center pt-4 pb-2">
             <TouchableOpacity onPress={handleDone}>
@@ -108,8 +116,21 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
             </View>
 
             {/* Business List */}
-            <ScrollView className="px-6">
-              {businesses.map((business) => (
+            <ScrollView
+              className="px-6"
+              contentContainerStyle={{ paddingBottom: 40 }}
+            >
+              {myBusinessesLoading && displayedBusinesses.length === 0 && (
+                <View className="py-6 items-center">
+                  <ActivityIndicator size="small" color="#4FB2F3" />
+                </View>
+              )}
+              {!myBusinessesLoading && displayedBusinesses.length === 0 && (
+                <Text className="text-center text-sm text-gray-500 py-6">
+                  No businesses found.
+                </Text>
+              )}
+              {displayedBusinesses.map((business) => (
                 <TouchableOpacity
                   key={business.id}
                   onPress={() => toggleBusiness(business.id)}
@@ -120,23 +141,42 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
                   {/* Business Avatar */}
                   <View className="w-10 h-10 rounded-full mr-4 justify-center items-center">
                     <Image
-                      source={business.imageUrl}
+                      source={
+                        business.imageUrl ||
+                        "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
+                      }
                       style={{
                         width: 34,
                         height: 34,
                         borderRadius: 999,
                       }}
+                      contentFit="cover"
                     />
                   </View>
 
                   {/* Business Name */}
-                  <Text
-                    className={`flex-1 font-proximanova-semibold ${
-                      isSelected(business.id) ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    {business.name}
-                  </Text>
+                  <View className="flex-1">
+                    <Text
+                      className={`font-proximanova-semibold ${
+                        isSelected(business.id) ? "text-white" : "text-gray-900"
+                      }`}
+                      numberOfLines={1}
+                    >
+                      {business.name}
+                    </Text>
+                    {!!business.address && (
+                      <Text
+                        className={`text-xs ${
+                          isSelected(business.id)
+                            ? "text-white/80"
+                            : "text-gray-500"
+                        }`}
+                        numberOfLines={1}
+                      >
+                        {business.address}
+                      </Text>
+                    )}
+                  </View>
 
                   {/* Selection Indicator */}
                   <View

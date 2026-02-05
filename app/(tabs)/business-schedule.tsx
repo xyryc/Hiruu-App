@@ -1,11 +1,11 @@
-import businesses from "@/assets/data/businesses.json";
 import ShiftCard from "@/components/ui/cards/ShiftCard";
 import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
+import { useStore } from "@/stores/store";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   StatusBar,
@@ -21,17 +21,40 @@ const BusinessScheduleScreen = () => {
   const [selectedFilter, setSelectedFilter] = useState("all");
 
   const [showModal, setShowModal] = useState(false);
-  const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
+  const {
+    myBusinesses,
+    selectedBusinesses,
+    setSelectedBusinesses,
+    getMyBusinesses,
+  } = useStore();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadBusinesses = async () => {
+      try {
+        await getMyBusinesses();
+      } catch {
+        // ignore
+      }
+    };
+
+    loadBusinesses();
+    return () => {
+      isMounted = false;
+    };
+  }, [getMyBusinesses]);
   // Get display content for header button
   const getDisplayContent = () => {
     if (selectedBusinesses.length === 0) {
       return { type: "all", content: "All" };
     } else if (selectedBusinesses.length === 1) {
-      const selectedBusiness = businesses.find(
+      const selectedBusiness = myBusinesses.find(
         (b) => b.id === selectedBusinesses[0]
       );
       return { type: "single", content: selectedBusiness };
     }
+    return { type: "multi", content: `${selectedBusinesses.length} Selected` };
   };
 
   const displayContent = getDisplayContent();
@@ -209,19 +232,36 @@ const BusinessScheduleScreen = () => {
           {/* business selection */}
           <TouchableOpacity
             onPress={() => setShowModal(true)}
-            className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
+            className="bg-[#E5F4FD] flex-row items-center p-1 rounded-[26px]"
           >
             {displayContent?.type === "all" ? (
               <View className="pl-2.5 py-1.5">
                 <Text className="font-semibold text-sm text-primary">All</Text>
               </View>
+            ) : displayContent?.type === "single" ? (
+              <View className="">
+                {displayContent?.content?.logo || displayContent?.content?.imageUrl ? (
+                  <Image
+                    source={displayContent?.content?.logo || displayContent?.content?.imageUrl}
+                    style={{ width: 30, height: 30, borderRadius: 999 }}
+                    contentFit="cover"
+                  />
+                ) : (
+                  <View className="pl-2.5 py-1.5">
+                    <Text className="font-semibold text-sm text-primary">
+                      {displayContent?.content?.name || "Selected"}
+                    </Text>
+                  </View>
+                )}
+              </View>
             ) : (
-              <Image
-                source={displayContent?.content?.imageUrl}
-                style={{ width: 30, height: 30, borderRadius: 999 }}
-                contentFit="cover"
-              />
+              <View className="pl-2.5 py-1.5">
+                <Text className="font-semibold text-sm text-primary">
+                  {displayContent?.content}
+                </Text>
+              </View>
             )}
+
             <SimpleLineIcons
               className="p-1.5"
               name="arrow-down"
@@ -237,11 +277,10 @@ const BusinessScheduleScreen = () => {
               className="px-2.5 py-1"
             >
               <Text
-                className={`text-sm ${
-                  selectedShift === "morning"
-                    ? "text-primary font-proximanova-semibold"
-                    : "text-secondary"
-                }`}
+                className={`text-sm ${selectedShift === "morning"
+                  ? "text-primary font-proximanova-semibold"
+                  : "text-secondary"
+                  }`}
               >
                 Morning Shift
               </Text>
@@ -254,11 +293,10 @@ const BusinessScheduleScreen = () => {
               className="px-2.5 py-1"
             >
               <Text
-                className={`text-sm ${
-                  selectedShift === "afternoon"
-                    ? "text-primary font-proximanova-semibold"
-                    : "text-secondary"
-                }`}
+                className={`text-sm ${selectedShift === "afternoon"
+                  ? "text-primary font-proximanova-semibold"
+                  : "text-secondary"
+                  }`}
               >
                 Afternoon Shift
               </Text>
@@ -271,11 +309,10 @@ const BusinessScheduleScreen = () => {
               className="px-2.5 py-1"
             >
               <Text
-                className={`text-sm ${
-                  selectedShift === "evening"
-                    ? "text-primary font-proximanova-semibold"
-                    : "text-secondary"
-                }`}
+                className={`text-sm ${selectedShift === "evening"
+                  ? "text-primary font-proximanova-semibold"
+                  : "text-secondary"
+                  }`}
               >
                 Evening Shift
               </Text>
@@ -293,23 +330,20 @@ const BusinessScheduleScreen = () => {
             <TouchableOpacity
               key={index}
               onPress={() => setSelectedDate(item.date)}
-              className={`w-8 h-14 items-center justify-center rounded-2xl mr-3 ${
-                selectedDate === item.date
-                  ? "bg-[#4FB2F3]"
-                  : "bg-white border border-[#EEEEEE]"
-              }`}
+              className={`w-8 h-14 items-center justify-center rounded-2xl mr-3 ${selectedDate === item.date
+                ? "bg-[#4FB2F3]"
+                : "bg-white border border-[#EEEEEE]"
+                }`}
             >
               <Text
-                className={`font-proximanova-bold ${
-                  selectedDate === item.date ? "text-white" : "text-primary"
-                }`}
+                className={`font-proximanova-bold ${selectedDate === item.date ? "text-white" : "text-primary"
+                  }`}
               >
                 {item.date}
               </Text>
               <Text
-                className={`text-xs font-proximanova-regular mt-1 ${
-                  selectedDate === item.date ? "text-white" : "text-gray-600"
-                }`}
+                className={`text-xs font-proximanova-regular mt-1 ${selectedDate === item.date ? "text-white" : "text-gray-600"
+                  }`}
               >
                 {item.day}
               </Text>
@@ -327,16 +361,14 @@ const BusinessScheduleScreen = () => {
             <TouchableOpacity
               key={filter.id}
               onPress={() => setSelectedFilter(filter.id)}
-              className={`px-2.5 py-2 rounded-full mr-3 ${
-                selectedFilter === filter.id ? "bg-[#4FB2F3]" : "bg-gray-100"
-              }`}
+              className={`px-2.5 py-2 rounded-full mr-3 ${selectedFilter === filter.id ? "bg-[#4FB2F3]" : "bg-gray-100"
+                }`}
             >
               <Text
-                className={` text-sm ${
-                  selectedFilter === filter.id
-                    ? "text-white font-proximanova-semibold"
-                    : "text-primary font-proximanova-regular"
-                }`}
+                className={` text-sm ${selectedFilter === filter.id
+                  ? "text-white font-proximanova-semibold"
+                  : "text-primary font-proximanova-regular"
+                  }`}
               >
                 {filter.label} ({filter.count})
               </Text>
@@ -369,7 +401,13 @@ const BusinessScheduleScreen = () => {
       <BusinessSelectionModal
         visible={showModal}
         onClose={() => setShowModal(false)}
-        businesses={businesses}
+        businesses={myBusinesses.map((b) => ({
+          id: b.id,
+          name: b.name,
+          address: b.address,
+          imageUrl: b.logo,
+          logo: b.logo,
+        }))}
         selectedBusinesses={selectedBusinesses}
         onSelectionChange={setSelectedBusinesses}
       />

@@ -12,24 +12,22 @@ import BusinessSelectionModal from "../ui/modals/BusinessSelectionModal";
 
 const TodaysShift = ({ className }: TodaysShiftProps) => {
   const [showModal, setShowModal] = useState(false);
-  const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
-  const [businesses, setBusinesses] = useState<any[]>([]);
   const router = useRouter();
-  const { getMyBusinesses } = useStore();
+  const {
+    myBusinesses,
+    selectedBusinesses,
+    setSelectedBusinesses,
+    getMyBusinesses,
+  } = useStore();
 
   useEffect(() => {
     let isMounted = true;
 
     const loadBusinesses = async () => {
       try {
-        const data = await getMyBusinesses();
-        if (isMounted) {
-          setBusinesses(data || []);
-        }
+        await getMyBusinesses();
       } catch {
-        if (isMounted) {
-          setBusinesses([]);
-        }
+        // ignore
       }
     };
 
@@ -48,7 +46,7 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
     if (selectedBusinesses.length === 0) {
       return { type: "all", content: "All" };
     } else if (selectedBusinesses.length === 1) {
-      const selectedBusiness = businesses.find(
+      const selectedBusiness = myBusinesses.find(
         (b) => b.id === selectedBusinesses[0]
       );
       return { type: "single", content: selectedBusiness };
@@ -110,7 +108,7 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
       <BusinessSelectionModal
         visible={showModal}
         onClose={() => setShowModal(false)}
-        businesses={businesses.map((b) => ({
+        businesses={myBusinesses.map((b) => ({
           id: b.id,
           name: b.name,
           address: b.address,
