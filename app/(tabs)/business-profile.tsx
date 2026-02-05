@@ -34,6 +34,8 @@ const BusinessProfile = () => {
   const { selectedBusinesses, getBusinessProfile } = useBusinessStore();
   const businessId = selectedBusinesses[0];
 
+  console.log("business data", businessData)
+
   useEffect(() => {
     let isMounted = true;
 
@@ -149,7 +151,7 @@ const BusinessProfile = () => {
           </View>
         </View>
 
-        {/* prifile name and details */}
+        {/* profile name and details */}
         <View className="mx-6 mt-16">
           <View className="flex-row items-center gap-1.5">
             <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
