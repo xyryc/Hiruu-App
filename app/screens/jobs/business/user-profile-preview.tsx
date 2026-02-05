@@ -272,7 +272,7 @@ const UserProfilePreview = () => {
           <View className="flex-row items-center gap-2.5">
             <View>
               <Image
-                source={require("@/assets/images/reward/nameplate-profile.png")}
+                source={require("@/assets/images/adaptive-icon.png")}
                 contentFit="contain"
                 style={{ height: 40, width: 40 }}
               />

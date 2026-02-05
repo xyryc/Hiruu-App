@@ -77,26 +77,14 @@ const profile = () => {
     }
   };
 
-  const apiUrl = process.env.EXPO_PUBLIC_API_URL || "";
-  const baseImageUrl = apiUrl.replace(/\/api\/v1\/?$/, "");
-  const avatarUri =
-    profileData?.avatar && typeof profileData.avatar === "string"
-      ? profileData.avatar.startsWith("http")
-        ? profileData.avatar
-        : `${baseImageUrl}${profileData.avatar}`
-      : null;
-  const displayName = profileData?.name || profileData?.email || "User";
-  const namePlateName = profileData?.name || profileData?.email || "User";
-  const namePlateAddress =
-    profileData?.address?.address || "Location unavailable";
-  const namePlateImage = avatarUri
-    ? { uri: avatarUri }
-    : require("@/assets/images/reward/nameplate-profile.png");
   const bioText = profileData?.bio || "No bio yet.";
   const shortBio =
     bioText.length > 140 ? `${bioText.slice(0, 140)}...` : bioText;
   const interests: string[] = Array.isArray(profileData?.interest)
     ? profileData.interest
+    : [];
+  const experiences = Array.isArray(profileData?.experiences)
+    ? profileData.experiences
     : [];
 
   return (
@@ -173,9 +161,9 @@ const profile = () => {
         >
           <NamePlateCard
             variant="variant4"
-            name={namePlateName}
-            address={namePlateAddress}
-            profileImage={namePlateImage}
+            name={profileData?.name || profileData?.email || "User"}
+            address={profileData?.address?.address || "Location unavailable"}
+            profileImage={profileData?.avatar}
           />
         </TouchableOpacity>
 
@@ -257,9 +245,18 @@ const profile = () => {
             Experience
           </Text>
         </View>
-        <ExperienceCard focus className="mt-8 mx-5" />
-        <ExperienceCard className="mt-2.5 mx-5" />
-        <ExperienceCard className="mt-2.5 mx-5" />
+        {experiences.map((experience: any, index: number) => (
+          <ExperienceCard
+            key={experience?.id || `${experience?.companyId}-${index}`}
+            focus={Boolean(experience?.isCurrent)}
+            className={index === 0 ? "mt-8 mx-5" : "mt-2.5 mx-5"}
+            companyName={experience?.company?.name}
+            position={experience?.position}
+            companyLogo={experience?.company?.logo}
+            isVerified={Boolean(experience?.company?.isVerified)}
+          />
+        )
+        )}
 
         {/* Achievement */}
         <View className=" mx-5 mt-8">
@@ -386,7 +383,7 @@ const profile = () => {
         >
           <View className="flex-row items-center gap-2.5">
             <Image
-              source={require("@/assets/images/reward/nameplate-profile.png")}
+              source={require("@/assets/images/adaptive-icon.png")}
               contentFit="contain"
               style={{ height: 40, width: 40 }}
             />

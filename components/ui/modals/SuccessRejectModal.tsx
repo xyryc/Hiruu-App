@@ -50,7 +50,7 @@ const SuccessRejectModal = ({ visible, onClose, reject }: any) => {
             {/* headers */}
             <View className="flex-row gap-2 items-center">
               <Image
-                source={require("@/assets/images/reward/nameplate-profile.png")}
+                source={require("@/assets/images/adaptive-icon.png")}
                 contentFit="contain"
                 style={{ height: 40, width: 40 }}
               />
@@ -141,9 +141,8 @@ const SuccessRejectModal = ({ visible, onClose, reject }: any) => {
                     className="flex-row items-center mt-4 gap-2"
                   >
                     <View
-                      className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${
-                        selected === option.key ? "bg-primary" : ""
-                      }`}
+                      className={`h-6 w-6 border rounded-full flex-row justify-center items-center ${selected === option.key ? "bg-primary" : ""
+                        }`}
                     >
                       {selected === option.key && (
                         <Ionicons

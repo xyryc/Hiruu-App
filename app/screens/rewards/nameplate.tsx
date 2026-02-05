@@ -10,8 +10,6 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Nameplate = () => {
-  const img = require("@/assets/images/reward/nameplate-profile.png");
-
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState({
     listitle: "",

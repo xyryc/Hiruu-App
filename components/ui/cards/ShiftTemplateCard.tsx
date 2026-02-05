@@ -147,7 +147,7 @@ const ShiftTemplateCard = ({ className, title, weekly }: any) => {
 
           <View className="flex-row gap-2 items-center mt-3">
             <Image
-              source={require("@/assets/images/reward/nameplate-profile.png")}
+              source={require("@/assets/images/adaptive-icon.png")}
               contentFit="contain"
               style={{ width: 30, height: 30 }}
             />

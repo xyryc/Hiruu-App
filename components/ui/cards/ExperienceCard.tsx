@@ -2,7 +2,24 @@ import { Image } from "expo-image";
 import React from "react";
 import { Text, View } from "react-native";
 
-const ExperienceCard = ({ focus, className }: any) => {
+type ExperienceCardProps = {
+  focus?: boolean;
+  className?: string;
+  companyName?: string;
+  position?: string;
+  companyLogo?: string | { uri: string };
+  isVerified?: boolean;
+};
+
+const ExperienceCard = ({
+  focus,
+  className,
+  companyName,
+  position,
+  companyLogo,
+  isVerified,
+}: ExperienceCardProps) => {
+
   return (
     <View
       className={` p-2.5  ${className} ${focus ? "border rounded-2xl" : "border border-[#0000000D] rounded-2xl"} `}
@@ -23,27 +40,31 @@ const ExperienceCard = ({ focus, className }: any) => {
         <View className="flex-row items-center gap-3">
           <View>
             <Image
-              source={require("@/assets/images/reward/nameplate-profile.png")}
-              contentFit="contain"
-              style={{ height: 50, width: 50 }}
+              source={companyLogo}
+              contentFit="cover"
+              style={{ height: 50, width: 50, borderRadius: 999 }}
             />
           </View>
           <View>
             <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-              Hapiness Bar
+              {companyName || "Company"}
             </Text>
             <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-              working as Operations Manager
+              {position ? `Working as ${position}` : "Role not specified"}
             </Text>
           </View>
         </View>
-        <View>
-          <Image
-            source={require("@/assets/images/hiruu-logo.svg")}
-            contentFit="contain"
-            style={{ height: 14, width: 38 }}
-          />
-        </View>
+
+        {/* hiruu logo */}
+        {isVerified && (
+          <View>
+            <Image
+              source={require("@/assets/images/hiruu-logo.svg")}
+              contentFit="contain"
+              style={{ height: 14, width: 38 }}
+            />
+          </View>
+        )}
       </View>
     </View>
   );

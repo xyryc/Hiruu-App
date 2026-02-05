@@ -9,7 +9,7 @@ const NamePlateCard = ({
   className,
   name = "User",
   address = "Location unavailable",
-  profileImage = require("@/assets/images/reward/nameplate-profile.png"),
+  profileImage
 }: NamePlateCardProps) => {
   const getGradientColors = () => {
     switch (variant) {

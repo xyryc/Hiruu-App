@@ -73,7 +73,7 @@ const BusinessShiftPending = ({
         <View className="flex-row justify-between items-center mt-2.5">
           <View className="flex-row gap-2 items-center">
             <Image
-              source={require("@/assets/images/reward/nameplate-profile.png")}
+              source={require("@/assets/images/adaptive-icon.png")}
               contentFit="contain"
               style={{ height: 40, width: 40 }}
             />

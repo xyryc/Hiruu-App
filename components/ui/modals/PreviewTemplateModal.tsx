@@ -6,11 +6,6 @@ import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../buttons/PrimaryButton";
 
-interface Option {
-  label: string;
-  value: string;
-}
-
 const PreviewTemplateModal = ({ visible, onClose }: any) => {
   const handleDone = () => {
     onClose();
@@ -114,7 +109,7 @@ const PreviewTemplateModal = ({ visible, onClose }: any) => {
 
               <View className="flex-row gap-2 items-center my-2.5">
                 <Image
-                  source={require("@/assets/images/reward/nameplate-profile.png")}
+                  source={require("@/assets/images/adaptive-icon.png")}
                   contentFit="contain"
                   style={{ width: 30, height: 30 }}
                 />

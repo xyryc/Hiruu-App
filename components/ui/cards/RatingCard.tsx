@@ -1,6 +1,6 @@
-import { View, Text } from "react-native";
-import React from "react";
 import { Image } from "expo-image";
+import React from "react";
+import { Text, View } from "react-native";
 import RatingStar from "./RatingStar";
 
 type TRatingCard = {
@@ -16,7 +16,7 @@ const RatingCard = ({ className, rating, name, time }: TRatingCard) => {
       <View className="flex-row justify-between">
         <View className="flex-row items-center gap-4">
           <Image
-            source={require("@/assets/images/reward/nameplate-profile.png")}
+            source={require("@/assets/images/adaptive-icon.png")}
             contentFit="contain"
             style={{ height: 50, width: 50 }}
           />
