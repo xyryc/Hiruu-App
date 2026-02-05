@@ -102,7 +102,10 @@ const Settings = () => {
             <Text className="text-lg font-proximanova-semibold text-[#11293A]">
               Businesses Effortlessly
             </Text>
-            <TouchableOpacity className="bg-[#11293A] rounded-full py-1.5 px-4 mt-5">
+
+            <TouchableOpacity
+              onPress={() => router.push("/business-setup")}
+              className="bg-[#11293A] rounded-full py-1.5 px-4 mt-5">
               <Text className="text-sm font-proximanova-semibold text-[#ffffff] text-center">
                 Create Business Profile
               </Text>

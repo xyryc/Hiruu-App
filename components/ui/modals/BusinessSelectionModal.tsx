@@ -118,7 +118,7 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
             {/* Business List */}
             <ScrollView
               className="px-6"
-              contentContainerStyle={{ paddingBottom: 40 }}
+              contentContainerStyle={{ paddingBottom: 140 }}
             >
               {myBusinessesLoading && displayedBusinesses.length === 0 && (
                 <View className="py-6 items-center">
@@ -134,9 +134,8 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
                 <TouchableOpacity
                   key={business.id}
                   onPress={() => toggleBusiness(business.id)}
-                  className={`flex-row items-center py-4 px-4 mb-3 rounded-xl ${
-                    isSelected(business.id) ? "bg-[#4FB2F3]" : "bg-white"
-                  }`}
+                  className={`flex-row items-center py-4 px-4 mb-3 rounded-xl ${isSelected(business.id) ? "bg-[#4FB2F3]" : "bg-white"
+                    }`}
                 >
                   {/* Business Avatar */}
                   <View className="w-10 h-10 rounded-full mr-4 justify-center items-center">
@@ -157,20 +156,18 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
                   {/* Business Name */}
                   <View className="flex-1">
                     <Text
-                      className={`font-proximanova-semibold ${
-                        isSelected(business.id) ? "text-white" : "text-gray-900"
-                      }`}
+                      className={`font-proximanova-semibold ${isSelected(business.id) ? "text-white" : "text-gray-900"
+                        }`}
                       numberOfLines={1}
                     >
                       {business.name}
                     </Text>
                     {!!business.address && (
                       <Text
-                        className={`text-xs ${
-                          isSelected(business.id)
-                            ? "text-white/80"
-                            : "text-gray-500"
-                        }`}
+                        className={`text-xs ${isSelected(business.id)
+                          ? "text-white/80"
+                          : "text-gray-500"
+                          }`}
                         numberOfLines={1}
                       >
                         {business.address}
@@ -180,11 +177,10 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
 
                   {/* Selection Indicator */}
                   <View
-                    className={`w-6 h-6 rounded-full border-2 ${
-                      isSelected(business.id)
-                        ? "bg-white border-white"
-                        : "border-gray-400 bg-white"
-                    } justify-center items-center`}
+                    className={`w-6 h-6 rounded-full border-2 ${isSelected(business.id)
+                      ? "bg-white border-white"
+                      : "border-gray-400 bg-white"
+                      } justify-center items-center`}
                   >
                     {isSelected(business.id) && (
                       <Entypo name="check" size={14} color="black" />

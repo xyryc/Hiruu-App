@@ -3,6 +3,7 @@ import JobCard from "@/components/ui/cards/JobCard";
 import RatingBanner from "@/components/ui/cards/RatingBanner";
 import RatingProgress from "@/components/ui/cards/RatingProgress";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
+import { useBusinessStore } from "@/stores/businessStore";
 import {
   EvilIcons,
   Feather,
@@ -13,28 +14,62 @@ import {
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
   Share,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const BusinessProfile = () => {
   const [selectedTab, setSelectedTab] = useState("about");
   const [togolIsOn, setTogolIsOn] = useState(false);
-  console.log(selectedTab);
+  const [businessData, setBusinessData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const { selectedBusinesses, getBusinessProfile } = useBusinessStore();
+  const businessId = selectedBusinesses[0];
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadBusiness = async () => {
+      if (!businessId) {
+        setBusinessData(null);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const data = await getBusinessProfile(businessId);
+        if (isMounted) {
+          setBusinessData(data);
+        }
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load business");
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadBusiness();
+    return () => {
+      isMounted = false;
+    };
+  }, [businessId, getBusinessProfile]);
 
   const handleShare = async () => {
     try {
       await Share.share({
         message:
-          "Check out Md Talath Un Nabi Anik's profile on Hiruu!\nhttps://hiruu.com/profile/mohammad-anik",
-        title: "Md Talath Un Nabi Anik's Profile",
+          `Check out ${businessData?.name || "this business"} on Hiruu!`,
+        title: businessData?.name || "Business Profile",
       });
     } catch (error) {
       Alert.alert("Error", "Could not share profile");
@@ -84,25 +119,28 @@ const BusinessProfile = () => {
           </View>
         </View>
 
-        {/* cover and prifile */}
+
+        {/* cover and profile */}
         <View className="mt-3 relative">
           {/* cover photo */}
           <Image
-            source="https://media-cdn.tripadvisor.com/media/photo-s/09/de/d6/61/infinity-resort.jpg"
+            source={businessData?.coverPhoto || require("@/assets/images/placeholder.png")}
             style={{ width: "100%", height: 137 }}
             contentFit="cover"
           />
 
           {/* profile photo */}
-          <View className="absolute -bottom-11 left-6">
-            <View className="h-[90px] w-[90px] bg-white flex-row justify-center items-center rounded-full">
-              <Image
-                source="https://cdn.dribbble.com/userupload/11076335/file/original-991912ab2ec877a6ca29ed851a2c2088.jpg?format=webp&resize=400x300&vertical=center"
-                contentFit="cover"
-                style={{ height: 86, width: 86, borderRadius: 100 }}
-              />
+          {businessData?.logo ? (
+            <View className="absolute -bottom-11 left-6">
+              <View className="h-[90px] w-[90px] bg-white flex-row justify-center items-center rounded-full">
+                <Image
+                  source={businessData.logo || require("@/assets/images/placeholder.png")}
+                  contentFit="cover"
+                  style={{ height: 86, width: 86, borderRadius: 100 }}
+                />
+              </View>
             </View>
-          </View>
+          ) : null}
 
           <View className="absolute -bottom-3 right-6">
             <Text className="bg-[#11293A] py-1 px-4 rounded-full border font-proximanova-semibold text-sm p-1 text-[#FFFFFF] capitalize">
@@ -110,11 +148,12 @@ const BusinessProfile = () => {
             </Text>
           </View>
         </View>
+
         {/* prifile name and details */}
         <View className="mx-6 mt-16">
           <View className="flex-row items-center gap-1.5">
             <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
-              PalmBeach Hotel
+              {businessData?.name || "Business"}
             </Text>
 
             <MaterialCommunityIcons
@@ -131,7 +170,7 @@ const BusinessProfile = () => {
             <EvilIcons name="location" size={18} color="black" />
 
             <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-              New York, North Bergen{"  "} |{"  "} 150 employee
+              {businessData?.address || "Location unavailable"}
             </Text>
           </View>
         </View>
@@ -224,6 +263,7 @@ const BusinessProfile = () => {
                 {/* <Foundation name="clipboard" size={16} color="black" /> */}
                 <SimpleLineIcons name="notebook" size={14} color="black" />
               </View>
+
               <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
                 About Us
               </Text>
@@ -231,9 +271,7 @@ const BusinessProfile = () => {
 
             <View className="mx-5 mt-4">
               <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                Ocean View Hotel is a premium beachfront destination renowned
-                for its exceptional guest service, welcoming atmosphere, and
-                dynamic work culture.
+                {businessData?.description || "No description available."}
               </Text>
             </View>
 
@@ -242,9 +280,12 @@ const BusinessProfile = () => {
               <View className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row justify-center items-center">
                 <Ionicons name="person-outline" size={18} color="black" />
               </View>
-              <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
-                Team & Overview
-              </Text>
+
+              <View className='flex-1'>
+                <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
+                  Team & Overview
+                </Text>
+              </View>
             </View>
 
             <View className="mx-5 px-4 py-3 border border-[#eeeeee] mt-4 rounded-xl">
@@ -295,8 +336,7 @@ const BusinessProfile = () => {
               </View>
 
               <Text className="mt-2.5 font-proximanova-regular text-sm text-primary dark:text-dark-primary">
-                <Text className="font-proximanova-semibold">Note</Text> : X more
-                hire to activate
+                <Text className="font-proximanova-semibold">Note</Text> : X more hire to activate
               </Text>
             </View>
 

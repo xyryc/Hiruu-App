@@ -20,6 +20,7 @@ interface BusinessState {
   fetchBusinesses: (search?: string) => Promise<any>;
   getMyBusinesses: (force?: boolean) => Promise<any>;
   getMyBusinessRoles: (businessId: string) => Promise<any>;
+  getBusinessProfile: (businessId: string) => Promise<any>;
   setSelectedBusinesses: (ids: string[]) => void;
   createCompanyManual: (companyData: any) => Promise<any>;
   createBusinessProfile: (payload: any) => Promise<any>;
@@ -114,6 +115,26 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
     }
   },
 
+  getBusinessProfile: async (businessId) => {
+    try {
+      const response = await axiosInstance.get(`/business/${businessId}`);
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to fetch business profile";
+        throw new Error(errorMsg);
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error("Fetch business profile error:", error);
+      throw error;
+    }
+  },
+
   setSelectedBusinesses: (ids) => set({ selectedBusinesses: ids }),
 
   createCompanyManual: async (companyData) => {
@@ -193,6 +214,15 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
         formData.append("logo", logoFile);
       }
 
+      if (payload.coverPhoto) {
+        const coverFile = {
+          uri: payload.coverPhoto,
+          type: "image/jpeg",
+          name: "cover.jpg",
+        } as any;
+        formData.append("coverPhoto", coverFile);
+      }
+
       const response = await fetch(`${baseUrl}/business`, {
         method: "POST",
         headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
@@ -223,6 +253,14 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       set({
         userBusiness: result.data ?? null,
         isLoading: false,
+        myBusinesses: result?.data
+          ? [
+              result.data,
+              ...get().myBusinesses.filter(
+                (item) => item?.id !== result.data?.id
+              ),
+            ]
+          : get().myBusinesses,
       });
 
       return result;

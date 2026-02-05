@@ -240,6 +240,7 @@ const BusinessSetup = () => {
       email: email.trim(),
       website: website.trim(),
       logo: profileImage,
+      coverPhoto: coverImage,
     };
 
     try {
@@ -285,7 +286,7 @@ const BusinessSetup = () => {
               ) : (
                 <Image
                   source={
-                    profileImage || require("@/assets/images/reward/user.svg")
+                    profileImage || require("@/assets/images/placeholder.png")
                   }
                   contentFit="cover"
                   style={{ height: 116, width: 116, borderRadius: 100 }}
