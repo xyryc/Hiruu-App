@@ -1,5 +1,5 @@
 import { getStepName } from "@/constants/Steps";
-import { useStore } from "@/stores/store";
+import { useAuthStore } from "@/stores/authStore";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -19,7 +19,7 @@ const ProgressFlow = () => {
   const [direction, setDirection] = useState("forward");
   const progress = currentStep / totalSteps;
   const router = useRouter();
-  const { user } = useStore();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     const onboarding = typeof user?.onboarding === "number" ? user.onboarding : 0;

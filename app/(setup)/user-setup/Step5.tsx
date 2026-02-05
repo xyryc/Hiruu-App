@@ -2,7 +2,8 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import OTPInput from "@/components/ui/inputs/OTPInput";
 import PhoneNumberInput from "@/components/ui/inputs/PhoneNumberInput";
-import { useStore } from "@/stores/store";
+import { useAuthStore } from "@/stores/authStore";
+import { useProfileStore } from "@/stores/profileStore";
 import { useRouter } from "expo-router";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
@@ -21,7 +22,8 @@ export default function Step5({
   handleBack,
 }: any) {
   const router = useRouter();
-  const { user, addContact, verifyAccount, updateProfile, isLoading } = useStore();
+  const { user, addContact, verifyAccount } = useAuthStore();
+  const { updateProfile, isLoading } = useProfileStore();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);

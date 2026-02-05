@@ -1,6 +1,6 @@
 import ErrorBoundary from "@/components/ui/error/ErrorBoundary";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { useStore } from "@/stores/store";
+import { useAuthStore } from "@/stores/authStore";
 import "@/utils/i18n";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
@@ -23,7 +23,7 @@ const AppContent = () => {
   });
 
   const [appIsReady, setAppIsReady] = useState(false);
-  const { initializeAuth } = useStore();
+  const { initializeAuth } = useAuthStore();
 
   useEffect(() => {
     const init = async () => {

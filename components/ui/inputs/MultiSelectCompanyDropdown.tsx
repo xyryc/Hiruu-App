@@ -1,4 +1,4 @@
-import { useStore } from "@/stores/store";
+import { useBusinessStore } from "@/stores/businessStore";
 import { Companies, Company, MultiSelectCompanyDropdownProps } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -25,7 +25,7 @@ const MultiSelectCompanyDropdown = ({
   onCompaniesChange,
   onWorkExperiencesChange,
 }: MultiSelectCompanyDropdownProps) => {
-  const { fetchBusinesses, createCompanyManual } = useStore();
+  const { fetchBusinesses, createCompanyManual } = useBusinessStore();
   const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoadingCompanies, setIsLoadingCompanies] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);

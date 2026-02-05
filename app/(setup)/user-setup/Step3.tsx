@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import MultiSelectCompanyDropdown from "@/components/ui/inputs/MultiSelectCompanyDropdown";
-import { useStore } from "@/stores/store";
+import { useProfileStore } from "@/stores/profileStore";
 import { Company, WorkExperience } from "@/types";
 import { t } from "i18next";
 import { useRouter } from "expo-router";
@@ -23,7 +23,7 @@ export default function Step3({
   const router = useRouter();
   const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
   const [workExperiences, setWorkExperiences] = useState<WorkExperience[]>([]);
-  const { updateProfile, isLoading } = useStore();
+  const { updateProfile, isLoading } = useProfileStore();
 
   const handleSkip = () => {
     router.replace("/(tabs)/home");

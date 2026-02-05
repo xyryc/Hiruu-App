@@ -1,4 +1,4 @@
-import { useStore } from '@/stores/store';
+import { useAuthStore } from "@/stores/authStore";
 import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const LogoutDeletModal = ({ visible, onClose, data }: any) => {
   const router = useRouter()
-  const { logout } = useStore()
+  const { logout } = useAuthStore();
 
   const handleLogout = async () => {
     await logout()

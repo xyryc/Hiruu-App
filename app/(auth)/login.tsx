@@ -1,12 +1,14 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import SocialAuth from "@/components/layout/SocialAuth";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import { useStore } from "@/stores/store";
+import { useAuthStore } from "@/stores/authStore";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { t } from "i18next";
+import { translateApiMessage } from "@/utils/apiMessages";
+import { toast } from "sonner-native";
 import React, { useState } from "react";
 import {
   Alert,
@@ -28,7 +30,7 @@ const Login = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isValidPhone, setIsValidPhone] = useState(true);
   const router = useRouter();
-  const { login, isLoading, clearError } = useStore();
+  const { login, isLoading, clearError } = useAuthStore();
 
   let phoneRef: any = null;
 
@@ -54,10 +56,16 @@ const Login = () => {
         return;
       }
 
-      const result = await login({ email, password });
+      try {
+        const result = await login({ email, password });
 
-      if (result?.success) {
-        router.replace("/(tabs)/home");
+        if (result?.success) {
+          toast.success(t("common.success", "Success"));
+          router.replace("/(tabs)/home");
+        }
+      } catch (error: any) {
+        const messageKey = error?.message || "UNKNOWN_ERROR";
+        toast.error(translateApiMessage(messageKey));
       }
     } else {
       // Temporarily disabled until phone login endpoint is clarified

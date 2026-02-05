@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ShareVia from "@/components/ui/modals/ShareVia";
-import { useStore } from '@/stores/store';
+import { useBusinessStore } from "@/stores/businessStore";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
 import { Image } from "expo-image";
@@ -32,7 +32,7 @@ const QrGenerate = () => {
   const [businessLogoUrl, setBusinessLogoUrl] = useState("")
 
   const [inviteCode, setInviteCode] = useState("")
-  const { userBusiness, generateBusinessCode, isLoading } = useStore()
+  const { userBusiness, generateBusinessCode, isLoading } = useBusinessStore();
 
   const generatedeepLinkUrl = async () => {
     const businessId = userBusiness?.id;

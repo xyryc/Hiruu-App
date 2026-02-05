@@ -21,6 +21,7 @@
     "error": "Error"
   },
   "api": {
+    "auth_invalid_credentials": "Invalid email or password.",
     "business_created_successfully": "Business created successfully.",
     "UNKNOWN_ERROR": "An unexpected error occurred"
   },

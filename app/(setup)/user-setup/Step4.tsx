@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import InterestSelection from "@/components/ui/inputs/InterestSelection";
-import { useStore } from "@/stores/store";
+import { useProfileStore } from "@/stores/profileStore";
 import { useRouter } from "expo-router";
 import { t } from "i18next";
 import { useState } from "react";
@@ -21,7 +21,7 @@ export default function Step4({
 }: any) {
   const router = useRouter();
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
-  const { updateProfile, isLoading } = useStore();
+  const { updateProfile, isLoading } = useProfileStore();
 
   const handleNext = async () => {
     if (selectedInterests.length === 0) {

@@ -1,15 +1,18 @@
-import { useStore } from "@/stores/store";
+import { useAuthStore } from "@/stores/authStore";
+import { useProfileStore } from "@/stores/profileStore";
 import { Redirect } from "expo-router";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 
 export default function Index() {
-  const { user, isInitialized, initializeAuth, isProfileComplete } = useStore();
+  const { user, isInitialized, initializeAuth } = useAuthStore();
+  const { isProfileComplete, loadProfileComplete } = useProfileStore();
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     const init = async () => {
       await initializeAuth();
+      await loadProfileComplete();
       setIsReady(true);
     };
     init();

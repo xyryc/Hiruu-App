@@ -1,4 +1,4 @@
-import { useStore } from "@/stores/store";
+import { useBusinessStore } from "@/stores/businessStore";
 import { TodaysShiftProps } from "@/types";
 import { SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -18,11 +18,9 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
     selectedBusinesses,
     setSelectedBusinesses,
     getMyBusinesses,
-  } = useStore();
+  } = useBusinessStore();
 
   useEffect(() => {
-    let isMounted = true;
-
     const loadBusinesses = async () => {
       try {
         await getMyBusinesses();
@@ -32,9 +30,6 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
     };
 
     loadBusinesses();
-    return () => {
-      isMounted = false;
-    };
   }, [getMyBusinesses]);
 
   const handleLogin = () => {

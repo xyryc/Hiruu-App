@@ -1,6 +1,6 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import { useStore } from "@/stores/store";
+import { useProfileStore } from "@/stores/profileStore";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -10,7 +10,7 @@ import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context"
 
 const Complete = () => {
   const router = useRouter();
-  const { setProfileComplete } = useStore();
+  const { setProfileComplete } = useProfileStore();
   const insets = useSafeAreaInsets();
   const [isSubmitting, setIsSubmitting] = useState(false);
 

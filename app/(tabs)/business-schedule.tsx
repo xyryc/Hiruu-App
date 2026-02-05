@@ -1,7 +1,7 @@
 import ShiftCard from "@/components/ui/cards/ShiftCard";
 import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
-import { useStore } from "@/stores/store";
+import { useBusinessStore } from "@/stores/businessStore";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { RelativePathString, useRouter } from "expo-router";
@@ -26,13 +26,11 @@ const BusinessScheduleScreen = () => {
     selectedBusinesses,
     setSelectedBusinesses,
     getMyBusinesses,
-  } = useStore();
+  } = useBusinessStore();
 
   console.log("selected business", selectedBusinesses)
 
   useEffect(() => {
-    let isMounted = true;
-
     const loadBusinesses = async () => {
       try {
         await getMyBusinesses();
@@ -42,9 +40,6 @@ const BusinessScheduleScreen = () => {
     };
 
     loadBusinesses();
-    return () => {
-      isMounted = false;
-    };
   }, [getMyBusinesses]);
   // Get display content for header button
   const getDisplayContent = () => {

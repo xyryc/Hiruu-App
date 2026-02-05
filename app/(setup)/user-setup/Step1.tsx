@@ -3,7 +3,7 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import DateOfBirthInput from "@/components/ui/inputs/DateOfBirthInput";
 import GenderSelection from "@/components/ui/inputs/GenderSelection";
-import { useStore } from "@/stores/store";
+import { useProfileStore } from "@/stores/profileStore";
 import { GenderOption } from "@/types";
 import { t } from "i18next";
 import { useState } from "react";
@@ -22,7 +22,7 @@ export default function Step1({
   onComplete,
   handleBack,
 }: any) {
-  const { user, updateProfile, isLoading } = useStore();
+  const { updateProfile, isLoading } = useProfileStore();
 
   // Form state
   const [fullName, setFullName] = useState("John Doe");

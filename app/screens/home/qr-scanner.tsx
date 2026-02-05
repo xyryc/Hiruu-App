@@ -1,5 +1,5 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import { useStore } from '@/stores/store';
+import { useBusinessStore } from "@/stores/businessStore";
 import { Feather } from "@expo/vector-icons";
 import { Camera, CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
@@ -28,7 +28,7 @@ const QrScanner = () => {
   const [scanned, setScanned] = useState(false);
   const [flashMode, setFlashMode] = useState<"off" | "on" | "auto">("off");
 
-  const { joinBusiness, loading } = useStore();
+  const { joinBusiness, loading } = useBusinessStore();
 
   useEffect(() => {
 

@@ -21,6 +21,7 @@
     "error": "Σφάλμα"
   },
   "api": {
+    "auth_invalid_credentials": "Μη έγκυρα στοιχεία σύνδεσης.",
     "business_created_successfully": "Η επιχείρηση δημιουργήθηκε με επιτυχία.",
     "UNKNOWN_ERROR": "Παρουσιάστηκε απροσδόκητο σφάλμα"
   },

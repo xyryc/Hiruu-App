@@ -1,4 +1,4 @@
-import { useStore } from "@/stores/store";
+import { useBusinessStore } from "@/stores/businessStore";
 import { BusinessSelectionModalProps } from "@/types";
 import { Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
@@ -21,7 +21,7 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
   selectedBusinesses,
   onSelectionChange,
 }) => {
-  const { myBusinesses, myBusinessesLoading, getMyBusinesses } = useStore();
+  const { myBusinesses, myBusinessesLoading, getMyBusinesses } = useBusinessStore();
   const displayedBusinesses =
     businesses.length > 0 ? businesses : myBusinesses;
 

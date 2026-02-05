@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
-import { useStore } from "@/stores/store";
+import { useBusinessStore } from "@/stores/businessStore";
 import { translateApiMessage } from "@/utils/apiMessages";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -33,7 +33,7 @@ const BusinessSetup = () => {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  const { createBusinessProfile, isLoading } = useStore();
+  const { createBusinessProfile, isLoading } = useBusinessStore();
 
   // profile and cover photo
   const [profileImage, setProfileImage] = useState<string | null>(null);
