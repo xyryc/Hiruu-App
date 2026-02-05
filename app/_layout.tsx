@@ -5,8 +5,8 @@ import "@/utils/i18n";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import { useEffect, useState } from "react";
-import "react-native-reanimated";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import "react-native-reanimated";
 import { Toaster } from "sonner-native";
 import "./global.css";
 import SplashScreen from "./splash";
@@ -33,7 +33,7 @@ const AppContent = () => {
       if (fontsLoaded) {
         const timer = setTimeout(() => {
           setAppIsReady(true);
-        }, 1500);
+        }, 500); // default: 1500
 
         return () => clearTimeout(timer);
       }
@@ -50,7 +50,6 @@ const AppContent = () => {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="(auth)" />
-      {/* <Stack.Screen name="(setup)" /> */}
       <Stack.Screen name="(tabs)" />
       <Stack.Screen name="+not-found" />
     </Stack>

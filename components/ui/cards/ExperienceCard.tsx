@@ -9,22 +9,21 @@ type ExperienceCardProps = {
   position?: string;
   companyLogo?: string | { uri: string };
   isVerified?: boolean;
+  isCurrent?: boolean;
 };
 
 const ExperienceCard = ({
-  focus,
+  isCurrent,
   className,
   companyName,
   position,
   companyLogo,
   isVerified,
 }: ExperienceCardProps) => {
-
   return (
     <View
-      className={` p-2.5  ${className} ${focus ? "border rounded-2xl" : "border border-[#0000000D] rounded-2xl"} `}
-    >
-      {focus && (
+      className={`p-2.5  ${className} ${isCurrent ? "mb-8 border rounded-2xl" : "border border-[#0000000D] rounded-2xl"}`}>
+      {isCurrent && (
         <View className="absolute -top-9 right-2">
           <Image
             source={require("@/assets/images/experience.svg")}

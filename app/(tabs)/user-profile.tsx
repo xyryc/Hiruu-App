@@ -248,7 +248,7 @@ const profile = () => {
         {experiences.map((experience: any, index: number) => (
           <ExperienceCard
             key={experience?.id || `${experience?.companyId}-${index}`}
-            focus={Boolean(experience?.isCurrent)}
+            isCurrent={Boolean(experience?.isCurrent)}
             className={index === 0 ? "mt-8 mx-5" : "mt-2.5 mx-5"}
             companyName={experience?.company?.name}
             position={experience?.position}
