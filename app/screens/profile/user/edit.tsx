@@ -42,6 +42,8 @@ const Edit = () => {
     "art",
   ]);
   const [profileData, setProfileData] = useState<any>(null);
+  const [shortIntro, setShortIntro] = useState("");
+  const [isEditingIntro, setIsEditingIntro] = useState(false);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
@@ -54,6 +56,7 @@ const Edit = () => {
         const result = await profileService.getProfile();
         if (isMounted) {
           setProfileData(result.data);
+          setShortIntro(result.data?.bio || "");
           if (Array.isArray(result.data?.interest)) {
             setSelectedInterests(result.data.interest);
           }
@@ -135,10 +138,14 @@ const Edit = () => {
           </View>
           <BadgeCard className="mx-5 mt-3.5" />
         </View>
+
+
         <EditBadgeModal
           visible={isBadgeVisible}
           onClose={() => setIsBadgeVisible(false)}
         />
+
+
         {/* short intro */}
         <View>
           <View className="flex-row justify-between items-center mx-5 mt-8 ">
@@ -154,16 +161,32 @@ const Edit = () => {
                 Short Intro
               </Text>
             </View>
-            <Text className="font-proximanova-semibold text-sm text-[#4FB2F3] underline ">
-              Edit
-            </Text>
+            <TouchableOpacity onPress={() => setIsEditingIntro((prev) => !prev)}>
+              <Text className="font-proximanova-semibold text-sm text-[#4FB2F3] underline ">
+                {isEditingIntro ? "Done" : "Edit"}
+              </Text>
+            </TouchableOpacity>
           </View>
           <View className="mx-5 mt-4">
-            <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary border border-[#0000000D] rounded-xl p-3">
-              {profileData?.bio || "No bio yet."}
-            </Text>
+            {isEditingIntro ? (
+              <TextInput
+                value={shortIntro}
+                onChangeText={setShortIntro}
+                placeholder="Type here..."
+                placeholderTextColor="#7A7A7A"
+                className="w-full text-sm text-primary border border-[#0000000D] rounded-xl p-3"
+                multiline
+                textAlignVertical="top"
+              />
+            ) : (
+              <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary border border-[#0000000D] rounded-xl p-3">
+                {shortIntro || "No bio yet."}
+              </Text>
+            )}
           </View>
         </View>
+
+
         {/* Experience */}
         <View>
           <View className="flex-row justify-between items-center mx-5 mt-8 ">
@@ -266,6 +289,7 @@ const Edit = () => {
             </View>
           </View>
         </View>
+
         {/*  Interests */}
         <View>
           <View className="flex-row justify-between items-center mx-5 mt-8 ">
@@ -306,6 +330,7 @@ const Edit = () => {
             setVisible(false);
           }}
         />
+
         {/* Contact Us On */}
         <View className="flex-row justify-between items-center mx-5 mt-8 ">
           <View className="flex-row gap-2.5">
