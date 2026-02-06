@@ -65,16 +65,16 @@ const CreateTemplate = () => {
         className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
         edges={["left", "right", "bottom"]}
       >
-        <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-2.5 px-5">
-          <ScreenHeader
-            className=""
-            style={{ paddingTop: insets.top + 10, paddingBottom: 26 }}
-            onPressBack={() => router.back()}
-            title="Create Templete"
-            titleClass="text-primary dark:text-dark-primary"
-            iconColor={isDark ? "#fff" : "#111"}
-          />
-        </View>
+
+        <ScreenHeader
+          className="bg-[#E5F4FD] px-5 rounded-b-2xl"
+          style={{ paddingTop: insets.top, paddingBottom: 16 }}
+          onPressBack={() => router.back()}
+          title="Create Templete"
+          titleClass="text-primary dark:text-dark-primary"
+          iconColor={isDark ? "#fff" : "#111"}
+        />
+
         <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
           {/* inpute */}
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">

@@ -22,6 +22,7 @@ interface BusinessState {
   getMyBusinessRoles: (businessId: string) => Promise<any>;
   getBusinessProfile: (businessId: string) => Promise<any>;
   updateMyBusinessProfile: (businessId: string, payload: any) => Promise<any>;
+  deleteBusinessRole: (businessId: string, roleId: string) => Promise<any>;
   setSelectedBusinesses: (ids: string[]) => void;
   createCompanyManual: (companyData: any) => Promise<any>;
   createBusinessProfile: (payload: any) => Promise<any>;
@@ -132,6 +133,28 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       return result.data;
     } catch (error) {
       console.error("Fetch business profile error:", error);
+      throw error;
+    }
+  },
+
+  deleteBusinessRole: async (businessId, roleId) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/businesses/${businessId}/roles/${roleId}`
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to delete role";
+        throw new Error(errorMsg);
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error("Delete role error:", error);
       throw error;
     }
   },

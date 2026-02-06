@@ -6,6 +6,7 @@ import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Modal,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -21,9 +22,12 @@ const AllCreatedRole = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const { selectedBusinesses, getMyBusinessRoles } = useBusinessStore();
+  const { selectedBusinesses, getMyBusinessRoles, deleteBusinessRole } =
+    useBusinessStore();
   const [roles, setRoles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [menuRoleId, setMenuRoleId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const businessId = selectedBusinesses[0];
 
@@ -57,6 +61,21 @@ const AllCreatedRole = () => {
     };
   }, [businessId, getMyBusinessRoles]);
 
+  const handleDeleteRole = async (roleId: string) => {
+    if (!businessId) return;
+    try {
+      setDeleting(true);
+      await deleteBusinessRole(businessId, roleId);
+      setRoles((prev) => prev.filter((role) => role.id !== roleId));
+      setMenuRoleId(null);
+      toast.success("Role deleted");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to delete role");
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -85,7 +104,7 @@ const AllCreatedRole = () => {
       <ScrollView className="mx-5">
         <View className="mt-4">
           {isLoading ? (
-            <View className="py-10 items-center">
+            <View className="flex-1 items-center">
               <ActivityIndicator size="large" />
             </View>
           ) : roles.length > 0 ? (
@@ -100,7 +119,14 @@ const AllCreatedRole = () => {
                 <Text className="font-proximanova-semibold text-primary dark:text-dark-primary capitalize">
                   {role?.name || "Role"}
                 </Text>
-                <Entypo name="dots-three-vertical" size={20} color="black" />
+
+                {/* three dot dropdown */}
+                <TouchableOpacity
+                  onPress={() => setMenuRoleId(role.id)}
+                  className="p-2 rounded-full"
+                >
+                  <Entypo name="dots-three-vertical" size={16} color="black" />
+                </TouchableOpacity>
               </TouchableOpacity>
             ))
           ) : (
@@ -112,6 +138,31 @@ const AllCreatedRole = () => {
           )}
         </View>
       </ScrollView>
+
+      <Modal
+        visible={Boolean(menuRoleId)}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setMenuRoleId(null)}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => setMenuRoleId(null)}
+          className="flex-1 bg-black/40 justify-end"
+        >
+          <View className="bg-white rounded-t-2xl px-6 py-5">
+            <TouchableOpacity
+              onPress={() => menuRoleId && handleDeleteRole(menuRoleId)}
+              disabled={deleting}
+              className="py-3"
+            >
+              <Text className="text-red-600 font-proximanova-semibold">
+                {deleting ? "Deleting..." : "Delete role"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 };
