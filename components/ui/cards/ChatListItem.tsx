@@ -1,8 +1,27 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Image } from "expo-image";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-const ChatListItem = ({ onPress, isActive }) => {
+type ChatListItemProps = {
+  onPress: () => void;
+  title: string;
+  subtitle?: string;
+  time?: string;
+  avatar?: string;
+  unreadCount?: number;
+  badgeAvatar?: string;
+};
+
+const ChatListItem = ({
+  onPress,
+  title,
+  subtitle,
+  time,
+  avatar,
+  unreadCount = 0,
+  badgeAvatar,
+}: ChatListItemProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -11,7 +30,7 @@ const ChatListItem = ({ onPress, isActive }) => {
       {/* left */}
       <View>
         <Image
-          source="https://media.licdn.com/dms/image/v2/D5603AQFMeZ7i9ybZgw/profile-displayphoto-shrink_200_200/B56ZS29wLQHwAY-/0/1738236429558?e=2147483647&v=beta&t=RTX-UGEWSzuEb-Gv2bqXqREzQX15FMKi0TK1HJBAKuE"
+          source={avatar || require("@/assets/images/placeholder.png")}
           style={{
             width: 50,
             height: 50,
@@ -19,9 +38,9 @@ const ChatListItem = ({ onPress, isActive }) => {
           }}
           contentFit="cover"
         />
-        {isActive === "chat" && (
+        {!badgeAvatar && (
           <Image
-            source="https://images-platform.99static.com//XA86QPjmKC7CdDnzMsNPiEH5O-Y=/63x55:1588x1580/fit-in/500x500/projects-files/66/6611/661127/3fcadb3b-493d-4b86-8b30-3d38007c3a79.png"
+            source={badgeAvatar || require("@/assets/images/placeholder.png")}
             style={{
               width: 25,
               height: 25,
@@ -36,34 +55,39 @@ const ChatListItem = ({ onPress, isActive }) => {
       </View>
 
       {/* right */}
-      <View className="flex-1">
+      <View className="flex-1 border">
         {/* top */}
         <View className="flex-row justify-between items-center">
-          <Text className="font-proximanova-semibold text-primary">
-            Farout Beach Club
+          <Text className="font-proximanova-semibold text-lg text-primary">
+            {title}
           </Text>
-          <Text className="font-proximanova-regular text-primary">12:00PM</Text>
+          {!!time && (
+            <Text className="font-proximanova-regular text-base text-primary">
+              {time}
+            </Text>
+          )}
         </View>
 
         {/* bottom */}
         <View className="flex-1 flex-row justify-between items-center">
           <View className="flex-row gap-1.5 items-center">
-            <Text className="font-proximanova-semibold text-sm text-[#4FB2F3]">
-              You:
-            </Text>
+            <Ionicons name="checkmark-done" size={14} color="black" />
+
             <Text
               className="text-sm font-proximanova-regular text-primary w-4/5"
               numberOfLines={1}
             >
-              Hi, I just applied for the bartender position
+              {subtitle || "No messages yet."}
             </Text>
           </View>
 
-          <View className="w-6 h-6 bg-[#4FB2F3] rounded-full items-center justify-center">
-            <Text className="font-proximanova-semibold text-sm text-white">
-              1
-            </Text>
-          </View>
+          {unreadCount > 0 && (
+            <View className="w-6 h-6 bg-[#4FB2F3] rounded-full items-center justify-center">
+              <Text className="font-proximanova-semibold text-sm text-white">
+                {unreadCount}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>

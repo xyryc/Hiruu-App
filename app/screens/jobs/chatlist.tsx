@@ -1,11 +1,14 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import ChatListItem from "@/components/ui/cards/ChatListItem";
 import SearchBar from "@/components/ui/inputs/SearchBar";
+import { useAuthStore } from "@/stores/authStore";
+import { chatService } from "@/services/chatService";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useMemo, useState } from "react";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const ChatList = () => {
   const router = useRouter();
@@ -13,6 +16,56 @@ const ChatList = () => {
   const isDark = colorScheme === "dark";
   const tabs = ["group", "chat"];
   const [isActive, setIsActive] = useState("group");
+  const [rooms, setRooms] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuthStore();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRooms = async () => {
+      try {
+        setLoading(true);
+        const result = await chatService.getChatRooms();
+        const data = result?.data?.data || [];
+        if (isMounted) {
+          setRooms(Array.isArray(data) ? data : []);
+        }
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load chats");
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadRooms();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const filteredRooms = useMemo(() => {
+    return rooms.filter((room) =>
+      isActive === "group" ? room.type !== "direct" : room.type === "direct"
+    );
+  }, [rooms, isActive]);
+
+  const formatTime = (dateString?: string | null) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const getDirectUser = (room: any) => {
+    const currentUserId = user?.id;
+    const participant = room?.participants?.find(
+      (p: any) => p?.userId && p?.userId !== currentUserId
+    );
+    return participant?.user || room?.participants?.[0]?.user;
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#E5F4FD] dark:bg-dark-background">
@@ -47,56 +100,43 @@ const ChatList = () => {
         showsVerticalScrollIndicator={false}
         className="bg-white px-5"
       >
-        {isActive === "group" ? (
-          <>
-            <SearchBar className="mt-5 mb-4" />
+        <SearchBar className="mt-5 mb-4" />
 
-            <ChatListItem
-              isActive={isActive}
-              onPress={() => router.push("/screens/jobs/chatscreen")}
-            />
-            <ChatListItem
-              isActive={isActive}
-              onPress={() => router.push("/screens/jobs/chatscreen")}
-            />
-            <ChatListItem
-              isActive={isActive}
-              onPress={() => router.push("/screens/jobs/chatscreen")}
-            />
-            <ChatListItem
-              isActive={isActive}
-              onPress={() => router.push("/screens/jobs/chatscreen")}
-            />
-            <ChatListItem
-              isActive={isActive}
-              onPress={() => router.push("/screens/jobs/chatscreen")}
-            />
-          </>
+        {loading ? (
+          <View className="py-6 items-center">
+            <ActivityIndicator size="small" color="#4FB2F3" />
+          </View>
+        ) : filteredRooms.length === 0 ? (
+          <Text className="text-center text-sm text-gray-500 py-6">
+            No chats found.
+          </Text>
         ) : (
-          <>
-            <SearchBar className="mt-5 mb-4" />
+          filteredRooms.map((room) => {
+            const directUser = room.type === "direct" ? getDirectUser(room) : null;
+            const title =
+              room.type === "direct"
+                ? directUser?.name || "Direct Chat"
+                : room.name || "Group Chat";
+            const avatar =
+              room.type === "direct"
+                ? directUser?.avatar
+                : room.avatar || room?.business?.logo;
+            const time = formatTime(room.lastMessageAt || room.updatedAt);
+            const subtitle =
+              room.lastMessage?.content || room.lastMessage?.text || "No messages yet.";
 
-            <ChatListItem
-              isActive={isActive}
-              onPress={() => router.push("/screens/jobs/chatscreen")}
-            />
-            <ChatListItem
-              isActive={isActive}
-              onPress={() => router.push("/screens/jobs/chatscreen")}
-            />
-            <ChatListItem
-              isActive={isActive}
-              onPress={() => router.push("/screens/jobs/chatscreen")}
-            />
-            <ChatListItem
-              isActive={isActive}
-              onPress={() => router.push("/screens/jobs/chatscreen")}
-            />
-            <ChatListItem
-              isActive={isActive}
-              onPress={() => router.push("/screens/jobs/chatscreen")}
-            />
-          </>
+            return (
+              <ChatListItem
+                key={room.id}
+                onPress={() => router.push("/screens/jobs/chatscreen")}
+                title={title}
+                subtitle={subtitle}
+                time={time}
+                avatar={avatar}
+                unreadCount={room.unreadCount || 0}
+              />
+            );
+          })
         )}
       </ScrollView>
     </SafeAreaView>
