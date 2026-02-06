@@ -9,13 +9,11 @@ import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import ColorPickerModal from "@/components/ui/modals/ColorPickerModal";
 import { profileService } from "@/services/profileService";
 import {
-  Feather,
   FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
-  SimpleLineIcons,
+  SimpleLineIcons
 } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -360,46 +358,6 @@ const profile = () => {
             onSelect={setSelectedIssue}
           />
         </View>
-
-        {/* Employee Info */}
-        <View className="flex-row items-center gap-2.5 mt-8 mx-5">
-          <DynamicBackground
-            className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row items-center justify-center overflow-hidden"
-            pickerType={pickerType}
-            profileColor={profileColor}
-            gradientColors={gradientColors}
-          >
-            <Feather name="user" size={16} color="black" />
-          </DynamicBackground>
-          <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
-            Employee Info
-          </Text>
-        </View>
-        <DynamicBackground
-          className="flex-row justify-between items-center mx-5 mt-4 p-2.5 !bg-[#4FB2F3] rounded-xl overflow-hidden"
-          pickerType={pickerType}
-          profileColor={profileColor}
-          gradientColors={gradientColors}
-        >
-          <View className="flex-row items-center gap-2.5">
-            <Image
-              source={require("@/assets/images/adaptive-icon.png")}
-              contentFit="contain"
-              style={{ height: 40, width: 40 }}
-            />
-
-            <Text className="font-proximanova-bold text-white">
-              Md Talath Un Nabi Anik
-            </Text>
-          </View>
-          <View className="h-10 w-10 bg-white rounded-full flex-row items-center justify-center">
-            <Image
-              source={require("@/assets/images/messages-fill.svg")}
-              contentFit="contain"
-              style={{ height: 22, width: 22 }}
-            />
-          </View>
-        </DynamicBackground>
 
         {/* Contact Us On */}
         <View className="flex-row items-center gap-2.5 mt-8 mx-5">
