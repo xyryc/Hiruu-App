@@ -10,6 +10,7 @@ import InterestSelection from "@/components/ui/inputs/InterestSelection";
 import EditBadgeModal from "@/components/ui/modals/EditBadgeModal";
 import InterestModal from "@/components/ui/modals/InterestModal";
 import { profileService } from "@/services/profileService";
+import { translateApiMessage } from "@/utils/apiMessages";
 import {
   FontAwesome6,
   Ionicons,
@@ -31,6 +32,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const Edit = () => {
   const [isBadgeVisible, setIsBadgeVisible] = useState(false);
@@ -44,6 +46,7 @@ const Edit = () => {
   const [profileData, setProfileData] = useState<any>(null);
   const [shortIntro, setShortIntro] = useState("");
   const [isEditingIntro, setIsEditingIntro] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
@@ -71,6 +74,23 @@ const Edit = () => {
       isMounted = false;
     };
   }, []);
+
+  const handleSaveProfile = async () => {
+    try {
+      setIsSaving(true);
+      const result = await profileService.updateProfile({
+        bio: shortIntro,
+        interest: selectedInterests,
+      });
+      const messageKey = result?.message || "profile_updated_successfully";
+      toast.success(translateApiMessage(messageKey));
+    } catch (error: any) {
+      const messageKey = error?.message || "UNKNOWN_ERROR";
+      toast.error(translateApiMessage(messageKey));
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -144,7 +164,6 @@ const Edit = () => {
           visible={isBadgeVisible}
           onClose={() => setIsBadgeVisible(false)}
         />
-
 
         {/* short intro */}
         <View>
@@ -481,7 +500,12 @@ const Edit = () => {
           </View>
         </View>
 
-        <PrimaryButton title="Save Change" className="mx-5 mt-6" />
+        <PrimaryButton
+          title="Save Change"
+          className="mx-5 mt-6"
+          onPress={handleSaveProfile}
+          loading={isSaving}
+        />
       </ScrollView>
     </SafeAreaView>
   );
