@@ -6,6 +6,7 @@ import NamePlateCard from "@/components/ui/cards/NamePlateCard";
 import StatCardPrimary from "@/components/ui/cards/StatCardPrimary";
 import Dropdown from "@/components/ui/dropdown/DropDown";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
+import InterestSelection from "@/components/ui/inputs/InterestSelection";
 import ColorPickerModal from "@/components/ui/modals/ColorPickerModal";
 import { profileService } from "@/services/profileService";
 import {
@@ -325,21 +326,13 @@ const profile = () => {
           </Text>
         </View>
 
-        <View className="flex-row justify-between mx-5 mt-4">
-          {(interests.length ? interests.slice(0, 4) : ["No interests"]).map(
-            (item, index) => (
-              <View key={`${item}-${index}`}>
-                <View className="w-16 h-16 rounded-full items-center justify-center bg-gray-200 p-2.5">
-                  <Text className="text-xl">
-                    {item === "No interests" ? "—" : item[0]?.toUpperCase()}
-                  </Text>
-                </View>
-                <Text className="text-center text-xs mt-2 font-proximanova-medium">
-                  {item}
-                </Text>
-              </View>
-            )
-          )}
+        <View className="mx-5 mt-4">
+          <InterestSelection
+            selectedInterests={interests}
+            onInterestsChange={() => { }}
+            readonly
+            showSelectedOnly
+          />
         </View>
 
         <View className="mx-5 mt-8 flex-row justify-between items-center">

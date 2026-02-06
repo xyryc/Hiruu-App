@@ -12,12 +12,16 @@ interface InterestsSelectionProps {
   selectedInterests: string[];
   onInterestsChange: (interests: string[]) => void;
   maxSelections?: number;
+  readonly?: boolean;
+  showSelectedOnly?: boolean;
 }
 
 const InterestsSelection: React.FC<InterestsSelectionProps> = ({
   selectedInterests,
   onInterestsChange,
   maxSelections = 10,
+  readonly = false,
+  showSelectedOnly = false,
 }) => {
   const interests: Interest[] = [
     { id: "art", name: "Art", icon: "🎨", color: "bg-orange-100" },
@@ -78,23 +82,31 @@ const InterestsSelection: React.FC<InterestsSelectionProps> = ({
   const isSelected = (interestId: string) =>
     selectedInterests.includes(interestId);
 
+  const visibleInterests =
+    readonly && showSelectedOnly
+      ? interests.filter((interest) =>
+        selectedInterests.includes(interest.id)
+      )
+      : interests;
+
   return (
     <View>
-      {/* Header */}
-      <View className="mb-6">
-        <Text className="text-xl font-proximanova-semibold text-gray-900 mb-2">
-          What are your interests?
-        </Text>
-        <Text className="text-sm text-gray-600">
-          Select up to {maxSelections} interests ({selectedInterests.length}/
-          {maxSelections} selected)
-        </Text>
-      </View>
+      {!readonly && (
+        <View className="mb-6">
+          <Text className="text-xl font-proximanova-semibold text-gray-900 mb-2">
+            What are your interests?
+          </Text>
+          <Text className="text-sm text-gray-600">
+            Select up to {maxSelections} interests ({selectedInterests.length}/
+            {maxSelections} selected)
+          </Text>
+        </View>
+      )}
 
       {/* Interests Grid */}
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="flex-row flex-wrap justify-between">
-          {interests.map((interest) => {
+        <View className={`flex-row flex-wrap ${!readonly && "justify-between"}`}>
+          {visibleInterests.map((interest) => {
             const selected = isSelected(interest.id);
 
             return (
@@ -109,13 +121,13 @@ const InterestsSelection: React.FC<InterestsSelectionProps> = ({
                   <View className="relative">
                     <View
                       className={`w-16 h-16 rounded-full items-center justify-center overflow-hidden
-                        ${selected && `border border-primary`} ${interest.color}`}
+                        ${selected && !readonly ? `border border-primary` : ""} ${interest.color}`}
                     >
                       <Text className="text-2xl">{interest.icon}</Text>
                     </View>
 
                     {/* Checkmark */}
-                    {selected && (
+                    {(selected && !readonly) && (
                       <View className="absolute -top-1 -right-1 w-6 h-6 bg-gray-800 rounded-full items-center justify-center border-2 border-white">
                         <Text className="text-white text-xs font-proximanova-bold">
                           ✓
@@ -139,7 +151,7 @@ const InterestsSelection: React.FC<InterestsSelectionProps> = ({
       </ScrollView>
 
       {/* Selected Count */}
-      {selectedInterests.length >= maxSelections && (
+      {!readonly && selectedInterests.length >= maxSelections && (
         <View className="mt-4 p-3 bg-blue-50 rounded-lg">
           <Text className="text-blue-700 text-sm text-center">
             Maximum selections reached. Deselect an interest to choose another.

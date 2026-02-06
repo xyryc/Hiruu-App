@@ -6,6 +6,7 @@ import ExperienceCard from "@/components/ui/cards/ExperienceCard";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
 import Dropdown from "@/components/ui/dropdown/DropDown";
 import DatePicker from "@/components/ui/inputs/DatePicker";
+import InterestSelection from "@/components/ui/inputs/InterestSelection";
 import EditBadgeModal from "@/components/ui/modals/EditBadgeModal";
 import InterestModal from "@/components/ui/modals/InterestModal";
 import {
@@ -33,6 +34,12 @@ import {
 const Edit = () => {
   const [isBadgeVisible, setIsBadgeVisible] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([
+    "sports",
+    "music",
+    "photography",
+    "art",
+  ]);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
@@ -247,43 +254,23 @@ const Edit = () => {
             </TouchableOpacity>
           </View>
 
-          <View className="flex-row justify-between mx-5 mt-4">
-            <View>
-              <View className="w-16 h-16 rounded-full items-center justify-center bg-gray-200 p-2.5">
-                <Text className="text-2xl">⚽</Text>
-              </View>
-              <Text className="text-center text-xs  mt-2 font-proximanova-medium">
-                Sports
-              </Text>
-            </View>
-            <View>
-              <View className="w-16 h-16 rounded-full items-center justify-center bg-green-100 p-2.5">
-                <Text className="text-2xl">🎵</Text>
-              </View>
-              <Text className="text-center text-xs  mt-2 font-proximanova-medium">
-                Music
-              </Text>
-            </View>
-            <View>
-              <View className="w-16 h-16 rounded-full items-center justify-center bg-yellow-100 p-2.5">
-                <Text className="text-2xl">📷</Text>
-              </View>
-              <Text className="text-center text-xs  mt-2 font-proximanova-medium">
-                Photography
-              </Text>
-            </View>
-            <View>
-              <View className="w-16 h-16 rounded-full items-center justify-center bg-orange-100 p-2.5">
-                <Text className="text-2xl">🎨</Text>
-              </View>
-              <Text className="text-center text-xs  mt-2 font-proximanova-medium">
-                Art
-              </Text>
-            </View>
+          <View className="mx-5 mt-4">
+            <InterestSelection
+              selectedInterests={selectedInterests}
+              onInterestsChange={setSelectedInterests}
+              readonly
+            />
           </View>
         </View>
 
-        <InterestModal visible={visible} onClose={() => setVisible(false)} />
+        <InterestModal
+          visible={visible}
+          initialInterests={selectedInterests}
+          onClose={(next) => {
+            setSelectedInterests(next);
+            setVisible(false);
+          }}
+        />
         {/* Contact Us On */}
         <View className="flex-row justify-between items-center mx-5 mt-8 ">
           <View className="flex-row gap-2.5">
