@@ -14,7 +14,8 @@ import {
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -34,35 +35,33 @@ const BusinessProfile = () => {
   const { selectedBusinesses, getBusinessProfile } = useBusinessStore();
   const businessId = selectedBusinesses[0];
 
-  useEffect(() => {
-    let isMounted = true;
+  const loadBusiness = useCallback(async () => {
+    if (!businessId) {
+      setBusinessData(null);
+      return;
+    }
 
-    const loadBusiness = async () => {
-      if (!businessId) {
-        setBusinessData(null);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const data = await getBusinessProfile(businessId);
-        if (isMounted) {
-          setBusinessData(data);
-        }
-      } catch (error: any) {
-        toast.error(error?.message || "Failed to load business");
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadBusiness();
-    return () => {
-      isMounted = false;
-    };
+    try {
+      setLoading(true);
+      const data = await getBusinessProfile(businessId);
+      setBusinessData(data);
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to load business");
+    } finally {
+      setLoading(false);
+    }
   }, [businessId, getBusinessProfile]);
+
+  useEffect(() => {
+    loadBusiness();
+  }, [loadBusiness]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadBusiness();
+      return () => {};
+    }, [loadBusiness])
+  );
 
   const handleShare = async () => {
     try {
@@ -81,47 +80,46 @@ const BusinessProfile = () => {
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
       edges={["left", "right", "top"]}
     >
+      {/* Profile Header */}
+      <View className="flex-row justify-between mx-5 py-3.5">
+        <Text className="font-proximanova-bold text-2xl text-primary dark:text-dark-primary">
+          Profile
+        </Text>
+        <View className="flex-row gap-1.5 items-center justify-center">
+          <TouchableOpacity
+            onPress={() =>
+              router.push("/screens/profile/business/edit-business-profile")
+            }
+            className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
+          >
+            <SimpleLineIcons name="pencil" size={16} color="black" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => handleShare()}
+            className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
+          >
+            <EvilIcons name="share-apple" size={24} color="black" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => router.push("/screens/profile/settings/settings")}
+            className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
+          >
+            <Ionicons name="settings-outline" size={20} color="black" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <ScrollView
-        className="bg-[#ffffff] dark:bg-dark-border rounded-b-2xl pt-3.5"
+        className="bg-[#ffffff] dark:bg-dark-border rounded-b-2xl"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 40,
         }}
       >
-        {/* Profile Header */}
-        <View className="flex-row justify-between mx-5">
-          <Text className="font-proximanova-bold text-2xl text-primary dark:text-dark-primary">
-            Profile
-          </Text>
-          <View className="flex-row gap-1.5 items-center justify-center">
-            <TouchableOpacity
-              onPress={() =>
-                router.push("/screens/profile/business/edit-business-profile")
-              }
-              className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
-            >
-              <SimpleLineIcons name="pencil" size={16} color="black" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => handleShare()}
-              className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
-            >
-              <EvilIcons name="share-apple" size={24} color="black" />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => router.push("/screens/profile/settings/settings")}
-              className="h-10 w-10 bg-[#EEEEEE] rounded-full items-center justify-center"
-            >
-              <Ionicons name="settings-outline" size={20} color="black" />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-
         {/* cover and profile */}
-        <View className="mt-3 relative">
+        <View className="relative">
           {/* cover photo */}
           <Image
             source={businessData?.coverPhoto || require("@/assets/images/placeholder.png")}

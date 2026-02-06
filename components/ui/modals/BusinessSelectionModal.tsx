@@ -139,18 +139,27 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
                 >
                   {/* Business Avatar */}
                   <View className="w-10 h-10 rounded-full mr-4 justify-center items-center">
-                    <Image
-                      source={
-                        business.imageUrl ||
-                        "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
-                      }
-                      style={{
-                        width: 34,
-                        height: 34,
-                        borderRadius: 999,
-                      }}
-                      contentFit="cover"
-                    />
+                    {business.logo ? (
+                      <Image
+                        source={business.logo}
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: 999,
+                        }}
+                        contentFit="cover"
+                      />
+                    ) : (
+                      <Image
+                        source={require("@/assets/images/placeholder.png")}
+                        style={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: 999,
+                        }}
+                        contentFit="cover"
+                      />
+                    )}
                   </View>
 
                   {/* Business Name */}

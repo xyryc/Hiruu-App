@@ -407,7 +407,7 @@ const EditBusinessProfile = () => {
           </ScrollView>
 
           <PrimaryButton
-            className="absolute bottom-0 mt-4 mx-5 "
+            className="absolute bottom-10 mt-4 mx-5"
             title="Save Change"
             onPress={handleSave}
             loading={isLoading}
