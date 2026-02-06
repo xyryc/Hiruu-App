@@ -84,6 +84,7 @@ const Edit = () => {
       });
       const messageKey = result?.message || "profile_updated_successfully";
       toast.success(translateApiMessage(messageKey));
+      router.back()
     } catch (error: any) {
       const messageKey = error?.message || "UNKNOWN_ERROR";
       toast.error(translateApiMessage(messageKey));

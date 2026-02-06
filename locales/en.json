@@ -25,6 +25,7 @@
     "auth_invalid_credentials": "Invalid email or password.",
     "business_created_successfully": "Business created successfully.",
     "business_updated_successfully": "Profile updated successfully.",
+    "profile_updated_successfully": "Profile updated successfully.",
     "UNKNOWN_ERROR": "An unexpected error occurred"
   },
   "validation": {

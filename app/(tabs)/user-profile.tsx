@@ -16,6 +16,7 @@ import {
   SimpleLineIcons
 } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -44,25 +45,25 @@ const profile = () => {
     "#fff",
   ]);
 
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadProfile = async () => {
-      try {
-        const result = await profileService.getProfile();
-        if (isMounted) {
-          setProfileData(result.data);
-        }
-      } catch (error: any) {
-        toast.error(error?.message || "Failed to load profile");
-      }
-    };
-
-    loadProfile();
-    return () => {
-      isMounted = false;
-    };
+  const loadProfile = React.useCallback(async () => {
+    try {
+      const result = await profileService.getProfile();
+      setProfileData(result.data);
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to load profile");
+    }
   }, []);
+
+  useEffect(() => {
+    loadProfile();
+  }, [loadProfile]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadProfile();
+      return () => {};
+    }, [loadProfile])
+  );
 
   const handleColorSelect = (color: string | string[]) => {
     if (Array.isArray(color)) {
