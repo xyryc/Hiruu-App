@@ -167,6 +167,7 @@ const Edit = () => {
               </Text>
             </TouchableOpacity>
           </View>
+
           <View className="mx-5 mt-4">
             {isEditingIntro ? (
               <TextInput
@@ -207,6 +208,7 @@ const Edit = () => {
             </Text>
           </View>
         </View>
+
         <View className="mx-5 mt-4">
           <Dropdown
             // label="Select Style"
