@@ -9,6 +9,7 @@ import DatePicker from "@/components/ui/inputs/DatePicker";
 import InterestSelection from "@/components/ui/inputs/InterestSelection";
 import EditBadgeModal from "@/components/ui/modals/EditBadgeModal";
 import InterestModal from "@/components/ui/modals/InterestModal";
+import { profileService } from "@/services/profileService";
 import {
   FontAwesome6,
   Ionicons,
@@ -18,7 +19,7 @@ import {
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   Text,
@@ -40,9 +41,33 @@ const Edit = () => {
     "photography",
     "art",
   ]);
+  const [profileData, setProfileData] = useState<any>(null);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadProfile = async () => {
+      try {
+        const result = await profileService.getProfile();
+        if (isMounted) {
+          setProfileData(result.data);
+          if (Array.isArray(result.data?.interest)) {
+            setSelectedInterests(result.data.interest);
+          }
+        }
+      } catch {
+        // Silent fail to keep edit screen stable.
+      }
+    };
+
+    loadProfile();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <SafeAreaView
@@ -80,7 +105,15 @@ const Edit = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <NamePlateCard variant="variant5" />
+          <NamePlateCard
+            variant="variant5"
+            name={profileData?.name || profileData?.email || "User"}
+            address={profileData?.address?.address || "Location unavailable"}
+            profileImage={
+              profileData?.avatar ||
+              require("@/assets/images/placeholder.png")
+            }
+          />
         </View>
 
         {/* Badge item */}
@@ -127,9 +160,7 @@ const Edit = () => {
           </View>
           <View className="mx-5 mt-4">
             <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary border border-[#0000000D] rounded-xl p-3">
-              Join the core team at Space Hotel, a unique dining experience
-              known for its space-themed interiors and premium service. Join the
-              core team at Space Hotel, a unique dining experien
+              {profileData?.bio || "No bio yet."}
             </Text>
           </View>
         </View>
@@ -157,23 +188,26 @@ const Edit = () => {
           <Dropdown
             // label="Select Style"
             placeholder="2 Company selected"
-            // options={issues}
-            // value={selectedIssue}
-            // onSelect={setSelectedIssue}
+          // options={issues}
+          // value={selectedIssue}
+          // onSelect={setSelectedIssue}
           />
           <View className="p-5 mt-5 border border-[#0000000D] rounded-xl">
-            <View className="flex-row justify-between items-center mt-3">
+            <View className="flex-row justify-between items-center">
               <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
                 Verified HIRUU Experience
               </Text>
               <Ionicons name="close-circle" size={24} color="black" />
             </View>
-            <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-4">
-              auto-tracked
+            <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary my-3.5">
+              Auto-Tracked
             </Text>
-            <ExperienceCard className="mt-8" />
+
+            <ExperienceCard />
             <ExperienceCard className="mt-2.5" />
-            <View className="border border-[#0000000D] my-4" />
+
+            <View className="border-hairline border-[#0000000D] my-4" />
+
             {/* apply new job and roll */}
             <View className="flex-row gap-3 items-center">
               <View className="h-9 w-9 bg-[#11293A] rounded-full flex-row justify-center items-center">
@@ -259,6 +293,7 @@ const Edit = () => {
               selectedInterests={selectedInterests}
               onInterestsChange={setSelectedInterests}
               readonly
+              showSelectedOnly
             />
           </View>
         </View>

@@ -20,7 +20,7 @@ const WelcomeHeader = ({
           onPress={() => router.push("/(tabs)/user-profile")}
         >
           <Image
-            source={avatar}
+            source={avatar || require("@/assets/images/placeholder.png")}
             style={{
               width: 44,
               height: 44,

@@ -162,7 +162,7 @@ const profile = () => {
             variant="variant4"
             name={profileData?.name || profileData?.email || "User"}
             address={profileData?.address?.address || "Location unavailable"}
-            profileImage={profileData?.avatar}
+            profileImage={profileData?.avatar || require("@/assets/images/placeholder.png")}
           />
         </TouchableOpacity>
 
