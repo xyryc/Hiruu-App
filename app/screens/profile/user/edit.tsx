@@ -113,7 +113,7 @@ const Edit = () => {
         className="bg-white"
         contentContainerStyle={{
           paddingTop: 14,
-          paddingBottom: 40,
+          paddingBottom: 120,
         }}
       >
         <View className="mx-5">
@@ -500,14 +500,15 @@ const Edit = () => {
             <SmallButton title="Link" />
           </View>
         </View>
+      </ScrollView>
 
+      <View className="absolute bottom-10 left-0 right-0 mx-5">
         <PrimaryButton
-          title="Save Change"
-          className="mx-5 mt-6"
+          title="Save Changes"
           onPress={handleSaveProfile}
           loading={isSaving}
         />
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };

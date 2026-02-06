@@ -78,15 +78,14 @@ const InterestModal = ({
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
-                paddingBottom: 80,
+                paddingTop: 20,
+                paddingBottom: 80
               }}
             >
-              <View className="mt-10">
-                <InterestGrid
-                  selectedInterests={selectedInterests}
-                  onToggle={toggleInterest}
-                />
-              </View>
+              <InterestGrid
+                selectedInterests={selectedInterests}
+                onToggle={toggleInterest}
+              />
             </ScrollView>
 
             <View className="absolute bottom-10 inset-x-0 items-center mx-5">
