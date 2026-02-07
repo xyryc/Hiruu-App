@@ -4,8 +4,11 @@ import NoMessages from "@/components/ui/cards/NoMessages";
 import RenderMessage from "@/components/ui/cards/RenderMessage";
 import ChatInput from "@/components/ui/inputs/ChatInput";
 import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
+import { chatService } from "@/services/chatService";
+import { useAuthStore } from "@/stores/authStore";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import { useLocalSearchParams } from "expo-router";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -18,51 +21,59 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const ChatScreen = () => {
   const [message, setMessage] = useState("");
+  const [messages, setMessages] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const { user } = useAuthStore();
+  const params = useLocalSearchParams();
+  const roomId =
+    typeof params?.roomId === "string"
+      ? params.roomId
+      : "b8712c1d-9473-4450-989e-9497cb675211";
 
-  const messages = [
-    {
-      id: 1,
-      text: "Hi, I just applied for the bartender position",
-      time: "1:44 PM",
-      isSent: true,
-      isRead: true,
-      avatar:
-        "https://www.denverheadshotco.com/wp-content/uploads/2023/06/Company-Headshots-scaled.jpg",
-    },
-    {
-      id: 2,
-      text: "Yes, we're still hiring",
-      time: "1:44 PM",
-      isSent: false,
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
-    },
-    {
-      id: 3,
-      text: "I've worked 2 years at The Lounge Bar",
-      time: "1:44 PM",
-      isSent: true,
-      isRead: true,
-      avatar:
-        "https://media.licdn.com/dms/image/v2/D5603AQFMeZ7i9ybZgw/profile-displayphoto-shrink_200_200/B56ZS29wLQHwAY-/0/1738236429558?e=2147483647&v=beta&t=RTX-UGEWSzuEb-Gv2bqXqREzQX15FMKi0TK1HJBAKuE",
-    },
-    {
-      id: 4,
-      text: "Thank You andrew",
-      time: "1:44 PM",
-      isSent: false,
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-    },
-    {
-      id: 5,
-      text: "Wow that's great, andrew",
-      time: "1:44 PM",
-      isSent: false,
-      avatar:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-    },
-  ];
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadMessages = async () => {
+      try {
+        setLoading(true);
+        const result = await chatService.getRoomMessages(roomId);
+        const data = result?.data?.data || [];
+        if (isMounted) {
+          setMessages(Array.isArray(data) ? data : []);
+        }
+      } catch {
+        // keep UI stable
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadMessages();
+    return () => {
+      isMounted = false;
+    };
+  }, [roomId]);
+
+  const formatTime = (dateString?: string | null) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  const mappedMessages = useMemo(() => {
+    const currentUserId = user?.id;
+    return messages.map((msg) => ({
+      id: msg.id,
+      text: msg.content || "",
+      time: formatTime(msg.createdAt),
+      isSent: msg.senderId === currentUserId,
+      isRead: msg.status === "read" || msg.status === "seen",
+      avatar: msg.sender?.avatar || require("@/assets/images/placeholder.png"),
+    }));
+  }, [messages, user?.id]);
 
   return (
     <SafeAreaView
@@ -88,14 +99,22 @@ const ChatScreen = () => {
 
           {/* Messages */}
           <FlatList
-            data={messages}
+            data={mappedMessages}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={{ paddingHorizontal: 16 }}
             showsVerticalScrollIndicator={false}
             inverted={true}
             renderItem={({ item: msg }) => <RenderMessage msg={msg} />}
             ListHeaderComponent={<TypingIndicator />}
-            ListEmptyComponent={<NoMessages />}
+            ListEmptyComponent={
+              loading ? (
+                <View className="py-6 items-center">
+                  <Text className="text-sm text-secondary">Loading...</Text>
+                </View>
+              ) : (
+                <NoMessages />
+              )
+            }
             ListFooterComponent={
               <View className="flex-row items-center justify-center my-6">
                 <LinearGradient

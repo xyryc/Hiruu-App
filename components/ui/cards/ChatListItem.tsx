@@ -55,7 +55,7 @@ const ChatListItem = ({
       </View>
 
       {/* right */}
-      <View className="flex-1 border">
+      <View className="flex-1">
         {/* top */}
         <View className="flex-row justify-between items-center">
           <Text className="font-proximanova-semibold text-lg text-primary">
