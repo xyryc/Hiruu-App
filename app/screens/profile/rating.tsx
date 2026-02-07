@@ -93,11 +93,13 @@ const Rating = () => {
           onClose={() => setIsVisible(false)}
         />
       </ScrollView>
-      <PrimaryButton
-        title="Add Rating"
-        className="mx-5"
-        onPress={() => setIsVisible(true)}
-      />
+
+      <View className="absolute bottom-0 left-0 right-0 px-5 pb-5">
+        <PrimaryButton
+          title="Add Rating"
+          onPress={() => setIsVisible(true)}
+        />
+      </View>
     </SafeAreaView>
   );
 };
