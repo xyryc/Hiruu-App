@@ -3,12 +3,29 @@ import { Image } from "expo-image";
 import React from "react";
 import { Text, View } from "react-native";
 
+const getStatusMeta = (status) => {
+  switch ((status || "").toLowerCase()) {
+    case "read":
+      return { name: "checkmark-done", color: "#4FB2F3" };
+    case "delivered":
+      return { name: "checkmark-done", color: "#111827" };
+    case "sent":
+      return { name: "checkmark", color: "#111827" };
+    case "failed":
+      return { name: "alert-circle", color: "#EF4444" };
+    case "deleted":
+      return { name: "trash", color: "#9CA3AF" };
+    default:
+      return null;
+  }
+};
+
 const RenderMessage = ({ msg }) => {
+  const statusMeta = getStatusMeta(msg.status);
   return (
     <View
-      className={`flex-row gap-1.5 mb-4 ${
-        msg.isSent ? "justify-end" : "justify-start"
-      }`}
+      className={`flex-row gap-1.5 mb-4 ${msg.isSent ? "justify-end" : "justify-start"
+        }`}
     >
       {!msg.isSent && (
         <Image
@@ -22,16 +39,14 @@ const RenderMessage = ({ msg }) => {
       >
         <View className="flex-row items-end gap-1.5">
           <View
-            className={`p-2.5 rounded-2xl ${
-              msg.isSent
-                ? "bg-[#4FB2F3] rounded-br-sm"
-                : "bg-white rounded-bl-sm"
-            }`}
+            className={`p-2.5 rounded-2xl ${msg.isSent
+              ? "bg-[#4FB2F3] rounded-br-sm"
+              : "bg-white rounded-bl-sm"
+              }`}
           >
             <Text
-              className={`font-proximanova-regular text-sm ${
-                msg.isSent ? "text-white" : "text-primary"
-              }`}
+              className={`font-proximanova-regular text-sm ${msg.isSent ? "text-white" : "text-primary"
+                }`}
             >
               {msg.text}
             </Text>
@@ -46,8 +61,12 @@ const RenderMessage = ({ msg }) => {
         </View>
 
         <View className="flex-row items-center mt-1 gap-1">
-          {msg.isSent && msg.isRead && (
-            <Ionicons name="checkmark-done" size={14} color="#4FB2F3" />
+          {msg.isSent && statusMeta && (
+            <Ionicons
+              name={statusMeta.name}
+              size={14}
+              color={statusMeta.color}
+            />
           )}
 
           <Text className="font-proximanova-regular text-xs text-secondary">

@@ -70,7 +70,7 @@ const ChatScreen = () => {
       text: msg.content || "",
       time: formatTime(msg.createdAt),
       isSent: msg.senderId === currentUserId,
-      isRead: msg.status === "read" || msg.status === "seen",
+      status: msg.status,
       avatar: msg.sender?.avatar || require("@/assets/images/placeholder.png"),
     }));
   }, [messages, user?.id]);
