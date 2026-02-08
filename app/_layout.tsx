@@ -1,5 +1,6 @@
 import ErrorBoundary from "@/components/ui/error/ErrorBoundary";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { socketService } from "@/services/socketService";
 import { useAuthStore } from "@/stores/authStore";
 import "@/utils/i18n";
 import { useFonts } from "expo-font";
@@ -23,7 +24,7 @@ const AppContent = () => {
   });
 
   const [appIsReady, setAppIsReady] = useState(false);
-  const { initializeAuth } = useAuthStore();
+  const { initializeAuth, user } = useAuthStore();
 
   useEffect(() => {
     const init = async () => {
@@ -41,6 +42,21 @@ const AppContent = () => {
 
     init();
   }, [fontsLoaded]);
+
+  // Initialize socket connection when user is authenticated
+  useEffect(() => {
+    if (user && appIsReady) {
+      // Connect to socket when user is logged in
+      socketService.connect().catch((error) => {
+        console.error('Failed to connect to socket:', error);
+      });
+
+      return () => {
+        // Disconnect when user logs out or app unmounts
+        socketService.disconnect();
+      };
+    }
+  }, [user, appIsReady]);
 
   if (!appIsReady) {
     return <SplashScreen />;

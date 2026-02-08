@@ -3,25 +3,42 @@ import { Image } from "expo-image";
 import React from "react";
 import { Text, View } from "react-native";
 
-const getStatusMeta = (status) => {
+const getStatusMeta = (status: string) => {
   switch ((status || "").toLowerCase()) {
     case "read":
-      return { name: "checkmark-done", color: "#4FB2F3" };
+      return { name: "checkmark-done" as const, color: "#4FB2F3" };
     case "delivered":
-      return { name: "checkmark-done", color: "#111827" };
+      return { name: "checkmark-done" as const, color: "#111827" };
     case "sent":
-      return { name: "checkmark", color: "#111827" };
+      return { name: "checkmark" as const, color: "#111827" };
     case "failed":
-      return { name: "alert-circle", color: "#EF4444" };
+      return { name: "alert-circle" as const, color: "#EF4444" };
     case "deleted":
-      return { name: "trash", color: "#9CA3AF" };
+      return { name: "trash" as const, color: "#9CA3AF" };
     default:
       return null;
   }
 };
 
-const RenderMessage = ({ msg }) => {
+interface MessageProps {
+  msg: {
+    id: string;
+    text: string;
+    time: string;
+    isSent: boolean;
+    status: string;
+    avatar: any;
+  };
+}
+
+const RenderMessage: React.FC<MessageProps> = ({ msg }) => {
   const statusMeta = getStatusMeta(msg.status);
+
+  // Handle avatar source - can be URL string or require() object
+  const avatarSource = typeof msg.avatar === 'string'
+    ? { uri: msg.avatar }
+    : msg.avatar;
+
   return (
     <View
       className={`flex-row gap-1.5 mb-4 ${msg.isSent ? "justify-end" : "justify-start"
@@ -29,8 +46,9 @@ const RenderMessage = ({ msg }) => {
     >
       {!msg.isSent && (
         <Image
-          source={{ uri: msg.avatar }}
+          source={avatarSource}
           style={{ width: 40, height: 40, borderRadius: 999 }}
+          contentFit="cover"
         />
       )}
 
@@ -40,8 +58,8 @@ const RenderMessage = ({ msg }) => {
         <View className="flex-row items-end gap-1.5">
           <View
             className={`p-2.5 rounded-2xl ${msg.isSent
-              ? "bg-[#4FB2F3] rounded-br-sm"
-              : "bg-white rounded-bl-sm"
+                ? "bg-[#4FB2F3] rounded-br-sm"
+                : "bg-white rounded-bl-sm"
               }`}
           >
             <Text
@@ -54,8 +72,9 @@ const RenderMessage = ({ msg }) => {
 
           {msg.isSent && (
             <Image
-              source={{ uri: msg.avatar }}
+              source={avatarSource}
               style={{ width: 40, height: 40, borderRadius: 999 }}
+              contentFit="cover"
             />
           )}
         </View>
