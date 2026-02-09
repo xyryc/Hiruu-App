@@ -1,18 +1,17 @@
-import { Entypo } from "@expo/vector-icons";
+import { profileService } from "@/services/profileService";
+import { useBusinessStore } from "@/stores/businessStore";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
 import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Modal,
   ScrollView,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { profileService } from "@/services/profileService";
-import { useBusinessStore } from "@/stores/businessStore";
 
 interface ProfileSwitchModalProps {
   visible: boolean;
@@ -104,23 +103,19 @@ const ProfileSwitchModal: React.FC<ProfileSwitchModalProps> = ({
                   <Text className="text-xs text-secondary">{profile.email}</Text>
                 )}
               </View>
-              <View className="w-6 h-6 rounded-full border-2 border-gray-400 bg-white justify-center items-center">
-                {selectedBusinessId === null && (
-                  <Entypo name="check" size={14} color="black" />
-                )}
-              </View>
-            </TouchableOpacity>
 
-            <ScrollView
-              className="mt-3"
-              contentContainerStyle={{ paddingBottom: 30 }}
-            >
-              {(profileLoading || myBusinessesLoading) && (
-                <View className="py-6 items-center">
-                  <ActivityIndicator size="small" color="#4FB2F3" />
-                </View>
+
+              {selectedBusinessId === null && (
+                <Ionicons name="checkmark-circle" size={24} color="#4FB2F3" />
               )}
 
+            </TouchableOpacity>
+
+            <Text className='font-proximanova-medium text-lg mt-3'>Your Business Profiles</Text>
+
+            <ScrollView
+              contentContainerStyle={{ paddingBottom: 30 }}
+            >
               {!myBusinessesLoading && myBusinesses.length === 0 && (
                 <Text className="text-center text-sm text-secondary py-4">
                   No businesses found.
@@ -148,11 +143,10 @@ const ProfileSwitchModal: React.FC<ProfileSwitchModalProps> = ({
                       </Text>
                     )}
                   </View>
-                  <View className="w-6 h-6 rounded-full border-2 border-gray-400 bg-white justify-center items-center">
-                    {selectedBusinessId === business.id && (
-                      <Entypo name="check" size={14} color="black" />
-                    )}
-                  </View>
+
+                  {selectedBusinessId === business.id && (
+                    <Ionicons name="checkmark-circle" size={24} color="#4FB2F3" />
+                  )}
                 </TouchableOpacity>
               ))}
             </ScrollView>
