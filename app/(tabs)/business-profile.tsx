@@ -3,6 +3,7 @@ import JobCard from "@/components/ui/cards/JobCard";
 import RatingBanner from "@/components/ui/cards/RatingBanner";
 import RatingProgress from "@/components/ui/cards/RatingProgress";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
+import ProfileSwitchModal from "@/components/ui/modals/ProfileSwitchModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import {
   EvilIcons,
@@ -10,6 +11,7 @@ import {
   FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
+  MaterialIcons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
@@ -32,7 +34,8 @@ const BusinessProfile = () => {
   const [togolIsOn, setTogolIsOn] = useState(false);
   const [businessData, setBusinessData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
-  const { selectedBusinesses, getBusinessProfile } = useBusinessStore();
+  const [isProfileSwitchOpen, setIsProfileSwitchOpen] = useState(false);
+  const { selectedBusinesses, getBusinessProfile, setSelectedBusinesses } = useBusinessStore();
   const businessId = selectedBusinesses[0];
 
   const loadBusiness = useCallback(async () => {
@@ -82,9 +85,15 @@ const BusinessProfile = () => {
     >
       {/* Profile Header */}
       <View className="flex-row justify-between mx-5 py-3.5">
-        <Text className="font-proximanova-bold text-2xl text-primary dark:text-dark-primary">
-          Profile
-        </Text>
+        <TouchableOpacity
+          onPress={() => setIsProfileSwitchOpen(true)}
+          className="flex-row items-center gap-2"
+        >
+          <Text className="font-proximanova-bold text-2xl text-primary dark:text-dark-primary">
+            Profile
+          </Text>
+          <MaterialIcons name="arrow-drop-down" size={30} color="black" />
+        </TouchableOpacity>
         <View className="flex-row gap-1.5 items-center justify-center">
           <TouchableOpacity
             onPress={() =>
@@ -377,6 +386,21 @@ const BusinessProfile = () => {
           </View>
         )}
       </ScrollView>
+
+      <ProfileSwitchModal
+        visible={isProfileSwitchOpen}
+        onClose={() => setIsProfileSwitchOpen(false)}
+        onSelectUserProfile={() => {
+          setIsProfileSwitchOpen(false);
+          setSelectedBusinesses([]);
+          router.replace("/(tabs)/user-profile");
+        }}
+        onSelectBusinessProfile={(nextBusinessId) => {
+          setIsProfileSwitchOpen(false);
+          setSelectedBusinesses([nextBusinessId]);
+          router.replace("/(tabs)/business-profile");
+        }}
+      />
     </SafeAreaView>
   );
 };
