@@ -31,7 +31,7 @@ import { toast } from "sonner-native";
 
 const BusinessProfile = () => {
   const [selectedTab, setSelectedTab] = useState("about");
-  const [togolIsOn, setTogolIsOn] = useState(false);
+  const [toggleIsOn, setToggleIsOn] = useState(false);
   const [businessData, setBusinessData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [recruitingUpdateLoading, setRecruitingUpdateLoading] = useState(false);
@@ -74,7 +74,7 @@ const BusinessProfile = () => {
 
   useEffect(() => {
     if (typeof businessData?.isRecruiting === "boolean") {
-      setTogolIsOn(businessData.isRecruiting);
+      setToggleIsOn(businessData.isRecruiting);
     }
   }, [businessData?.isRecruiting]);
 
@@ -93,15 +93,15 @@ const BusinessProfile = () => {
   const handleRecruitingToggle = async (nextValue: boolean) => {
     if (!businessId || recruitingUpdateLoading) return;
 
-    const previousValue = togolIsOn;
-    setTogolIsOn(nextValue);
+    const previousValue = toggleIsOn;
+    setToggleIsOn(nextValue);
     setRecruitingUpdateLoading(true);
 
     try {
       await updateMyBusinessProfile(businessId, { isRecruiting: nextValue });
       await loadBusiness();
     } catch (error: any) {
-      setTogolIsOn(previousValue);
+      setToggleIsOn(previousValue);
       toast.error(error?.message || "Failed to update recruiting status");
     } finally {
       setRecruitingUpdateLoading(false);
@@ -179,11 +179,13 @@ const BusinessProfile = () => {
             </View>
           ) : null}
 
-          <View className="absolute -bottom-3 right-6">
-            <Text className="bg-[#11293A] py-1 px-4 rounded-full border font-proximanova-semibold text-sm p-1 text-[#FFFFFF] capitalize">
-              actively recruiting
-            </Text>
-          </View>
+          {toggleIsOn && (
+            <View className="absolute -bottom-3 right-6">
+              <Text className="bg-[#11293A] py-1 px-4 rounded-full border font-proximanova-semibold text-sm p-1 text-[#FFFFFF] capitalize">
+                Actively Recruiting
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* profile name and details */}
@@ -262,7 +264,7 @@ const BusinessProfile = () => {
                 <View>
                   <RatingProgress rating={4.5} />
                   <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary text-center mt-1.5 capitalize">
-                    Work Enviroment
+                    Work Environment
                   </Text>
                 </View>
 
@@ -333,7 +335,7 @@ const BusinessProfile = () => {
                     Total Employee
                   </Text>
                 </View>
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary">
+                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                   50 +
                 </Text>
               </View>
@@ -349,12 +351,13 @@ const BusinessProfile = () => {
                     Active job posting:
                   </Text>
                 </View>
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary">
+                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                   04
                 </Text>
               </View>
 
               <View className="flex-row justify-between items-center mt-2.5 p-2">
+                {/* recruiting badge */}
                 <View className="flex-row gap-2">
                   <MaterialCommunityIcons
                     name="account-search"
@@ -367,12 +370,12 @@ const BusinessProfile = () => {
                 </View>
 
                 <ToggleButton
-                  isOn={togolIsOn}
+                  isOn={toggleIsOn}
                   setIsOn={handleRecruitingToggle}
                   title={
                     recruitingUpdateLoading
                       ? "Saving..."
-                      : `${togolIsOn ? "YES" : "NO"}`
+                      : `${toggleIsOn ? "YES" : "NO"}`
                   }
                 />
               </View>
@@ -401,7 +404,7 @@ const BusinessProfile = () => {
           </View>
         )}
 
-        {/* job tobs */}
+        {/* job tabs */}
         {selectedTab === "job" && (
           <View className="mx-5">
             <Text className="my-4">Open Positions</Text>

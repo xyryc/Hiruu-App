@@ -227,7 +227,7 @@ const EditBusinessProfile = () => {
           colors={["#BDE4F9", "#F7F7F7"]}
           locations={[0, 0.38]}
           className="flex-1"
-          style={{ paddingTop: insets.top + 10 }}
+          style={{ paddingTop: insets.top }}
         >
           <ScreenHeader
             className="mt-3 mx-5"
