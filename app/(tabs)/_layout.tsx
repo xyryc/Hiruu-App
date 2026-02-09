@@ -1,10 +1,10 @@
+import { profileService } from "@/services/profileService";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Octicons from "@expo/vector-icons/Octicons";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import { profileService } from "@/services/profileService";
 
 export default function TabLayout() {
   const [profileData, setProfileData] = useState<any>(null);
@@ -164,7 +164,7 @@ export default function TabLayout() {
         name="user-profile"
         options={{
           title: "Profile",
-          href: isOwner ? null : undefined,
+          href: undefined,
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome
               name={focused ? "user" : "user-o"}
@@ -179,7 +179,7 @@ export default function TabLayout() {
         name="business-profile"
         options={{
           title: "Profile",
-          href: isOwner ? undefined : null,
+          href: null,
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome
               name={focused ? "user" : "user-o"}

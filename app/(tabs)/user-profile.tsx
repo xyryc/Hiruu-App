@@ -10,16 +10,19 @@ import InterestSelection from "@/components/ui/inputs/InterestSelection";
 import ColorPickerModal from "@/components/ui/modals/ColorPickerModal";
 import { profileService } from "@/services/profileService";
 import {
+  Entypo,
   FontAwesome6,
   Ionicons,
   MaterialCommunityIcons,
+  MaterialIcons,
   SimpleLineIcons
 } from "@expo/vector-icons";
-import { router } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
+import { BlurView } from "expo-blur";
+import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
 const profile = () => {
@@ -34,6 +37,7 @@ const profile = () => {
     { label: "Network Issues", value: "Network Issues" },
   ];
   const [isOn, setIsOn] = useState(false);
+  const [isProfileSwitchOpen, setIsProfileSwitchOpen] = useState(false);
   const insets = useSafeAreaInsets();
 
   // color
@@ -61,7 +65,7 @@ const profile = () => {
   useFocusEffect(
     React.useCallback(() => {
       loadProfile();
-      return () => {};
+      return () => { };
     }, [loadProfile])
   );
 
@@ -86,6 +90,7 @@ const profile = () => {
   const experiences = Array.isArray(profileData?.experiences)
     ? profileData.experiences
     : [];
+  const canSwitchToBusiness = (profileData?.ownedBusinesses?.length || 0) > 0;
 
   return (
     <DynamicBackground
@@ -103,13 +108,21 @@ const profile = () => {
         gradientColors={gradientColors}
       >
         <View className={`flex-row justify-between items-center mt-5 mx-5`}>
-          <View className="flex-row items-center gap-2.5">
+          {/* profile switch modal */}
+          <TouchableOpacity
+            onPress={() => setIsProfileSwitchOpen(true)}
+            className="flex-row items-center gap-2.5"
+          >
             <Text
               className={`font-proximanova-bold text-2xl text-primary dark:text-dark-primary`}
             >
               Profile
             </Text>
-          </View>
+
+            <MaterialIcons name="arrow-drop-down" size={30} color="black" />
+          </TouchableOpacity>
+
+
           <View className="flex-row gap-1.5 items-center justify-center">
             {/* color picker */}
             <TouchableOpacity
@@ -370,6 +383,60 @@ const profile = () => {
 
         <ConnectSocials className="mx-5 my-4" />
       </ScrollView>
+
+      <Modal
+        visible={isProfileSwitchOpen}
+        animationType="fade"
+        transparent={true}
+        onRequestClose={() => setIsProfileSwitchOpen(false)}
+      >
+        <BlurView intensity={80} tint="dark" className="flex-1 justify-end">
+          <View className="bg-white rounded-t-3xl max-h-[45%]">
+            <View className="absolute -top-24 inset-x-0 items-center pt-4 pb-2">
+              <TouchableOpacity onPress={() => setIsProfileSwitchOpen(false)}>
+                <View className="bg-[#000] rounded-full p-2.5">
+                  <Entypo name="cross" size={30} color="white" />
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <SafeAreaView edges={["bottom"]} className="px-6 py-7">
+              <Text className="font-proximanova-bold text-xl text-center text-primary">
+                Switch profile
+              </Text>
+
+              <TouchableOpacity
+                onPress={() => {
+                  setIsProfileSwitchOpen(false);
+                  router.replace("/(tabs)/user-profile");
+                }}
+                className="mt-6 border border-[#EEEEEE] rounded-xl px-4 py-3"
+              >
+                <Text className="font-proximanova-semibold text-primary">
+                  User profile
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  if (!canSwitchToBusiness) return;
+                  setIsProfileSwitchOpen(false);
+                  router.replace("/(tabs)/business-profile");
+                }}
+                disabled={!canSwitchToBusiness}
+                className="mt-3 border border-[#EEEEEE] rounded-xl px-4 py-3"
+              >
+                <Text
+                  className={`font-proximanova-semibold ${canSwitchToBusiness ? "text-primary" : "text-secondary"
+                    }`}
+                >
+                  Business profile
+                </Text>
+              </TouchableOpacity>
+            </SafeAreaView>
+          </View>
+        </BlurView>
+      </Modal>
     </DynamicBackground>
   );
 };
