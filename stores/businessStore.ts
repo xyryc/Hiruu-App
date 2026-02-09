@@ -163,56 +163,75 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const baseUrl = process.env.EXPO_PUBLIC_API_URL;
-      if (!baseUrl) {
-        throw new Error("API URL not configured");
-      }
-
-      const accessToken = await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-
-      const formData = new FormData();
-      if (payload.name) formData.append("name", payload.name);
-      if (payload.description) formData.append("description", payload.description);
-
-      if (payload.logo) {
-        const logoFile = {
-          uri: payload.logo,
-          type: "image/jpeg",
-          name: "logo.jpg",
-        } as any;
-        formData.append("logo", logoFile);
-      }
-
-      if (payload.coverPhoto) {
-        const coverFile = {
-          uri: payload.coverPhoto,
-          type: "image/jpeg",
-          name: "cover.jpg",
-        } as any;
-        formData.append("coverPhoto", coverFile);
-      }
-
-      const response = await fetch(`${baseUrl}/business/${businessId}`, {
-        method: "PATCH",
-        headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
-        body: formData,
-      });
-
-      const rawText = await response.text();
+      const hasFile = Boolean(payload.logo || payload.coverPhoto);
       let result: any = null;
-      try {
-        result = rawText ? JSON.parse(rawText) : null;
-      } catch {
-        result = null;
-      }
 
-      if (!response.ok || !result?.success) {
-        const messageKey = result?.message || "UNKNOWN_ERROR";
-        const validation = Array.isArray(result?.data)
-          ? result.data.join("\n")
-          : null;
-        const message = validation || translateApiMessage(messageKey);
-        throw new Error(message);
+      if (!hasFile) {
+        const response = await axiosInstance.patch(`/business/${businessId}`, payload);
+        result = response.data;
+
+        if (!result?.success) {
+          const messageKey = result?.message || "UNKNOWN_ERROR";
+          const validation = Array.isArray(result?.data)
+            ? result.data.join("\n")
+            : null;
+          const message = validation || translateApiMessage(messageKey);
+          throw new Error(message);
+        }
+      } else {
+        const baseUrl = process.env.EXPO_PUBLIC_API_URL;
+        if (!baseUrl) {
+          throw new Error("API URL not configured");
+        }
+
+        const accessToken = await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+        const formData = new FormData();
+
+        if (payload.name) formData.append("name", payload.name);
+        if (payload.description) formData.append("description", payload.description);
+        if (typeof payload.isRecruiting === "boolean") {
+          formData.append("isRecruiting", String(payload.isRecruiting));
+        }
+
+        if (payload.logo) {
+          const logoFile = {
+            uri: payload.logo,
+            type: "image/jpeg",
+            name: "logo.jpg",
+          } as any;
+          formData.append("logo", logoFile);
+        }
+
+        if (payload.coverPhoto) {
+          const coverFile = {
+            uri: payload.coverPhoto,
+            type: "image/jpeg",
+            name: "cover.jpg",
+          } as any;
+          formData.append("coverPhoto", coverFile);
+        }
+
+        const response = await fetch(`${baseUrl}/business/${businessId}`, {
+          method: "PATCH",
+          headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+          body: formData,
+        });
+
+        const rawText = await response.text();
+        try {
+          result = rawText ? JSON.parse(rawText) : null;
+        } catch {
+          result = null;
+        }
+
+        if (!response.ok || !result?.success) {
+          const messageKey = result?.message || "UNKNOWN_ERROR";
+          const validation = Array.isArray(result?.data)
+            ? result.data.join("\n")
+            : null;
+          const message = validation || translateApiMessage(messageKey);
+          throw new Error(message);
+        }
       }
 
       const updatedBusiness = result.data ?? null;
@@ -220,8 +239,8 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
         userBusiness: updatedBusiness ?? state.userBusiness,
         myBusinesses: updatedBusiness
           ? state.myBusinesses.map((item) =>
-              item?.id === updatedBusiness?.id ? updatedBusiness : item
-            )
+            item?.id === updatedBusiness?.id ? updatedBusiness : item
+          )
           : state.myBusinesses,
         isLoading: false,
       }));
@@ -355,11 +374,11 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
         isLoading: false,
         myBusinesses: result?.data
           ? [
-              result.data,
-              ...get().myBusinesses.filter(
-                (item) => item?.id !== result.data?.id
-              ),
-            ]
+            result.data,
+            ...get().myBusinesses.filter(
+              (item) => item?.id !== result.data?.id
+            ),
+          ]
           : get().myBusinesses,
       });
 

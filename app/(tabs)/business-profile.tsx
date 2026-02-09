@@ -14,9 +14,9 @@ import {
   MaterialIcons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
@@ -34,8 +34,14 @@ const BusinessProfile = () => {
   const [togolIsOn, setTogolIsOn] = useState(false);
   const [businessData, setBusinessData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [recruitingUpdateLoading, setRecruitingUpdateLoading] = useState(false);
   const [isProfileSwitchOpen, setIsProfileSwitchOpen] = useState(false);
-  const { selectedBusinesses, getBusinessProfile, setSelectedBusinesses } = useBusinessStore();
+  const {
+    selectedBusinesses,
+    getBusinessProfile,
+    setSelectedBusinesses,
+    updateMyBusinessProfile,
+  } = useBusinessStore();
   const businessId = selectedBusinesses[0];
 
   const loadBusiness = useCallback(async () => {
@@ -62,9 +68,15 @@ const BusinessProfile = () => {
   useFocusEffect(
     useCallback(() => {
       loadBusiness();
-      return () => {};
+      return () => { };
     }, [loadBusiness])
   );
+
+  useEffect(() => {
+    if (typeof businessData?.isRecruiting === "boolean") {
+      setTogolIsOn(businessData.isRecruiting);
+    }
+  }, [businessData?.isRecruiting]);
 
   const handleShare = async () => {
     try {
@@ -75,6 +87,24 @@ const BusinessProfile = () => {
       });
     } catch (error) {
       Alert.alert("Error", "Could not share profile");
+    }
+  };
+
+  const handleRecruitingToggle = async (nextValue: boolean) => {
+    if (!businessId || recruitingUpdateLoading) return;
+
+    const previousValue = togolIsOn;
+    setTogolIsOn(nextValue);
+    setRecruitingUpdateLoading(true);
+
+    try {
+      await updateMyBusinessProfile(businessId, { isRecruiting: nextValue });
+      await loadBusiness();
+    } catch (error: any) {
+      setTogolIsOn(previousValue);
+      toast.error(error?.message || "Failed to update recruiting status");
+    } finally {
+      setRecruitingUpdateLoading(false);
     }
   };
 
@@ -335,10 +365,15 @@ const BusinessProfile = () => {
                     Actively Recruiting
                   </Text>
                 </View>
+
                 <ToggleButton
                   isOn={togolIsOn}
-                  setIsOn={setTogolIsOn}
-                  title={`${togolIsOn ? "YES" : "NO"}`}
+                  setIsOn={handleRecruitingToggle}
+                  title={
+                    recruitingUpdateLoading
+                      ? "Saving..."
+                      : `${togolIsOn ? "YES" : "NO"}`
+                  }
                 />
               </View>
 
