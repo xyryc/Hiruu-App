@@ -23,10 +23,13 @@
     "api":  {
                 "auth_email_already_taken":  "Î¤Î¿ email Ï‡ÏÎ·ÏƒÎ¹Î¼Î¿Ï€Î¿Î¹ÎµÎ¯Ï„Î±Î¹ Î®Î´Î·.",
                 "auth_invalid_credentials":  "ÎœÎ· Î­Î³ÎºÏ…ÏÎ± ÏƒÏ„Î¿Î¹Ï‡ÎµÎ¯Î± ÏƒÏÎ½Î´ÎµÏƒÎ·Ï‚.",
+                "bad_request":  "Παρακαλώ ελέγξτε τα στοιχεία και δοκιμάστε ξανά.",
+                "experience_invalid_date_range":  "Η ημερομηνία έναρξης πρέπει να είναι πριν από την ημερομηνία λήξης.",
                 "business_created_successfully":  "Î— ÎµÏ€Î¹Ï‡ÎµÎ¯ÏÎ·ÏƒÎ· Î´Î·Î¼Î¹Î¿Ï…ÏÎ³Î®Î¸Î·ÎºÎµ Î¼Îµ ÎµÏ€Î¹Ï„Ï…Ï‡Î¯Î±.",
                 "UNKNOWN_ERROR":  "Î Î±ÏÎ¿Ï…ÏƒÎ¹Î¬ÏƒÏ„Î·ÎºÎµ Î±Ï€ÏÎ¿ÏƒÎ´ÏŒÎºÎ·Ï„Î¿ ÏƒÏ†Î¬Î»Î¼Î±",
                 "business_updated_successfully":  "Προφίλ ενημερώθηκε με επιτυχία.",
-                "profile_updated_successfully":  "Το προφίλ ενημερώθηκε με επιτυχία."
+                "profile_updated_successfully":  "Το προφίλ ενημερώθηκε με επιτυχία.",
+                "experiences.0.startDate must be a valid ISO 8601 date string":  "Η ημερομηνία έναρξης εμπειρίας πρέπει να είναι έγκυρη μορφή ISO 8601."
             },
     "validation":  {
                        "fillAllFields":  "Î Î±ÏÎ±ÎºÎ±Î»ÏŽ ÏƒÏ…Î¼Ï€Î»Î·ÏÏŽÏƒÏ„Îµ ÏŒÎ»Î± Ï„Î± Ï€ÎµÎ´Î¯Î±",

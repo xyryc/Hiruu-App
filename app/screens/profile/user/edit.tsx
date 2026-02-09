@@ -2,14 +2,13 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import SmallButton from "@/components/ui/buttons/SmallButton";
 import BadgeCard from "@/components/ui/cards/BadgeCard";
-import ExperienceCard from "@/components/ui/cards/ExperienceCard";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
-import Dropdown from "@/components/ui/dropdown/DropDown";
-import DatePicker from "@/components/ui/inputs/DatePicker";
 import InterestSelection from "@/components/ui/inputs/InterestSelection";
+import MultiSelectCompanyDropdown from "@/components/ui/inputs/MultiSelectCompanyDropdown";
 import EditBadgeModal from "@/components/ui/modals/EditBadgeModal";
 import InterestModal from "@/components/ui/modals/InterestModal";
 import { profileService } from "@/services/profileService";
+import { Companies, Company } from "@/types";
 import { translateApiMessage } from "@/utils/apiMessages";
 import {
   FontAwesome6,
@@ -47,6 +46,8 @@ const Edit = () => {
   const [shortIntro, setShortIntro] = useState("");
   const [isEditingIntro, setIsEditingIntro] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
+  const [workExperiences, setWorkExperiences] = useState<Companies[]>([]);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
@@ -63,6 +64,33 @@ const Edit = () => {
           if (Array.isArray(result.data?.interest)) {
             setSelectedInterests(result.data.interest);
           }
+          if (Array.isArray(result.data?.experiences)) {
+            const mappedExperiences: Companies[] = result.data.experiences.map(
+              (exp: any) => ({
+                companyId: exp.companyId,
+                companyName: exp?.company?.name || "Company",
+                logo: exp?.company?.logo || undefined,
+                startDate: exp.startDate || "",
+                endDate: exp.endDate || "",
+                position: exp.position || "",
+                description: exp.description || "",
+                isCurrent: Boolean(exp.isCurrent),
+              })
+            );
+
+            const companyMap = new Map<string, Company>();
+            mappedExperiences.forEach((exp) => {
+              if (!companyMap.has(exp.companyId)) {
+                companyMap.set(exp.companyId, {
+                  id: exp.companyId,
+                  name: exp.companyName || "Company",
+                });
+              }
+            });
+
+            setWorkExperiences(mappedExperiences);
+            setSelectedCompanies(Array.from(companyMap.values()));
+          }
         }
       } catch {
         // Silent fail to keep edit screen stable.
@@ -78,13 +106,29 @@ const Edit = () => {
   const handleSaveProfile = async () => {
     try {
       setIsSaving(true);
-      const result = await profileService.updateProfile({
+      // Keep one draft per company from UI
+      const uniqueExperienceDrafts = new Map<string, Companies>();
+      workExperiences.forEach((exp) => {
+        if (!exp?.companyId) return;
+        if (!uniqueExperienceDrafts.has(exp.companyId)) {
+          uniqueExperienceDrafts.set(exp.companyId, exp);
+        }
+      });
+
+      const payload = {
         bio: shortIntro,
         interest: selectedInterests,
-      });
+      };
+
+      const result = await profileService.updateProfile(payload);
+      await profileService.syncExperiences(
+        Array.from(uniqueExperienceDrafts.values()),
+        Array.isArray(profileData?.experiences) ? profileData.experiences : []
+      );
+
       const messageKey = result?.message || "profile_updated_successfully";
       toast.success(translateApiMessage(messageKey));
-      router.back()
+      router.back();
     } catch (error: any) {
       const messageKey = error?.message || "UNKNOWN_ERROR";
       toast.error(translateApiMessage(messageKey));
@@ -227,88 +271,13 @@ const Edit = () => {
               Edit
             </Text>
           </View>
-        </View>
-
-        <View className="mx-5 mt-4">
-          <Dropdown
-            // label="Select Style"
-            placeholder="2 Company selected"
-          // options={issues}
-          // value={selectedIssue}
-          // onSelect={setSelectedIssue}
-          />
-          <View className="p-5 mt-5 border border-[#0000000D] rounded-xl">
-            <View className="flex-row justify-between items-center">
-              <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
-                Verified HIRUU Experience
-              </Text>
-              <Ionicons name="close-circle" size={24} color="black" />
-            </View>
-            <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary my-3.5">
-              Auto-Tracked
-            </Text>
-
-            <ExperienceCard />
-            <ExperienceCard className="mt-2.5" />
-
-            <View className="border-hairline border-[#0000000D] my-4" />
-
-            {/* apply new job and roll */}
-            <View className="flex-row gap-3 items-center">
-              <View className="h-9 w-9 bg-[#11293A] rounded-full flex-row justify-center items-center">
-                <SimpleLineIcons name="camera" size={18} color="white" />
-              </View>
-              <TextInput
-                placeholder="Enter Company Name"
-                className="flex-1 text-base border border-[#0000000D] p-2 rounded-xl"
-              />
-              <Ionicons name="close-circle" size={24} color="black" />
-            </View>
-            <View>
-              <Text className="mt-2.5 font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                Period
-              </Text>
-              <View className="flex-row gap-2.5 mt-1.5">
-                <DatePicker title="Start Date" className="flex-1" />
-                <DatePicker title="End Date" className="flex-1" />
-              </View>
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-2.5">
-                Job Title
-              </Text>
-              <TextInput
-                placeholder="Enter your Role"
-                className="flex-1 text-base border border-[#0000000D] p-2 rounded-xl mt-2.5"
-              />
-            </View>
-            <View className="border border-[#0000000D] my-4" />
-
-            {/* 2nd new job apply */}
-            <View className="flex-row gap-3 items-center">
-              <View className="h-9 w-9 bg-[#11293A] rounded-full flex-row justify-center items-center">
-                <SimpleLineIcons name="camera" size={18} color="white" />
-              </View>
-              <TextInput
-                placeholder="Enter Company Name"
-                className="flex-1 text-base border border-[#0000000D] p-2 rounded-xl"
-              />
-              <Ionicons name="close-circle" size={24} color="black" />
-            </View>
-            <View>
-              <Text className="mt-2.5 font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                Period
-              </Text>
-              <View className="flex-row gap-2.5 mt-1.5">
-                <DatePicker title="Start Date" className="flex-1" />
-                <DatePicker title="End Date" className="flex-1" />
-              </View>
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-2.5">
-                Job Title
-              </Text>
-              <TextInput
-                placeholder="Enter your Role"
-                className="flex-1 text-base border border-[#0000000D] p-2 rounded-xl mt-2.5"
-              />
-            </View>
+          <View className="mx-5 mt-4">
+            <MultiSelectCompanyDropdown
+              selectedCompanies={selectedCompanies}
+              workExperiences={workExperiences}
+              onCompaniesChange={setSelectedCompanies}
+              onWorkExperiencesChange={setWorkExperiences}
+            />
           </View>
         </View>
 

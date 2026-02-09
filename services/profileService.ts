@@ -3,6 +3,72 @@ import axiosInstance from '@/utils/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class ProfileService {
+    private toIsoString(value: any): string | undefined {
+        if (!value) return undefined;
+        if (value instanceof Date) {
+            return Number.isNaN(value.getTime()) ? undefined : value.toISOString();
+        }
+        if (typeof value === "string") {
+            const date = new Date(value);
+            return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+        }
+        return undefined;
+    }
+
+    private normalizeExperiencePayload(experience: any) {
+        return {
+            companyId: experience?.companyId,
+            position: experience?.position || undefined,
+            description: experience?.description || undefined,
+            startDate: this.toIsoString(experience?.startDate),
+            endDate: this.toIsoString(experience?.endDate),
+            isCurrent: Boolean(experience?.isCurrent),
+        };
+    }
+
+    private isExperienceChanged(existing: any, next: any): boolean {
+        const existingStart = this.toIsoString(existing?.startDate);
+        const existingEnd = this.toIsoString(existing?.endDate);
+        return (
+            (existing?.position || "") !== (next?.position || "") ||
+            (existing?.description || "") !== (next?.description || "") ||
+            (existingStart || "") !== (next?.startDate || "") ||
+            (existingEnd || "") !== (next?.endDate || "") ||
+            Boolean(existing?.isCurrent) !== Boolean(next?.isCurrent)
+        );
+    }
+
+    async syncExperiences(experiences: any[], existingExperiences: any[] = []): Promise<void> {
+        try {
+            if (!Array.isArray(experiences) || experiences.length === 0) return;
+
+            const existingByCompanyId = new Map<string, any>();
+            existingExperiences.forEach((item) => {
+                if (item?.companyId) {
+                    existingByCompanyId.set(item.companyId, item);
+                }
+            });
+
+            for (const raw of experiences) {
+                const payload = this.normalizeExperiencePayload(raw);
+                if (!payload.companyId) continue;
+                if (!payload.startDate) continue;
+
+                const existing = existingByCompanyId.get(payload.companyId);
+                if (existing?.id) {
+                    if (!this.isExperienceChanged(existing, payload)) {
+                        continue;
+                    }
+                    await axiosInstance.patch(`/experiences/${existing.id}`, payload);
+                } else {
+                    await axiosInstance.post("/experiences", payload);
+                }
+            }
+        } catch (error: any) {
+            throw this.handleError(error);
+        }
+    }
+
     // Update user profile
     async updateProfile(data: UpdateProfileData): Promise<ProfileResponse> {
         try {
@@ -93,6 +159,12 @@ class ProfileService {
     private handleError(error: any): Error {
         if (error.response?.data) {
             const errorData = error.response.data;
+            if (Array.isArray(errorData.data) && errorData.data.length > 0) {
+                const firstValidationError = errorData.data[0];
+                if (typeof firstValidationError === "string") {
+                    return new Error(firstValidationError);
+                }
+            }
             return new Error(errorData.message || 'An error occurred');
         }
         return new Error(error.message || 'Network error occurred');

@@ -9,8 +9,8 @@ import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import InterestSelection from "@/components/ui/inputs/InterestSelection";
 import ColorPickerModal from "@/components/ui/modals/ColorPickerModal";
 import ProfileSwitchModal from "@/components/ui/modals/ProfileSwitchModal";
-import { useBusinessStore } from "@/stores/businessStore";
 import { profileService } from "@/services/profileService";
+import { useBusinessStore } from "@/stores/businessStore";
 import {
   FontAwesome6,
   Ionicons,
@@ -121,20 +121,20 @@ const profile = () => {
             <MaterialIcons name="arrow-drop-down" size={30} color="black" />
           </TouchableOpacity>
 
-      <ProfileSwitchModal
-        visible={isProfileSwitchOpen}
-        onClose={() => setIsProfileSwitchOpen(false)}
-        onSelectUserProfile={() => {
-          setIsProfileSwitchOpen(false);
-          setSelectedBusinesses([]);
-          router.replace("/(tabs)/user-profile");
-        }}
-        onSelectBusinessProfile={(businessId) => {
-          setIsProfileSwitchOpen(false);
-          setSelectedBusinesses([businessId]);
-          router.replace("/(tabs)/business-profile");
-        }}
-      />
+          <ProfileSwitchModal
+            visible={isProfileSwitchOpen}
+            onClose={() => setIsProfileSwitchOpen(false)}
+            onSelectUserProfile={() => {
+              setIsProfileSwitchOpen(false);
+              setSelectedBusinesses([]);
+              router.replace("/(tabs)/user-profile");
+            }}
+            onSelectBusinessProfile={(businessId) => {
+              setIsProfileSwitchOpen(false);
+              setSelectedBusinesses([businessId]);
+              router.replace("/(tabs)/business-profile");
+            }}
+          />
 
 
           <View className="flex-row gap-1.5 items-center justify-center">
@@ -272,6 +272,7 @@ const profile = () => {
             Experience
           </Text>
         </View>
+
         {experiences.map((experience: any, index: number) => (
           <ExperienceCard
             key={experience?.id || `${experience?.companyId}-${index}`}
