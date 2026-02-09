@@ -19,7 +19,7 @@ import {
   SimpleLineIcons
 } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -39,6 +39,7 @@ const profile = () => {
   const [isOn, setIsOn] = useState(false);
   const [isProfileSwitchOpen, setIsProfileSwitchOpen] = useState(false);
   const { setSelectedBusinesses } = useBusinessStore();
+  const { refreshAt } = useLocalSearchParams<{ refreshAt?: string }>();
   const insets = useSafeAreaInsets();
 
   // color
@@ -61,7 +62,7 @@ const profile = () => {
 
   useEffect(() => {
     loadProfile();
-  }, [loadProfile]);
+  }, [loadProfile, refreshAt]);
 
   useFocusEffect(
     React.useCallback(() => {

@@ -40,7 +40,7 @@ class ProfileService {
 
     async syncExperiences(experiences: any[], existingExperiences: any[] = []): Promise<void> {
         try {
-            if (!Array.isArray(experiences) || experiences.length === 0) return;
+            if (!Array.isArray(experiences)) return;
 
             const existingByCompanyId = new Map<string, any>();
             existingExperiences.forEach((item) => {
@@ -48,6 +48,19 @@ class ProfileService {
                     existingByCompanyId.set(item.companyId, item);
                 }
             });
+
+            const incomingCompanyIds = new Set<string>();
+            experiences.forEach((exp) => {
+                if (exp?.companyId) incomingCompanyIds.add(exp.companyId);
+            });
+
+            // Delete experiences removed from the edit list
+            for (const existing of existingExperiences) {
+                if (!existing?.id || !existing?.companyId) continue;
+                if (!incomingCompanyIds.has(existing.companyId)) {
+                    await axiosInstance.delete(`/experiences/${existing.id}`);
+                }
+            }
 
             for (const raw of experiences) {
                 const payload = this.normalizeExperiencePayload(raw);

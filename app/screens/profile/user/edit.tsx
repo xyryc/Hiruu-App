@@ -125,10 +125,14 @@ const Edit = () => {
         Array.from(uniqueExperienceDrafts.values()),
         Array.isArray(profileData?.experiences) ? profileData.experiences : []
       );
+      await profileService.getProfile();
 
       const messageKey = result?.message || "profile_updated_successfully";
       toast.success(translateApiMessage(messageKey));
-      router.back();
+      router.replace({
+        pathname: "/(tabs)/user-profile",
+        params: { refreshAt: Date.now().toString() },
+      });
     } catch (error: any) {
       const messageKey = error?.message || "UNKNOWN_ERROR";
       toast.error(translateApiMessage(messageKey));
