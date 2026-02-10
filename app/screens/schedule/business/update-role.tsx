@@ -45,7 +45,8 @@ const UpdateRole = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const { getPermissions } = useBusinessStore();
+  const { selectedBusinesses, getPermissions, getBusinessRoleById } =
+    useBusinessStore();
   const params = useLocalSearchParams<{
     businessRoleId?: string;
     roleId?: string;
@@ -62,9 +63,18 @@ const UpdateRole = () => {
   const [roleSelectorKey, setRoleSelectorKey] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [permissionsLoading, setPermissionsLoading] = useState(false);
+  const [roleDetailsLoading, setRoleDetailsLoading] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     {}
   );
+  const businessId = selectedBusinesses[0];
+  const businessRoleId = Array.isArray(params.businessRoleId)
+    ? params.businessRoleId[0]
+    : params.businessRoleId;
+  const roleIdParam = Array.isArray(params.roleId)
+    ? params.roleId[0]
+    : params.roleId;
+  const targetRoleId = businessRoleId || roleIdParam;
 
   useEffect(() => {
     let isMounted = true;
@@ -113,6 +123,67 @@ const UpdateRole = () => {
       isMounted = false;
     };
   }, [getPermissions]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRoleDetails = async () => {
+      if (!businessId || !targetRoleId) return;
+
+      try {
+        setRoleDetailsLoading(true);
+        const data = await getBusinessRoleById(businessId, targetRoleId);
+        if (!isMounted || !data) return;
+
+        setDescription(data?.description || "");
+
+        if (data?.role?.id && data?.role?.name) {
+          setSelectedRole({
+            id: data.role.id,
+            name: data.role.name,
+          });
+        }
+
+        if (Array.isArray(data?.permissions)) {
+          const mapped = data.permissions.reduce(
+            (acc: Record<string, number>, permissionKey: string) => {
+              if (typeof permissionKey === "string") {
+                acc[permissionKey] = 1;
+              }
+              return acc;
+            },
+            {}
+          );
+          setPermissionValues(mapped);
+        } else if (data?.permissions && typeof data.permissions === "object") {
+          const mapped = Object.entries(data.permissions).reduce(
+            (acc: Record<string, number>, [key, value]) => {
+              const numeric = Number(value);
+              if (Number.isFinite(numeric) && numeric > 0) {
+                acc[key] = Math.max(1, Math.min(3, Math.trunc(numeric)));
+              }
+              return acc;
+            },
+            {}
+          );
+          setPermissionValues(mapped);
+        } else {
+          setPermissionValues({});
+        }
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load role details");
+      } finally {
+        if (isMounted) {
+          setRoleDetailsLoading(false);
+        }
+      }
+    };
+
+    loadRoleDetails();
+    return () => {
+      isMounted = false;
+    };
+  }, [businessId, getBusinessRoleById, targetRoleId]);
 
   const filteredGroups = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -200,6 +271,7 @@ const UpdateRole = () => {
           <View className="mt-4">
             <RoleSelector
               key={roleSelectorKey}
+              selectedRole={selectedRole}
               onSelectRole={(role) => setSelectedRole(role)}
             />
           </View>
@@ -242,7 +314,7 @@ const UpdateRole = () => {
 
           {/* toggle button */}
           <View>
-            {permissionsLoading && (
+            {(permissionsLoading || roleDetailsLoading) && (
               <View className="py-8 items-center">
                 <ActivityIndicator size="small" />
               </View>
@@ -281,6 +353,7 @@ const UpdateRole = () => {
               </View>
             ))}
             {!permissionsLoading &&
+              !roleDetailsLoading &&
               permissionGroups.length > 0 &&
               filteredGroups.length === 0 && (
               <View className="py-8 items-center">
@@ -289,7 +362,9 @@ const UpdateRole = () => {
                 </Text>
               </View>
             )}
-            {!permissionsLoading && permissionGroups.length === 0 && (
+            {!permissionsLoading &&
+              !roleDetailsLoading &&
+              permissionGroups.length === 0 && (
               <View className="py-8 items-center">
                 <Text className="font-proximanova-regular text-secondary dark:text-dark-secondary">
                   No permissions available.

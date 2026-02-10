@@ -19,15 +19,26 @@ type RoleItem = {
 type RoleSelectorProps = {
   className?: string;
   onSelectRole?: (role: RoleItem | null) => void;
+  selectedRole?: RoleItem | null;
 };
 
-const RoleSelector = ({ className, onSelectRole }: RoleSelectorProps) => {
+const RoleSelector = ({
+  className,
+  onSelectRole,
+  selectedRole,
+}: RoleSelectorProps) => {
   const { getRoles } = useBusinessStore();
-  const [selectedRole, setSelectedRole] = useState<RoleItem | null>(null);
+  const [localSelectedRole, setLocalSelectedRole] = useState<RoleItem | null>(
+    selectedRole || null
+  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [roles, setRoles] = useState<RoleItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setLocalSelectedRole(selectedRole || null);
+  }, [selectedRole]);
 
   useEffect(() => {
     let isMounted = true;
@@ -63,7 +74,7 @@ const RoleSelector = ({ className, onSelectRole }: RoleSelectorProps) => {
   );
 
   const handleRoleSelect = (role: RoleItem) => {
-    setSelectedRole(role);
+    setLocalSelectedRole(role);
     onSelectRole?.(role);
     setIsDropdownOpen(false);
     setSearchQuery("");
@@ -88,7 +99,7 @@ const RoleSelector = ({ className, onSelectRole }: RoleSelectorProps) => {
         <Text
           className={`flex-1 font-proximanova-semibold text-sm text-primary dark:text-dark-primary capitalize`}
         >
-          {selectedRole ? selectedRole.name : "Select Role"}
+          {localSelectedRole ? localSelectedRole.name : "Select Role"}
         </Text>
         <View className="flex-row items-center gap-1.5">
           <View className="py-1 px-5 bg-[#11293A] rounded-full">
@@ -145,7 +156,7 @@ const RoleSelector = ({ className, onSelectRole }: RoleSelectorProps) => {
                   }}
                   key={item.id}
                   onPress={() => handleRoleSelect(item)}
-                  className={`px-4 py-3 ${selectedRole?.id === item.id ? "bg-blue-50" : "bg-white"
+                  className={`px-4 py-3 ${localSelectedRole?.id === item.id ? "bg-blue-50" : "bg-white"
                     } `}
                 >
                   <Text

@@ -23,6 +23,7 @@ interface BusinessState {
   getPermissions: () => Promise<any>;
   createBusinessRole: (businessId: string, payload: any) => Promise<any>;
   getMyBusinessRoles: (businessId: string) => Promise<any>;
+  getBusinessRoleById: (businessId: string, roleId: string) => Promise<any>;
   getBusinessProfile: (businessId: string) => Promise<any>;
   updateMyBusinessProfile: (businessId: string, payload: any) => Promise<any>;
   deleteBusinessRole: (businessId: string, roleId: string) => Promise<any>;
@@ -177,6 +178,28 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       return result.data || [];
     } catch (error) {
       console.error("Fetch roles error:", error);
+      throw error;
+    }
+  },
+
+  getBusinessRoleById: async (businessId, roleId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/businesses/${businessId}/roles/${roleId}`
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to fetch role details";
+        throw new Error(errorMsg);
+      }
+
+      return result.data || null;
+    } catch (error) {
+      console.error("Fetch role details error:", error);
       throw error;
     }
   },
