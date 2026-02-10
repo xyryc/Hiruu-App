@@ -1,4 +1,5 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
+import RoleDeleteModal from "@/components/ui/modals/RoleDeleteModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { Entypo, Feather } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -7,7 +8,6 @@ import { useColorScheme } from "nativewind";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  Modal,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -140,30 +140,12 @@ const AllCreatedRole = () => {
         </View>
       </ScrollView>
 
-      <Modal
+      <RoleDeleteModal
         visible={Boolean(menuRoleId)}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setMenuRoleId(null)}
-      >
-        <TouchableOpacity
-          activeOpacity={1}
-          onPress={() => setMenuRoleId(null)}
-          className="flex-1 bg-black/40 justify-end"
-        >
-          <View className="bg-white rounded-t-2xl px-6 py-5">
-            <TouchableOpacity
-              onPress={() => menuRoleId && handleDeleteRole(menuRoleId)}
-              disabled={deleting}
-              className="py-3"
-            >
-              <Text className="text-red-600 font-proximanova-semibold">
-                {deleting ? "Deleting..." : "Delete role"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+        deleting={deleting}
+        onClose={() => setMenuRoleId(null)}
+        onConfirm={() => menuRoleId && handleDeleteRole(menuRoleId)}
+      />
     </SafeAreaView>
   );
 };

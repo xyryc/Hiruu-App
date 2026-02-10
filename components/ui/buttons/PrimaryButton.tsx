@@ -8,6 +8,7 @@ const PrimaryButton = ({
   title,
   onPress,
   iconSize = 24,
+  showIcon = true,
   loading,
   disabled,
 }: PrimaryButtonProps) => {
@@ -17,7 +18,7 @@ const PrimaryButton = ({
     <TouchableOpacity
       onPress={onPress}
       disabled={isDisabled}
-      className={`${className} p-0.5 rounded-full flex-row items-center justify-center pl-10 ${isDisabled ? "bg-gray-300" : "bg-[#11293A]"}`}
+      className={`${className} p-0.5 rounded-full flex-row items-center justify-center ${showIcon ? "pl-10" : "px-6"} ${isDisabled ? "bg-gray-300" : "bg-[#11293A]"}`}
     >
       <Text
         className={`font-proximanova-semibold text-center flex-1 ${isDisabled ? "text-gray-600" : "text-white"}`}
@@ -25,20 +26,20 @@ const PrimaryButton = ({
         {title}
       </Text>
 
-      {loading ? (
+      {loading && showIcon ? (
         <ActivityIndicator
           size="small"
           color="#ffffff"
           className="p-2 bg-black rounded-full"
         />
-      ) : (
+      ) : showIcon ? (
         <Feather
           name="arrow-right"
           size={iconSize}
           color={isDisabled ? "#6B7280" : "#000000"}
           className={`p-2 rounded-full ${isDisabled ? "bg-gray-200" : "bg-white"}`}
         />
-      )}
+      ) : null}
     </TouchableOpacity>
   );
 };

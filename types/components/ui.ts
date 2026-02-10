@@ -7,6 +7,7 @@ export interface PrimaryButtonProps {
   title: string;
   onPress?: (event: GestureResponderEvent) => void;
   iconSize?: number;
+  showIcon?: boolean;
   loading?: boolean;
   disabled?: boolean;
 }
