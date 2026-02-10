@@ -4,14 +4,18 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
 import SearchBar from "@/components/ui/inputs/SearchBar";
 import RoleSelector from "@/components/ui/modals/RoleSelector";
+import { useBusinessStore } from "@/stores/businessStore";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -19,42 +23,174 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
+
+type RoleItem = {
+  id: string;
+  name: string;
+};
+
+type PermissionItem = {
+  key: string;
+  title: string;
+};
+
+type PermissionGroup = {
+  id: string;
+  label: string;
+  permissions: PermissionItem[];
+};
 
 const CreateRole = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
+  const { selectedBusinesses, createBusinessRole, getPermissions } =
+    useBusinessStore();
   const [search, setSearch] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedRole, setSelectedRole] = useState<RoleItem | null>(null);
+  const [permissionGroups, setPermissionGroups] = useState<PermissionGroup[]>(
+    []
+  );
+  const [permissionValues, setPermissionValues] = useState<
+    Record<string, number>
+  >({});
+  const [roleSelectorKey, setRoleSelectorKey] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [permissionsLoading, setPermissionsLoading] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {}
+  );
 
-  const [toggleData, setToggleData] = useState([
-    {
-      name: "Business Overview",
-      isOn: false,
-    },
-    {
-      name: "People Management",
-      isOn: false,
-    },
-    {
-      name: "Job Management",
-      isOn: false,
-    },
-    {
-      name: "Shift & Schedule",
-      isOn: false,
-    },
-    {
-      name: "System Access",
-      isOn: false,
-    },
-  ]);
+  const businessId = selectedBusinesses[0];
 
-  const handleToggle = (index: number) => {
-    setToggleData((prev) =>
-      prev.map((item, i) =>
-        i === index ? { ...item, isOn: !item.isOn } : item
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPermissions = async () => {
+      try {
+        setPermissionsLoading(true);
+        const data = await getPermissions();
+
+        const groups: PermissionGroup[] = Object.entries(data || {}).map(
+          ([id, value]: [string, any]) => ({
+            id,
+            label: value?.label || id,
+            permissions: Array.isArray(value?.permissions)
+              ? value.permissions
+                  .filter(
+                    (item: any) =>
+                      typeof item?.key === "string" &&
+                      typeof item?.title === "string"
+                  )
+                  .map((item: any) => ({ key: item.key, title: item.title }))
+              : [],
+          })
+        );
+
+        if (isMounted) {
+          setPermissionGroups(groups);
+          setExpandedGroups(
+            groups.reduce(
+              (acc, group) => ({ ...acc, [group.id]: false }),
+              {} as Record<string, boolean>
+            )
+          );
+        }
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load permissions");
+      } finally {
+        if (isMounted) {
+          setPermissionsLoading(false);
+        }
+      }
+    };
+
+    loadPermissions();
+    return () => {
+      isMounted = false;
+    };
+  }, [getPermissions]);
+
+  const filteredGroups = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return permissionGroups;
+
+    return permissionGroups.map((group) => ({
+      ...group,
+      permissions: group.permissions.filter((permission) =>
+        permission.title.toLowerCase().includes(query)
+      ),
+    })).filter((group) => group.permissions.length > 0);
+  }, [permissionGroups, search]);
+
+  const handleGroupToggle = (groupId: string) => {
+    setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }));
+  };
+
+  const togglePermission = (key: string, bit: 1 | 2) => {
+    setPermissionValues((prev) => {
+      const current = prev[key] || 0;
+      const updated = current & bit ? current & ~bit : current | bit;
+
+      if (updated === 0) {
+        const next = { ...prev };
+        delete next[key];
+        return next;
+      }
+
+      return { ...prev, [key]: updated };
+    });
+  };
+
+  const handleReset = () => {
+    setSearch("");
+    setDescription("");
+    setSelectedRole(null);
+    setPermissionValues({});
+    setRoleSelectorKey((prev) => prev + 1);
+    setExpandedGroups(
+      permissionGroups.reduce(
+        (acc, group) => ({ ...acc, [group.id]: false }),
+        {} as Record<string, boolean>
       )
     );
+    Keyboard.dismiss();
+  };
+
+  const handleSaveRole = async () => {
+    if (!businessId) {
+      toast.error("Please select a business first.");
+      return;
+    }
+
+    if (!selectedRole?.id) {
+      toast.error("Please select a predefined role.");
+      return;
+    }
+
+    if (Object.keys(permissionValues).length === 0) {
+      toast.error("Please select at least one permission.");
+      return;
+    }
+
+    const payload = {
+      roleId: selectedRole.id,
+      description: description.trim() || null,
+      permissions: permissionValues,
+    };
+
+    try {
+      setIsSubmitting(true);
+      await createBusinessRole(businessId, payload);
+      toast.success("Role created successfully.");
+      router.back();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to create role");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -75,7 +211,7 @@ const CreateRole = () => {
             titleClass="text-primary dark:text-dark-primary"
             iconColor={isDark ? "#fff" : "#111"}
             components={
-              <TouchableOpacity className="">
+              <TouchableOpacity onPress={handleReset} className="">
                 <Text className="font-proximanova-semibold text-[#4FB2F3]">
                   Reset
                 </Text>
@@ -86,7 +222,25 @@ const CreateRole = () => {
         <ScrollView showsVerticalScrollIndicator={false} className="mx-5">
           {/* predefine role */}
           <View className="mt-4">
-            <RoleSelector />
+            <RoleSelector
+              key={roleSelectorKey}
+              onSelectRole={(role) => setSelectedRole(role)}
+            />
+          </View>
+
+          <View className="mt-6">
+            <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
+              Description
+            </Text>
+            <TextInput
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Add role description"
+              placeholderTextColor="#7A7A7A"
+              multiline
+              className="mt-3 min-h-[100px] border border-[#EEEEEE] rounded-[10px] px-4 py-3 font-proximanova-regular text-primary dark:text-dark-primary"
+              textAlignVertical="top"
+            />
           </View>
 
           {/* Permissions Section */}
@@ -112,33 +266,69 @@ const CreateRole = () => {
 
           {/* toggle button */}
           <View>
-            {toggleData.map((toggle, index) => (
+            {permissionsLoading && (
+              <View className="py-8 items-center">
+                <ActivityIndicator size="small" />
+              </View>
+            )}
+            {filteredGroups.map((group) => (
               <View
-                key={index}
+                key={group.id}
                 className="border border-[#EEEEEE] p-4 rounded-[10px] mt-4"
               >
                 <View className="flex-row justify-between items-center ">
                   <Text className="font-proximanova-semibold text-primary dark:text-dark-primary capitalize">
-                    {toggle.name}
+                    {group.label}
                   </Text>
                   <ToggleButton
-                    isOn={toggle.isOn}
-                    setIsOn={() => handleToggle(index)}
+                    isOn={Boolean(expandedGroups[group.id])}
+                    setIsOn={() => handleGroupToggle(group.id)}
                   />
                 </View>
-                {toggle.isOn && (
+                {expandedGroups[group.id] && (
                   <View className="border-b border-[#EEEEEE] mt-3" />
                 )}
-                {toggle.isOn && <CheckButton title="View Business Summary" />}
-                {toggle.isOn && (
-                  <CheckButton title="View Business Statistics" />
-                )}
-                {toggle.isOn && <CheckButton title="View User Statistics" />}
+                {expandedGroups[group.id] &&
+                  group.permissions.map((permission) => {
+                    const value = permissionValues[permission.key] || 0;
+                    return (
+                      <CheckButton
+                        key={permission.key}
+                        title={permission.title}
+                        viewChecked={Boolean(value & 1)}
+                        editChecked={Boolean(value & 2)}
+                        onToggleView={() => togglePermission(permission.key, 1)}
+                        onToggleEdit={() => togglePermission(permission.key, 2)}
+                      />
+                    );
+                  })}
               </View>
             ))}
+            {!permissionsLoading &&
+              permissionGroups.length > 0 &&
+              filteredGroups.length === 0 && (
+              <View className="py-8 items-center">
+                <Text className="font-proximanova-regular text-secondary dark:text-dark-secondary">
+                  No permissions found.
+                </Text>
+              </View>
+            )}
+            {!permissionsLoading && permissionGroups.length === 0 && (
+              <View className="py-8 items-center">
+                <Text className="font-proximanova-regular text-secondary dark:text-dark-secondary">
+                  No permissions available.
+                </Text>
+              </View>
+            )}
           </View>
 
-          <PrimaryButton title="Save Role" className="my-10" />
+          <PrimaryButton
+            title="Save Role"
+            className="my-10"
+            onPress={handleSaveRole}
+            loading={isSubmitting}
+            disabled={isSubmitting}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

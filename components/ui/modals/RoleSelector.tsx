@@ -16,9 +16,14 @@ type RoleItem = {
   name: string;
 };
 
-const RoleSelector = ({ className }: { className?: string }) => {
+type RoleSelectorProps = {
+  className?: string;
+  onSelectRole?: (role: RoleItem | null) => void;
+};
+
+const RoleSelector = ({ className, onSelectRole }: RoleSelectorProps) => {
   const { getRoles } = useBusinessStore();
-  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedRole, setSelectedRole] = useState<RoleItem | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [roles, setRoles] = useState<RoleItem[]>([]);
@@ -57,8 +62,9 @@ const RoleSelector = ({ className }: { className?: string }) => {
     [roles, searchQuery]
   );
 
-  const handleRoleSelect = (role: string) => {
+  const handleRoleSelect = (role: RoleItem) => {
     setSelectedRole(role);
+    onSelectRole?.(role);
     setIsDropdownOpen(false);
     setSearchQuery("");
   };
@@ -82,7 +88,7 @@ const RoleSelector = ({ className }: { className?: string }) => {
         <Text
           className={`flex-1 font-proximanova-semibold text-sm text-primary dark:text-dark-primary capitalize`}
         >
-          {selectedRole ? selectedRole : "Select Role"}
+          {selectedRole ? selectedRole.name : "Select Role"}
         </Text>
         <View className="flex-row items-center gap-1.5">
           <View className="py-1 px-5 bg-[#11293A] rounded-full">
@@ -138,8 +144,8 @@ const RoleSelector = ({ className }: { className?: string }) => {
                     marginBottom: index === filteredRoles.length - 1 ? 15 : 0,
                   }}
                   key={item.id}
-                  onPress={() => handleRoleSelect(item.name)}
-                  className={`px-4 py-3 ${selectedRole === item.name ? "bg-blue-50" : "bg-white"
+                  onPress={() => handleRoleSelect(item)}
+                  className={`px-4 py-3 ${selectedRole?.id === item.id ? "bg-blue-50" : "bg-white"
                     } `}
                 >
                   <Text
