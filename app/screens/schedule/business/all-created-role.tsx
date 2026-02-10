@@ -110,14 +110,11 @@ const AllCreatedRole = () => {
           ) : roles.length > 0 ? (
             roles.map((role, index) => (
               <TouchableOpacity
-                onPress={() =>
-                  router.push("/screens/schedule/business/create-role")
-                }
                 className="flex-row justify-between items-center border border-[#EEEEEE] p-4 rounded-[10px] mt-4"
                 key={role?.id || index}
               >
                 <Text className="font-proximanova-semibold text-primary dark:text-dark-primary capitalize">
-                  {role?.name || "Role"}
+                  {role?.role?.name || "Role"}
                 </Text>
 
                 {/* three dot dropdown */}
