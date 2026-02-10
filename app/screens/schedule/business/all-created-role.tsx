@@ -105,6 +105,15 @@ const AllCreatedRole = () => {
           ) : roles.length > 0 ? (
             roles.map((role, index) => (
               <TouchableOpacity
+                onPress={() =>
+                  router.push({
+                    pathname: "/screens/schedule/business/update-role",
+                    params: {
+                      businessRoleId: role?.id,
+                      roleId: role?.roleId,
+                    },
+                  })
+                }
                 className="flex-row justify-between items-center border border-[#EEEEEE] p-4 rounded-[10px] mt-4"
                 key={role?.id || index}
               >
