@@ -275,7 +275,11 @@ const BusinessSetup = () => {
         />
 
         {/* content */}
-        <ScrollView className="px-5" contentContainerClassName="pb-10">
+        <ScrollView className="px-5" contentContainerClassName="pb-10"
+          contentContainerStyle={{
+            paddingBottom: 200
+          }}
+        >
           {/* Profile Photo */}
           <View className="items-center">
             <View className="bg-[#ffffff] h-[119px] w-[119px] flex-row justify-center items-center rounded-full relative">
@@ -490,13 +494,16 @@ const BusinessSetup = () => {
         </ScrollView>
 
         {/* button */}
-        <PrimaryButton
-          // onPress={() => router.push("/(tabs)/business-home")}
-          onPress={handleCreateBusiness}
-          title="Create Profile"
-          className="mx-5 my-4"
-          loading={isLoading}
-        />
+        <View className='absolute bottom-32 inset-x-0'>
+          <PrimaryButton
+            // onPress={() => router.push("/(tabs)/business-home")}
+            onPress={handleCreateBusiness}
+            title="Create Profile"
+            className="mx-5 my-4"
+            loading={isLoading}
+          />
+        </View>
+
       </LinearGradient>
     </SafeAreaView>
   );
