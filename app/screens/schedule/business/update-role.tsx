@@ -201,6 +201,23 @@ const UpdateRole = () => {
     })).filter((group) => group.permissions.length > 0);
   }, [permissionGroups, search]);
 
+  useEffect(() => {
+    if (permissionGroups.length === 0) return;
+
+    setExpandedGroups((prev) =>
+      permissionGroups.reduce(
+        (acc, group) => {
+          const hasSelectedPermission = group.permissions.some(
+            (permission) => (permissionValues[permission.key] || 0) > 0
+          );
+          acc[group.id] = Boolean(prev[group.id]) || hasSelectedPermission;
+          return acc;
+        },
+        {} as Record<string, boolean>
+      )
+    );
+  }, [permissionGroups, permissionValues]);
+
   const handleGroupToggle = (groupId: string) => {
     setExpandedGroups((prev) => ({ ...prev, [groupId]: !prev[groupId] }));
   };
