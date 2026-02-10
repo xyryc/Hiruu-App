@@ -24,11 +24,14 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
   const { myBusinesses, myBusinessesLoading, getMyBusinesses } = useBusinessStore();
   const displayedBusinesses =
     businesses.length > 0 ? businesses : myBusinesses;
+  const hasSingleBusiness = displayedBusinesses.length === 1;
+  const hasMultipleBusinesses = displayedBusinesses.length > 1;
 
   // Determine if "All" is selected
   const isAllSelected =
-    selectedBusinesses.length === 0 ||
-    selectedBusinesses.length === displayedBusinesses.length;
+    hasMultipleBusinesses &&
+    (selectedBusinesses.length === 0 ||
+      selectedBusinesses.length === displayedBusinesses.length);
 
   useEffect(() => {
     if (!visible) return;
@@ -36,11 +39,30 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
     getMyBusinesses().catch(() => undefined);
   }, [businesses.length, getMyBusinesses, visible]);
 
+  useEffect(() => {
+    if (!hasSingleBusiness) return;
+    const onlyBusinessId = displayedBusinesses[0]?.id;
+    if (!onlyBusinessId) return;
+    if (
+      selectedBusinesses.length === 1 &&
+      selectedBusinesses[0] === onlyBusinessId
+    ) {
+      return;
+    }
+    onSelectionChange([onlyBusinessId]);
+  }, [displayedBusinesses, hasSingleBusiness, onSelectionChange, selectedBusinesses]);
+
   const toggleSelectAll = () => {
+    if (!hasMultipleBusinesses) return;
     onSelectionChange([]);
   };
 
   const toggleBusiness = (businessId: string) => {
+    if (hasSingleBusiness) {
+      onSelectionChange([businessId]);
+      return;
+    }
+
     // If clicking on already selected single business, switch to "All"
     if (
       selectedBusinesses.length === 1 &&
@@ -58,8 +80,8 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
   };
 
   const isSelected = (businessId: string) => {
-    // If empty array, "All" is selected, so all businesses appear selected
-    if (selectedBusinesses.length === 0) return true;
+    // With one business, explicit selection is required.
+    if (selectedBusinesses.length === 0) return hasMultipleBusinesses;
     return selectedBusinesses.includes(businessId);
   };
 
@@ -90,30 +112,32 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
             </View>
 
             {/* Select All Toggle */}
-            <View className="px-6 pb-4">
-              <TouchableOpacity
-                onPress={toggleSelectAll}
-                className="flex-row justify-between items-center"
-              >
-                <Text className="font-proximanova-semibold text-lg text-primary">
-                  Select all
-                </Text>
-                <View
-                  className="w-12 h-6 rounded-full relative"
-                  style={{
-                    backgroundColor: isAllSelected ? "#4FB2F3" : "#D1D5DB",
-                  }}
+            {hasMultipleBusinesses && (
+              <View className="px-6 pb-4">
+                <TouchableOpacity
+                  onPress={toggleSelectAll}
+                  className="flex-row justify-between items-center"
                 >
+                  <Text className="font-proximanova-semibold text-lg text-primary">
+                    Select all
+                  </Text>
                   <View
-                    className="w-5 h-5 bg-white rounded-full absolute top-0.5"
+                    className="w-12 h-6 rounded-full relative"
                     style={{
-                      right: isAllSelected ? 2 : undefined,
-                      left: isAllSelected ? undefined : 2,
+                      backgroundColor: isAllSelected ? "#4FB2F3" : "#D1D5DB",
                     }}
-                  />
-                </View>
-              </TouchableOpacity>
-            </View>
+                  >
+                    <View
+                      className="w-5 h-5 bg-white rounded-full absolute top-0.5"
+                      style={{
+                        right: isAllSelected ? 2 : undefined,
+                        left: isAllSelected ? undefined : 2,
+                      }}
+                    />
+                  </View>
+                </TouchableOpacity>
+              </View>
+            )}
 
             {/* Business List */}
             <ScrollView
