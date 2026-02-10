@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import BusinessScheduleMonthYearsPickerModal from "@/components/ui/modals/BusinessScheduleMonthYearsPickerModal";
 import ImportHolidayModal from "@/components/ui/modals/ImportHolidayModal";
-import LogoutDeletModal from "@/components/ui/modals/LogoutDeletModal";
+import LogoutDeleteModal from "@/components/ui/modals/LogoutDeleteModal";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -308,7 +308,7 @@ const Calendar = () => {
             {renderHolidaysCard()}
           </View>
 
-          <LogoutDeletModal
+          <LogoutDeleteModal
             visible={isModal}
             onClose={() => setIsModal(false)}
             data={data}
@@ -324,3 +324,4 @@ const Calendar = () => {
 };
 
 export default Calendar;
+

@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import CoinProgressSlider from "../inputs/CoinProgressSlider";
 import BadgeModal from "../modals/BadgeModal";
 
-type TBadgeCardWidthSlider = {
+type TBadgeCardWithSlider = {
   img: string;
   title: string;
   time: string;
@@ -18,7 +18,7 @@ type TBadgeCardWidthSlider = {
   onPress: () => void;
 };
 
-const BadgeCardWidthSlider = ({
+const BadgeCardWithSlider = ({
   img,
   title,
   time,
@@ -30,7 +30,7 @@ const BadgeCardWidthSlider = ({
   badgeBackground,
   className,
   onPress,
-}: TBadgeCardWidthSlider) => {
+}: TBadgeCardWithSlider) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <View
@@ -75,4 +75,5 @@ const BadgeCardWidthSlider = ({
   );
 };
 
-export default BadgeCardWidthSlider;
+export default BadgeCardWithSlider;
+

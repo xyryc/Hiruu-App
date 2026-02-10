@@ -7,7 +7,7 @@ import React from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const LogoutDeletModal = ({ visible, onClose, data }: any) => {
+const LogoutDeleteModal = ({ visible, onClose, data }: any) => {
   const router = useRouter()
   const { logout } = useAuthStore();
 
@@ -85,4 +85,5 @@ const LogoutDeletModal = ({ visible, onClose, data }: any) => {
   );
 };
 
-export default LogoutDeletModal;
+export default LogoutDeleteModal;
+

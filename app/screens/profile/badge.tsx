@@ -4,7 +4,7 @@ import { useColorScheme } from "nativewind";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenHeader from "@/components/header/ScreenHeader";
 import { router } from "expo-router";
-import BadgeCardWidthSlider from "@/components/ui/cards/BadgeCardWidthSlider";
+import BadgeCardWithSlider from "@/components/ui/cards/BadgeCardWithSlider";
 import BadgeModal from "@/components/ui/modals/BadgeModal";
 
 const Badge = () => {
@@ -120,7 +120,7 @@ const Badge = () => {
       </View>
 
       <ScrollView>
-        <BadgeCardWidthSlider
+        <BadgeCardWithSlider
           onPress={() => handleClickOpenModal("Bronze")}
           className="mt-5 mx-5"
           badgeBackground="#FFF4ED"
@@ -133,7 +133,7 @@ const Badge = () => {
           achieved={300}
           tag="Bronze"
         />
-        <BadgeCardWidthSlider
+        <BadgeCardWithSlider
           onPress={() => handleClickOpenModal("Gold")}
           className="mt-4 mx-5"
           badgeBackground="#FFFBE8"
@@ -146,7 +146,7 @@ const Badge = () => {
           achieved={50}
           tag="Gold"
         />
-        <BadgeCardWidthSlider
+        <BadgeCardWithSlider
           onPress={() => handleClickOpenModal("Silver")}
           className="mt-5 mx-5"
           badgeBackground="#80808008"
@@ -159,7 +159,7 @@ const Badge = () => {
           achieved={20}
           tag="Silver"
         />
-        <BadgeCardWidthSlider
+        <BadgeCardWithSlider
           onPress={() => handleClickOpenModal("Blue")}
           className="mt-4 mx-5"
           badgeBackground="#EFF9FF"
@@ -172,7 +172,7 @@ const Badge = () => {
           achieved={100}
           tag="Diamond"
         />
-        <BadgeCardWidthSlider
+        <BadgeCardWithSlider
           onPress={() => handleClickOpenModal("Bronze")}
           className="mt-5 mx-5"
           badgeBackground="#FFF4ED"
@@ -185,7 +185,7 @@ const Badge = () => {
           achieved={40}
           tag="Bronze"
         />
-        <BadgeCardWidthSlider
+        <BadgeCardWithSlider
           onPress={() => handleClickOpenModal("Gold")}
           className="mt-4 mx-5"
           badgeBackground="#FFFBE8"
@@ -210,3 +210,4 @@ const Badge = () => {
 };
 
 export default Badge;
+

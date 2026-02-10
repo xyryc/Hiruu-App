@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import Dropdown from "@/components/ui/dropdown/DropDown";
+import Dropdown from "@/components/ui/dropdown/Dropdown";
 import DatePicker from "@/components/ui/inputs/DatePicker";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import { router } from "expo-router";
@@ -84,3 +84,4 @@ const CorrectionRequest = () => {
 };
 
 export default CorrectionRequest;
+

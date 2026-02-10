@@ -1,7 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import ContacrSection from "@/components/ui/cards/ContacrSection";
-import ContactListWithLock from "@/components/ui/cards/ContacrSection";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import ContactSection from "@/components/ui/cards/ContactSection";
 import {
   Entypo,
   FontAwesome5,
@@ -12,8 +11,8 @@ import {
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
-import { View, Text, ScrollView } from "react-native";
+import React from "react";
+import { ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const refer = () => {
@@ -165,7 +164,7 @@ const refer = () => {
             </View>
           </View>
 
-          <ContacrSection />
+          <ContactSection />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -173,3 +172,4 @@ const refer = () => {
 };
 
 export default refer;
+

@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const UserCalenderShidulModal = ({ visible, onClose }: any) => {
+const UserCalendarScheduleModal = ({ visible, onClose }: any) => {
   const handleDone = () => {
     onClose();
   };
@@ -279,4 +279,5 @@ const UserCalenderShidulModal = ({ visible, onClose }: any) => {
   );
 };
 
-export default UserCalenderShidulModal;
+export default UserCalendarScheduleModal;
+

@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import UserCalenderShidulModal from "../ui/modals/UserCalenderShidulModal";
+import UserCalendarScheduleModal from "../ui/modals/UserCalendarScheduleModal";
 
 const ShiftHeader = ({
   setShowModal,
@@ -87,7 +87,7 @@ const ShiftHeader = ({
             color="#111111"
           />
         </TouchableOpacity>
-        <UserCalenderShidulModal
+        <UserCalendarScheduleModal
           visible={isCalenderModal}
           onClose={() => setCalenderModal(false)}
         />
@@ -97,3 +97,4 @@ const ShiftHeader = ({
 };
 
 export default ShiftHeader;
+

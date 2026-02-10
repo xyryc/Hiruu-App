@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
-import NotificationPreferencesInpute from "@/components/ui/dropdown/NotificationPreferencesInpute";
+import NotificationPreferencesInput from "@/components/ui/dropdown/NotificationPreferencesInput";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
@@ -110,7 +110,7 @@ const NotificationPreferences = () => {
           <ToggleButton setIsOn={setIsAll} isOn={isAll} />
         </View>
 
-        <NotificationPreferencesInpute
+        <NotificationPreferencesInput
           title="General Notification"
           settingsConfig={generalConfig}
           settings={general}
@@ -119,7 +119,7 @@ const NotificationPreferences = () => {
           setIsToggle={setIsGeneral}
         />
 
-        <NotificationPreferencesInpute
+        <NotificationPreferencesInput
           title="Email Notification"
           settingsConfig={emailConfig}
           settings={email}
@@ -128,7 +128,7 @@ const NotificationPreferences = () => {
           setIsToggle={setIsEmail}
         />
 
-        <NotificationPreferencesInpute
+        <NotificationPreferencesInput
           title="Push Notification"
           settingsConfig={pushConfig}
           settings={push}
@@ -142,3 +142,4 @@ const NotificationPreferences = () => {
 };
 
 export default NotificationPreferences;
+

@@ -1,10 +1,10 @@
-import { JoinCollegueProps } from "@/types";
+import { JoinColleagueProps } from "@/types";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-const JoinCollegue = ({ className }: JoinCollegueProps) => {
+const JoinColleague = ({ className }: JoinColleagueProps) => {
   return (
     <View className={`${className} px-4`}>
       <Text className="text-xl font-proximanova-semibold mb-4">
@@ -45,4 +45,5 @@ const JoinCollegue = ({ className }: JoinCollegueProps) => {
   );
 };
 
-export default JoinCollegue;
+export default JoinColleague;
+

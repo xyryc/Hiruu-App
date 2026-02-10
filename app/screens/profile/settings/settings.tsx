@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
 import SettingsCard from "@/components/ui/cards/SettingsCard";
-import LogoutDeletModal from "@/components/ui/modals/LogoutDeletModal";
+import LogoutDeleteModal from "@/components/ui/modals/LogoutDeleteModal";
 import {
   Entypo,
   FontAwesome,
@@ -215,7 +215,7 @@ const Settings = () => {
           </Text>
         </TouchableOpacity>
 
-        <LogoutDeletModal
+        <LogoutDeleteModal
           visible={isModal}
           onClose={() => setIsModal(false)}
           data={data}
@@ -226,3 +226,4 @@ const Settings = () => {
 };
 
 export default Settings;
+

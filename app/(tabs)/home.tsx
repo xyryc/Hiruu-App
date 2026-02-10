@@ -3,7 +3,7 @@ import WelcomeHeader from "@/components/header/WelcomeHeader";
 import BusinessProfile from "@/components/layout/BusinessProfile";
 import EngagementPerks from "@/components/layout/EngagementPerks";
 import FindNewJob from "@/components/layout/FindNewJob";
-import JoinCollegue from "@/components/layout/JoinCollegue";
+import JoinColleague from "@/components/layout/JoinColleague";
 import ProfileProgress from "@/components/layout/ProfileProgress";
 import TodaysShift from '@/components/layout/TodaysShift';
 import Widgets from "@/components/layout/Widgets";
@@ -64,7 +64,7 @@ const UserHome = () => {
         {/* )} */}
 
         {/* join your collegues */}
-        <JoinCollegue />
+        <JoinColleague />
 
         {/* find new job */}
         <FindNewJob className="mt-7" />
@@ -136,3 +136,4 @@ const UserHome = () => {
 };
 
 export default UserHome;
+

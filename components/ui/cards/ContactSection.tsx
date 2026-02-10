@@ -11,7 +11,7 @@ import {
 import { Feather, Fontisto } from "@expo/vector-icons";
 import * as Contacts from "expo-contacts";
 
-const ContacrSection = () => {
+const ContactSection = () => {
   const [isLock, setIsLock] = useState(true);
   const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -235,4 +235,5 @@ const ContacrSection = () => {
   );
 };
 
-export default ContacrSection;
+export default ContactSection;
+

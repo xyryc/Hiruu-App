@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import SickLeaveCard from "@/components/ui/cards/SickLeaveCard";
-import UserCalenderShidulModal from "@/components/ui/modals/UserCalenderShidulModal";
+import UserCalendarScheduleModal from "@/components/ui/modals/UserCalendarScheduleModal";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -180,7 +180,7 @@ const LeaveHistory = () => {
           <SickLeaveCard item={item} selectedCategory={selectedCategory} />
         )}
       />
-      <UserCalenderShidulModal
+      <UserCalendarScheduleModal
         visible={onCalender}
         onClose={() => setOnCalendet(false)}
       />
@@ -189,3 +189,4 @@ const LeaveHistory = () => {
 };
 
 export default LeaveHistory;
+

@@ -4,7 +4,7 @@ import AttendanceSummary from "@/components/layout/AttendanceSummary";
 import BusinessProfile from "@/components/layout/BusinessProfile";
 import BusinessSummary from "@/components/layout/BusinessSummary";
 import FindNewJob from "@/components/layout/FindNewJob";
-import JoinCollegue from "@/components/layout/JoinCollegue";
+import JoinColleague from "@/components/layout/JoinColleague";
 import PerformanceTrend from "@/components/layout/PerformanceTrend";
 import ProfileProgress from "@/components/layout/ProfileProgress";
 import QuickAction from "@/components/layout/QuickAction";
@@ -52,7 +52,7 @@ const BusinessHome = () => {
         <AttendanceSummary className="mx-5 mt-8" />
 
         {/* join your collegues */}
-        <JoinCollegue className="mt-7" />
+        <JoinColleague className="mt-7" />
 
         {/* do you  manage a business */}
         <BusinessProfile className="mt-7" />
@@ -91,3 +91,4 @@ const BusinessHome = () => {
 };
 
 export default BusinessHome;
+

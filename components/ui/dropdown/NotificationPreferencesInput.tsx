@@ -3,7 +3,7 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { ToggleButton } from "../buttons/ToggleButton";
 
-const NotificationPreferencesInpute = ({
+const NotificationPreferencesInput = ({
   setIsToggle,
   settingsConfig,
   settings,
@@ -54,4 +54,5 @@ const NotificationPreferencesInpute = ({
   );
 };
 
-export default NotificationPreferencesInpute;
+export default NotificationPreferencesInput;
+

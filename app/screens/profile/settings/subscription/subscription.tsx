@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import SettingsCard from "@/components/ui/cards/SettingsCard";
-import LogoutDeletModal from "@/components/ui/modals/LogoutDeletModal";
+import LogoutDeleteModal from "@/components/ui/modals/LogoutDeleteModal";
 import {
   Entypo,
   Feather,
@@ -200,7 +200,7 @@ const Subscription = () => {
         </Text>
       </ScrollView>
 
-      <LogoutDeletModal
+      <LogoutDeleteModal
         visible={showModal}
         onClose={() => setShowModal(false)}
         data={modalData}
@@ -210,3 +210,4 @@ const Subscription = () => {
 };
 
 export default Subscription;
+

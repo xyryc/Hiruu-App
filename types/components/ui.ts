@@ -95,7 +95,7 @@ export interface WelcomeHeaderProps {
   coins?: number;
 }
 
-export interface JoinCollegueProps {
+export interface JoinColleagueProps {
   className?: string;
 }
 
@@ -282,3 +282,4 @@ export interface BusinessJobCardProps {
   candidate?: boolean;
   received?: boolean;
 }
+
