@@ -19,6 +19,7 @@ interface BusinessState {
 
   fetchBusinesses: (search?: string) => Promise<any>;
   getMyBusinesses: (force?: boolean) => Promise<any>;
+  getRoles: () => Promise<any>;
   getMyBusinessRoles: (businessId: string) => Promise<any>;
   getBusinessProfile: (businessId: string) => Promise<any>;
   updateMyBusinessProfile: (businessId: string, payload: any) => Promise<any>;
@@ -91,6 +92,24 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
     } catch (error) {
       set({ myBusinessesLoading: false });
       console.error("Fetch my businesses error:", error);
+      throw error;
+    }
+  },
+
+  getRoles: async () => {
+    try {
+      const response = await axiosInstance.get("/roles");
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message || result.message?.code || "Failed to fetch roles";
+        throw new Error(errorMsg);
+      }
+
+      return Array.isArray(result.data) ? result.data : [];
+    } catch (error) {
+      console.error("Fetch predefined roles error:", error);
       throw error;
     }
   },

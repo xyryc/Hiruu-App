@@ -19,15 +19,14 @@ export default function SearchBar({ className, onSearch }: SearchBarProps) {
 
   return (
     <View
-      className={`flex-row items-center rounded-[10px] px-4 ${className} border ${
-        isFocused ? "border-[#00000027]" : "border-[#EEEEEE]"
-      }`}
+      className={`flex-row items-center rounded-[10px] px-4 ${className} border ${isFocused ? "border-[#00000027]" : "border-[#EEEEEE]"
+        }`}
     >
       <Feather name="search" size={18} color="#6B7280" className="mr-2" />
 
       <TextInput
         style={{ fontFamily: "ProximaNova-Regular" }}
-        className="flex-1"
+        className="flex-1 py-3"
         placeholder="Search here..."
         placeholderTextColor="#7A7A7A"
         value={searchQuery}

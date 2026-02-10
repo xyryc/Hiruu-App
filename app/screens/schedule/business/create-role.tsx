@@ -86,7 +86,7 @@ const CreateRole = () => {
         <ScrollView showsVerticalScrollIndicator={false} className="mx-5">
           {/* predefine role */}
           <View className="mt-4">
-            <RoleSelector className="" />
+            <RoleSelector />
           </View>
 
           {/* Permissions Section */}

@@ -1,39 +1,60 @@
+import { useBusinessStore } from "@/stores/businessStore";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { toast } from "sonner-native";
 
-const roleData = [
-  { name: "employee" },
-  { name: "manager" },
-  { name: "HR / recruiter" },
-  { name: "shift supervisor" },
-  { name: "auditor" },
-  { name: "trainer" },
-  { name: "team lead" },
-  { name: "project manager" },
-  { name: "assistant manager" },
-  { name: "customer service" },
-  { name: "sales associate" },
-  { name: "marketing specialist" },
-  { name: "product owner" },
-  { name: "data analyst" },
-  { name: "software engineer" },
-  { name: "graphic designer" },
-];
+type RoleItem = {
+  id: string;
+  name: string;
+};
 
 const RoleSelector = ({ className }: { className?: string }) => {
+  const { getRoles } = useBusinessStore();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [roles, setRoles] = useState<RoleItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const filteredRoles = roleData.filter((role) =>
-    role.name.toLowerCase().includes(searchQuery.toLowerCase())
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRoles = async () => {
+      try {
+        setIsLoading(true);
+        const data = await getRoles();
+        if (isMounted) {
+          setRoles(Array.isArray(data) ? data : []);
+        }
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load roles");
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadRoles();
+    return () => {
+      isMounted = false;
+    };
+  }, [getRoles]);
+
+  const filteredRoles = useMemo(
+    () =>
+      roles.filter((role) =>
+        role.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ),
+    [roles, searchQuery]
   );
 
   const handleRoleSelect = (role: string) => {
@@ -88,7 +109,7 @@ const RoleSelector = ({ className }: { className?: string }) => {
                 placeholder="Search here..."
                 value={searchQuery}
                 onChangeText={setSearchQuery}
-                className="flex-1 pt-3 text-base font-proximanova-regular text-secondary dark:text-dark-secondary"
+                className="flex-1 py-3 text-base font-proximanova-regular text-secondary dark:text-dark-secondary"
                 autoFocus={true}
                 placeholderTextColor="#666"
               />
@@ -105,25 +126,30 @@ const RoleSelector = ({ className }: { className?: string }) => {
             style={{ maxHeight: 200 }}
             showsVerticalScrollIndicator={true}
           >
-            {filteredRoles.map((item) => (
-              <TouchableOpacity
-                style={{
-                  marginBottom: item.name === "graphic designer" ? 15 : 0,
-                }}
-                key={item.name}
-                onPress={() => handleRoleSelect(item.name)}
-                className={`px-4 mt-4 ${
-                  selectedRole === item.name ? "bg-blue-50" : "bg-white"
-                } `}
-              >
-                <Text
-                  className={`text-sm font-proximanova-regular text-primary dark:text-dark-primary capitalize `}
+            {isLoading && (
+              <View className="p-4 items-center">
+                <ActivityIndicator size="small" />
+              </View>
+            )}
+            {!isLoading &&
+              filteredRoles.map((item, index) => (
+                <TouchableOpacity
+                  style={{
+                    marginBottom: index === filteredRoles.length - 1 ? 15 : 0,
+                  }}
+                  key={item.id}
+                  onPress={() => handleRoleSelect(item.name)}
+                  className={`px-4 py-3 ${selectedRole === item.name ? "bg-blue-50" : "bg-white"
+                    } `}
                 >
-                  {item.name}
-                </Text>
-              </TouchableOpacity>
-            ))}
-            {filteredRoles.length === 0 && (
+                  <Text
+                    className={`text-sm font-proximanova-regular text-primary dark:text-dark-primary capitalize `}
+                  >
+                    {item.name}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            {!isLoading && filteredRoles.length === 0 && (
               <View className="p-4 items-center">
                 <Text className="text-base text-gray-600">No roles found</Text>
               </View>
