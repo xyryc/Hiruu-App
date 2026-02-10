@@ -1,9 +1,10 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import { useBusinessStore } from "@/stores/businessStore";
 import { Entypo, Feather } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Modal,
@@ -28,38 +29,32 @@ const AllCreatedRole = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [menuRoleId, setMenuRoleId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const isFocused = useIsFocused();
 
   const businessId = selectedBusinesses[0];
 
-  useEffect(() => {
-    let isMounted = true;
+  const loadRoles = useCallback(async () => {
+    if (!businessId) {
+      setRoles([]);
+      return;
+    }
 
-    const loadRoles = async () => {
-      if (!businessId) {
-        setRoles([]);
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        const data = await getMyBusinessRoles(businessId);
-        if (isMounted) {
-          setRoles(Array.isArray(data) ? data : []);
-        }
-      } catch (error: any) {
-        toast.error(error?.message || "Failed to load roles");
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadRoles();
-    return () => {
-      isMounted = false;
-    };
+    try {
+      setIsLoading(true);
+      const data = await getMyBusinessRoles(businessId);
+      setRoles(Array.isArray(data) ? data : []);
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to load roles");
+    } finally {
+      setIsLoading(false);
+    }
   }, [businessId, getMyBusinessRoles]);
+
+  useEffect(() => {
+    if (isFocused) {
+      loadRoles();
+    }
+  }, [isFocused, loadRoles]);
 
   const handleDeleteRole = async (roleId: string) => {
     if (!businessId) return;
