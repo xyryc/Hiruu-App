@@ -45,8 +45,12 @@ const UpdateRole = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const { selectedBusinesses, getPermissions, getBusinessRoleById } =
-    useBusinessStore();
+  const {
+    selectedBusinesses,
+    getPermissions,
+    getBusinessRoleById,
+    updateBusinessRole,
+  } = useBusinessStore();
   const params = useLocalSearchParams<{
     businessRoleId?: string;
     roleId?: string;
@@ -232,12 +236,42 @@ const UpdateRole = () => {
   };
 
   const handleUpdateRole = async () => {
-    setIsSubmitting(true);
-    toast.error(
-      `Update role API is not integrated yet${selectedRole?.name ? ` (${selectedRole.name})` : params.businessRoleId ? ` (role: ${params.businessRoleId})` : ""
-      }.`
-    );
-    setIsSubmitting(false);
+    if (!businessId) {
+      toast.error("Please select a business first.");
+      return;
+    }
+
+    if (!targetRoleId) {
+      toast.error("Role id is missing.");
+      return;
+    }
+
+    if (!selectedRole?.id) {
+      toast.error("Please select a predefined role.");
+      return;
+    }
+
+    if (Object.keys(permissionValues).length === 0) {
+      toast.error("Please select at least one permission.");
+      return;
+    }
+
+    const payload = {
+      roleId: selectedRole.id,
+      description: description.trim() || null,
+      permissions: permissionValues,
+    };
+
+    try {
+      setIsSubmitting(true);
+      await updateBusinessRole(businessId, targetRoleId, payload);
+      toast.success("Role updated successfully.");
+      router.back();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update role");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -378,7 +412,7 @@ const UpdateRole = () => {
             className="my-10"
             onPress={handleUpdateRole}
             loading={isSubmitting}
-            disabled={isSubmitting}
+            disabled={isSubmitting || permissionsLoading || roleDetailsLoading}
           />
         </ScrollView>
       </KeyboardAvoidingView>

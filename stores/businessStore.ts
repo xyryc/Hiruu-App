@@ -22,6 +22,11 @@ interface BusinessState {
   getRoles: () => Promise<any>;
   getPermissions: () => Promise<any>;
   createBusinessRole: (businessId: string, payload: any) => Promise<any>;
+  updateBusinessRole: (
+    businessId: string,
+    roleId: string,
+    payload: any
+  ) => Promise<any>;
   getMyBusinessRoles: (businessId: string) => Promise<any>;
   getBusinessRoleById: (businessId: string, roleId: string) => Promise<any>;
   getBusinessProfile: (businessId: string) => Promise<any>;
@@ -156,6 +161,29 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       return result.data;
     } catch (error) {
       console.error("Create business role error:", error);
+      throw error;
+    }
+  },
+
+  updateBusinessRole: async (businessId, roleId, payload) => {
+    try {
+      const response = await axiosInstance.patch(
+        `/businesses/${businessId}/roles/${roleId}`,
+        payload
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to update business role";
+        throw new Error(errorMsg);
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error("Update business role error:", error);
       throw error;
     }
   },
