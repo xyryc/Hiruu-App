@@ -1,5 +1,5 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import RoleDeleteModal from "@/components/ui/modals/RoleDeleteModal";
+import DeleteConfirmModal from "@/components/ui/modals/DeleteConfirmModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { Entypo, Feather } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
@@ -140,7 +140,7 @@ const AllCreatedRole = () => {
         </View>
       </ScrollView>
 
-      <RoleDeleteModal
+      <DeleteConfirmModal
         visible={Boolean(menuRoleId)}
         deleting={deleting}
         onClose={() => setMenuRoleId(null)}

@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import ShiftTemplateCard from "@/components/ui/cards/ShiftTemplateCard";
+import DeleteConfirmModal from "@/components/ui/modals/DeleteConfirmModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -24,9 +25,12 @@ const SavedShiftTemplate = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const { selectedBusinesses, getShiftTemplates } = useBusinessStore();
+  const { selectedBusinesses, getShiftTemplates, deleteShiftTemplate } =
+    useBusinessStore();
   const [templates, setTemplates] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const businessId = selectedBusinesses[0];
 
   const loadTemplates = useCallback(async () => {
@@ -62,6 +66,21 @@ const SavedShiftTemplate = () => {
     const period = hour >= 12 ? "PM" : "AM";
     const hour12 = hour % 12 === 0 ? 12 : hour % 12;
     return `${hour12}:${String(minute).padStart(2, "0")} ${period}`;
+  };
+
+  const handleDeleteTemplate = async (templateId?: string) => {
+    if (!businessId || !templateId || deletingId) return;
+
+    try {
+      setDeletingId(templateId);
+      await deleteShiftTemplate(businessId, templateId);
+      setTemplates((prev) => prev.filter((item) => item?.id !== templateId));
+      toast.success("Shift template deleted successfully");
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to delete shift template");
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   return (
@@ -116,6 +135,7 @@ const SavedShiftTemplate = () => {
                   businessName={template?.business?.name || "Business"}
                   businessLogo={template?.business?.logo}
                   roles={template?.roleRequirements || []}
+                  onDelete={() => setPendingDeleteId(template?.id)}
                 />
               );
             })
@@ -127,6 +147,24 @@ const SavedShiftTemplate = () => {
             </View>
           )}
         </ScrollView>
+
+        <DeleteConfirmModal
+          visible={Boolean(pendingDeleteId)}
+          deleting={Boolean(deletingId)}
+          title="Delete Shift Template"
+          description="Are you sure you want to delete this shift template? This action cannot be undone."
+          confirmText="Delete"
+          cancelText="Cancel"
+          onClose={() => {
+            if (deletingId) return;
+            setPendingDeleteId(null);
+          }}
+          onConfirm={async () => {
+            if (!pendingDeleteId) return;
+            await handleDeleteTemplate(pendingDeleteId);
+            setPendingDeleteId(null);
+          }}
+        />
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

@@ -16,6 +16,7 @@ const ShiftTemplateCard = ({
   roles,
   businessName,
   businessLogo,
+  onDelete,
 }: any) => {
   const scrollX = new Animated.Value(0);
   const roleChips =
@@ -46,7 +47,12 @@ const ShiftTemplateCard = ({
               <Feather name="edit-2" size={16} color="black" />
             </TouchableOpacity>
 
-            {weekly || <EvilIcons name="trash" size={24} color="#F34F4F" />}
+            {/* delete shift */}
+            {weekly || (
+              <TouchableOpacity onPress={onDelete}>
+                <EvilIcons name="trash" size={24} color="#F34F4F" />
+              </TouchableOpacity>
+            )}
           </View>
         </View>
 
