@@ -2,7 +2,7 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import WeeklySchedule from "@/components/ui/buttons/WeeklySchedule";
-import ExperienceLevel from "@/components/ui/inputs/ExperienceLevel";
+import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { useRouter } from "expo-router";
@@ -270,7 +270,7 @@ const FindJobFilters = () => {
 
         {/* Experience Level */}
         <View className="py-5">
-          <ExperienceLevel />
+          <RoleSlotsInput />
         </View>
         {/* <View className="flex-row justify-between border border-[#eeeeee] items-center p-4 rounded-xl">
           <Text>Available Working Days</Text>

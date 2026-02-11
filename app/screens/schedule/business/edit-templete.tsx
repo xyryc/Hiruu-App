@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
-import ExperienceLevel from "@/components/ui/inputs/ExperienceLevel";
+import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
 import SearchBar from "@/components/ui/inputs/SearchBar";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
@@ -150,8 +150,8 @@ const EditTemplete = () => {
 
           <SearchBar className="mt-4 " onSearch={(text) => setSearch(text)} />
 
-          {/* ExperienceLevel */}
-          <ExperienceLevel titleHeight={true} />
+          {/* Role slots */}
+          <RoleSlotsInput titleHeight={true} />
 
           {/* Total roles must equal required staff */}
           <View className="flex-row items-center gap-2.5 -mt-4">

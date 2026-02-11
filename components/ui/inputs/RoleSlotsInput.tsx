@@ -2,52 +2,61 @@ import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
-const ExperienceLevel = ({ titleHeight }: any) => {
-  const [experiences, setExperiences] = useState([
-    { id: 1, role: "Cashier", value: 5 },
-    { id: 2, role: "Receptionist", value: 5 },
+type RoleSlot = {
+  id: number;
+  roleName: string;
+  requiredCount: number;
+};
+
+const RoleSlotsInput = ({ titleHeight }: any) => {
+  const [roleSlots, setRoleSlots] = useState<RoleSlot[]>([
+    { id: 1, roleName: "Cashier", requiredCount: 5 },
+    { id: 2, roleName: "Receptionist", requiredCount: 5 },
   ]);
 
-  const updateExperience = (id: number, increment: boolean) => {
-    setExperiences(
-      experiences.map((exp) =>
-        exp.id === id
+  const updateRequiredCount = (slotId: number, increment: boolean) => {
+    setRoleSlots(
+      roleSlots.map((slot) =>
+        slot.id === slotId
           ? {
-              ...exp,
-              value: increment ? exp.value + 1 : Math.max(0, exp.value - 1),
+              ...slot,
+              requiredCount: increment
+                ? slot.requiredCount + 1
+                : Math.max(0, slot.requiredCount - 1),
             }
-          : exp
+          : slot
       )
     );
   };
 
-  const addNewExperience = () => {
-    const newId = Math.max(...experiences.map((exp) => exp.id)) + 1;
-    setExperiences([...experiences, { id: newId, role: "New Role", value: 0 }]);
+  const addRoleSlot = () => {
+    const maxId = roleSlots.length > 0 ? Math.max(...roleSlots.map((slot) => slot.id)) : 0;
+    const newId = maxId + 1;
+    setRoleSlots([...roleSlots, { id: newId, roleName: "New Role", requiredCount: 0 }]);
   };
 
-  const removeExperience = (id: number) => {
-    setExperiences(experiences.filter((exp) => exp.id !== id));
+  const removeRoleSlot = (slotId: number) => {
+    setRoleSlots(roleSlots.filter((slot) => slot.id !== slotId));
   };
 
   return (
     <View className="py-5">
       {titleHeight || (
         <Text className="text-base font-proximanova-semibold text-primary mb-4">
-          Experience Level
+          Role Slots
         </Text>
       )}
 
-      {experiences.map((exp) => (
-        <View key={exp.id} className="flex-row items-center mb-3 gap-3">
+      {roleSlots.map((slot) => (
+        <View key={slot.id} className="flex-row items-center mb-3 gap-3">
           {/* Role Input */}
           <View className="flex-1">
             {/* <Text className="font-proximanova-regular text-gray-600">
-              {exp.role}
+              {slot.roleName}
             </Text> */}
             <TextInput
-              placeholder={exp?.role}
-              value={exp?.role}
+              placeholder={slot.roleName}
+              value={slot.roleName}
               className="border border-[#EEEEEE] px-2.5 py-2.5 rounded-lg font-proximanova-regular text-sm"
               // keyboardType="twitter"
               autoCapitalize="none"
@@ -58,18 +67,18 @@ const ExperienceLevel = ({ titleHeight }: any) => {
           <View className="border border-[#EEEEEE] flex-row justify-between items-center gap-6 px-2 py-3 rounded-xl">
             <View>
               <Text className="font-proximanova-semibold text-primary">
-                {exp.value.toString().padStart(2, "0")}
+                {slot.requiredCount.toString().padStart(2, "0")}
               </Text>
             </View>
 
             <View className="flex-row justify-center items-center">
               {/* Plus Button */}
-              <TouchableOpacity onPress={() => updateExperience(exp.id, true)}>
+              <TouchableOpacity onPress={() => updateRequiredCount(slot.id, true)}>
                 <Feather name="plus" size={16} color="#7A7A7A" />
               </TouchableOpacity>
 
               {/* Minus Button */}
-              <TouchableOpacity onPress={() => updateExperience(exp.id, false)}>
+              <TouchableOpacity onPress={() => updateRequiredCount(slot.id, false)}>
                 <Feather name="minus" size={16} color="#7A7A7A" />
               </TouchableOpacity>
             </View>
@@ -78,23 +87,23 @@ const ExperienceLevel = ({ titleHeight }: any) => {
           {/* Add/Remove Circle Button */}
           <TouchableOpacity
             onPress={() =>
-              exp.id === experiences[experiences.length - 1].id
-                ? addNewExperience()
-                : removeExperience(exp.id)
+              slot.id === roleSlots[roleSlots.length - 1].id
+                ? addRoleSlot()
+                : removeRoleSlot(slot.id)
             }
             className={`items-center justify-center ${
-              exp.id === experiences[experiences.length - 1].id
+              slot.id === roleSlots[roleSlots.length - 1].id
             }`}
           >
             <Feather
               name={
-                exp.id === experiences[experiences.length - 1].id
+                slot.id === roleSlots[roleSlots.length - 1].id
                   ? "plus-circle"
                   : "minus-circle"
               }
               size={24}
               color={
-                exp.id === experiences[experiences.length - 1].id
+                slot.id === roleSlots[roleSlots.length - 1].id
                   ? "#4FB2F3"
                   : "#F87171"
               }
@@ -106,4 +115,4 @@ const ExperienceLevel = ({ titleHeight }: any) => {
   );
 };
 
-export default ExperienceLevel;
+export default RoleSlotsInput;

@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import ExperienceLevel from "@/components/ui/inputs/ExperienceLevel";
+import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
 import { useRouter } from "expo-router";
@@ -288,7 +288,7 @@ const FindJobFilters = () => {
             Experience Level
           </Text>
 
-          <ExperienceLevel />
+          <RoleSlotsInput />
         </View>
       </ScrollView>
 

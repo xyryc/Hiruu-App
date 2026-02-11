@@ -71,7 +71,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
 
       <TouchableOpacity
         onPress={() => setIsVisible(true)}
-        className="h-11 pl-2 flex-row items-center justify-between dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border"
+        className="h-11 px-2 flex-row items-center justify-between dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border"
       >
         <View className="flex-row items-center">
           {selectedOption?.avatar && (
@@ -135,6 +135,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
 
               {/* Options */}
               <FlatList
+                contentContainerStyle={{ paddingBottom: 400 }}
                 data={filteredOptions}
                 keyExtractor={(item) => item.value}
                 renderItem={({ item }) => (
@@ -145,11 +146,11 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
                     {item.avatar && (
                       <Image
                         source={item.avatar}
-                        style={{ height: 40, width: 40, borderRadius: 999 }}
+                        style={{ height: imageHeight, width: imageWidth, borderRadius: 999 }}
                         contentFit="cover"
                       />
                     )}
-                    <Text className="text-sm font-proximanova-regular ml-5 text-primary dark:text-dark-primary flex-1">
+                    <Text className="text-sm font-proximanova-regular ml-2 text-primary dark:text-dark-primary flex-1">
                       {item.label}
                     </Text>
                   </TouchableOpacity>
