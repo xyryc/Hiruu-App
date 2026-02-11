@@ -5,7 +5,7 @@ import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
 import { useBusinessStore } from "@/stores/businessStore";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useMemo, useState } from "react";
@@ -36,6 +36,9 @@ const CreateTemplate = () => {
   } = useBusinessStore();
   const [selectedBusiness, setSelectedBusiness] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<string>("");
+  const [requiredStaffCount, setRequiredStaffCount] = useState<string>("15");
+  const [currentRoleSlotsTotal, setCurrentRoleSlotsTotal] = useState<number>(0);
+  const [roleSelectionVersion, setRoleSelectionVersion] = useState(0);
   const [roleOptions, setRoleOptions] = useState<
     { label: string; value: string }[]
   >([]);
@@ -63,6 +66,7 @@ const CreateTemplate = () => {
       if (!selectedBusiness) {
         setRoleOptions([]);
         setSelectedRole("");
+        setRoleSelectionVersion(0);
         return;
       }
 
@@ -84,6 +88,22 @@ const CreateTemplate = () => {
 
     loadRoles();
   }, [getMyBusinessRoles, selectedBusiness]);
+
+  const selectedRoleOption = useMemo(
+    () => roleOptions.find((item) => item.value === selectedRole) || null,
+    [roleOptions, selectedRole]
+  );
+  const requiredCountOptions = useMemo(
+    () => [
+      { label: "5", value: "5" },
+      { label: "10", value: "10" },
+      { label: "15", value: "15" },
+      { label: "20", value: "20" },
+    ],
+    []
+  );
+  const selectedRequiredCount = Number(requiredStaffCount) || 0;
+  const isRequiredCountMatched = currentRoleSlotsTotal === selectedRequiredCount;
 
   return (
     <KeyboardAvoidingView
@@ -170,20 +190,20 @@ const CreateTemplate = () => {
           </View>
 
           {/* role requard */}
-          <View className="mt-8 flex-row justify-between items-center">
+          <View className="mt-8 flex-row items-center justify-between">
             <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
               Roles & Required Count
             </Text>
-            <View className="bg-[#E5F4FD] flex-row gap-2.5 rounded-lg items-center p-1">
-              <Text>15</Text>
-              <MaterialIcons
-                name="keyboard-arrow-down"
-                size={24}
-                color="black"
-              />
-            </View>
+
+            <BusinessDropdown
+              placeholder="Select required staff"
+              options={requiredCountOptions}
+              value={requiredStaffCount}
+              onSelect={(value: string) => setRequiredStaffCount(value)}
+            />
           </View>
 
+          {/* role list */}
           <View className="mt-4">
             {rolesLoading ? (
               <View className="py-4 items-center border border-[#EEEEEE] rounded-[10px]">
@@ -196,7 +216,10 @@ const CreateTemplate = () => {
                 }
                 options={roleOptions}
                 value={selectedRole}
-                onSelect={(value: string) => setSelectedRole(value)}
+                onSelect={(value: string) => {
+                  setSelectedRole(value);
+                  setRoleSelectionVersion((prev) => prev + 1);
+                }}
               />
             )}
           </View>
@@ -207,16 +230,32 @@ const CreateTemplate = () => {
           /> */}
 
           {/* role slot */}
-          <RoleSlotsInput titleHeight={true} />
+          <RoleSlotsInput
+            titleHeight={true}
+            selectedRoleToAdd={
+              selectedRoleOption
+                ? { id: selectedRoleOption.value, name: selectedRoleOption.label }
+                : null
+            }
+            addRoleTrigger={roleSelectionVersion}
+            onTotalRequiredChange={(total) => setCurrentRoleSlotsTotal(total)}
+          />
 
           {/* Total roles must equal required staff */}
           <View className="flex-row items-center gap-2.5 -mt-4">
-            <Feather name="alert-triangle" size={16} color="#F34F4F" />
+            <Feather
+              name={isRequiredCountMatched ? "check-circle" : "alert-triangle"}
+              size={16}
+              color={isRequiredCountMatched ? "#22C55E" : "#F34F4F"}
+            />
             <Text
               numberOfLines={1}
-              className="ml-1.5 text-sm font-proximanova-regular text-[#F34F4F]"
+              className={`ml-1.5 text-sm font-proximanova-regular ${isRequiredCountMatched ? "text-[#22C55E]" : "text-[#F34F4F]"
+                }`}
             >
-              Total roles must equal required staff
+              {isRequiredCountMatched
+                ? "Role count matches required staff"
+                : `Total roles (${currentRoleSlotsTotal}) must equal required staff (${selectedRequiredCount})`}
             </Text>
           </View>
 

@@ -1,5 +1,5 @@
 import { Feather } from "@expo/vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 
 type RoleSlot = {
@@ -8,15 +8,57 @@ type RoleSlot = {
   requiredCount: number;
 };
 
-const RoleSlotsInput = ({ titleHeight }: any) => {
-  const [roleSlots, setRoleSlots] = useState<RoleSlot[]>([
-    { id: 1, roleName: "Cashier", requiredCount: 5 },
-    { id: 2, roleName: "Receptionist", requiredCount: 5 },
-  ]);
+type RoleSlotsInputProps = {
+  titleHeight?: boolean;
+  selectedRoleToAdd?: { id: string; name: string } | null;
+  addRoleTrigger?: number;
+  onTotalRequiredChange?: (total: number) => void;
+};
+
+const RoleSlotsInput = ({
+  titleHeight,
+  selectedRoleToAdd,
+  addRoleTrigger = 0,
+  onTotalRequiredChange,
+}: RoleSlotsInputProps) => {
+  const [roleSlots, setRoleSlots] = useState<RoleSlot[]>([]);
+
+  const getNextSlotId = (slots: RoleSlot[]) =>
+    slots.length > 0 ? Math.max(...slots.map((slot) => slot.id)) + 1 : 1;
+
+  useEffect(() => {
+    if (!selectedRoleToAdd?.name) return;
+
+    setRoleSlots((prev) => {
+      const exists = prev.some(
+        (slot) =>
+          slot.roleName.trim().toLowerCase() ===
+          selectedRoleToAdd.name.trim().toLowerCase()
+      );
+      if (exists) return prev;
+
+      return [
+        ...prev,
+        {
+          id: getNextSlotId(prev),
+          roleName: selectedRoleToAdd.name,
+          requiredCount: 1,
+        },
+      ];
+    });
+  }, [addRoleTrigger, selectedRoleToAdd]);
+
+  useEffect(() => {
+    const total = roleSlots.reduce(
+      (sum, slot) => sum + Math.max(0, slot.requiredCount),
+      0
+    );
+    onTotalRequiredChange?.(total);
+  }, [onTotalRequiredChange, roleSlots]);
 
   const updateRequiredCount = (slotId: number, increment: boolean) => {
-    setRoleSlots(
-      roleSlots.map((slot) =>
+    setRoleSlots((prev) =>
+      prev.map((slot) =>
         slot.id === slotId
           ? {
               ...slot,
@@ -29,14 +71,14 @@ const RoleSlotsInput = ({ titleHeight }: any) => {
     );
   };
 
-  const addRoleSlot = () => {
-    const maxId = roleSlots.length > 0 ? Math.max(...roleSlots.map((slot) => slot.id)) : 0;
-    const newId = maxId + 1;
-    setRoleSlots([...roleSlots, { id: newId, roleName: "New Role", requiredCount: 0 }]);
+  const removeRoleSlot = (slotId: number) => {
+    setRoleSlots((prev) => prev.filter((slot) => slot.id !== slotId));
   };
 
-  const removeRoleSlot = (slotId: number) => {
-    setRoleSlots(roleSlots.filter((slot) => slot.id !== slotId));
+  const updateRoleName = (slotId: number, roleName: string) => {
+    setRoleSlots((prev) =>
+      prev.map((slot) => (slot.id === slotId ? { ...slot, roleName } : slot))
+    );
   };
 
   return (
@@ -47,70 +89,79 @@ const RoleSlotsInput = ({ titleHeight }: any) => {
         </Text>
       )}
 
-      {roleSlots.map((slot) => (
-        <View key={slot.id} className="flex-row items-center mb-3 gap-3">
-          {/* Role Input */}
-          <View className="flex-1">
-            {/* <Text className="font-proximanova-regular text-gray-600">
-              {slot.roleName}
-            </Text> */}
-            <TextInput
-              placeholder={slot.roleName}
-              value={slot.roleName}
-              className="border border-[#EEEEEE] px-2.5 py-2.5 rounded-lg font-proximanova-regular text-sm"
-              // keyboardType="twitter"
-              autoCapitalize="none"
-            />
-          </View>
-
-          {/* Value Display */}
-          <View className="border border-[#EEEEEE] flex-row justify-between items-center gap-6 px-2 py-3 rounded-xl">
-            <View>
-              <Text className="font-proximanova-semibold text-primary">
-                {slot.requiredCount.toString().padStart(2, "0")}
-              </Text>
-            </View>
-
-            <View className="flex-row justify-center items-center">
-              {/* Plus Button */}
-              <TouchableOpacity onPress={() => updateRequiredCount(slot.id, true)}>
-                <Feather name="plus" size={16} color="#7A7A7A" />
-              </TouchableOpacity>
-
-              {/* Minus Button */}
-              <TouchableOpacity onPress={() => updateRequiredCount(slot.id, false)}>
-                <Feather name="minus" size={16} color="#7A7A7A" />
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Add/Remove Circle Button */}
-          <TouchableOpacity
-            onPress={() =>
-              slot.id === roleSlots[roleSlots.length - 1].id
-                ? addRoleSlot()
-                : removeRoleSlot(slot.id)
-            }
-            className={`items-center justify-center ${
-              slot.id === roleSlots[roleSlots.length - 1].id
-            }`}
-          >
-            <Feather
-              name={
-                slot.id === roleSlots[roleSlots.length - 1].id
-                  ? "plus-circle"
-                  : "minus-circle"
-              }
-              size={24}
-              color={
-                slot.id === roleSlots[roleSlots.length - 1].id
-                  ? "#4FB2F3"
-                  : "#F87171"
-              }
-            />
-          </TouchableOpacity>
+      {roleSlots.length === 0 ? (
+        <View className="border border-dashed border-[#D1D5DB] rounded-[10px] py-4 px-3">
+          <Text className="text-sm text-secondary font-proximanova-regular text-center">
+            Select a role to create a role slot
+          </Text>
         </View>
-      ))}
+      ) : (
+        roleSlots.map((slot) => (
+          <View key={slot.id} className="flex-row items-center mb-3 gap-3">
+            {/* Role Input */}
+            <View className="flex-1">
+              <TextInput
+                placeholder="Role name"
+                value={slot.roleName}
+                onChangeText={(text) => updateRoleName(slot.id, text)}
+                className="border border-[#EEEEEE] px-2.5 py-2.5 rounded-lg font-proximanova-regular text-sm"
+                autoCapitalize="words"
+              />
+            </View>
+
+            {/* Value Display */}
+            <View className="border border-[#EEEEEE] flex-row justify-between items-center gap-6 px-2 py-3 rounded-xl">
+              <View>
+                <Text className="font-proximanova-semibold text-primary">
+                  {slot.requiredCount.toString().padStart(2, "0")}
+                </Text>
+              </View>
+
+              <View className="flex-row justify-center items-center">
+                {/* Plus Button */}
+                <TouchableOpacity
+                  onPress={() => updateRequiredCount(slot.id, true)}
+                >
+                  <Feather name="plus" size={16} color="#7A7A7A" />
+                </TouchableOpacity>
+
+                {/* Minus Button */}
+                <TouchableOpacity
+                  onPress={() => updateRequiredCount(slot.id, false)}
+                >
+                  <Feather name="minus" size={16} color="#7A7A7A" />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Add/Remove Circle Button */}
+            <TouchableOpacity
+              onPress={() =>
+                slot.id === roleSlots[roleSlots.length - 1].id
+                  ? undefined
+                  : removeRoleSlot(slot.id)
+              }
+              className={`items-center justify-center ${
+                slot.id === roleSlots[roleSlots.length - 1].id
+              }`}
+            >
+              <Feather
+                name={
+                  slot.id === roleSlots[roleSlots.length - 1].id
+                    ? "plus-circle"
+                    : "minus-circle"
+                }
+                size={24}
+                color={
+                  slot.id === roleSlots[roleSlots.length - 1].id
+                    ? "#4FB2F3"
+                    : "#F87171"
+                }
+              />
+            </TouchableOpacity>
+          </View>
+        ))
+      )}
     </View>
   );
 };
