@@ -30,6 +30,7 @@ interface BusinessState {
   getMyBusinessRoles: (businessId: string) => Promise<any>;
   getBusinessRoleById: (businessId: string, roleId: string) => Promise<any>;
   createShiftTemplate: (businessId: string, payload: any) => Promise<any>;
+  getShiftTemplates: (businessId: string) => Promise<any>;
   getBusinessProfile: (businessId: string) => Promise<any>;
   updateMyBusinessProfile: (businessId: string, payload: any) => Promise<any>;
   deleteBusinessRole: (businessId: string, roleId: string) => Promise<any>;
@@ -252,6 +253,26 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       return result.data;
     } catch (error) {
       console.error("Create shift template error:", error);
+      throw error;
+    }
+  },
+
+  getShiftTemplates: async (businessId) => {
+    try {
+      const response = await axiosInstance.get(`/shift-template/${businessId}`);
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to fetch shift templates";
+        throw new Error(errorMsg);
+      }
+
+      return Array.isArray(result.data) ? result.data : [];
+    } catch (error) {
+      console.error("Fetch shift templates error:", error);
       throw error;
     }
   },

@@ -5,9 +5,26 @@ import { router } from "expo-router";
 import React from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
 
-const ShiftTemplateCard = ({ className, title, weekly }: any) => {
+type ShiftTemplateRole = {
+  name: string;
+  count: number;
+  bg?: string;
+  color?: string;
+};
+
+const ShiftTemplateCard = ({
+  className,
+  title,
+  weekly,
+  timeRange,
+  breakTimeRange,
+  location,
+  roles,
+  businessName,
+  businessLogo,
+}: any) => {
   const scrollX = new Animated.Value(0);
-  const roles = [
+  const roleChips: ShiftTemplateRole[] = roles || [
     { name: "Cashier", count: 2, bg: "#EEF2FF", color: "#4F46E5" },
     { name: "Bartender", count: 1, bg: "#FEF9C3", color: "#CA8A04" },
     { name: "Cleaner", count: 1, bg: "#DCFCE7", color: "#16A34A" },
@@ -51,7 +68,7 @@ const ShiftTemplateCard = ({ className, title, weekly }: any) => {
               Time:
             </Text>
             <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary ">
-              7:00 AM - 3:00 PM
+              {timeRange || "7:00 AM - 3:00 PM"}
             </Text>
           </View>
 
@@ -60,7 +77,7 @@ const ShiftTemplateCard = ({ className, title, weekly }: any) => {
               Break Time:
             </Text>
             <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary ">
-              10:00 AM - 11:00 PM
+              {breakTimeRange || "10:00 AM - 11:00 PM"}
             </Text>
           </View>
 
@@ -68,12 +85,13 @@ const ShiftTemplateCard = ({ className, title, weekly }: any) => {
             <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
               Location:
             </Text>
+
             <Text
               numberOfLines={1}
               ellipsizeMode="tail"
-              className="font-proximanova-regular text-sm text-primary dark:text-dark-primary w-1/2"
+              className="font-proximanova-regular text-sm text-primary dark:text-dark-primary w-1/2 text-right"
             >
-              136 Avenue-Maciezine, New York, USA, 65004
+              {location || "Location not defined"}
             </Text>
           </View>
 
@@ -86,7 +104,7 @@ const ShiftTemplateCard = ({ className, title, weekly }: any) => {
             {/* Scrollable Role Chips with fade edge */}
             <View className="flex-1 ml-2">
               <Animated.FlatList
-                data={roles}
+                data={roleChips}
                 horizontal
                 keyExtractor={(item) => item.name}
                 showsHorizontalScrollIndicator={false}
@@ -98,11 +116,11 @@ const ShiftTemplateCard = ({ className, title, weekly }: any) => {
                 renderItem={({ item }) => (
                   <View
                     className="px-3 py-1.5 rounded-full"
-                    style={{ backgroundColor: item.bg }}
+                    style={{ backgroundColor: item.bg || "#EEF2FF" }}
                   >
                     <Text
                       className="font-proximanova-regular text-xs"
-                      style={{ color: item.color }}
+                      style={{ color: item.color || "#4F46E5" }}
                     >
                       {item.name}: {item.count}
                     </Text>
@@ -145,14 +163,19 @@ const ShiftTemplateCard = ({ className, title, weekly }: any) => {
             style={{ width: 295, height: 2, marginTop: 15 }}
           />
 
+          {/* business logo and name */}
           <View className="flex-row gap-2 items-center mt-3">
             <Image
-              source={require("@/assets/images/adaptive-icon.png")}
+              source={
+                businessLogo
+                  ? { uri: businessLogo }
+                  : require("@/assets/images/adaptive-icon.png")
+              }
               contentFit="contain"
-              style={{ width: 30, height: 30 }}
+              style={{ width: 30, height: 30, borderRadius: 999 }}
             />
             <Text className="font-proximanova-regular  text-secondary dark:text-dark-secondary">
-              Palm Beach
+              {businessName || "Palm Beach"}
             </Text>
           </View>
         </View>
