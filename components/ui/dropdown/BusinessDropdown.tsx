@@ -38,8 +38,8 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
   onSelect,
   className,
   hideSelectedText = false,
-  imageHeight = 35,
-  imageWidth = 35,
+  imageHeight = 30,
+  imageWidth = 30,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -71,11 +71,9 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
 
       <TouchableOpacity
         onPress={() => setIsVisible(true)}
-        className={`flex-row items-center justify-between dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border
-            ${selectedOption ? "py-1 pl-4" : "px-4 py-3"}
-          `}
+        className="h-11 pl-2 flex-row items-center justify-between dark:bg-dark-surface rounded-[10px] border border-[#EEEEEE] dark:border-dark-border"
       >
-        <View className="flex-row items-center p-1">
+        <View className="flex-row items-center">
           {selectedOption?.avatar && (
             <Image
               source={selectedOption.avatar}
@@ -91,11 +89,10 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
           {/* Conditionally render text based on hideSelectedText prop */}
           {!(hideSelectedText && value) && (
             <Text
-              className={`text-sm ml-2.5 font-proximanova-regular ${
-                value
-                  ? "text-primary dark:text-dark-primary"
-                  : "text-placeholder dark:text-dark-placeholder"
-              }`}
+              className={`text-sm ml-2.5 font-proximanova-regular ${value
+                ? "text-primary dark:text-dark-primary"
+                : "text-placeholder dark:text-dark-placeholder"
+                }`}
             >
               {selectedOption?.label || placeholder}
             </Text>

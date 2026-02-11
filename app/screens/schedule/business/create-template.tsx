@@ -2,7 +2,6 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
 import ExperienceLevel from "@/components/ui/inputs/ExperienceLevel";
-import SearchBar from "@/components/ui/inputs/SearchBar";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
 import { useBusinessStore } from "@/stores/businessStore";
@@ -29,10 +28,18 @@ const CreateTemplate = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const { myBusinesses, myBusinessesLoading, getMyBusinesses } =
-    useBusinessStore();
+  const {
+    myBusinesses,
+    myBusinessesLoading,
+    getMyBusinesses,
+    getMyBusinessRoles,
+  } = useBusinessStore();
   const [selectedBusiness, setSelectedBusiness] = useState<string>("");
-  const [search, setSearch] = useState("");
+  const [selectedRole, setSelectedRole] = useState<string>("");
+  const [roleOptions, setRoleOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [rolesLoading, setRolesLoading] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
 
   useEffect(() => {
@@ -50,6 +57,33 @@ const CreateTemplate = () => {
       })),
     [myBusinesses]
   );
+
+  useEffect(() => {
+    const loadRoles = async () => {
+      if (!selectedBusiness) {
+        setRoleOptions([]);
+        setSelectedRole("");
+        return;
+      }
+
+      try {
+        setRolesLoading(true);
+        const data = await getMyBusinessRoles(selectedBusiness);
+        const mapped = (Array.isArray(data) ? data : []).map((item: any) => ({
+          label: item?.role?.name || item?.name || "Role",
+          value: item?.id || item?.roleId || "",
+        }));
+        setRoleOptions(mapped.filter((item: any) => item.value));
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load roles");
+        setRoleOptions([]);
+      } finally {
+        setRolesLoading(false);
+      }
+    };
+
+    loadRoles();
+  }, [getMyBusinessRoles, selectedBusiness]);
 
   return (
     <KeyboardAvoidingView
@@ -150,12 +184,27 @@ const CreateTemplate = () => {
             </View>
           </View>
 
-          {/* <TextInput /> */}
+          <View className="mt-4">
+            {rolesLoading ? (
+              <View className="py-4 items-center border border-[#EEEEEE] rounded-[10px]">
+                <ActivityIndicator size="small" />
+              </View>
+            ) : (
+              <BusinessDropdown
+                placeholder={
+                  selectedBusiness ? "Choose role" : "Select business first"
+                }
+                options={roleOptions}
+                value={selectedRole}
+                onSelect={(value: string) => setSelectedRole(value)}
+              />
+            )}
+          </View>
 
-          <SearchBar
+          {/* <SearchBar
             className="mt-4 py-1"
-            onSearch={(text) => setSearch(text)}
-          />
+            onSearch={(text) => {}}
+          /> */}
 
           {/* ExperienceLevel */}
           <ExperienceLevel titleHeight={true} />
