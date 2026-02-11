@@ -5,6 +5,7 @@ import { Text, TextInput, TouchableOpacity, View } from "react-native";
 type RoleSlot = {
   id: number;
   roleName: string;
+  roleId?: string;
   requiredCount: number;
 };
 
@@ -13,6 +14,9 @@ type RoleSlotsInputProps = {
   selectedRoleToAdd?: { id: string; name: string } | null;
   addRoleTrigger?: number;
   onTotalRequiredChange?: (total: number) => void;
+  onRoleSlotsChange?: (
+    slots: { roleId: string; roleName: string; count: number }[]
+  ) => void;
 };
 
 const RoleSlotsInput = ({
@@ -20,6 +24,7 @@ const RoleSlotsInput = ({
   selectedRoleToAdd,
   addRoleTrigger = 0,
   onTotalRequiredChange,
+  onRoleSlotsChange,
 }: RoleSlotsInputProps) => {
   const [roleSlots, setRoleSlots] = useState<RoleSlot[]>([]);
 
@@ -32,8 +37,9 @@ const RoleSlotsInput = ({
     setRoleSlots((prev) => {
       const exists = prev.some(
         (slot) =>
+          (slot.roleId && slot.roleId === selectedRoleToAdd.id) ||
           slot.roleName.trim().toLowerCase() ===
-          selectedRoleToAdd.name.trim().toLowerCase()
+            selectedRoleToAdd.name.trim().toLowerCase()
       );
       if (exists) return prev;
 
@@ -42,6 +48,7 @@ const RoleSlotsInput = ({
         {
           id: getNextSlotId(prev),
           roleName: selectedRoleToAdd.name,
+          roleId: selectedRoleToAdd.id,
           requiredCount: 1,
         },
       ];
@@ -55,6 +62,17 @@ const RoleSlotsInput = ({
     );
     onTotalRequiredChange?.(total);
   }, [onTotalRequiredChange, roleSlots]);
+
+  useEffect(() => {
+    const normalized = roleSlots
+      .filter((slot) => slot.roleId && slot.requiredCount > 0)
+      .map((slot) => ({
+        roleId: slot.roleId as string,
+        roleName: slot.roleName,
+        count: slot.requiredCount,
+      }));
+    onRoleSlotsChange?.(normalized);
+  }, [onRoleSlotsChange, roleSlots]);
 
   const updateRequiredCount = (slotId: number, increment: boolean) => {
     setRoleSlots((prev) =>

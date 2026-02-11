@@ -8,13 +8,17 @@ const TimePicker = ({
   paddingy,
   marginx,
   rounded,
+  value,
+  onChangeTime,
 }: {
   title?: string;
   paddingy?: number;
   marginx?: number;
   rounded?: number;
+  value?: Date;
+  onChangeTime?: (time: Date) => void;
 }) => {
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState(value || new Date());
   const [show, setShow] = useState(false);
 
   const onChange = (event: any, selectedTime?: Date) => {
@@ -23,9 +27,11 @@ const TimePicker = ({
     }
     if (selectedTime) {
       setTime(selectedTime);
+      onChangeTime?.(selectedTime);
     }
   };
-  const formattedTime = time.toLocaleTimeString([], {
+  const displayTime = value || time;
+  const formattedTime = displayTime.toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,

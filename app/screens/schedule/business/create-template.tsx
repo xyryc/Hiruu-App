@@ -3,12 +3,11 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
 import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
 import TimePicker from "@/components/ui/inputs/TimePicker";
-import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -33,17 +32,26 @@ const CreateTemplate = () => {
     myBusinessesLoading,
     getMyBusinesses,
     getMyBusinessRoles,
+    createShiftTemplate,
   } = useBusinessStore();
+  const [templateName, setTemplateName] = useState("");
+  const [templateDescription, setTemplateDescription] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [requiredStaffCount, setRequiredStaffCount] = useState<string>("15");
   const [currentRoleSlotsTotal, setCurrentRoleSlotsTotal] = useState<number>(0);
+  const [roleRequirements, setRoleRequirements] = useState<
+    { roleId: string; roleName: string; count: number }[]
+  >([]);
+  const [shiftStartTime, setShiftStartTime] = useState<Date>(new Date());
+  const [shiftEndTime, setShiftEndTime] = useState<Date>(new Date());
+  const [breakStartTime, setBreakStartTime] = useState<Date>(new Date());
+  const [breakEndTime, setBreakEndTime] = useState<Date>(new Date());
   const [roleSelectionVersion, setRoleSelectionVersion] = useState(0);
   const [roleOptions, setRoleOptions] = useState<
     { label: string; value: string }[]
   >([]);
   const [rolesLoading, setRolesLoading] = useState(false);
-  const [isPreview, setIsPreview] = useState(false);
 
   useEffect(() => {
     getMyBusinesses().catch((error: any) => {
@@ -104,6 +112,89 @@ const CreateTemplate = () => {
   );
   const selectedRequiredCount = Number(requiredStaffCount) || 0;
   const isRequiredCountMatched = currentRoleSlotsTotal === selectedRequiredCount;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleTotalRequiredChange = useCallback((total: number) => {
+    setCurrentRoleSlotsTotal((prev) => (prev === total ? prev : total));
+  }, []);
+
+  const handleRoleSlotsChange = useCallback(
+    (slots: { roleId: string; roleName: string; count: number }[]) => {
+      setRoleRequirements((prev) => {
+        if (
+          prev.length === slots.length &&
+          prev.every(
+            (item, index) =>
+              item.roleId === slots[index]?.roleId &&
+              item.roleName === slots[index]?.roleName &&
+              item.count === slots[index]?.count
+          )
+        ) {
+          return prev;
+        }
+        return slots;
+      });
+    },
+    []
+  );
+
+  const formatTime24 = (date: Date) => {
+    const h = `${date.getHours()}`.padStart(2, "0");
+    const m = `${date.getMinutes()}`.padStart(2, "0");
+    return `${h}:${m}`;
+  };
+
+  const handleCreateTemplate = async () => {
+    if (!selectedBusiness) {
+      toast.error("Please select a business.");
+      return;
+    }
+
+    if (!templateName.trim()) {
+      toast.error("Template name is required.");
+      return;
+    }
+
+    if (roleRequirements.length === 0) {
+      toast.error("Please add at least one role slot.");
+      return;
+    }
+
+    if (!isRequiredCountMatched) {
+      toast.error("Total roles must equal required staff.");
+      return;
+    }
+
+    const payload = {
+      name: templateName.trim(),
+      description: templateDescription.trim() || null,
+      startTime: formatTime24(shiftStartTime),
+      endTime: formatTime24(shiftEndTime),
+      breakDuration: [
+        {
+          startTime: formatTime24(breakStartTime),
+          endTime: formatTime24(breakEndTime),
+        },
+      ],
+      roleRequirements: roleRequirements.map((item) => ({
+        roleId: item.roleId,
+        count: item.count,
+      })),
+      isOvertime: false,
+    };
+
+    try {
+      setIsSubmitting(true);
+      console.log("createShiftTemplate payload:", payload);
+      await createShiftTemplate(selectedBusiness, payload);
+      toast.success("Shift template created successfully.");
+      router.back();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to create shift template");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -132,23 +223,42 @@ const CreateTemplate = () => {
             Templete Name
           </Text>
           <TextInput
+            value={templateName}
+            onChangeText={setTemplateName}
             className="px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary  border border-[#EEEEEE] mt-2.5 rounded-[10px]"
             placeholder="Morning Shift"
             placeholderTextColor="#7D7D7D"
             textAlignVertical="top"
+          />
+          <TextInput
+            value={templateDescription}
+            onChangeText={setTemplateDescription}
+            className="px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] mt-3 rounded-[10px]"
+            placeholder="Template description"
+            placeholderTextColor="#7D7D7D"
+            textAlignVertical="top"
+            multiline
           />
 
           {/* Time Picker shift  */}
           <View className="mt-8">
             <View className="flex-row gap-4 items-center">
               <View className="flex-1">
-                <TimePicker title="Shift Start Time" />
+                <TimePicker
+                  title="Shift Start Time"
+                  value={shiftStartTime}
+                  onChangeTime={setShiftStartTime}
+                />
               </View>
               <Text className="mt-7 font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                 To
               </Text>
               <View className="flex-1">
-                <TimePicker title="Shift End Time" />
+                <TimePicker
+                  title="Shift End Time"
+                  value={shiftEndTime}
+                  onChangeTime={setShiftEndTime}
+                />
               </View>
             </View>
           </View>
@@ -157,13 +267,21 @@ const CreateTemplate = () => {
           <View className="mt-8">
             <View className="flex-row gap-4 items-center">
               <View className="flex-1">
-                <TimePicker title="Add Break" />
+                <TimePicker
+                  title="Add Break"
+                  value={breakStartTime}
+                  onChangeTime={setBreakStartTime}
+                />
               </View>
               <Text className="mt-7 font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                 To
               </Text>
               <View className="flex-1">
-                <TimePicker title="  " />
+                <TimePicker
+                  title="  "
+                  value={breakEndTime}
+                  onChangeTime={setBreakEndTime}
+                />
               </View>
             </View>
           </View>
@@ -238,7 +356,8 @@ const CreateTemplate = () => {
                 : null
             }
             addRoleTrigger={roleSelectionVersion}
-            onTotalRequiredChange={(total) => setCurrentRoleSlotsTotal(total)}
+            onTotalRequiredChange={handleTotalRequiredChange}
+            onRoleSlotsChange={handleRoleSlotsChange}
           />
 
           {/* Total roles must equal required staff */}
@@ -261,14 +380,12 @@ const CreateTemplate = () => {
 
           <View className="mt-8 mb-5">
             <PrimaryButton
-              onPress={() => setIsPreview(true)}
+              onPress={handleCreateTemplate}
+              loading={isSubmitting}
+              disabled={isSubmitting}
               title="Save Template"
             />
           </View>
-          <PreviewTemplateModal
-            visible={isPreview}
-            onClose={() => setIsPreview(false)}
-          />
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
