@@ -1,4 +1,5 @@
 import { EvilIcons, Feather, MaterialIcons } from "@expo/vector-icons";
+import RoleChip, { DEFAULT_ROLE_CHIPS } from "@/components/ui/badges/RoleChip";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -24,14 +25,7 @@ const ShiftTemplateCard = ({
   businessLogo,
 }: any) => {
   const scrollX = new Animated.Value(0);
-  const roleChips: ShiftTemplateRole[] = roles || [
-    { name: "Cashier", count: 2, bg: "#EEF2FF", color: "#4F46E5" },
-    { name: "Bartender", count: 1, bg: "#FEF9C3", color: "#CA8A04" },
-    { name: "Cleaner", count: 1, bg: "#DCFCE7", color: "#16A34A" },
-    { name: "Security", count: 1, bg: "#FFE4E6", color: "#E11D48" },
-    { name: "Waiter", count: 3, bg: "#E0F2FE", color: "#0284C7" },
-    { name: "Chef", count: 1, bg: "#F3E8FF", color: "#9333EA" },
-  ];
+  const roleChips: ShiftTemplateRole[] = roles || DEFAULT_ROLE_CHIPS;
 
   return (
     <View className={`${className}`}>
@@ -53,10 +47,11 @@ const ShiftTemplateCard = ({
               onPress={() =>
                 router.push("/screens/schedule/business/edit-templete")
               }
-              className="h-10 w-10 rounded-full bg-[#FFF] flex-row justify-center items-center "
+              className="h-9 w-9 rounded-full bg-[#FFF] flex-row justify-center items-center "
             >
-              <Feather name="edit-2" size={20} color="black" />
+              <Feather name="edit-2" size={16} color="black" />
             </TouchableOpacity>
+
             {weekly || <EvilIcons name="trash" size={24} color="#F34F4F" />}
           </View>
         </View>
@@ -97,7 +92,7 @@ const ShiftTemplateCard = ({
 
           <View className="flex-row items-start mt-2.5">
             {/* Label */}
-            <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-1">
+            <Text className="font-proximanova-regular text-[14px] text-secondary dark:text-dark-secondary mt-2">
               Roles:
             </Text>
 
@@ -108,23 +103,18 @@ const ShiftTemplateCard = ({
                 horizontal
                 keyExtractor={(item) => item.name}
                 showsHorizontalScrollIndicator={false}
-                contentContainerStyle={{ gap: 8, paddingRight: 20 }}
+                contentContainerStyle={{ gap: 10, paddingRight: 20 }}
                 onScroll={Animated.event(
                   [{ nativeEvent: { contentOffset: { x: scrollX } } }],
                   { useNativeDriver: true }
                 )}
                 renderItem={({ item }) => (
-                  <View
-                    className="px-3 py-1.5 rounded-full"
-                    style={{ backgroundColor: item.bg || "#EEF2FF" }}
-                  >
-                    <Text
-                      className="font-proximanova-regular text-xs"
-                      style={{ color: item.color || "#4F46E5" }}
-                    >
-                      {item.name}: {item.count}
-                    </Text>
-                  </View>
+                  <RoleChip
+                    name={item.name}
+                    count={item.count}
+                    bg={item.bg}
+                    color={item.color}
+                  />
                 )}
               />
 
