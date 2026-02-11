@@ -1,17 +1,10 @@
-import { EvilIcons, Feather, MaterialIcons } from "@expo/vector-icons";
 import RoleChip, { DEFAULT_ROLE_CHIPS } from "@/components/ui/badges/RoleChip";
+import { EvilIcons, Feather, MaterialIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import React from "react";
 import { Animated, Text, TouchableOpacity, View } from "react-native";
-
-type ShiftTemplateRole = {
-  name: string;
-  count: number;
-  bg?: string;
-  color?: string;
-};
 
 const ShiftTemplateCard = ({
   className,
@@ -25,7 +18,8 @@ const ShiftTemplateCard = ({
   businessLogo,
 }: any) => {
   const scrollX = new Animated.Value(0);
-  const roleChips: ShiftTemplateRole[] = roles || DEFAULT_ROLE_CHIPS;
+  const roleChips =
+    Array.isArray(roles) && roles.length > 0 ? roles : DEFAULT_ROLE_CHIPS;
 
   return (
     <View className={`${className}`}>
@@ -101,7 +95,9 @@ const ShiftTemplateCard = ({
               <Animated.FlatList
                 data={roleChips}
                 horizontal
-                keyExtractor={(item) => item.name}
+                keyExtractor={(item, index) =>
+                  `${item?.businessRoleName || item?.roleName || item?.name || item?.role?.name || item?.roleId || "role"}-${item?.roleId || index}`
+                }
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={{ gap: 10, paddingRight: 20 }}
                 onScroll={Animated.event(
@@ -110,10 +106,17 @@ const ShiftTemplateCard = ({
                 )}
                 renderItem={({ item }) => (
                   <RoleChip
-                    name={item.name}
-                    count={item.count}
-                    bg={item.bg}
-                    color={item.color}
+                    name={
+                      item?.businessRoleName ||
+                      item?.roleName ||
+                      item?.name ||
+                      item?.role?.name ||
+                      item?.roleId ||
+                      "Role"
+                    }
+                    count={Number(item?.count || 0)}
+                    bg={item?.bg}
+                    color={item?.color}
                   />
                 )}
               />

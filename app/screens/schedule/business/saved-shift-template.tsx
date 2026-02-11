@@ -96,12 +96,6 @@ const SavedShiftTemplate = () => {
           ) : templates.length > 0 ? (
             templates.map((template, index) => {
               const firstBreak = template?.breakDuration?.[0];
-              const roles = Array.isArray(template?.roleRequirements)
-                ? template.roleRequirements.map((roleItem: any) => ({
-                  name: roleItem?.role?.name || roleItem?.roleId || "Role",
-                  count: roleItem?.count || 0,
-                }))
-                : [];
 
               return (
                 <ShiftTemplateCard
@@ -121,7 +115,7 @@ const SavedShiftTemplate = () => {
                   location={template?.business?.address || "Business address"}
                   businessName={template?.business?.name || "Business"}
                   businessLogo={template?.business?.logo}
-                  roles={roles}
+                  roles={template?.roleRequirements || []}
                 />
               );
             })
