@@ -5,11 +5,13 @@ import ExperienceLevel from "@/components/ui/inputs/ExperienceLevel";
 import SearchBar from "@/components/ui/inputs/SearchBar";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
+import { useBusinessStore } from "@/stores/businessStore";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -21,40 +23,33 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
-const leaveTypes = [
-  {
-    label: "Sick Leave",
-    value: "sick",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Personal Leave",
-    value: "personal",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Work From Home",
-    value: "wfh",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Emergency Leave",
-    value: "emergency",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-];
 const CreateTemplate = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const [selectedLeave, setSelectedLeave] = useState<string>("");
+  const { myBusinesses, myBusinessesLoading, getMyBusinesses } =
+    useBusinessStore();
+  const [selectedBusiness, setSelectedBusiness] = useState<string>("");
   const [search, setSearch] = useState("");
   const [isPreview, setIsPreview] = useState(false);
+
+  useEffect(() => {
+    getMyBusinesses().catch((error: any) => {
+      toast.error(error?.message || "Failed to load businesses");
+    });
+  }, [getMyBusinesses]);
+
+  const businessOptions = useMemo(
+    () =>
+      (myBusinesses || []).map((business: any) => ({
+        label: business?.name || "Business",
+        value: business?.id || "",
+        avatar: business?.logo || undefined,
+      })),
+    [myBusinesses]
+  );
 
   return (
     <KeyboardAvoidingView
@@ -75,7 +70,9 @@ const CreateTemplate = () => {
           iconColor={isDark ? "#fff" : "#111"}
         />
 
-        <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
+        <ScrollView className="mx-5" showsVerticalScrollIndicator={false} contentContainerStyle={{
+          paddingBottom: 400
+        }}>
           {/* inpute */}
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
             Templete Name
@@ -117,18 +114,25 @@ const CreateTemplate = () => {
             </View>
           </View>
 
-          {/* hapiness bar */}
+          {/* business dropdown */}
           <View>
             <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-8">
               Select business
             </Text>
-            <BusinessDropdown
-              className="mt-4"
-              placeholder="Choose leave type"
-              options={leaveTypes}
-              value={selectedLeave}
-              onSelect={(value: any) => setSelectedLeave(value)}
-            />
+
+            {myBusinessesLoading ? (
+              <View className="mt-4 py-4 items-center border border-[#EEEEEE] rounded-[10px]">
+                <ActivityIndicator size="small" />
+              </View>
+            ) : (
+              <BusinessDropdown
+                className="mt-4"
+                placeholder="Choose business"
+                options={businessOptions}
+                value={selectedBusiness}
+                onSelect={(value: string) => setSelectedBusiness(value)}
+              />
+            )}
           </View>
 
           {/* role requard */}
