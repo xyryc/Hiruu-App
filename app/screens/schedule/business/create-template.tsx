@@ -48,6 +48,7 @@ const CreateTemplate = () => {
   const [breakStartTime, setBreakStartTime] = useState<Date>(new Date());
   const [breakEndTime, setBreakEndTime] = useState<Date>(new Date());
   const [roleSelectionVersion, setRoleSelectionVersion] = useState(0);
+  const [roleSlotsResetVersion, setRoleSlotsResetVersion] = useState(0);
   const [roleOptions, setRoleOptions] = useState<
     { label: string; value: string }[]
   >([]);
@@ -185,7 +186,7 @@ const CreateTemplate = () => {
 
     try {
       setIsSubmitting(true);
-      console.log("createShiftTemplate payload:", payload);
+      // console.log("createShiftTemplate payload:", payload);
       await createShiftTemplate(selectedBusiness, payload);
       toast.success("Shift template created successfully.");
       router.back();
@@ -302,7 +303,14 @@ const CreateTemplate = () => {
                 placeholder="Choose business"
                 options={businessOptions}
                 value={selectedBusiness}
-                onSelect={(value: string) => setSelectedBusiness(value)}
+                onSelect={(value: string) => {
+                  setSelectedBusiness(value);
+                  setSelectedRole("");
+                  setRoleSelectionVersion(0);
+                  setRoleRequirements([]);
+                  setCurrentRoleSlotsTotal(0);
+                  setRoleSlotsResetVersion((prev) => prev + 1);
+                }}
               />
             )}
           </View>
@@ -356,6 +364,7 @@ const CreateTemplate = () => {
                 : null
             }
             addRoleTrigger={roleSelectionVersion}
+            resetTrigger={roleSlotsResetVersion}
             onTotalRequiredChange={handleTotalRequiredChange}
             onRoleSlotsChange={handleRoleSlotsChange}
           />

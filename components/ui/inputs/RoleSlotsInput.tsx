@@ -13,6 +13,7 @@ type RoleSlotsInputProps = {
   titleHeight?: boolean;
   selectedRoleToAdd?: { id: string; name: string } | null;
   addRoleTrigger?: number;
+  resetTrigger?: number;
   onTotalRequiredChange?: (total: number) => void;
   onRoleSlotsChange?: (
     slots: { roleId: string; roleName: string; count: number }[]
@@ -23,6 +24,7 @@ const RoleSlotsInput = ({
   titleHeight,
   selectedRoleToAdd,
   addRoleTrigger = 0,
+  resetTrigger = 0,
   onTotalRequiredChange,
   onRoleSlotsChange,
 }: RoleSlotsInputProps) => {
@@ -54,6 +56,10 @@ const RoleSlotsInput = ({
       ];
     });
   }, [addRoleTrigger, selectedRoleToAdd]);
+
+  useEffect(() => {
+    setRoleSlots([]);
+  }, [resetTrigger]);
 
   useEffect(() => {
     const total = roleSlots.reduce(
