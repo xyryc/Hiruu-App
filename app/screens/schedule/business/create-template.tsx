@@ -3,6 +3,7 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
 import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
 import TimePicker from "@/components/ui/inputs/TimePicker";
+import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { Feather } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -53,6 +54,7 @@ const CreateTemplate = () => {
     { label: string; value: string }[]
   >([]);
   const [rolesLoading, setRolesLoading] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   useEffect(() => {
     getMyBusinesses().catch((error: any) => {
@@ -145,28 +147,36 @@ const CreateTemplate = () => {
     return `${h}:${m}`;
   };
 
-  const handleCreateTemplate = async () => {
+  const formatTime12 = (date: Date) => {
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const period = hour >= 12 ? "PM" : "AM";
+    const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+    return `${hour12}:${`${minute}`.padStart(2, "0")} ${period}`;
+  };
+
+  const getValidatedPayload = () => {
     if (!selectedBusiness) {
       toast.error("Please select a business.");
-      return;
+      return null;
     }
 
     if (!templateName.trim()) {
       toast.error("Template name is required.");
-      return;
+      return null;
     }
 
     if (roleRequirements.length === 0) {
       toast.error("Please add at least one role slot.");
-      return;
+      return null;
     }
 
     if (!isRequiredCountMatched) {
       toast.error("Total roles must equal required staff.");
-      return;
+      return null;
     }
 
-    const payload = {
+    return {
       name: templateName.trim(),
       description: templateDescription.trim() || null,
       startTime: formatTime24(shiftStartTime),
@@ -183,12 +193,18 @@ const CreateTemplate = () => {
       })),
       isOvertime: false,
     };
+  };
+
+  const handleCreateTemplate = async () => {
+    const payload = getValidatedPayload();
+    if (!payload) return;
 
     try {
       setIsSubmitting(true);
-      // console.log("createShiftTemplate payload:", payload);
+      console.log("createShiftTemplate payload:", payload);
       await createShiftTemplate(selectedBusiness, payload);
       toast.success("Shift template created successfully.");
+      setIsPreviewOpen(false);
       router.back();
     } catch (error: any) {
       toast.error(error?.message || "Failed to create shift template");
@@ -196,6 +212,47 @@ const CreateTemplate = () => {
       setIsSubmitting(false);
     }
   };
+
+  const handleOpenPreview = () => {
+    const payload = getValidatedPayload();
+    if (!payload) return;
+    setIsPreviewOpen(true);
+  };
+
+  const selectedBusinessInfo = useMemo(
+    () => (myBusinesses || []).find((business: any) => business?.id === selectedBusiness),
+    [myBusinesses, selectedBusiness]
+  );
+
+  const previewData = useMemo(
+    () => ({
+      templateName: templateName.trim() || "Template",
+      shiftTimeRange: `${formatTime12(shiftStartTime)} - ${formatTime12(
+        shiftEndTime
+      )}`,
+      breakTimeRange: `${formatTime12(breakStartTime)} - ${formatTime12(
+        breakEndTime
+      )}`,
+      totalStaff: selectedRequiredCount,
+      roles: roleRequirements.map((item) => ({
+        roleName: item.roleName || "Role",
+        count: item.count || 0,
+      })),
+      businessName: selectedBusinessInfo?.name || "Business",
+      businessLogo: selectedBusinessInfo?.logo || undefined,
+    }),
+    [
+      breakEndTime,
+      breakStartTime,
+      roleRequirements,
+      selectedBusinessInfo?.logo,
+      selectedBusinessInfo?.name,
+      selectedRequiredCount,
+      shiftEndTime,
+      shiftStartTime,
+      templateName,
+    ]
+  );
 
   return (
     <KeyboardAvoidingView
@@ -389,13 +446,21 @@ const CreateTemplate = () => {
 
           <View className="mt-8 mb-5">
             <PrimaryButton
-              onPress={handleCreateTemplate}
+              onPress={handleOpenPreview}
               loading={isSubmitting}
               disabled={isSubmitting}
               title="Save Template"
             />
           </View>
         </ScrollView>
+
+        <PreviewTemplateModal
+          visible={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
+          onApply={handleCreateTemplate}
+          loading={isSubmitting}
+          data={previewData}
+        />
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

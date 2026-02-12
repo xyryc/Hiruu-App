@@ -6,7 +6,36 @@ import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../buttons/PrimaryButton";
 
-const PreviewTemplateModal = ({ visible, onClose }: any) => {
+type PreviewRole = {
+  roleName: string;
+  count: number;
+};
+
+type PreviewTemplateData = {
+  templateName: string;
+  shiftTimeRange: string;
+  breakTimeRange: string;
+  totalStaff: number;
+  roles: PreviewRole[];
+  businessName: string;
+  businessLogo?: string;
+};
+
+type PreviewTemplateModalProps = {
+  visible: boolean;
+  onClose: () => void;
+  onApply: () => void;
+  loading?: boolean;
+  data: PreviewTemplateData;
+};
+
+const PreviewTemplateModal = ({
+  visible,
+  onClose,
+  onApply,
+  loading = false,
+  data,
+}: PreviewTemplateModalProps) => {
   const handleDone = () => {
     onClose();
   };
@@ -52,7 +81,7 @@ const PreviewTemplateModal = ({ visible, onClose }: any) => {
                 />
                 <View className="absolute flex-row gap-3 mt-1.5">
                   <Text className="font-proximanova-bold text-primary dark:text-dark-primary text-center ">
-                    Morning Shift
+                    {data?.templateName || "Template"}
                   </Text>
                   <Feather name="edit-2" size={16} color="black" />
                 </View>
@@ -65,7 +94,7 @@ const PreviewTemplateModal = ({ visible, onClose }: any) => {
                     Time:
                   </Text>
                   <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary ">
-                    7:00 AM - 3:00 PM
+                    {data?.shiftTimeRange || "--:-- - --:--"}
                   </Text>
                 </View>
 
@@ -74,7 +103,7 @@ const PreviewTemplateModal = ({ visible, onClose }: any) => {
                     Break Time:
                   </Text>
                   <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary ">
-                    10:00 AM - 11:00 PM
+                    {data?.breakTimeRange || "--:-- - --:--"}
                   </Text>
                 </View>
 
@@ -83,21 +112,29 @@ const PreviewTemplateModal = ({ visible, onClose }: any) => {
                     Total Staff:
                   </Text>
                   <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary ">
-                    15
+                    {data?.totalStaff || 0}
                   </Text>
                 </View>
 
-                <View className="flex-row justify-between items-center mt-3  ">
+                <View className="flex-row justify-between items-start mt-3">
                   <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
                     Roles:
                   </Text>
-                  <View className="flex-row gap-2 items-center">
-                    <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary bg-[#f5f5f5] rounded-full px-2.5 py-1.5 ">
-                      2 Bartender
-                    </Text>
-                    <Text className="font-proximanova-regular text-sm text-primary dark:text-dark-primary bg-[#f5f5f5] rounded-full px-2.5 py-1.5 ">
-                      +4
-                    </Text>
+                  <View className="flex-row flex-wrap gap-2 justify-end flex-1 ml-3">
+                    {(data?.roles || []).length > 0 ? (
+                      data.roles.map((role, index) => (
+                        <Text
+                          key={`${role.roleName}-${index}`}
+                          className="font-proximanova-regular text-sm text-primary dark:text-dark-primary bg-[#f5f5f5] rounded-full px-2.5 py-1.5 "
+                        >
+                          {role.count} {role.roleName}
+                        </Text>
+                      ))
+                    ) : (
+                      <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                        No roles added
+                      </Text>
+                    )}
                   </View>
                 </View>
               </View>
@@ -109,17 +146,27 @@ const PreviewTemplateModal = ({ visible, onClose }: any) => {
 
               <View className="flex-row gap-2 items-center my-2.5">
                 <Image
-                  source={require("@/assets/images/adaptive-icon.png")}
+                  source={
+                    data?.businessLogo
+                      ? { uri: data.businessLogo }
+                      : require("@/assets/images/adaptive-icon.png")
+                  }
                   contentFit="contain"
-                  style={{ width: 30, height: 30 }}
+                  style={{ width: 30, height: 30, borderRadius: 999 }}
                 />
                 <Text className="font-proximanova-regular  text-secondary dark:text-dark-secondary">
-                  Hapiness Bar
+                  {data?.businessName || "Business"}
                 </Text>
               </View>
             </View>
 
-            <PrimaryButton title="Apply Template" className="mt-5" />
+            <PrimaryButton
+              title="Apply Template"
+              className="mt-5"
+              loading={loading}
+              disabled={loading}
+              onPress={onApply}
+            />
           </SafeAreaView>
         </View>
       </BlurView>
