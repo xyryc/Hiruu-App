@@ -32,6 +32,8 @@ const PostJob = () => {
   const [jobName, setJobName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [gender, setGender] = useState("");
+  const [shiftType, setShiftType] = useState("");
+  const [jobType, setJobType] = useState("");
   const [experience, setExperience] = useState("");
   const [ageMin, setAgeMin] = useState("");
   const [ageMax, setAgeMax] = useState("");
@@ -47,6 +49,27 @@ const PostJob = () => {
       { label: "Male", value: "Male" },
       { label: "Female", value: "Female" },
       { label: "Other", value: "Other" },
+    ],
+    []
+  );
+  const shiftTypeOptions = useMemo(
+    () => [
+      { label: "Day", value: "day" },
+      { label: "Night", value: "night" },
+      { label: "Weekend", value: "weekend" },
+    ],
+    []
+  );
+  const jobTypeOptions = useMemo(
+    () => [
+      { label: "Full-time", value: "fulltime" },
+      { label: "Part-time", value: "parttime" },
+      { label: "Hourly", value: "hourly" },
+      { label: "Contract", value: "contract" },
+      { label: "Internship", value: "internship" },
+      { label: "Onsite", value: "onsite" },
+      { label: "Remote", value: "remote" },
+      { label: "Hybrid", value: "hybrid" },
     ],
     []
   );
@@ -183,9 +206,34 @@ const PostJob = () => {
           <BusinessDropdown
             className="mt-2.5"
             placeholder="Select gender"
+            listMaxHeight={320}
             options={genderOptions}
             value={gender}
             onSelect={(value: string) => setGender(value)}
+          />
+
+          <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
+            Shift Type
+          </Text>
+          <BusinessDropdown
+            className="mt-2.5"
+            placeholder="Select shift type"
+            listMaxHeight={320}
+            options={shiftTypeOptions}
+            value={shiftType}
+            onSelect={(value: string) => setShiftType(value)}
+          />
+
+          <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
+            Job Type
+          </Text>
+          <BusinessDropdown
+            className="mt-2.5"
+            placeholder="Select job type"
+            options={jobTypeOptions}
+            value={jobType}
+            listMaxHeight={320}
+            onSelect={(value: string) => setJobType(value)}
           />
 
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
@@ -246,7 +294,7 @@ const PostJob = () => {
           </View>
 
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-8">
-            Salary Range ($/Hour)
+            Salary Range
           </Text>
           <View className="flex-row items-center gap-3 mt-2.5">
             <View className="flex-1 relative">

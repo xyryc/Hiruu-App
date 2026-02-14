@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
 
@@ -28,6 +29,7 @@ interface BusinessDropdownProps {
   hideSelectedText?: boolean;
   imageHeight?: number;
   imageWidth?: number;
+  listMaxHeight?: number;
 }
 
 const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
@@ -40,7 +42,9 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
   hideSelectedText = false,
   imageHeight = 30,
   imageWidth = 30,
+  listMaxHeight,
 }) => {
+  const { height } = useWindowDimensions();
   const [isVisible, setIsVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [filteredOptions, setFilteredOptions] = useState<Option[]>(options);
@@ -115,7 +119,10 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
           >
-            <View className="bg-white dark:bg-dark-surface rounded-t-3xl">
+            <View
+              className="bg-white dark:bg-dark-surface rounded-t-3xl"
+              style={{ maxHeight: listMaxHeight ?? height * 0.7 }}
+            >
               {/* Header */}
               <View className="px-5 py-4 border-b border-gray-200 dark:border-dark-border">
                 <Text className="text-lg font-semibold text-primary dark:text-dark-primary text-center">
@@ -135,7 +142,7 @@ const BusinessDropdown: React.FC<BusinessDropdownProps> = ({
 
               {/* Options */}
               <FlatList
-                contentContainerStyle={{ paddingBottom: 400 }}
+                contentContainerStyle={{ paddingBottom: 24 }}
                 data={filteredOptions}
                 keyExtractor={(item) => item.value}
                 renderItem={({ item }) => (
