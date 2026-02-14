@@ -1,5 +1,5 @@
 import RoleChip, { DEFAULT_ROLE_CHIPS } from "@/components/ui/badges/RoleChip";
-import { EvilIcons, Feather, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, EvilIcons, Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
@@ -35,9 +35,9 @@ const ShiftTemplateCard = ({
             {weekly && (
               <TouchableOpacity
                 onPress={() => router.push("/screens/schedule/business/assign")}
-                className="h-10 w-10 rounded-full bg-[#FFF] flex-row justify-center items-center "
+                className="h-10 w-10 rounded-full bg-[#FFF] flex-row justify-center items-center"
               >
-                <MaterialIcons name="person-add-alt" size={20} color="black" />
+                <AntDesign name="user-add" size={16} color="black" />
               </TouchableOpacity>
             )}
             <TouchableOpacity

@@ -79,10 +79,10 @@ const Assign = () => {
         className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
         edges={["left", "right", "bottom"]}
       >
-        <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-2.5 px-5">
+        <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl">
           <ScreenHeader
-            className="capitalize"
-            style={{ paddingTop: insets.top + 10, paddingBottom: 10 }}
+            className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+            style={{ paddingTop: insets.top + 10, paddingBottom: 16 }}
             onPressBack={() => router.back()}
             title="Assign"
             titleClass="text-primary dark:text-dark-primary"
@@ -91,7 +91,7 @@ const Assign = () => {
               <View className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center">
                 <MaterialCommunityIcons
                   name="line-scan"
-                  size={20}
+                  size={18}
                   color="black"
                 />
               </View>
@@ -120,65 +120,66 @@ const Assign = () => {
             />
           </View>
         </View>
+
+        <View className="border mt-9 border-[#eeeeee] rounded-[10px] px-4 flex-row items-center mx-5">
+          {/* Search Icon */}
+          <Ionicons
+            name="search"
+            size={16}
+            color={isDark ? "#fff" : "#7A7A7A"}
+            style={{ marginRight: 10 }}
+          />
+
+          {/* Search Input */}
+          <TextInput
+            placeholder="Search here..."
+            placeholderTextColor={isDark ? "#fff" : "#7A7A7A"}
+            style={{
+              flex: 1,
+              color: isDark ? "#fff" : "#111",
+              backgroundColor: isDark ? "#111" : "#fff",
+            }}
+          />
+        </View>
+
         <ScrollView
           className="mx-5 flex-1"
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
         >
-          <View className="border mt-9 border-[#eeeeee] rounded-[10px] px-4 flex-row items-center">
-            {/* Search Icon */}
-            <Ionicons
-              name="search"
-              size={16}
-              color={isDark ? "#fff" : "#7A7A7A"}
-              style={{ marginRight: 10 }}
-            />
-
-            {/* Search Input */}
-            <TextInput
-              placeholder="Search here..."
-              placeholderTextColor={isDark ? "#fff" : "#7A7A7A"}
-              style={{
-                flex: 1,
-                color: isDark ? "#fff" : "#111",
-                backgroundColor: isDark ? "#111" : "#fff",
-              }}
-            />
-          </View>
-
-          {/* chashar list */}
-          <View>
-            {cashierData.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                onPress={() => handleCashierPress(item.id)}
-                className={`flex-row items-center p-4 mt-4 rounded-xl border border-[#eeeeee] `}
-              >
-                <Image
-                  source={{ uri: item.avatar }}
-                  className="w-12 h-12 rounded-full mr-3"
-                />
-                <View className="flex-1">
-                  <Text className="text-base font-proximanova-semibold text-primary dark:text-dark-primary">
-                    {item.name}
-                  </Text>
-                  <Text className="text-sm text-secondary dark:text-dark-secondary font-proximanova-regular">
-                    {item.role}
-                  </Text>
-                </View>
-                <Ionicons
-                  name="checkmark-circle"
-                  size={24}
-                  color={
-                    selectedCashiers.includes(item.id) ? "#11293A" : "#7A7A7A"
-                  }
-                />
-              </TouchableOpacity>
-            ))}
-          </View>
-
-          {/* button  */}
+          {cashierData.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              onPress={() => handleCashierPress(item.id)}
+              className={`flex-row items-center p-4 mt-4 rounded-xl border border-[#eeeeee] `}
+            >
+              <Image
+                source={{ uri: item.avatar }}
+                className="w-12 h-12 rounded-full mr-3"
+              />
+              <View className="flex-1">
+                <Text className="text-base font-proximanova-semibold text-primary dark:text-dark-primary">
+                  {item.name}
+                </Text>
+                <Text className="text-sm text-secondary dark:text-dark-secondary font-proximanova-regular">
+                  {item.role}
+                </Text>
+              </View>
+              <Ionicons
+                name="checkmark-circle"
+                size={24}
+                color={
+                  selectedCashiers.includes(item.id) ? "#11293A" : "#7A7A7A"
+                }
+              />
+            </TouchableOpacity>
+          ))}
         </ScrollView>
-        <PrimaryButton className="mx-5" title="Assign" />
+
+        {/* button  */}
+        <View className='absolute bottom-10 w-full'>
+          <PrimaryButton className="mx-5" title="Assign" />
+        </View>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

@@ -69,30 +69,20 @@ const ListofShifts = () => {
         className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
         edges={["left", "right", "bottom"]}
       >
-        <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-2.5 px-5">
-          <ScreenHeader
-            className="capitalize mb-7"
-            style={{ paddingTop: insets.top + 10, paddingBottom: 10 }}
-            onPressBack={() => router.back()}
-            title="ListofShifts"
-            titleClass="text-primary dark:text-dark-primary"
-            iconColor={isDark ? "#fff" : "#111"}
-            // components={
-            //   <View className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center">
-            //     <MaterialCommunityIcons
-            //       name="line-scan"
-            //       size={20}
-            //       color="black"
-            //     />
-            //   </View>
-            // }
-          />
-        </View>
+        <ScreenHeader
+          className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+          style={{ paddingTop: insets.top + 10, paddingBottom: 16 }}
+          onPressBack={() => router.back()}
+          title="List of Shifts"
+          titleClass="text-primary dark:text-dark-primary"
+          iconColor={isDark ? "#fff" : "#111"}
+        />
+
         <ScrollView
           className="mx-5 flex-1"
           showsVerticalScrollIndicator={false}
         >
-          {/* chashar list */}
+          {/* shift list */}
           <View className="mt-4">
             {cashierData.map((item) => (
               <TouchableOpacity
@@ -114,6 +104,7 @@ const ListofShifts = () => {
                     {item.role}
                   </Text>
                 </View>
+
                 <Ionicons
                   name={
                     selectedCashier === item.id
@@ -126,10 +117,12 @@ const ListofShifts = () => {
               </TouchableOpacity>
             ))}
           </View>
-
-          {/* button  */}
         </ScrollView>
-        <PrimaryButton className="mx-5" title="Next" />
+
+        {/* button  */}
+        <View className='absolute bottom-10 w-full'>
+          <PrimaryButton className="mx-5" title="Next" />
+        </View>
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
