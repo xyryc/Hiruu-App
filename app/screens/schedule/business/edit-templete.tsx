@@ -5,7 +5,7 @@ import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
 import { useBusinessStore } from "@/stores/businessStore";
-import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -90,10 +90,10 @@ const EditTemplete = () => {
 
           const roles = Array.isArray(data?.roleRequirements)
             ? data.roleRequirements.map((item: any) => ({
-                roleId: item?.roleId || "",
-                roleName: item?.businessRoleName || item?.roleName || "Role",
-                count: Number(item?.count || 0),
-              }))
+              roleId: item?.roleId || "",
+              roleName: item?.businessRoleName || item?.roleName || "Role",
+              count: Number(item?.count || 0),
+            }))
             : [];
           const totalRequired = roles.reduce((sum: number, item: any) => sum + item.count, 0);
 
@@ -173,6 +173,15 @@ const EditTemplete = () => {
     () => roleOptions.find((item) => item.value === selectedRole) || null,
     [roleOptions, selectedRole]
   );
+  const requiredCountOptions = useMemo(
+    () => [
+      { label: "5", value: "5" },
+      { label: "10", value: "10" },
+      { label: "15", value: "15" },
+      { label: "20", value: "20" },
+    ],
+    []
+  );
 
   const selectedRequiredCount = Number(requiredStaffCount) || 0;
   const isRequiredCountMatched = currentRoleSlotsTotal === selectedRequiredCount;
@@ -184,8 +193,6 @@ const EditTemplete = () => {
   const handleRoleSlotsChange = useCallback(
     (slots: { roleId: string; roleName: string; count: number }[]) => {
       setRoleRequirements(slots);
-      const total = slots.reduce((sum, item) => sum + Number(item.count || 0), 0);
-      setRequiredStaffCount(String(total));
     },
     []
   );
@@ -412,14 +419,12 @@ const EditTemplete = () => {
                 <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                   Roles & Required Count
                 </Text>
-                <View className="bg-[#E5F4FD] flex-row gap-2.5 rounded-lg items-center p-1">
-                  <Text>{requiredStaffCount}</Text>
-                  <MaterialIcons
-                    name="keyboard-arrow-down"
-                    size={24}
-                    color="black"
-                  />
-                </View>
+                <BusinessDropdown
+                  placeholder=""
+                  options={requiredCountOptions}
+                  value={requiredStaffCount}
+                  onSelect={(value: string) => setRequiredStaffCount(value)}
+                />
               </View>
 
               <View className="mt-4">
@@ -464,9 +469,8 @@ const EditTemplete = () => {
                 />
                 <Text
                   numberOfLines={1}
-                  className={`ml-1.5 text-sm font-proximanova-regular ${
-                    isRequiredCountMatched ? "text-[#22C55E]" : "text-[#F34F4F]"
-                  }`}
+                  className={`ml-1.5 text-sm font-proximanova-regular ${isRequiredCountMatched ? "text-[#22C55E]" : "text-[#F34F4F]"
+                    }`}
                 >
                   {isRequiredCountMatched
                     ? "Role count matches required staff"

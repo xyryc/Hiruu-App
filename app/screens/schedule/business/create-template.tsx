@@ -360,14 +360,14 @@ const CreateTemplate = () => {
             )}
           </View>
 
-          {/* role requard */}
+          {/* role required */}
           <View className="mt-8 flex-row items-center justify-between">
             <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
               Roles & Required Count
             </Text>
 
             <BusinessDropdown
-              placeholder="Select required staff"
+              placeholder=""
               options={requiredCountOptions}
               value={requiredStaffCount}
               onSelect={(value: string) => setRequiredStaffCount(value)}
