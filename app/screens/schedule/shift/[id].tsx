@@ -43,7 +43,7 @@ const ShiftDetails = () => {
             <StatusBadge status={status} />
 
             <TouchableOpacity
-              onPress={() => router.push("/screens/home/qr-scanner")}
+              onPress={() => router.push("/screens/home/qr/scan")}
               className="bg-[#f5f5f5] border-[0.5px] border-[#FFFFFF00] w-10 h-10 justify-center items-center rounded-full"
             >
               <Ionicons name="qr-code-outline" size={16} color="black" />

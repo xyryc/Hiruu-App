@@ -52,7 +52,7 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
 
         {/* scanner */}
         <TouchableOpacity
-          onPress={() => router.push("/screens/home/qr-scanner")}
+          onPress={() => router.push("/screens/home/qr/scan")}
           className="h-10 w-10 bg-[#F5F5F5] border-[0.5px] border-[#b2b1b185] rounded-full items-center justify-center"
         >
           <Image
@@ -66,7 +66,7 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => router.push("/screens/home/business/qr-generate")}
+          onPress={() => router.push("/screens/home/qr/generate")}
           className="h-10 w-10 bg-[#F5F5F5] border-[0.5px] border-[#b2b1b185] rounded-full items-center justify-center"
         >
           <Ionicons name="qr-code-outline" size={18} color="black" />

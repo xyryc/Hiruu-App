@@ -13,7 +13,7 @@ const JoinColleague = ({ className }: JoinColleagueProps) => {
 
       <View className="flex-row items-center gap-3">
         <TouchableOpacity
-          onPress={() => router.push("/screens/home/qr-scanner")}
+          onPress={() => router.push("/screens/home/qr/scan")}
           className="flex-row flex-1 max-w-56 justify-between items-center border border-[#EEEEEE] rounded-xl p-4"
         >
           <Text className="text-sm font-proximanova-semibold">Scan QR</Text>

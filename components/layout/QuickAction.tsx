@@ -34,8 +34,8 @@ const QuickAction = ({ className }: QuickActionProps) => {
           title={user.role === "user" ? "Track Hours" : "Leave"}
           onPress={() => {
             user.role === "user"
-              ? router.push("/screens/home/shift/track-hours/track-hours")
-              : router.push("/screens/home/business/leave/leave-request");
+              ? router.push("/screens/home/shift/track-hours")
+              : router.push("/screens/home/leave/request");
           }}
         />
 
@@ -55,7 +55,7 @@ const QuickAction = ({ className }: QuickActionProps) => {
           onPress={() => {
             user.role === "user"
               ? router.push("/screens/home/shift/overtime-action")
-              : router.push("/screens/home/business/shift-request");
+              : router.push("/screens/home/team/shift-requests");
           }}
         />
 
@@ -64,8 +64,8 @@ const QuickAction = ({ className }: QuickActionProps) => {
           title={user.role === "user" ? "Leave" : "Team Panel"}
           onPress={() => {
             user.role === "user"
-              ? router.push("/screens/home/shift/leave/leave-history")
-              : router.push("/screens/home/business/team/manage-team-panel");
+              ? router.push("/screens/home/leave/history")
+              : router.push("/screens/home/team/manage");
           }}
         />
 

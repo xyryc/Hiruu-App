@@ -42,7 +42,7 @@ const ShiftRequest = () => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() =>
-                  router.push("/screens/home/business/filter-shift")
+                  router.push("/screens/home/shift/filter")
                 }
                 className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center"
               >
