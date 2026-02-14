@@ -40,6 +40,7 @@ const EditTemplete = () => {
     getMyBusinesses,
     getMyBusinessRoles,
     getShiftTemplateById,
+    updateShiftTemplate,
   } = useBusinessStore();
 
   const fallbackBusinessId = selectedBusinesses[0];
@@ -47,6 +48,7 @@ const EditTemplete = () => {
   const templateIdValue = (templateId || "").toString();
 
   const [templateName, setTemplateName] = useState("");
+  const [templateDescription, setTemplateDescription] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState<string>("");
   const [requiredStaffCount, setRequiredStaffCount] = useState<string>("15");
   const [currentRoleSlotsTotal, setCurrentRoleSlotsTotal] = useState<number>(0);
@@ -69,6 +71,7 @@ const EditTemplete = () => {
   const [rolesLoading, setRolesLoading] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
   const [isLoadingTemplate, setIsLoadingTemplate] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     getMyBusinesses().catch((error: any) => {
@@ -95,6 +98,7 @@ const EditTemplete = () => {
           const totalRequired = roles.reduce((sum: number, item: any) => sum + item.count, 0);
 
           setTemplateName(data?.name || "");
+          setTemplateDescription(data?.description || "");
           setSelectedBusiness(data?.businessId || templateBusinessId);
           setInitialRoleRequirements(roles);
           setRoleRequirements(roles);
@@ -180,9 +184,17 @@ const EditTemplete = () => {
   const handleRoleSlotsChange = useCallback(
     (slots: { roleId: string; roleName: string; count: number }[]) => {
       setRoleRequirements(slots);
+      const total = slots.reduce((sum, item) => sum + Number(item.count || 0), 0);
+      setRequiredStaffCount(String(total));
     },
     []
   );
+
+  const formatTime24 = (date: Date) => {
+    const h = `${date.getHours()}`.padStart(2, "0");
+    const m = `${date.getMinutes()}`.padStart(2, "0");
+    return `${h}:${m}`;
+  };
 
   const formatTime12 = (date: Date) => {
     const hour = date.getHours();
@@ -222,6 +234,69 @@ const EditTemplete = () => {
       templateName,
     ]
   );
+
+  const getValidatedPayload = () => {
+    if (!selectedBusiness || !templateIdValue) {
+      toast.error("Template not found.");
+      return null;
+    }
+
+    if (!templateName.trim()) {
+      toast.error("Template name is required.");
+      return null;
+    }
+
+    if (roleRequirements.length === 0) {
+      toast.error("Please add at least one role slot.");
+      return null;
+    }
+
+    if (!isRequiredCountMatched) {
+      toast.error("Total roles must equal required staff.");
+      return null;
+    }
+
+    return {
+      name: templateName.trim(),
+      description: templateDescription?.trim() || null,
+      startTime: formatTime24(shiftStartTime),
+      endTime: formatTime24(shiftEndTime),
+      breakDuration: [
+        {
+          startTime: formatTime24(breakStartTime),
+          endTime: formatTime24(breakEndTime),
+        },
+      ],
+      roleRequirements: roleRequirements.map((item) => ({
+        roleId: item.roleId,
+        count: item.count,
+      })),
+      isOvertime: false,
+    };
+  };
+
+  const handleUpdateTemplate = async () => {
+    const payload = getValidatedPayload();
+    if (!payload) return;
+
+    try {
+      setIsSubmitting(true);
+      await updateShiftTemplate(selectedBusiness, templateIdValue, payload);
+      toast.success("Shift template updated successfully.");
+      setIsPreview(false);
+      router.back();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to update shift template");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleOpenPreview = () => {
+    const payload = getValidatedPayload();
+    if (!payload) return;
+    setIsPreview(true);
+  };
 
   return (
     <KeyboardAvoidingView
@@ -407,7 +482,9 @@ const EditTemplete = () => {
                 </View>
                 <PrimaryButton
                   className="flex-1"
-                  onPress={() => setIsPreview(true)}
+                  onPress={handleOpenPreview}
+                  loading={isSubmitting}
+                  disabled={isSubmitting}
                   title="Save"
                 />
               </View>
@@ -417,6 +494,8 @@ const EditTemplete = () => {
           <PreviewTemplateModal
             visible={isPreview}
             onClose={() => setIsPreview(false)}
+            onApply={handleUpdateTemplate}
+            loading={isSubmitting}
             data={previewData}
           />
         </ScrollView>
