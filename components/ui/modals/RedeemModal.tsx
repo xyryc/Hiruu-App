@@ -4,7 +4,7 @@ import { Image } from "expo-image";
 import React, { useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import PrimaryButton from "../buttons/PrimaryButton";
-import BusinessDropdown from "../dropdown/BusinessDropdown";
+import SelectDropdown from "../dropdown/SelectDropdown";
 
 interface Option {
   label: string;
@@ -141,7 +141,7 @@ const RedeemModal = ({ visible, onClose, data, namePlate }: any) => {
 
             {data.tag !== "premium" && (
               <View className="mt-4">
-                <BusinessDropdown
+                <SelectDropdown
                   label="Select User"
                   placeholder="Select a user to gift"
                   options={leaveTypes}

@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
+import SelectDropdown from "@/components/ui/dropdown/SelectDropdown";
 import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
@@ -342,7 +342,7 @@ const CreateTemplate = () => {
                 <ActivityIndicator size="small" />
               </View>
             ) : (
-              <BusinessDropdown
+              <SelectDropdown
                 className="mt-4"
                 placeholder="Choose business"
                 options={businessOptions}
@@ -365,7 +365,7 @@ const CreateTemplate = () => {
               Roles & Required Count
             </Text>
 
-            <BusinessDropdown
+            <SelectDropdown
               placeholder=""
               options={requiredCountOptions}
               value={requiredStaffCount}
@@ -380,7 +380,7 @@ const CreateTemplate = () => {
                 <ActivityIndicator size="small" />
               </View>
             ) : (
-              <BusinessDropdown
+              <SelectDropdown
                 placeholder={
                   selectedBusiness ? "Choose role" : "Select business first"
                 }

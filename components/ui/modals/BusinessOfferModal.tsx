@@ -16,7 +16,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../buttons/PrimaryButton";
 import SmallButton from "../buttons/SmallButton";
-import BusinessDropdown from "../dropdown/BusinessDropdown";
+import SelectDropdown from "../dropdown/SelectDropdown";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -165,7 +165,7 @@ const BusinessOfferModal = ({ visible, onClose }: any) => {
                   Business
                 </Text>
 
-                <BusinessDropdown
+                <SelectDropdown
                   placeholder="Choose a business"
                   options={businessData}
                   value={selectedBusiness}

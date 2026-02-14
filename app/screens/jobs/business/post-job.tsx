@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
+import SelectDropdown from "@/components/ui/dropdown/SelectDropdown";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import { useBusinessStore } from "@/stores/businessStore";
 import { useJobStore } from "@/stores/jobStore";
@@ -203,7 +203,7 @@ const PostJob = () => {
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
             Gender
           </Text>
-          <BusinessDropdown
+          <SelectDropdown
             className="mt-2.5"
             placeholder="Select gender"
             listMaxHeight={320}
@@ -215,7 +215,7 @@ const PostJob = () => {
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
             Shift Type
           </Text>
-          <BusinessDropdown
+          <SelectDropdown
             className="mt-2.5"
             placeholder="Select shift type"
             listMaxHeight={320}
@@ -227,7 +227,7 @@ const PostJob = () => {
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
             Job Type
           </Text>
-          <BusinessDropdown
+          <SelectDropdown
             className="mt-2.5"
             placeholder="Select job type"
             options={jobTypeOptions}

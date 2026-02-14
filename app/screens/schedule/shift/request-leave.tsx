@@ -1,7 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import { ToggleButton } from "@/components/ui/buttons/ToggleButton";
 import ActionCard from "@/components/ui/cards/ActionCard";
-import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
+import SelectDropdown from "@/components/ui/dropdown/SelectDropdown";
 import DatePicker from "@/components/ui/inputs/DatePicker";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import LeaveRequestModal from "@/components/ui/modals/LeaveRequestModal";
@@ -129,7 +129,7 @@ const RequestLeave = () => {
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mb-2">
             Select Business
           </Text>
-          <BusinessDropdown
+          <SelectDropdown
             placeholder="Choose Business"
             options={businessData}
             value={selectedBusiness}

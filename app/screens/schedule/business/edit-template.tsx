@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
+import SelectDropdown from "@/components/ui/dropdown/SelectDropdown";
 import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import DeleteConfirmModal from "@/components/ui/modals/DeleteConfirmModal";
@@ -425,7 +425,7 @@ const EditTemplate = () => {
                     <ActivityIndicator size="small" />
                   </View>
                 ) : (
-                  <BusinessDropdown
+                  <SelectDropdown
                     className="mt-4"
                     placeholder="Choose business"
                     options={businessOptions}
@@ -443,7 +443,7 @@ const EditTemplate = () => {
                 <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                   Roles & Required Count
                 </Text>
-                <BusinessDropdown
+                <SelectDropdown
                   placeholder=""
                   options={requiredCountOptions}
                   value={requiredStaffCount}
@@ -457,7 +457,7 @@ const EditTemplate = () => {
                     <ActivityIndicator size="small" />
                   </View>
                 ) : (
-                  <BusinessDropdown
+                  <SelectDropdown
                     placeholder={
                       selectedBusiness ? "Choose role" : "Select business first"
                     }
