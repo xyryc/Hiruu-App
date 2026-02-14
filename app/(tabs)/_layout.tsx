@@ -1,4 +1,5 @@
 import { profileService } from "@/services/profileService";
+import { useBusinessStore } from "@/stores/businessStore";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Octicons from "@expo/vector-icons/Octicons";
 import { Image } from "expo-image";
@@ -6,8 +7,12 @@ import { Tabs } from "expo-router";
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
 
+
 export default function TabLayout() {
   const [profileData, setProfileData] = useState<any>(null);
+
+  const selectedBusinesses = useBusinessStore((s) => s.selectedBusinesses);
+  const isBusinessProfile = selectedBusinesses.length > 0;
 
   useEffect(() => {
     let isMounted = true;
@@ -164,7 +169,7 @@ export default function TabLayout() {
         name="user-profile"
         options={{
           title: "Profile",
-          href: undefined,
+          href: isBusinessProfile ? null : "/user-profile",
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome
               name={focused ? "user" : "user-o"}
@@ -175,6 +180,24 @@ export default function TabLayout() {
         }}
       />
 
+      {/* profile */}
+      <Tabs.Screen
+        name="business-profile"
+        options={{
+          title: "Profile",
+          href: isBusinessProfile ? "/business-profile" : null,
+          tabBarIcon: ({ color, focused }) => (
+            <FontAwesome
+              name={focused ? "user" : "user-o"}
+              size={24}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+
+      {/*
       <Tabs.Screen
         name="business-profile"
         options={{
@@ -189,6 +212,7 @@ export default function TabLayout() {
           ),
         }}
       />
+     */}
     </Tabs>
   );
 }
