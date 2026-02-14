@@ -76,26 +76,26 @@ const AllCreatedRole = () => {
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
       edges={["left", "right", "bottom"]}
     >
-      <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5">
-        <ScreenHeader
-          style={{ paddingTop: insets.top + 15, paddingBottom: 20 }}
-          className=""
-          onPressBack={() => router.back()}
-          title="All Created Role"
-          titleClass="text-primary dark:text-dark-primary"
-          iconColor={isDark ? "#fff" : "#111"}
-          components={
-            <TouchableOpacity
-              onPress={() =>
-                router.push("/screens/schedule/business/create-role")
-              }
-              className="h-10 w-10 rounded-full bg-[#FFFFFF] flex-row justify-center items-center "
-            >
-              <Feather name="plus" size={24} color="black" />
-            </TouchableOpacity>
-          }
-        />
-      </View>
+
+      <ScreenHeader
+        className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+        style={{ paddingTop: insets.top + 10, paddingBottom: 16 }}
+        onPressBack={() => router.back()}
+        title="All Created Role"
+        titleClass="text-primary dark:text-dark-primary"
+        iconColor={isDark ? "#fff" : "#111"}
+        components={
+          <TouchableOpacity
+            onPress={() =>
+              router.push("/screens/schedule/business/create-role")
+            }
+            className="h-10 w-10 rounded-full bg-[#FFFFFF] flex-row justify-center items-center "
+          >
+            <Feather name="plus" size={18} color="black" />
+          </TouchableOpacity>
+        }
+      />
+
       <ScrollView className="mx-5">
         <View className="mt-4">
           {isLoading ? (

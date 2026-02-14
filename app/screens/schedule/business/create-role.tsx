@@ -79,12 +79,12 @@ const CreateRole = () => {
             label: value?.label || id,
             permissions: Array.isArray(value?.permissions)
               ? value.permissions
-                  .filter(
-                    (item: any) =>
-                      typeof item?.key === "string" &&
-                      typeof item?.title === "string"
-                  )
-                  .map((item: any) => ({ key: item.key, title: item.title }))
+                .filter(
+                  (item: any) =>
+                    typeof item?.key === "string" &&
+                    typeof item?.title === "string"
+                )
+                .map((item: any) => ({ key: item.key, title: item.title }))
               : [],
           })
         );
@@ -202,23 +202,22 @@ const CreateRole = () => {
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5">
-          <ScreenHeader
-            style={{ paddingTop: insets.top + 15, paddingBottom: 20 }}
-            className=""
-            onPressBack={() => router.back()}
-            title="Create Role"
-            titleClass="text-primary dark:text-dark-primary"
-            iconColor={isDark ? "#fff" : "#111"}
-            components={
-              <TouchableOpacity onPress={handleReset} className="">
-                <Text className="font-proximanova-semibold text-[#4FB2F3]">
-                  Reset
-                </Text>
-              </TouchableOpacity>
-            }
-          />
-        </View>
+        <ScreenHeader
+          className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+          style={{ paddingTop: insets.top + 10, paddingBottom: 16 }}
+          onPressBack={() => router.back()}
+          title="Create Role"
+          titleClass="text-primary dark:text-dark-primary"
+          iconColor={isDark ? "#fff" : "#111"}
+          components={
+            <TouchableOpacity onPress={handleReset} className='p-2'>
+              <Text className="font-proximanova-semibold text-[#4FB2F3]">
+                Reset
+              </Text>
+            </TouchableOpacity>
+          }
+        />
+
         <ScrollView showsVerticalScrollIndicator={false} className="mx-5">
           {/* predefine role */}
           <View className="mt-4">
@@ -307,12 +306,12 @@ const CreateRole = () => {
             {!permissionsLoading &&
               permissionGroups.length > 0 &&
               filteredGroups.length === 0 && (
-              <View className="py-8 items-center">
-                <Text className="font-proximanova-regular text-secondary dark:text-dark-secondary">
-                  No permissions found.
-                </Text>
-              </View>
-            )}
+                <View className="py-8 items-center">
+                  <Text className="font-proximanova-regular text-secondary dark:text-dark-secondary">
+                    No permissions found.
+                  </Text>
+                </View>
+              )}
             {!permissionsLoading && permissionGroups.length === 0 && (
               <View className="py-8 items-center">
                 <Text className="font-proximanova-regular text-secondary dark:text-dark-secondary">

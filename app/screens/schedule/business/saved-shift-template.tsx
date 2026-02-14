@@ -13,6 +13,7 @@ import {
   Platform,
   ScrollView,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import {
@@ -101,9 +102,9 @@ const SavedShiftTemplate = () => {
           titleClass="text-primary dark:text-dark-primary"
           iconColor={isDark ? "#fff" : "#111"}
           components={
-            <View className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center">
-              <Ionicons name="documents-outline" size={22} color="black" />
-            </View>
+            <TouchableOpacity onPress={() => router.push("/screens/schedule/business/create-template")} className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center">
+              <Ionicons name="documents-outline" size={18} color="black" />
+            </TouchableOpacity>
           }
         />
 

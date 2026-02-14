@@ -261,22 +261,21 @@ const CreateTemplate = () => {
         className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
         edges={["left", "right", "bottom"]}
       >
-
         <ScreenHeader
-          className="bg-[#E5F4FD] px-5 rounded-b-2xl"
-          style={{ paddingTop: insets.top, paddingBottom: 16 }}
+          className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+          style={{ paddingTop: insets.top + 10, paddingBottom: 16 }}
           onPressBack={() => router.back()}
-          title="Create Templete"
+          title="Create Template"
           titleClass="text-primary dark:text-dark-primary"
           iconColor={isDark ? "#fff" : "#111"}
         />
 
         <ScrollView className="mx-5" showsVerticalScrollIndicator={false} contentContainerStyle={{
-          paddingBottom: 400
+          paddingBottom: 120
         }}>
-          {/* inpute */}
+          {/* input */}
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
-            Templete Name
+            Template Name
           </Text>
           <TextInput
             value={templateName}
