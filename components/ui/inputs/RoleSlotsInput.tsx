@@ -14,6 +14,7 @@ type RoleSlotsInputProps = {
   selectedRoleToAdd?: { id: string; name: string } | null;
   addRoleTrigger?: number;
   resetTrigger?: number;
+  initialRoleSlots?: { roleId: string; roleName: string; count: number }[];
   onTotalRequiredChange?: (total: number) => void;
   onRoleSlotsChange?: (
     slots: { roleId: string; roleName: string; count: number }[]
@@ -25,6 +26,7 @@ const RoleSlotsInput = ({
   selectedRoleToAdd,
   addRoleTrigger = 0,
   resetTrigger = 0,
+  initialRoleSlots = [],
   onTotalRequiredChange,
   onRoleSlotsChange,
 }: RoleSlotsInputProps) => {
@@ -60,6 +62,20 @@ const RoleSlotsInput = ({
   useEffect(() => {
     setRoleSlots([]);
   }, [resetTrigger]);
+
+  useEffect(() => {
+    if (!Array.isArray(initialRoleSlots) || initialRoleSlots.length === 0) {
+      return;
+    }
+
+    const mappedSlots: RoleSlot[] = initialRoleSlots.map((slot, index) => ({
+      id: index + 1,
+      roleName: slot.roleName,
+      roleId: slot.roleId,
+      requiredCount: Number(slot.count || 0),
+    }));
+    setRoleSlots(mappedSlots);
+  }, [initialRoleSlots]);
 
   useEffect(() => {
     const total = roleSlots.reduce(

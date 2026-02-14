@@ -2,14 +2,16 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
 import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
-import SearchBar from "@/components/ui/inputs/SearchBar";
 import TimePicker from "@/components/ui/inputs/TimePicker";
 import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
+import { useBusinessStore } from "@/stores/businessStore";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -21,40 +23,205 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
-const leaveTypes = [
-  {
-    label: "Sick Leave",
-    value: "sick",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Personal Leave",
-    value: "personal",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Work From Home",
-    value: "wfh",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-  {
-    label: "Emergency Leave",
-    value: "emergency",
-    avatar:
-      "https://i.pinimg.com/736x/16/6f/73/166f73ab4a3d7657e67b4ec1246cc2d6.jpg",
-  },
-];
 const EditTemplete = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const [selectedLeave, setSelectedLeave] = useState<string>("");
-  const [search, setSearch] = useState("");
+  const { templateId, businessId: businessIdParam } = useLocalSearchParams<{
+    templateId?: string;
+    businessId?: string;
+  }>();
+  const {
+    selectedBusinesses,
+    myBusinesses,
+    myBusinessesLoading,
+    getMyBusinesses,
+    getMyBusinessRoles,
+    getShiftTemplateById,
+  } = useBusinessStore();
+
+  const fallbackBusinessId = selectedBusinesses[0];
+  const templateBusinessId = (businessIdParam || fallbackBusinessId || "").toString();
+  const templateIdValue = (templateId || "").toString();
+
+  const [templateName, setTemplateName] = useState("");
+  const [selectedBusiness, setSelectedBusiness] = useState<string>("");
+  const [requiredStaffCount, setRequiredStaffCount] = useState<string>("15");
+  const [currentRoleSlotsTotal, setCurrentRoleSlotsTotal] = useState<number>(0);
+  const [initialRoleRequirements, setInitialRoleRequirements] = useState<
+    { roleId: string; roleName: string; count: number }[]
+  >([]);
+  const [roleRequirements, setRoleRequirements] = useState<
+    { roleId: string; roleName: string; count: number }[]
+  >([]);
+  const [shiftStartTime, setShiftStartTime] = useState<Date>(new Date());
+  const [shiftEndTime, setShiftEndTime] = useState<Date>(new Date());
+  const [breakStartTime, setBreakStartTime] = useState<Date>(new Date());
+  const [breakEndTime, setBreakEndTime] = useState<Date>(new Date());
+  const [roleSelectionVersion, setRoleSelectionVersion] = useState(0);
+  const [roleSlotsResetVersion, setRoleSlotsResetVersion] = useState(0);
+  const [selectedRole, setSelectedRole] = useState<string>("");
+  const [roleOptions, setRoleOptions] = useState<
+    { label: string; value: string }[]
+  >([]);
+  const [rolesLoading, setRolesLoading] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
+  const [isLoadingTemplate, setIsLoadingTemplate] = useState(false);
+
+  useEffect(() => {
+    getMyBusinesses().catch((error: any) => {
+      toast.error(error?.message || "Failed to load businesses");
+    });
+  }, [getMyBusinesses]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadTemplate = async () => {
+        if (!templateBusinessId || !templateIdValue) return;
+        try {
+          setIsLoadingTemplate(true);
+          const data = await getShiftTemplateById(templateBusinessId, templateIdValue);
+          if (!data) return;
+
+          const roles = Array.isArray(data?.roleRequirements)
+            ? data.roleRequirements.map((item: any) => ({
+                roleId: item?.roleId || "",
+                roleName: item?.businessRoleName || item?.roleName || "Role",
+                count: Number(item?.count || 0),
+              }))
+            : [];
+          const totalRequired = roles.reduce((sum: number, item: any) => sum + item.count, 0);
+
+          setTemplateName(data?.name || "");
+          setSelectedBusiness(data?.businessId || templateBusinessId);
+          setInitialRoleRequirements(roles);
+          setRoleRequirements(roles);
+          setRequiredStaffCount(String(totalRequired || 0));
+          setCurrentRoleSlotsTotal(totalRequired);
+
+          const parseTimeToDate = (value?: string) => {
+            if (!value) return new Date();
+            const [hour = "0", minute = "0"] = value.split(":");
+            const parsed = new Date();
+            parsed.setHours(Number(hour), Number(minute), 0, 0);
+            return parsed;
+          };
+
+          setShiftStartTime(parseTimeToDate(data?.startTime));
+          setShiftEndTime(parseTimeToDate(data?.endTime));
+          const firstBreak = Array.isArray(data?.breakDuration)
+            ? data.breakDuration[0]
+            : null;
+          setBreakStartTime(parseTimeToDate(firstBreak?.startTime));
+          setBreakEndTime(parseTimeToDate(firstBreak?.endTime));
+
+          setRoleSlotsResetVersion((prev) => prev + 1);
+        } catch (error: any) {
+          toast.error(error?.message || "Failed to load template");
+        } finally {
+          setIsLoadingTemplate(false);
+        }
+      };
+
+      loadTemplate();
+    }, [getShiftTemplateById, templateBusinessId, templateIdValue])
+  );
+
+  useEffect(() => {
+    const loadRoles = async () => {
+      if (!selectedBusiness) {
+        setRoleOptions([]);
+        return;
+      }
+
+      try {
+        setRolesLoading(true);
+        const data = await getMyBusinessRoles(selectedBusiness);
+        const mapped = (Array.isArray(data) ? data : []).map((item: any) => ({
+          label: item?.role?.name || item?.name || "Role",
+          value: item?.id || item?.roleId || "",
+        }));
+        setRoleOptions(mapped.filter((item: any) => item.value));
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load roles");
+        setRoleOptions([]);
+      } finally {
+        setRolesLoading(false);
+      }
+    };
+
+    loadRoles();
+  }, [getMyBusinessRoles, selectedBusiness]);
+
+  const businessOptions = useMemo(
+    () =>
+      (myBusinesses || []).map((business: any) => ({
+        label: business?.name || "Business",
+        value: business?.id || "",
+        avatar: business?.logo || undefined,
+      })),
+    [myBusinesses]
+  );
+
+  const selectedRoleOption = useMemo(
+    () => roleOptions.find((item) => item.value === selectedRole) || null,
+    [roleOptions, selectedRole]
+  );
+
+  const selectedRequiredCount = Number(requiredStaffCount) || 0;
+  const isRequiredCountMatched = currentRoleSlotsTotal === selectedRequiredCount;
+
+  const handleTotalRequiredChange = useCallback((total: number) => {
+    setCurrentRoleSlotsTotal((prev) => (prev === total ? prev : total));
+  }, []);
+
+  const handleRoleSlotsChange = useCallback(
+    (slots: { roleId: string; roleName: string; count: number }[]) => {
+      setRoleRequirements(slots);
+    },
+    []
+  );
+
+  const formatTime12 = (date: Date) => {
+    const hour = date.getHours();
+    const minute = date.getMinutes();
+    const period = hour >= 12 ? "PM" : "AM";
+    const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+    return `${hour12}:${`${minute}`.padStart(2, "0")} ${period}`;
+  };
+
+  const selectedBusinessInfo = useMemo(
+    () => (myBusinesses || []).find((business: any) => business?.id === selectedBusiness),
+    [myBusinesses, selectedBusiness]
+  );
+
+  const previewData = useMemo(
+    () => ({
+      templateName: templateName.trim() || "Template",
+      shiftTimeRange: `${formatTime12(shiftStartTime)} - ${formatTime12(shiftEndTime)}`,
+      breakTimeRange: `${formatTime12(breakStartTime)} - ${formatTime12(breakEndTime)}`,
+      totalStaff: selectedRequiredCount,
+      roles: roleRequirements.map((item) => ({
+        roleName: item.roleName || "Role",
+        count: item.count || 0,
+      })),
+      businessName: selectedBusinessInfo?.name || "Business",
+      businessLogo: selectedBusinessInfo?.logo || undefined,
+    }),
+    [
+      breakEndTime,
+      breakStartTime,
+      roleRequirements,
+      selectedBusinessInfo?.logo,
+      selectedBusinessInfo?.name,
+      selectedRequiredCount,
+      shiftEndTime,
+      shiftStartTime,
+      templateName,
+    ]
+  );
 
   return (
     <KeyboardAvoidingView
@@ -76,112 +243,181 @@ const EditTemplete = () => {
 
         <ScrollView
           contentContainerStyle={{
-            paddingBottom: 120
+            paddingBottom: 120,
           }}
-          className="mx-5" showsVerticalScrollIndicator={false}>
-          {/* input */}
-          <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
-            Templete Name
-          </Text>
-          <TextInput
-            className="px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary  border border-[#EEEEEE] mt-2.5 rounded-[10px]"
-            placeholder="Morning Shift"
-            placeholderTextColor="#7D7D7D"
-            textAlignVertical="top"
-          />
-
-          {/* Time Picker shift  */}
-          <View className="mt-8">
-            <View className="flex-row gap-4 items-center">
-              <View className="flex-1">
-                <TimePicker title="Shift Start Time" />
-              </View>
-              <Text className="mt-7 font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                To
-              </Text>
-              <View className="flex-1">
-                <TimePicker title="Shift End Time" />
-              </View>
+          className="mx-5"
+          showsVerticalScrollIndicator={false}
+        >
+          {isLoadingTemplate ? (
+            <View className="py-10 items-center">
+              <ActivityIndicator size="large" />
             </View>
-          </View>
-
-          {/* Time Picker shift  */}
-          <View className="mt-8">
-            <View className="flex-row gap-4 items-center">
-              <View className="flex-1">
-                <TimePicker title="Add Break" />
-              </View>
-              <Text className="mt-7 font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                To
+          ) : (
+            <>
+              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
+                Templete Name
               </Text>
-              <View className="flex-1">
-                <TimePicker title="  " />
-              </View>
-            </View>
-          </View>
-
-          {/* hapiness bar */}
-          <View>
-            <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-8">
-              Select business
-            </Text>
-            <BusinessDropdown
-              className="mt-4"
-              placeholder="Choose leave type"
-              options={leaveTypes}
-              value={selectedLeave}
-              onSelect={(value: any) => setSelectedLeave(value)}
-            />
-          </View>
-
-          {/* role requard */}
-          <View className="mt-8 flex-row justify-between items-center">
-            <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-              Roles & Required Count
-            </Text>
-            <View className="bg-[#E5F4FD] flex-row gap-2.5 rounded-lg items-center p-1">
-              <Text>15</Text>
-              <MaterialIcons
-                name="keyboard-arrow-down"
-                size={24}
-                color="black"
+              <TextInput
+                value={templateName}
+                onChangeText={setTemplateName}
+                className="px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] mt-2.5 rounded-[10px]"
+                placeholder="Morning Shift"
+                placeholderTextColor="#7D7D7D"
+                textAlignVertical="top"
               />
-            </View>
-          </View>
 
-          {/* <TextInput /> */}
+              <View className="mt-8">
+                <View className="flex-row gap-4 items-center">
+                  <View className="flex-1">
+                    <TimePicker
+                      title="Shift Start Time"
+                      value={shiftStartTime}
+                      onChangeTime={setShiftStartTime}
+                    />
+                  </View>
+                  <Text className="mt-7 font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                    To
+                  </Text>
+                  <View className="flex-1">
+                    <TimePicker
+                      title="Shift End Time"
+                      value={shiftEndTime}
+                      onChangeTime={setShiftEndTime}
+                    />
+                  </View>
+                </View>
+              </View>
 
-          <SearchBar className="mt-4 " onSearch={(text) => setSearch(text)} />
+              <View className="mt-8">
+                <View className="flex-row gap-4 items-center">
+                  <View className="flex-1">
+                    <TimePicker
+                      title="Add Break"
+                      value={breakStartTime}
+                      onChangeTime={setBreakStartTime}
+                    />
+                  </View>
+                  <Text className="mt-7 font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                    To
+                  </Text>
+                  <View className="flex-1">
+                    <TimePicker
+                      title="  "
+                      value={breakEndTime}
+                      onChangeTime={setBreakEndTime}
+                    />
+                  </View>
+                </View>
+              </View>
 
-          {/* Role slots */}
-          <RoleSlotsInput titleHeight={true} />
+              <View>
+                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-8">
+                  Select business
+                </Text>
+                {myBusinessesLoading ? (
+                  <View className="mt-4 py-4 items-center border border-[#EEEEEE] rounded-[10px]">
+                    <ActivityIndicator size="small" />
+                  </View>
+                ) : (
+                  <BusinessDropdown
+                    className="mt-4"
+                    placeholder="Choose business"
+                    options={businessOptions}
+                    value={selectedBusiness}
+                    onSelect={(value: string) => {
+                      setSelectedBusiness(value);
+                      setSelectedRole("");
+                      setRoleSelectionVersion(0);
+                    }}
+                  />
+                )}
+              </View>
 
-          {/* Total roles must equal required staff */}
-          <View className="flex-row items-center gap-2.5 -mt-4">
-            <Feather name="alert-triangle" size={16} color="#F34F4F" />
-            <Text
-              numberOfLines={1}
-              className="ml-1.5 text-sm font-proximanova-regular text-[#F34F4F]"
-            >
-              Total roles must equal required staff
-            </Text>
-          </View>
+              <View className="mt-8 flex-row justify-between items-center">
+                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                  Roles & Required Count
+                </Text>
+                <View className="bg-[#E5F4FD] flex-row gap-2.5 rounded-lg items-center p-1">
+                  <Text>{requiredStaffCount}</Text>
+                  <MaterialIcons
+                    name="keyboard-arrow-down"
+                    size={24}
+                    color="black"
+                  />
+                </View>
+              </View>
 
-          <View className="mt-8 mb-5 flex-row gap-2">
-            <View className="flex-1 bg-[#F34F4F] items-center justify-center rounded-full">
-              <Text className="font-proximanova-semibold text-base text-center text-[#ffffff]">
-                Delete
-              </Text>
-            </View>
-            <PrimaryButton
-              className="flex-1"
-              onPress={() => setIsPreview(true)}
-              title="Save"
-            />
-          </View>
+              <View className="mt-4">
+                {rolesLoading ? (
+                  <View className="py-4 items-center border border-[#EEEEEE] rounded-[10px]">
+                    <ActivityIndicator size="small" />
+                  </View>
+                ) : (
+                  <BusinessDropdown
+                    placeholder={
+                      selectedBusiness ? "Choose role" : "Select business first"
+                    }
+                    options={roleOptions}
+                    value={selectedRole}
+                    onSelect={(value: string) => {
+                      setSelectedRole(value);
+                      setRoleSelectionVersion((prev) => prev + 1);
+                    }}
+                  />
+                )}
+              </View>
+
+              <RoleSlotsInput
+                titleHeight={true}
+                initialRoleSlots={initialRoleRequirements}
+                selectedRoleToAdd={
+                  selectedRoleOption
+                    ? { id: selectedRoleOption.value, name: selectedRoleOption.label }
+                    : null
+                }
+                addRoleTrigger={roleSelectionVersion}
+                resetTrigger={roleSlotsResetVersion}
+                onTotalRequiredChange={handleTotalRequiredChange}
+                onRoleSlotsChange={handleRoleSlotsChange}
+              />
+
+              <View className="flex-row items-center gap-2.5 -mt-4">
+                <Feather
+                  name={isRequiredCountMatched ? "check-circle" : "alert-triangle"}
+                  size={16}
+                  color={isRequiredCountMatched ? "#22C55E" : "#F34F4F"}
+                />
+                <Text
+                  numberOfLines={1}
+                  className={`ml-1.5 text-sm font-proximanova-regular ${
+                    isRequiredCountMatched ? "text-[#22C55E]" : "text-[#F34F4F]"
+                  }`}
+                >
+                  {isRequiredCountMatched
+                    ? "Role count matches required staff"
+                    : `Total roles (${currentRoleSlotsTotal}) must equal required staff (${selectedRequiredCount})`}
+                </Text>
+              </View>
+
+              <View className="mt-8 mb-5 flex-row gap-2">
+                <View className="flex-1 bg-[#F34F4F] items-center justify-center rounded-full">
+                  <Text className="font-proximanova-semibold text-base text-center text-[#ffffff]">
+                    Delete
+                  </Text>
+                </View>
+                <PrimaryButton
+                  className="flex-1"
+                  onPress={() => setIsPreview(true)}
+                  title="Save"
+                />
+              </View>
+            </>
+          )}
+
           <PreviewTemplateModal
             visible={isPreview}
             onClose={() => setIsPreview(false)}
+            data={previewData}
           />
         </ScrollView>
       </SafeAreaView>

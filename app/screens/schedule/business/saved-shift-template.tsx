@@ -125,6 +125,8 @@ const SavedShiftTemplate = () => {
                 <ShiftTemplateCard
                   key={template?.id || index}
                   className={index === 0 ? "mt-8" : "mt-4"}
+                  templateId={template?.id}
+                  businessId={businessId}
                   title={template?.name || "Shift Template"}
                   timeRange={`${to12Hour(template?.startTime)} - ${to12Hour(
                     template?.endTime

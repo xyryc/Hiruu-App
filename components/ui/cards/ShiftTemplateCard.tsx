@@ -16,6 +16,8 @@ const ShiftTemplateCard = ({
   roles,
   businessName,
   businessLogo,
+  templateId,
+  businessId,
   onDelete,
 }: any) => {
   const scrollX = new Animated.Value(0);
@@ -40,7 +42,13 @@ const ShiftTemplateCard = ({
             )}
             <TouchableOpacity
               onPress={() =>
-                router.push("/screens/schedule/business/edit-templete")
+                router.push({
+                  pathname: "/screens/schedule/business/edit-templete",
+                  params: {
+                    templateId,
+                    businessId,
+                  },
+                })
               }
               className="h-9 w-9 rounded-full bg-[#FFF] flex-row justify-center items-center "
             >

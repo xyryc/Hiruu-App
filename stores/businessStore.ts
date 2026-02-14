@@ -31,6 +31,7 @@ interface BusinessState {
   getBusinessRoleById: (businessId: string, roleId: string) => Promise<any>;
   createShiftTemplate: (businessId: string, payload: any) => Promise<any>;
   getShiftTemplates: (businessId: string) => Promise<any>;
+  getShiftTemplateById: (businessId: string, templateId: string) => Promise<any>;
   deleteShiftTemplate: (businessId: string, templateId: string) => Promise<any>;
   getBusinessProfile: (businessId: string) => Promise<any>;
   updateMyBusinessProfile: (businessId: string, payload: any) => Promise<any>;
@@ -51,6 +52,8 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
   myBusinesses: [],
   myBusinessesLoading: false,
   selectedBusinesses: [],
+
+  setSelectedBusinesses: (ids) => set({ selectedBusinesses: ids }),
 
   fetchBusinesses: async (search = "") => {
     try {
@@ -278,6 +281,28 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
     }
   },
 
+  getShiftTemplateById: async (businessId, templateId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/shift-template/${businessId}/${templateId}`
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to fetch shift template";
+        throw new Error(errorMsg);
+      }
+
+      return result.data || null;
+    } catch (error) {
+      console.error("Fetch shift template by id error:", error);
+      throw error;
+    }
+  },
+
   deleteShiftTemplate: async (businessId, templateId) => {
     try {
       const response = await axiosInstance.delete(
@@ -436,8 +461,6 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       throw finalError;
     }
   },
-
-  setSelectedBusinesses: (ids) => set({ selectedBusinesses: ids }),
 
   createCompanyManual: async (companyData) => {
     set({ isLoading: true, error: null });
