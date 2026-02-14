@@ -30,6 +30,16 @@ const BusinessJobs = () => {
         iconColor={isDark ? "#fff" : "#111"}
         components={
           <View className="flex-row items-center gap-2.5">
+            {/* post job */}
+            <TouchableOpacity
+              onPress={() =>
+                router.push("/screens/jobs/business/post-job")
+              }
+              className="h-10 w-10 bg-[#F5F5F5] flex-row justify-center items-center rounded-full"
+            >
+              <Ionicons name="add" size={18} color="black" />
+            </TouchableOpacity>
+
             <TouchableOpacity
               onPress={() =>
                 router.push("/screens/jobs/business/candidate-requests")
@@ -52,6 +62,8 @@ const BusinessJobs = () => {
           </View>
         }
       />
+
+
       <ScrollView
         className="mx-5"
         showsVerticalScrollIndicator={false}
