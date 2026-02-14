@@ -1,10 +1,13 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import { useBusinessStore } from "@/stores/businessStore";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -17,47 +20,55 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-
-const tabs = [
-  "Cashier (1/3)",
-  "Bartender (3/5)",
-  "Waiter (7/10)",
-  "Reception (5/7)",
-  "Others (2/5)",
-];
+import { toast } from "sonner-native";
 
 const ListofShifts = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const [selectedTab, setSelectedTab] = React.useState("Cashier (1/3)");
-  const [selectedCashier, setSelectedCashier] = useState<number | null>(null);
+  const { selectedBusinesses, getShiftTemplates } = useBusinessStore();
+  const businessId = selectedBusinesses[0];
+  const [templates, setTemplates] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedShiftId, setSelectedShiftId] = useState<string | null>(null);
 
-  // Sample cashier data
-  const cashierData = [
-    {
-      id: 1,
-      name: "Morning Shift",
-      role: "10:00AM to 5:00PM",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    },
-    {
-      id: 2,
-      name: "Afternoon Shift",
-      role: "10:00AM to 5:00PM",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    },
-    {
-      id: 3,
-      name: "Evening Shift",
-      role: "10:00AM to 5:00PM",
-      avatar: "https://randomuser.me/api/portraits/men/86.jpg",
-    },
-  ];
+  const to12Hour = (value?: string) => {
+    if (!value) return "--:--";
+    const [rawHour = "0", rawMinute = "0"] = value.split(":");
+    const hour = Number(rawHour);
+    const minute = Number(rawMinute);
+    if (Number.isNaN(hour) || Number.isNaN(minute)) return value;
 
-  // Function to handle cashier selection and toggle (for multiple selections)
-  const handleCashierPress = (id: number) => {
-    setSelectedCashier((prev) => (prev === id ? null : id));
+    const period = hour >= 12 ? "PM" : "AM";
+    const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+    return `${hour12}:${String(minute).padStart(2, "0")} ${period}`;
+  };
+
+  const loadTemplates = useCallback(async () => {
+    if (!businessId) {
+      setTemplates([]);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const data = await getShiftTemplates(businessId);
+      setTemplates(Array.isArray(data) ? data : []);
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to fetch shifts");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [businessId, getShiftTemplates]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadTemplates();
+    }, [loadTemplates])
+  );
+
+  const handleShiftPress = (id: string) => {
+    setSelectedShiftId((prev) => (prev === id ? null : id));
   };
 
   return (
@@ -81,42 +92,58 @@ const ListofShifts = () => {
         <ScrollView
           className="mx-5 flex-1"
           showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
         >
-          {/* shift list */}
-          <View className="mt-4">
-            {cashierData.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                onPress={() => handleCashierPress(item.id)}
-                className={`flex-row items-center p-4 mt-4 rounded-xl border border-[#eeeeee] `}
-              >
-                <Image
-                  source={{
-                    uri: "https://randomuser.me/api/portraits/lego/3.jpg",
-                  }}
-                  className="w-12 h-12 rounded-full mr-3"
-                />
-                <View className="flex-1">
-                  <Text className="text-base font-proximanova-semibold text-primary dark:text-dark-primary">
-                    {item.name}
-                  </Text>
-                  <Text className="text-sm text-secondary dark:text-dark-secondary font-proximanova-regular">
-                    {item.role}
-                  </Text>
-                </View>
+          {isLoading ? (
+            <View className="py-10 items-center">
+              <ActivityIndicator size="large" />
+            </View>
+          ) : templates.length === 0 ? (
+            <View className="py-10 items-center">
+              <Text className="text-sm text-secondary dark:text-dark-secondary">
+                {businessId
+                  ? "No shifts found for selected business."
+                  : "Select a business first."}
+              </Text>
+            </View>
+          ) : (
+            <View className="mt-4">
+              {templates.map((item) => (
+                <TouchableOpacity
+                  key={item?.id}
+                  onPress={() => handleShiftPress(item?.id)}
+                  className="flex-row items-center p-4 mt-4 rounded-xl border border-[#eeeeee]"
+                >
+                  <Image
+                    source={
+                      item?.business?.logo
+                        ? { uri: item.business.logo }
+                        : require("@/assets/images/placeholder.png")
+                    }
+                    className="w-12 h-12 rounded-full mr-3"
+                  />
+                  <View className="flex-1">
+                    <Text className="text-base font-proximanova-semibold text-primary dark:text-dark-primary">
+                      {item?.name || "Shift"}
+                    </Text>
+                    <Text className="text-sm text-secondary dark:text-dark-secondary font-proximanova-regular">
+                      {`${to12Hour(item?.startTime)} to ${to12Hour(item?.endTime)}`}
+                    </Text>
+                  </View>
 
-                <Ionicons
-                  name={
-                    selectedCashier === item.id
-                      ? "checkmark-circle"
-                      : "radio-button-off"
-                  }
-                  size={24}
-                  color={selectedCashier === item.id ? "#11293A" : "#C7C7CC"}
-                />
-              </TouchableOpacity>
-            ))}
-          </View>
+                  <Ionicons
+                    name={
+                      selectedShiftId === item?.id
+                        ? "checkmark-circle"
+                        : "radio-button-off"
+                    }
+                    size={24}
+                    color={selectedShiftId === item?.id ? "#11293A" : "#C7C7CC"}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+          )}
         </ScrollView>
 
         {/* button  */}
