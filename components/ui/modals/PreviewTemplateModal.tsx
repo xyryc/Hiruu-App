@@ -67,7 +67,7 @@ const PreviewTemplateModal = ({
               Review your template settings before saving
             </Text>
 
-            <View className="border my-7 mx-12 border-[#eeeeee] rounded-xl px-4 ">
+            <View className="border my-7 border-[#eeeeee] rounded-xl px-4">
               <View className="relative items-center">
                 <Image
                   source={require("@/assets/images/timer-bg.svg")}

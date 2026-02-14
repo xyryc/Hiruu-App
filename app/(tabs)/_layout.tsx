@@ -76,21 +76,6 @@ export default function TabLayout() {
         }}
       />
 
-      {/* <Tabs.Screen
-        name="business-home"
-        options={{
-          title: "Home",
-          href: user.role === "business" ? undefined : null, // Hide if not business
-          tabBarIcon: ({ color, focused }) => (
-            <Octicons
-              name={focused ? "home-fill" : "home"}
-              size={24}
-              color={color}
-            />
-          ),
-        }}
-      /> */}
-
       {/* rewards */}
       <Tabs.Screen
         name="rewards"

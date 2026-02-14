@@ -95,7 +95,7 @@ const SavedShiftTemplate = () => {
 
         <ScreenHeader
           className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
-          style={{ paddingTop: insets.top + 10, paddingBottom: 20 }}
+          style={{ paddingTop: insets.top + 10, paddingBottom: 16 }}
           onPressBack={() => router.back()}
           title="Saved Shift template"
           titleClass="text-primary dark:text-dark-primary"
@@ -107,7 +107,12 @@ const SavedShiftTemplate = () => {
           }
         />
 
-        <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={{
+            paddingBottom: 120
+          }}
+          className="mx-5"
+          showsVerticalScrollIndicator={false}>
           {isLoading ? (
             <View className="py-10 items-center">
               <ActivityIndicator size="large" />

@@ -36,7 +36,6 @@ const CreateTemplate = () => {
     createShiftTemplate,
   } = useBusinessStore();
   const [templateName, setTemplateName] = useState("");
-  const [templateDescription, setTemplateDescription] = useState("");
   const [selectedBusiness, setSelectedBusiness] = useState<string>("");
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [requiredStaffCount, setRequiredStaffCount] = useState<string>("15");
@@ -178,7 +177,6 @@ const CreateTemplate = () => {
 
     return {
       name: templateName.trim(),
-      description: templateDescription.trim() || null,
       startTime: formatTime24(shiftStartTime),
       endTime: formatTime24(shiftEndTime),
       breakDuration: [
@@ -288,52 +286,42 @@ const CreateTemplate = () => {
             placeholderTextColor="#7D7D7D"
             textAlignVertical="top"
           />
-          <TextInput
-            value={templateDescription}
-            onChangeText={setTemplateDescription}
-            className="px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] mt-3 rounded-[10px]"
-            placeholder="Template description"
-            placeholderTextColor="#7D7D7D"
-            textAlignVertical="top"
-            multiline
-          />
 
           {/* Time Picker shift  */}
           <View className="mt-8">
             <View className="flex-row gap-4 items-center">
-              <View className="flex-1">
-                <TimePicker
-                  title="Shift Start Time"
-                  value={shiftStartTime}
-                  onChangeTime={setShiftStartTime}
-                />
-              </View>
+              <TimePicker
+                title="Shift Start Time"
+                value={shiftStartTime}
+                onChangeTime={setShiftStartTime}
+              />
+
               <Text className="mt-7 font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                 To
               </Text>
-              <View className="flex-1">
-                <TimePicker
-                  title="Shift End Time"
-                  value={shiftEndTime}
-                  onChangeTime={setShiftEndTime}
-                />
-              </View>
+
+              <TimePicker
+                title="Shift End Time"
+                value={shiftEndTime}
+                onChangeTime={setShiftEndTime}
+              />
             </View>
           </View>
 
           {/* Time Picker shift  */}
           <View className="mt-8">
             <View className="flex-row gap-4 items-center">
-              <View className="flex-1">
-                <TimePicker
-                  title="Add Break"
-                  value={breakStartTime}
-                  onChangeTime={setBreakStartTime}
-                />
-              </View>
+              <TimePicker
+                title="Add Break"
+                value={breakStartTime}
+                onChangeTime={setBreakStartTime}
+              />
+
+
               <Text className="mt-7 font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                 To
               </Text>
+
               <View className="flex-1">
                 <TimePicker
                   title="  "

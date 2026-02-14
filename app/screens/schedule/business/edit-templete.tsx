@@ -65,18 +65,21 @@ const EditTemplete = () => {
         className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
         edges={["left", "right", "bottom"]}
       >
-        <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pb-4 pt-2.5 px-5">
-          <ScreenHeader
-            className=""
-            style={{ paddingTop: insets.top + 10, paddingBottom: 10 }}
-            onPressBack={() => router.back()}
-            title="Edit Templete"
-            titleClass="text-primary dark:text-dark-primary"
-            iconColor={isDark ? "#fff" : "#111"}
-          />
-        </View>
-        <ScrollView className="mx-5" showsVerticalScrollIndicator={false}>
-          {/* inpute */}
+        <ScreenHeader
+          className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+          style={{ paddingTop: insets.top + 10, paddingBottom: 16 }}
+          onPressBack={() => router.back()}
+          title="Edit Templete"
+          titleClass="text-primary dark:text-dark-primary"
+          iconColor={isDark ? "#fff" : "#111"}
+        />
+
+        <ScrollView
+          contentContainerStyle={{
+            paddingBottom: 120
+          }}
+          className="mx-5" showsVerticalScrollIndicator={false}>
+          {/* input */}
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
             Templete Name
           </Text>
