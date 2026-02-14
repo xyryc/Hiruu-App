@@ -80,7 +80,9 @@ const UserJobs = () => {
               Featured Job
             </Text>
 
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push("/screens/jobs/user/all-jobs")}
+            >
               <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
                 See All
               </Text>
@@ -105,7 +107,9 @@ const UserJobs = () => {
               Suggested Job
             </Text>
 
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => router.push("/screens/jobs/user/all-jobs")}
+            >
               <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
                 See All
               </Text>

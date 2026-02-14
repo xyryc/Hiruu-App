@@ -178,6 +178,7 @@ const JobCard = ({ className, status }: JobCardProps) => {
                 <StatusBadge status="submitted" />
               ) : (
                 <SmallButton
+                  className='w-28'
                   title="Apply Now"
                   onPress={() => setShowModal(true)}
                 />
