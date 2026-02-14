@@ -28,6 +28,8 @@
                 "business_created_successfully":  "Î— ÎµÏ€Î¹Ï‡ÎµÎ¯ÏÎ·ÏƒÎ· Î´Î·Î¼Î¹Î¿Ï…ÏÎ³Î®Î¸Î·ÎºÎµ Î¼Îµ ÎµÏ€Î¹Ï„Ï…Ï‡Î¯Î±.",
                 "UNKNOWN_ERROR":  "Î Î±ÏÎ¿Ï…ÏƒÎ¹Î¬ÏƒÏ„Î·ÎºÎµ Î±Ï€ÏÎ¿ÏƒÎ´ÏŒÎºÎ·Ï„Î¿ ÏƒÏ†Î¬Î»Î¼Î±",
                 "business_updated_successfully":  "Προφίλ ενημερώθηκε με επιτυχία.",
+                "shift_template_updated_successfully":  "Το πρότυπο βάρδιας ενημερώθηκε με επιτυχία.",
+                "shift_template_deleted_successfully":  "Το πρότυπο βάρδιας διαγράφηκε με επιτυχία.",
                 "profile_updated_successfully":  "Το προφίλ ενημερώθηκε με επιτυχία.",
                 "experiences.0.startDate must be a valid ISO 8601 date string":  "Η ημερομηνία έναρξης εμπειρίας πρέπει να είναι έγκυρη μορφή ISO 8601."
             },

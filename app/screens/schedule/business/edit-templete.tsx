@@ -3,6 +3,7 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
 import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
 import TimePicker from "@/components/ui/inputs/TimePicker";
+import DeleteConfirmModal from "@/components/ui/modals/DeleteConfirmModal";
 import PreviewTemplateModal from "@/components/ui/modals/PreviewTemplateModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { Feather } from "@expo/vector-icons";
@@ -17,6 +18,7 @@ import {
   ScrollView,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from "react-native";
 import {
@@ -40,6 +42,7 @@ const EditTemplete = () => {
     getMyBusinesses,
     getMyBusinessRoles,
     getShiftTemplateById,
+    deleteShiftTemplate,
     updateShiftTemplate,
   } = useBusinessStore();
 
@@ -72,6 +75,8 @@ const EditTemplete = () => {
   const [isPreview, setIsPreview] = useState(false);
   const [isLoadingTemplate, setIsLoadingTemplate] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     getMyBusinesses().catch((error: any) => {
@@ -305,6 +310,25 @@ const EditTemplete = () => {
     setIsPreview(true);
   };
 
+  const handleDeleteTemplate = async () => {
+    if (!selectedBusiness || !templateIdValue) {
+      toast.error("Template not found.");
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      await deleteShiftTemplate(selectedBusiness, templateIdValue);
+      toast.success("Shift template deleted successfully.");
+      setIsDeleteConfirmOpen(false);
+      router.back();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to delete shift template");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       className="flex-1"
@@ -479,11 +503,19 @@ const EditTemplete = () => {
               </View>
 
               <View className="mt-8 mb-5 flex-row gap-2">
-                <View className="flex-1 bg-[#F34F4F] items-center justify-center rounded-full">
+                <TouchableOpacity
+                  onPress={() => {
+                    if (isDeleting || isSubmitting) return;
+                    setIsDeleteConfirmOpen(true);
+                  }}
+                  className={`flex-1 bg-[#F34F4F] items-center justify-center rounded-full ${
+                    isDeleting || isSubmitting ? "opacity-50" : ""
+                  }`}
+                >
                   <Text className="font-proximanova-semibold text-base text-center text-[#ffffff]">
                     Delete
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <PrimaryButton
                   className="flex-1"
                   onPress={handleOpenPreview}
@@ -501,6 +533,20 @@ const EditTemplete = () => {
             onApply={handleUpdateTemplate}
             loading={isSubmitting}
             data={previewData}
+          />
+
+          <DeleteConfirmModal
+            visible={isDeleteConfirmOpen}
+            deleting={isDeleting}
+            title="Delete Shift Template"
+            description="Are you sure you want to delete this shift template? This action cannot be undone."
+            confirmText="Delete"
+            cancelText="Cancel"
+            onClose={() => {
+              if (isDeleting) return;
+              setIsDeleteConfirmOpen(false);
+            }}
+            onConfirm={handleDeleteTemplate}
           />
         </ScrollView>
       </SafeAreaView>

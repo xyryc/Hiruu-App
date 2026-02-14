@@ -27,6 +27,8 @@
     "experience_invalid_date_range": "Start date must be before end date.",
     "business_created_successfully": "Business created successfully.",
     "business_updated_successfully": "Profile updated successfully.",
+    "shift_template_updated_successfully": "Shift template updated successfully.",
+    "shift_template_deleted_successfully": "Shift template deleted successfully.",
     "profile_updated_successfully": "Profile updated successfully.",
     "experiences.0.startDate must be a valid ISO 8601 date string": "Experience start date must be a valid ISO 8601 date string.",
     "UNKNOWN_ERROR": "An unexpected error occurred"
