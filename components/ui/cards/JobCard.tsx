@@ -16,7 +16,7 @@ import SecondaryButton from "../buttons/SecondaryButton";
 import SmallButton from "../buttons/SmallButton";
 import JobApplyModal from "../modals/JobApplyModal";
 
-const JobCard = ({ className, status }: JobCardProps) => {
+const JobCard = ({ className, status, job }: JobCardProps) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
 
@@ -28,7 +28,10 @@ const JobCard = ({ className, status }: JobCardProps) => {
         className="flex-row gap-2.5"
       >
         <Image
-          source="https://img.freepik.com/free-vector/elegant-luxury-hotel-logo_23-2147534418.jpg?semt=ais_hybrid&w=740&q=80"
+          source={
+            job?.business?.logo ||
+            "https://img.freepik.com/free-vector/elegant-luxury-hotel-logo_23-2147534418.jpg?semt=ais_hybrid&w=740&q=80"
+          }
           style={{ width: 40, height: 40, borderRadius: 999 }}
           contentFit="cover"
         />
@@ -36,11 +39,11 @@ const JobCard = ({ className, status }: JobCardProps) => {
         {/* top */}
         <View>
           <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-1">
-            Maintanence Staff{" "}
+            {job?.name || "Maintanence Staff"}{" "}
             <MaterialCommunityIcons name="crown" size={14} color="#4FB2F3" />
           </Text>
           <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-            Picko labs
+            {job?.business?.name || "Picko labs"}
           </Text>
         </View>
       </TouchableOpacity>
@@ -50,16 +53,20 @@ const JobCard = ({ className, status }: JobCardProps) => {
         <View className="flex-row items-center gap-1.5">
           <SimpleLineIcons name="location-pin" size={12} color="black" />
           <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
-            New York, North Bergen
+            {job?.business?.address || "New York, North Bergen"}
           </Text>
         </View>
 
         <View className="flex-row">
           <Text className="text-xl font-proximanova-semibold text-primary">
-            5-10$
+            {typeof job?.salaryMin === "number" &&
+              typeof job?.salaryMax === "number"
+              ? `${job.salaryMin}-${job.salaryMax}`
+              : "5-10"}
+            $
           </Text>
           <Text className="text-lg font-proximanova-regular text-secondary">
-            /hr
+            {job?.salaryType === "monthly" ? "/mo" : "/hr"}
           </Text>
         </View>
       </View>
@@ -147,7 +154,7 @@ const JobCard = ({ className, status }: JobCardProps) => {
                   color="#7A7A7A"
                 />
                 <Text className="text-sm font-proximanova-regular text-secondary">
-                  305
+                  {job?._count?.recruitmentApplications ?? 305}
                 </Text>
               </View>
 

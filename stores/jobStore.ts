@@ -22,6 +22,7 @@ type CreateRecruitmentPayload = {
 interface JobState {
   isLoading: boolean;
   error: Error | null;
+  getPublicRecruitments: () => Promise<any[]>;
   createRecruitment: (
     businessId: string,
     payload: CreateRecruitmentPayload
@@ -32,6 +33,35 @@ interface JobState {
 export const useJobStore = create<JobState>((set) => ({
   isLoading: false,
   error: null,
+
+  getPublicRecruitments: async () => {
+    try {
+      const response = await axiosInstance.get("/recruitment/public");
+      const result = response.data;
+
+      if (!result?.success) {
+        const messageKey = result?.message || "UNKNOWN_ERROR";
+        const validation = Array.isArray(result?.data)
+          ? result.data.join("\n")
+          : null;
+        const message = validation || translateApiMessage(messageKey);
+        throw new Error(message);
+      }
+
+      return Array.isArray(result?.data) ? result.data : [];
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const apiValidation = Array.isArray(axiosError.response?.data?.data)
+        ? axiosError.response?.data?.data?.join("\n")
+        : null;
+      const message =
+        apiValidation ||
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to fetch jobs";
+      throw new Error(message);
+    }
+  },
 
   createRecruitment: async (businessId, payload) => {
     set({ isLoading: true, error: null });
@@ -72,4 +102,3 @@ export const useJobStore = create<JobState>((set) => ({
 
   clearError: () => set({ error: null }),
 }));
-

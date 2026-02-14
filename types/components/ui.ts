@@ -275,6 +275,24 @@ export interface TimeLeft {
 export interface JobCardProps {
   className?: string;
   status?: string;
+  job?: {
+    id: string;
+    name: string;
+    salaryMin: number;
+    salaryMax: number;
+    salaryType: string;
+    shiftStartTime?: string;
+    shiftEndTime?: string;
+    business?: {
+      id: string;
+      name: string;
+      logo?: string;
+      address?: string;
+    } | null;
+    _count?: {
+      recruitmentApplications?: number;
+    };
+  };
 }
 
 export interface BusinessJobCardProps {
