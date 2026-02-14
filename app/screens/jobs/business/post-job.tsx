@@ -2,6 +2,8 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import BusinessDropdown from "@/components/ui/dropdown/BusinessDropdown";
 import TimePicker from "@/components/ui/inputs/TimePicker";
+import { useBusinessStore } from "@/stores/businessStore";
+import { useJobStore } from "@/stores/jobStore";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useMemo, useState } from "react";
@@ -23,6 +25,9 @@ const PostJob = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
+  const selectedBusinesses = useBusinessStore((s) => s.selectedBusinesses);
+  const createRecruitment = useJobStore((s) => s.createRecruitment);
+  const isSubmitting = useJobStore((s) => s.isLoading);
 
   const [jobName, setJobName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
@@ -38,15 +43,27 @@ const PostJob = () => {
 
   const genderOptions = useMemo(
     () => [
-      { label: "Any", value: "any" },
-      { label: "Male", value: "male" },
-      { label: "Female", value: "female" },
-      { label: "Other", value: "other" },
+      { label: "Any", value: "Any" },
+      { label: "Male", value: "Male" },
+      { label: "Female", value: "Female" },
+      { label: "Other", value: "Other" },
     ],
     []
   );
 
-  const handlePostJob = () => {
+  const formatTime24 = (date: Date) => {
+    const hour = `${date.getHours()}`.padStart(2, "0");
+    const minute = `${date.getMinutes()}`.padStart(2, "0");
+    return `${hour}:${minute}`;
+  };
+
+  const handlePostJob = async () => {
+    const businessId = selectedBusinesses[0];
+    if (!businessId) {
+      toast.error("Please select a business profile first.");
+      return;
+    }
+
     if (!jobName.trim()) {
       toast.error("Job name is required.");
       return;
@@ -57,28 +74,59 @@ const PostJob = () => {
       return;
     }
 
+    if (!gender) {
+      toast.error("Gender is required.");
+      return;
+    }
+
+    const parsedAgeMin = Number(ageMin);
+    const parsedAgeMax = Number(ageMax);
+    const parsedSalaryMin = Number(salaryMin);
+    const parsedSalaryMax = Number(salaryMax);
+    const parsedOpenings = Number(openings);
+
+    if (!parsedAgeMin || !parsedAgeMax || parsedAgeMin > parsedAgeMax) {
+      toast.error("Please provide a valid age range.");
+      return;
+    }
+
+    if (
+      !parsedSalaryMin ||
+      !parsedSalaryMax ||
+      parsedSalaryMin > parsedSalaryMax
+    ) {
+      toast.error("Please provide a valid salary range.");
+      return;
+    }
+
+    if (!parsedOpenings || parsedOpenings < 1) {
+      toast.error("Number of openings must be at least 1.");
+      return;
+    }
+
     const payload = {
-      jobName: jobName.trim(),
-      jobDescription: jobDescription.trim(),
-      gender: gender || "any",
-      experience,
-      ageRange: {
-        min: ageMin,
-        max: ageMax,
-      },
-      shift: {
-        startTime: shiftStartTime,
-        endTime: shiftEndTime,
-      },
-      salaryRangePerHour: {
-        min: salaryMin,
-        max: salaryMax,
-      },
-      openings,
+      name: jobName.trim(),
+      description: jobDescription.trim(),
+      gender,
+      experience: experience.trim(),
+      ageMin: parsedAgeMin,
+      ageMax: parsedAgeMax,
+      shiftStartTime: formatTime24(shiftStartTime),
+      shiftEndTime: formatTime24(shiftEndTime),
+      salaryMin: parsedSalaryMin,
+      salaryMax: parsedSalaryMax,
+      requiredSkills: [],
+      salaryType: "hourly" as const,
+      numberOfOpenings: parsedOpenings,
     };
 
-    console.log("postJob payload:", payload);
-    toast.success("Job details captured.");
+    try {
+      await createRecruitment(businessId, payload);
+      toast.success("Job posted successfully.");
+      router.back();
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to post job");
+    }
   };
 
   return (
@@ -153,25 +201,27 @@ const PostJob = () => {
           />
 
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
-            Age Range
+            Age Range (Years)
           </Text>
           <View className="flex-row items-center gap-3 mt-2.5">
             <TextInput
               value={ageMin}
               onChangeText={setAgeMin}
               keyboardType="numeric"
-              className="flex-1 px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] rounded-[10px]"
+              className="flex-1 px-4 py-3 pr-10 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] rounded-[10px]"
               placeholder="Min"
               placeholderTextColor="#7D7D7D"
             />
+
             <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary">
               To
             </Text>
+
             <TextInput
               value={ageMax}
               onChangeText={setAgeMax}
               keyboardType="numeric"
-              className="flex-1 px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] rounded-[10px]"
+              className="flex-1 px-4 py-3 pr-10 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] rounded-[10px]"
               placeholder="Max"
               placeholderTextColor="#7D7D7D"
             />
@@ -196,28 +246,38 @@ const PostJob = () => {
           </View>
 
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-8">
-            Salary Range / Hour
+            Salary Range ($/Hour)
           </Text>
           <View className="flex-row items-center gap-3 mt-2.5">
-            <TextInput
-              value={salaryMin}
-              onChangeText={setSalaryMin}
-              keyboardType="numeric"
-              className="flex-1 px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] rounded-[10px]"
-              placeholder="Min"
-              placeholderTextColor="#7D7D7D"
-            />
+            <View className="flex-1 relative">
+              <Text className="absolute left-3 top-3.5 text-sm text-secondary dark:text-dark-secondary">
+                $
+              </Text>
+              <TextInput
+                value={salaryMin}
+                onChangeText={setSalaryMin}
+                keyboardType="numeric"
+                className="px-7 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] rounded-[10px]"
+                placeholder="Min"
+                placeholderTextColor="#7D7D7D"
+              />
+            </View>
             <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary">
               To
             </Text>
-            <TextInput
-              value={salaryMax}
-              onChangeText={setSalaryMax}
-              keyboardType="numeric"
-              className="flex-1 px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] rounded-[10px]"
-              placeholder="Max"
-              placeholderTextColor="#7D7D7D"
-            />
+            <View className="flex-1 relative">
+              <Text className="absolute left-3 top-3.5 text-sm text-secondary dark:text-dark-secondary">
+                $
+              </Text>
+              <TextInput
+                value={salaryMax}
+                onChangeText={setSalaryMax}
+                keyboardType="numeric"
+                className="px-7 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] rounded-[10px]"
+                placeholder="Max"
+                placeholderTextColor="#7D7D7D"
+              />
+            </View>
           </View>
 
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
@@ -233,7 +293,12 @@ const PostJob = () => {
           />
 
           <View className="mt-8 mb-5">
-            <PrimaryButton onPress={handlePostJob} title="Post Job" />
+            <PrimaryButton
+              onPress={handlePostJob}
+              loading={isSubmitting}
+              disabled={isSubmitting}
+              title="Post Job"
+            />
           </View>
         </ScrollView>
       </SafeAreaView>
