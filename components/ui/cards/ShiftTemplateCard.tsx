@@ -43,7 +43,7 @@ const ShiftTemplateCard = ({
             <TouchableOpacity
               onPress={() =>
                 router.push({
-                  pathname: "/screens/schedule/business/edit-templete",
+                  pathname: "/screens/schedule/business/edit-template",
                   params: {
                     templateId,
                     businessId,

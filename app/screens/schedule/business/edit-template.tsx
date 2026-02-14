@@ -27,7 +27,7 @@ import {
 } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
-const EditTemplete = () => {
+const EditTemplate = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
@@ -342,7 +342,7 @@ const EditTemplete = () => {
           className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
           style={{ paddingTop: insets.top + 10, paddingBottom: 16 }}
           onPressBack={() => router.back()}
-          title="Edit Templete"
+          title="Edit Template"
           titleClass="text-primary dark:text-dark-primary"
           iconColor={isDark ? "#fff" : "#111"}
         />
@@ -361,7 +361,7 @@ const EditTemplete = () => {
           ) : (
             <>
               <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
-                Templete Name
+                Template Name
               </Text>
               <TextInput
                 value={templateName}
@@ -554,4 +554,4 @@ const EditTemplete = () => {
   );
 };
 
-export default EditTemplete;
+export default EditTemplate;
