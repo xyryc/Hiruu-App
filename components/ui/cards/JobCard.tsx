@@ -1,8 +1,6 @@
 import { JobCardProps } from "@/types";
 import {
-  Entypo,
   FontAwesome,
-  Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
   SimpleLineIcons,
@@ -11,90 +9,14 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useMemo, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import StatusBadge from "../badges/StatusBadge";
-import SecondaryButton from "../buttons/SecondaryButton";
 import SmallButton from "../buttons/SmallButton";
 import JobApplyModal from "../modals/JobApplyModal";
 
-type JobCardVariant = "default" | "send_request" | "received" | "chatscreen";
-
-const resolveVariant = (status?: string): JobCardVariant => {
-  if (status === "send_request") return "send_request";
-  if (status === "received") return "received";
-  if (status === "chatscreen") return "chatscreen";
-  return "default";
-};
-
-const ReceivedFooter = () => (
-  <View className="flex-row items-center justify-between">
-    <SecondaryButton
-      title="View Details"
-      textClass="text-[#4FB2F3]"
-      iconBackground="bg-white"
-      iconColor="#4FB2F3"
-    />
-
-    <View className="flex-row items-center gap-1.5">
-      <View className="bg-[#E5F4FD] border-[0.5px] border-[#FFFFFF00] rounded-full p-2">
-        <Ionicons name="chatbubbles" size={22} color="#4FB2F3" />
-      </View>
-      <Entypo name="circle-with-cross" size={40} color="#F34F4F" />
-      <Ionicons name="checkmark-circle" size={40} color="#292D32" />
-    </View>
-  </View>
-);
-
-const DefaultFooter = ({
-  applicationsCount,
-  isSendRequest,
-  onPressApply,
-}: {
-  applicationsCount: number;
-  isSendRequest: boolean;
-  onPressApply: () => void;
-}) => (
-  <View className="flex-row items-center justify-between">
-    <View className="flex-row gap-1 items-center">
-      <MaterialCommunityIcons name="note-text-outline" size={18} color="#7A7A7A" />
-      <Text className="text-sm font-proximanova-regular text-secondary">
-        {applicationsCount}
-      </Text>
-    </View>
-
-    <Image
-      source={require("@/assets/images/line-small.svg")}
-      style={{
-        width: 1,
-        height: 18,
-      }}
-    />
-
-    <View className="flex-row gap-1 items-center">
-      <SimpleLineIcons name="share-alt" size={14} color="#7A7A7A" />
-      <Text className="text-sm font-proximanova-regular text-secondary">209</Text>
-    </View>
-
-    <Image
-      source={require("@/assets/images/line-small.svg")}
-      style={{
-        width: 1,
-        height: 18,
-      }}
-    />
-
-    {isSendRequest ? (
-      <StatusBadge status="submitted" />
-    ) : (
-      <SmallButton className="w-28" title="Apply Now" onPress={onPressApply} />
-    )}
-  </View>
-);
-
-const JobCard = ({ className, status, job }: JobCardProps) => {
+const JobCard = ({ className, compact = false, job }: JobCardProps) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-  const variant = resolveVariant(status);
-  const isChatVariant = variant === "chatscreen";
+  const isPlainSurface =
+    className?.includes("bg-white") || className?.includes("bg-[#FFFFFF]");
 
   const salarySuffix = useMemo(
     () => (job?.salaryType === "monthly" ? "/mo" : "/hr"),
@@ -150,57 +72,81 @@ const JobCard = ({ className, status, job }: JobCardProps) => {
 
       <View className="flex-row gap-1.5 mt-2.5">
         <View
-          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full ${isChatVariant ? "bg-[#F5F5F5]" : "bg-white"
-            }`}
+          className="flex-row gap-1.5 items-center px-2.5 py-1 rounded-full"
+          style={{
+            backgroundColor:
+              compact || isPlainSurface ? "#3F98FF4D" : "#FFFFFF",
+          }}
         >
           <MaterialIcons name="verified" size={16} color="#3090FF" />
           <Text className="text-xs font-proximanova-regular text-primary">Verified</Text>
         </View>
 
         <View
-          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full ${isChatVariant ? "bg-[#F5F5F5]" : "bg-white"
-            }`}
+          className="flex-row gap-1.5 items-center px-2.5 py-1 rounded-full"
+          style={{
+            backgroundColor:
+              compact || isPlainSurface ? "#F5F5F5" : "#FFFFFF",
+          }}
         >
           <FontAwesome name="star" size={16} color="#F1C400" />
           <Text className="text-xs font-proximanova-regular">4</Text>
         </View>
 
         <View
-          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full ${isChatVariant ? "bg-[#F5F5F5]" : "bg-white"
-            }`}
+          className="flex-row gap-1.5 items-center px-2.5 py-1 rounded-full"
+          style={{
+            backgroundColor:
+              compact || isPlainSurface ? "#F5F5F5" : "#FFFFFF",
+          }}
         >
           <Text className="text-xs font-proximanova-regular">Full Time</Text>
         </View>
-
-        <View
-          className={`flex-row gap-1.5 items-center px-2.5 py-1 rounded-full ${isChatVariant ? "bg-[#F5F5F5]" : "bg-white"
-            }`}
-        >
-          <Text className="text-xs font-proximanova-regular">2km away</Text>
-        </View>
       </View>
 
-      {!isChatVariant && (
+      {!compact && (
         <>
           <Image
             source={require("@/assets/images/dotted-line.svg")}
-            style={{
-              height: 1,
-              width: "100%",
-              marginVertical: 10,
-            }}
+            style={{ height: 1, width: "100%", marginVertical: 10 }}
             contentFit="contain"
           />
 
-          {variant === "received" ? (
-            <ReceivedFooter />
-          ) : (
-            <DefaultFooter
-              applicationsCount={job?._count?.recruitmentApplications ?? 305}
-              isSendRequest={variant === "send_request"}
-              onPressApply={() => setShowModal(true)}
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row gap-1 items-center">
+              <MaterialCommunityIcons
+                name="note-text-outline"
+                size={18}
+                color="#7A7A7A"
+              />
+              <Text className="text-sm font-proximanova-regular text-secondary">
+                {job?._count?.recruitmentApplications ?? 305}
+              </Text>
+            </View>
+
+            <Image
+              source={require("@/assets/images/line-small.svg")}
+              style={{ width: 1, height: 18 }}
             />
-          )}
+
+            <View className="flex-row gap-1 items-center">
+              <SimpleLineIcons name="share-alt" size={14} color="#7A7A7A" />
+              <Text className="text-sm font-proximanova-regular text-secondary">
+                209
+              </Text>
+            </View>
+
+            <Image
+              source={require("@/assets/images/line-small.svg")}
+              style={{ width: 1, height: 18 }}
+            />
+
+            <SmallButton
+              className="w-28"
+              title="Apply Now"
+              onPress={() => setShowModal(true)}
+            />
+          </View>
         </>
       )}
 

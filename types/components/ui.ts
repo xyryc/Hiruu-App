@@ -274,7 +274,7 @@ export interface TimeLeft {
 
 export interface JobCardProps {
   className?: string;
-  status?: string;
+  compact?: boolean;
   job?: {
     id: string;
     name: string;
@@ -293,6 +293,12 @@ export interface JobCardProps {
       recruitmentApplications?: number;
     };
   };
+}
+
+export interface JobRequestCardProps {
+  className?: string;
+  status: "send request" | "received";
+  job?: JobCardProps["job"];
 }
 
 export interface BusinessJobCardProps {

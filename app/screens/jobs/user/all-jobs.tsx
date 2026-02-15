@@ -100,7 +100,6 @@ const AllJobs = () => {
               <JobCard
                 key={item?.id}
                 job={item}
-                status='chatscreen'
                 className="bg-white border border-[#EEEEEE] mb-4"
               />
             ))

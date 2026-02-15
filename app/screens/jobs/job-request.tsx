@@ -12,7 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import SearchBar from "@/components/ui/inputs/SearchBar";
-import JobCard from "@/components/ui/cards/JobCard";
+import JobRequestCard from "@/components/ui/cards/JobRequestCard";
 
 const JobRequest = () => {
   const router = useRouter();
@@ -75,17 +75,17 @@ const JobRequest = () => {
       >
         <SearchBar className="mt-5 mb-4" />
 
-        <JobCard
+        <JobRequestCard
           className="bg-white border border-[#EEEEEE] mb-4"
           status={isActive}
         />
 
-        <JobCard
+        <JobRequestCard
           className="bg-white border border-[#EEEEEE] mb-4"
           status={isActive}
         />
 
-        <JobCard
+        <JobRequestCard
           className="bg-white border border-[#EEEEEE] mb-4"
           status={isActive}
         />

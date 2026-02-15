@@ -192,7 +192,7 @@ const ChatScreen = () => {
 
           {/* Job Card */}
           <JobCard
-            status="chatscreen"
+            compact
             className="mx-5 bg-white border border-[#EEEEEE] mt-4"
           />
 

@@ -411,15 +411,12 @@ const BusinessProfile = () => {
 
             <JobCard
               className="bg-white border border-[#EEEEEE] mb-4"
-              status={""}
             />
             <JobCard
               className="bg-white border border-[#EEEEEE] mb-4"
-              status={""}
             />
             <JobCard
               className="bg-white border border-[#EEEEEE] mb-4"
-              status={""}
             />
           </View>
         )}
