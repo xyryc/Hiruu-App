@@ -21,7 +21,7 @@
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
 
-  "files.autoSave": "afterDelay",
+  "files.autoSave": "off",
   "javascript.preferences.quoteStyle": "single",
   "typescript.preferences.quoteStyle": "single",
   "files.trimTrailingWhitespace": true,

@@ -1,11 +1,11 @@
-import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
-import { useColorScheme } from "nativewind";
-import { SafeAreaView } from "react-native-safe-area-context";
 import ScreenHeader from "@/components/header/ScreenHeader";
-import { router } from "expo-router";
 import BadgeCardWithSlider from "@/components/ui/cards/BadgeCardWithSlider";
 import BadgeModal from "@/components/ui/modals/BadgeModal";
+import { router } from "expo-router";
+import { useColorScheme } from "nativewind";
+import React, { useState } from "react";
+import { ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Badge = () => {
   const [visible, setVisible] = useState(false);
@@ -119,7 +119,9 @@ const Badge = () => {
         />
       </View>
 
-      <ScrollView>
+      <ScrollView contentContainerStyle={{
+        paddingBottom: 80
+      }}>
         <BadgeCardWithSlider
           onPress={() => handleClickOpenModal("Bronze")}
           className="mt-5 mx-5"
