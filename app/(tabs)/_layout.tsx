@@ -96,7 +96,7 @@ export default function TabLayout() {
         name="user-schedule"
         options={{
           title: "",
-          href: isOwner ? null : undefined,
+          href: isBusinessProfile ? null : "/user-schedule",
           tabBarIcon: () => (
             <View className="bg-[#4FB2F3] h-14 w-14 rounded-full items-center justify-center border-2 border-[#4FB2F34D]">
               <Ionicons name="calendar" size={24} color="white" />
@@ -109,7 +109,7 @@ export default function TabLayout() {
         name="business-schedule"
         options={{
           title: "",
-          href: isOwner ? undefined : null,
+          href: isBusinessProfile ? "/business-schedule" : null,
           tabBarIcon: () => (
             <View className="bg-[#4FB2F3] h-14 w-14 rounded-full items-center justify-center">
               <Ionicons name="calendar" size={24} color="white" />
@@ -118,12 +118,12 @@ export default function TabLayout() {
         }}
       />
 
-      {/* jobs */}
+      {/* user jobs */}
       <Tabs.Screen
         name="user-jobs"
         options={{
           title: "Jobs",
-          href: isOwner ? null : undefined,
+          href: isBusinessProfile ? null : "/user-jobs",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "briefcase" : "briefcase-outline"}
@@ -134,11 +134,12 @@ export default function TabLayout() {
         }}
       />
 
+      {/* business jobs */}
       <Tabs.Screen
         name="business-jobs"
         options={{
           title: "Jobs",
-          href: isOwner ? undefined : null,
+          href: isBusinessProfile ? "/business-jobs" : null,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "briefcase" : "briefcase-outline"}
