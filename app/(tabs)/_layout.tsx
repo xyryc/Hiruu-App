@@ -1,40 +1,15 @@
-import { profileService } from "@/services/profileService";
 import { useBusinessStore } from "@/stores/businessStore";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Octicons from "@expo/vector-icons/Octicons";
 import { Image } from "expo-image";
 import { Tabs } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View } from "react-native";
 
 
 export default function TabLayout() {
-  const [profileData, setProfileData] = useState<any>(null);
-
   const selectedBusinesses = useBusinessStore((s) => s.selectedBusinesses);
   const isBusinessProfile = selectedBusinesses.length > 0;
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadProfile = async () => {
-      try {
-        const result = await profileService.getProfile();
-        if (isMounted) {
-          setProfileData(result.data);
-        }
-      } catch {
-        // Keep defaults if profile can't load.
-      }
-    };
-
-    loadProfile();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const isOwner = (profileData?.ownedBusinesses?.length || 0) > 0;
 
   return (
     <Tabs
