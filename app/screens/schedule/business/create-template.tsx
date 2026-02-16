@@ -103,15 +103,6 @@ const CreateTemplate = () => {
     () => roleOptions.find((item) => item.value === selectedRole) || null,
     [roleOptions, selectedRole]
   );
-  const requiredCountOptions = useMemo(
-    () => [
-      { label: "5", value: "5" },
-      { label: "10", value: "10" },
-      { label: "15", value: "15" },
-      { label: "20", value: "20" },
-    ],
-    []
-  );
   const selectedRequiredCount = Number(requiredStaffCount) || 0;
   const isRequiredCountMatched = currentRoleSlotsTotal === selectedRequiredCount;
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -365,11 +356,15 @@ const CreateTemplate = () => {
               Roles & Required Count
             </Text>
 
-            <SelectDropdown
-              placeholder=""
-              options={requiredCountOptions}
+            <TextInput
               value={requiredStaffCount}
-              onSelect={(value: string) => setRequiredStaffCount(value)}
+              onChangeText={(value) =>
+                setRequiredStaffCount(value.replace(/[^0-9]/g, ""))
+              }
+              keyboardType="number-pad"
+              className="w-16 px-3 py-2 text-center text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] rounded-[10px]"
+              placeholder="0"
+              placeholderTextColor="#7D7D7D"
             />
           </View>
 

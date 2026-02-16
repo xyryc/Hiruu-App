@@ -178,16 +178,6 @@ const EditTemplate = () => {
     () => roleOptions.find((item) => item.value === selectedRole) || null,
     [roleOptions, selectedRole]
   );
-  const requiredCountOptions = useMemo(
-    () => [
-      { label: "5", value: "5" },
-      { label: "10", value: "10" },
-      { label: "15", value: "15" },
-      { label: "20", value: "20" },
-    ],
-    []
-  );
-
   const selectedRequiredCount = Number(requiredStaffCount) || 0;
   const isRequiredCountMatched = currentRoleSlotsTotal === selectedRequiredCount;
 
@@ -443,11 +433,16 @@ const EditTemplate = () => {
                 <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                   Roles & Required Count
                 </Text>
-                <SelectDropdown
-                  placeholder=""
-                  options={requiredCountOptions}
+
+                <TextInput
                   value={requiredStaffCount}
-                  onSelect={(value: string) => setRequiredStaffCount(value)}
+                  onChangeText={(value) =>
+                    setRequiredStaffCount(value.replace(/[^0-9]/g, ""))
+                  }
+                  keyboardType="number-pad"
+                  className="w-16 px-3 py-2 text-center text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] rounded-[10px]"
+                  placeholder="0"
+                  placeholderTextColor="#7D7D7D"
                 />
               </View>
 
@@ -508,9 +503,8 @@ const EditTemplate = () => {
                     if (isDeleting || isSubmitting) return;
                     setIsDeleteConfirmOpen(true);
                   }}
-                  className={`flex-1 bg-[#F34F4F] items-center justify-center rounded-full ${
-                    isDeleting || isSubmitting ? "opacity-50" : ""
-                  }`}
+                  className={`flex-1 bg-[#F34F4F] items-center justify-center rounded-full ${isDeleting || isSubmitting ? "opacity-50" : ""
+                    }`}
                 >
                   <Text className="font-proximanova-semibold text-base text-center text-[#ffffff]">
                     Delete
