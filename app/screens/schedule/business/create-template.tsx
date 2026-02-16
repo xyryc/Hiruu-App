@@ -48,6 +48,7 @@ const CreateTemplate = () => {
   const [breakStartTime, setBreakStartTime] = useState<Date>(new Date());
   const [breakEndTime, setBreakEndTime] = useState<Date>(new Date());
   const [roleSelectionVersion, setRoleSelectionVersion] = useState(0);
+  const [openRoleDropdownTrigger, setOpenRoleDropdownTrigger] = useState(0);
   const [roleSlotsResetVersion, setRoleSlotsResetVersion] = useState(0);
   const [roleOptions, setRoleOptions] = useState<
     { label: string; value: string }[]
@@ -381,6 +382,7 @@ const CreateTemplate = () => {
                 }
                 options={roleOptions}
                 value={selectedRole}
+                openTrigger={openRoleDropdownTrigger}
                 onSelect={(value: string) => {
                   setSelectedRole(value);
                   setRoleSelectionVersion((prev) => prev + 1);
@@ -406,6 +408,13 @@ const CreateTemplate = () => {
             resetTrigger={roleSlotsResetVersion}
             onTotalRequiredChange={handleTotalRequiredChange}
             onRoleSlotsChange={handleRoleSlotsChange}
+            onPressAddRole={() => {
+              if (!selectedBusiness) {
+                toast.error("Select business first.");
+                return;
+              }
+              setOpenRoleDropdownTrigger((prev) => prev + 1);
+            }}
           />
 
           {/* Total roles must equal required staff */}

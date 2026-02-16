@@ -19,6 +19,7 @@ type RoleSlotsInputProps = {
   onRoleSlotsChange?: (
     slots: { roleId: string; roleName: string; count: number }[]
   ) => void;
+  onPressAddRole?: () => void;
 };
 
 const RoleSlotsInput = ({
@@ -29,6 +30,7 @@ const RoleSlotsInput = ({
   initialRoleSlots = [],
   onTotalRequiredChange,
   onRoleSlotsChange,
+  onPressAddRole,
 }: RoleSlotsInputProps) => {
   const [roleSlots, setRoleSlots] = useState<RoleSlot[]>([]);
 
@@ -178,12 +180,10 @@ const RoleSlotsInput = ({
             <TouchableOpacity
               onPress={() =>
                 slot.id === roleSlots[roleSlots.length - 1].id
-                  ? undefined
+                  ? onPressAddRole?.()
                   : removeRoleSlot(slot.id)
               }
-              className={`items-center justify-center ${
-                slot.id === roleSlots[roleSlots.length - 1].id
-              }`}
+              className="items-center justify-center"
             >
               <Feather
                 name={

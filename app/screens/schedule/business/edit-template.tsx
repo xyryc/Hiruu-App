@@ -66,6 +66,7 @@ const EditTemplate = () => {
   const [breakStartTime, setBreakStartTime] = useState<Date>(new Date());
   const [breakEndTime, setBreakEndTime] = useState<Date>(new Date());
   const [roleSelectionVersion, setRoleSelectionVersion] = useState(0);
+  const [openRoleDropdownTrigger, setOpenRoleDropdownTrigger] = useState(0);
   const [roleSlotsResetVersion, setRoleSlotsResetVersion] = useState(0);
   const [selectedRole, setSelectedRole] = useState<string>("");
   const [roleOptions, setRoleOptions] = useState<
@@ -458,6 +459,7 @@ const EditTemplate = () => {
                     }
                     options={roleOptions}
                     value={selectedRole}
+                    openTrigger={openRoleDropdownTrigger}
                     onSelect={(value: string) => {
                       setSelectedRole(value);
                       setRoleSelectionVersion((prev) => prev + 1);
@@ -478,6 +480,13 @@ const EditTemplate = () => {
                 resetTrigger={roleSlotsResetVersion}
                 onTotalRequiredChange={handleTotalRequiredChange}
                 onRoleSlotsChange={handleRoleSlotsChange}
+                onPressAddRole={() => {
+                  if (!selectedBusiness) {
+                    toast.error("Select business first.");
+                    return;
+                  }
+                  setOpenRoleDropdownTrigger((prev) => prev + 1);
+                }}
               />
 
               <View className="flex-row items-center gap-2.5 -mt-4">

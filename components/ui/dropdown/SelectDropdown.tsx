@@ -30,6 +30,7 @@ interface SelectDropdownProps {
   imageHeight?: number;
   imageWidth?: number;
   listMaxHeight?: number;
+  openTrigger?: number;
 }
 
 const SelectDropdown: React.FC<SelectDropdownProps> = ({
@@ -43,6 +44,7 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
   imageHeight = 30,
   imageWidth = 30,
   listMaxHeight,
+  openTrigger = 0,
 }) => {
   const { height } = useWindowDimensions();
   const [isVisible, setIsVisible] = useState(false);
@@ -56,6 +58,12 @@ const SelectDropdown: React.FC<SelectDropdownProps> = ({
       )
     );
   }, [searchText, options]);
+
+  useEffect(() => {
+    if (openTrigger > 0) {
+      setIsVisible(true);
+    }
+  }, [openTrigger]);
 
   const handleSelect = (item: Option) => {
     onSelect(item.value);
