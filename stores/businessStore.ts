@@ -62,8 +62,9 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
   fetchBusinesses: async (search = "") => {
     try {
+      const query = search.trim();
       const response = await axiosInstance.get("/companies", {
-        params: { search },
+        params: query ? { search: query } : undefined,
       });
 
       const result = response.data;
@@ -76,7 +77,13 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
         throw new Error(errorMsg);
       }
 
-      return result.data;
+      const companies = Array.isArray(result?.data)
+        ? result.data
+        : Array.isArray(result?.data?.data)
+          ? result.data.data
+          : [];
+
+      return companies;
     } catch (error) {
       console.error("Fetch businesses error:", error);
       throw error;

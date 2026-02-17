@@ -54,7 +54,7 @@ const MultiSelectCompanyDropdown = ({
       const businesses = await fetchBusinesses(query);
 
       // Transform API data to Company format
-      const transformedCompanies = businesses.map((business: any) => ({
+      const transformedCompanies = (Array.isArray(businesses) ? businesses : []).map((business: any) => ({
         id: business.id,
         name: business.name,
         logo: business.logo || business.profileImage,
