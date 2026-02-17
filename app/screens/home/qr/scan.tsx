@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import { useBusinessStore } from "@/stores/businessStore";
+import { translateApiMessage } from "@/utils/apiMessages";
 import { Feather } from "@expo/vector-icons";
 import { Camera, CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
@@ -124,13 +125,13 @@ const QrScanner = () => {
       const url = new URL(data);
 
       const businessId = url.searchParams.get("businessid");
-      const inviteCode = url.searchParams.get("inviteCode");
+      const invitationCode = url.searchParams.get("inviteCode");
 
-      if (!businessId || !inviteCode) {
+      if (!businessId || !invitationCode) {
         throw new Error("Invalid QR code");
       }
 
-      return { businessId, inviteCode };
+      return { businessId, invitationCode };
     } catch {
       return null;
     }
@@ -269,21 +270,19 @@ const QrScanner = () => {
                   if (!scannedData) return;
 
                   const parsed = parseJoinBusinessQR(scannedData);
-                  console.log(parsed)
 
                   if (!parsed) {
                     Alert.alert("Invalid QR", "This QR code is not valid for joining a business.");
                     return;
                   }
                   try {
-                    const result = await joinBusiness(parsed.businessId, parsed.inviteCode);
-                    console.log("join result", result)
+                    await joinBusiness(parsed.businessId, parsed.invitationCode);
 
                     toast.success("You joined the business successfully!");
                     resetScanner();
                     router.replace("/(tabs)/home");
                   } catch (err: any) {
-                    toast.error(err?.message || "Failed to join business");
+                    toast.error(translateApiMessage(err?.message || "Failed to join business"));
                   }
                 }}
 

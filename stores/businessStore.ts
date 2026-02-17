@@ -45,7 +45,7 @@ interface BusinessState {
   createCompanyManual: (companyData: any) => Promise<any>;
   createBusinessProfile: (payload: any) => Promise<any>;
   generateBusinessCode: (businessId: string) => Promise<any>;
-  joinBusiness: (businessId: string, inviteCode: string) => Promise<any>;
+  joinBusiness: (businessId: string, invitationCode: string) => Promise<any>;
   resetBusinessSession: () => void;
   clearError: () => void;
 }
@@ -659,20 +659,13 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
     }
   },
 
-  joinBusiness: async (businessId, inviteCode) => {
+  joinBusiness: async (businessId, invitationCode) => {
     try {
       set({ loading: true, error: null });
-      const accessToken = await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-
-      const response = await axiosInstance.post(
-        `/workforce/business/joinbusiness?businessid=${businessId}&inviteCode=${inviteCode}`,
-        { businessId, inviteCode },
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+      const response = await axiosInstance.post("/employment/join", {
+        businessId,
+        invitationCode,
+      });
 
       const result = response.data;
 
