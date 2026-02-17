@@ -1,4 +1,5 @@
 import { HomeHeaderProps } from "@/types";
+import { useBusinessStore } from "@/stores/businessStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -6,6 +7,9 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
 const HomeHeader = ({ className }: HomeHeaderProps) => {
+  const { selectedBusinesses } = useBusinessStore();
+  const hasSelectedBusiness = selectedBusinesses.length > 0;
+
   return (
     <View className={`${className} px-4 flex-row justify-between`}>
       <Image
@@ -65,12 +69,14 @@ const HomeHeader = ({ className }: HomeHeaderProps) => {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => router.push("/screens/home/qr/generate")}
-          className="h-10 w-10 bg-[#F5F5F5] border-[0.5px] border-[#b2b1b185] rounded-full items-center justify-center"
-        >
-          <Ionicons name="qr-code-outline" size={18} color="black" />
-        </TouchableOpacity>
+        {hasSelectedBusiness && (
+          <TouchableOpacity
+            onPress={() => router.push("/screens/home/qr/generate")}
+            className="h-10 w-10 bg-[#F5F5F5] border-[0.5px] border-[#b2b1b185] rounded-full items-center justify-center"
+          >
+            <Ionicons name="qr-code-outline" size={18} color="black" />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

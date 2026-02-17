@@ -12,7 +12,6 @@ import { useColorScheme } from "nativewind";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Alert,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -21,6 +20,7 @@ import {
 import QRCode from "react-native-qrcode-svg";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { captureRef } from "react-native-view-shot";
+import { toast } from "sonner-native";
 
 const QrGenerate = () => {
   const { colorScheme } = useColorScheme();
@@ -33,31 +33,43 @@ const QrGenerate = () => {
   const insets = useSafeAreaInsets()
 
   const [inviteCode, setInviteCode] = useState("")
-  const { userBusiness, generateBusinessCode, isLoading } = useBusinessStore();
-
-  console.log("invite code response", userBusiness)
+  const {
+    userBusiness,
+    selectedBusinesses,
+    getBusinessProfile,
+    generateBusinessCode,
+    isLoading,
+  } = useBusinessStore();
 
 
   const generatedeepLinkUrl = async () => {
-    const businessId = userBusiness?.id;
+    const businessId = selectedBusinesses[0] || userBusiness?.id;
     if (!businessId) return;
 
-    const result = await generateBusinessCode(businessId)
-    console.log("invite code response", result)
+    try {
+      const business =
+        userBusiness?.id === businessId
+          ? userBusiness
+          : await getBusinessProfile(businessId).catch(() => null);
 
-    const invite = result?.code || ""
-    setInviteCode(invite)
-    setDeepLinkUrl(
-      invite ? `hirru://join?businessid=${businessId}&inviteCode=${invite}` : ""
-    )
-    setBusinessName(userBusiness?.name || "")
-    setBusinessLogoUrl(userBusiness?.logo || "")
-    console.log('code:', result)
+      const result = await generateBusinessCode(businessId);
+
+      const invite = result?.code || result?.data?.code || "";
+
+      const link = invite
+        ? `hirru://join?businessid=${businessId}&inviteCode=${invite}`
+        : "";
+
+      setInviteCode(invite);
+      setDeepLinkUrl(link);
+      setBusinessName(business?.name || userBusiness?.name || "");
+      setBusinessLogoUrl(business?.logo || userBusiness?.logo || "");
+    } catch {}
   }
 
   useEffect(() => {
     generatedeepLinkUrl()
-  }, [userBusiness?.id])
+  }, [selectedBusinesses[0], userBusiness?.id])
 
 
   // Create a deep link URL instead of JSON
@@ -72,10 +84,10 @@ const QrGenerate = () => {
   const copyToClipboard = async () => {
     try {
       await Clipboard.setStringAsync(inviteCode);
-      Alert.alert("Copied!", "Code has been copied to clipboard");
+      toast.success("Code has been copied to clipboard");
     } catch (error) {
       console.error("Error copying to clipboard:", error);
-      Alert.alert("Error", "Failed to copy code to clipboard");
+      toast.error("Failed to copy code to clipboard");
     }
   };
 
@@ -84,7 +96,7 @@ const QrGenerate = () => {
       setIsGenerating(true);
 
       if (!qrCodeContainerRef.current) {
-        Alert.alert("Error", "QR code not found");
+        toast.error("QR code not found");
         return;
       }
 
@@ -95,18 +107,15 @@ const QrGenerate = () => {
         quality: 1.0,
       });
 
-      console.log("Captured URI:", uri);
-
       try {
         const { status } = await MediaLibrary.requestPermissionsAsync();
         if (status === "granted") {
           const asset = await MediaLibrary.createAssetAsync(uri);
           await MediaLibrary.createAlbumAsync("Download", asset, false);
-          Alert.alert("Success", "QR code has been saved to your gallery");
+          toast.success("QR code has been saved to your gallery");
           return;
         }
-      } catch (mediaError) {
-        console.log("Media library save failed, using sharing...");
+      } catch {
       }
 
       if (await Sharing.isAvailableAsync()) {
@@ -115,25 +124,11 @@ const QrGenerate = () => {
           dialogTitle: "Save QR Code",
         });
       } else {
-        Alert.alert(
-          "QR Code Captured",
-          "QR code is ready. You can take a screenshot to save it.",
-          [{ text: "OK", style: "default" }],
-        );
+        toast.info("QR code is ready. You can take a screenshot to save it.");
       }
     } catch (error) {
       console.error("Error capturing QR code:", error);
-
-      Alert.alert(
-        "Save QR Code",
-        "To save this QR code:\n\n1. Take a screenshot of this screen\n2. The QR code will be saved to your gallery\n3. You can then share it with others",
-        [
-          {
-            text: "OK",
-            style: "default",
-          },
-        ],
-      );
+      toast.error("Failed to save QR code. Please take a screenshot instead.");
     } finally {
       setIsGenerating(false);
     }
