@@ -10,6 +10,7 @@ import {
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 // import CancelImg from "@/assets/images/cancel.svg";
@@ -18,14 +19,14 @@ const Subscription = () => {
   const CancelImg = require("@/assets/images/cancel.svg");
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { t } = useTranslation();
 
   const [showModal, setShowModal] = useState(false);
   const modalData = {
-    title: "Cancel Your Plan?",
-    subtitle:
-      "Your current plan will remain active until [expiry date]. You can continue using features until then..",
+    title: t("user.profile.cancelPlanTitle"),
+    subtitle: t("user.profile.cancelPlanSubtitle"),
     img: CancelImg,
-    buttonName: "Cancel Plan",
+    buttonName: t("user.profile.cancelPlan"),
     buttonColor: "#F34F4F",
   };
 
@@ -38,13 +39,17 @@ const Subscription = () => {
         <ScreenHeader
           className="my-4"
           onPressBack={() => router.back()}
-          title="Subscription"
+          title={t("user.profile.subscription")}
           titleClass="text-primary dark:text-dark-primary"
           iconColor={isDark ? "#fff" : "#111"}
         />
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: 80
+        }}
+        showsVerticalScrollIndicator={false}>
         <View className="m-5">
           <View className="border border-[#EEEEEE] rounded-2xl">
             <View className="px-2.5 py-5 flex-row gap-3">
@@ -57,19 +62,19 @@ const Subscription = () => {
               </View>
               <View>
                 <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary">
-                  User plan & Billing
+                  {t("user.profile.userPlanBilling")}
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3">
                   SarahCatlynne@gmail.com
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  Password: *********
+                  {t("user.profile.passwordMasked")}
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  Phone: 07896541232
+                  {t("user.profile.phoneMasked")}
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  Active: July 25, 2025 till August 1, 2025
+                  {t("user.profile.activeDateRange")}
                 </Text>
               </View>
             </View>
@@ -78,11 +83,10 @@ const Subscription = () => {
 
             <View className="px-2.5 py-5">
               <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center">
-                Billed through Googlepay
+                {t("user.profile.billedThroughGooglePay")}
               </Text>
               <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-14">
-                Contact Googlepay to update our payment details or end your
-                billing throut googlepay
+                {t("user.profile.googlePayBillingNote")}
               </Text>
             </View>
 
@@ -93,7 +97,7 @@ const Subscription = () => {
               className="my-5"
             >
               <Text className="font-proximanova-bold text-[#F34F4F] text-center">
-                Cancel Plan
+                {t("user.profile.cancelPlan")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -110,19 +114,19 @@ const Subscription = () => {
               </View>
               <View>
                 <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary">
-                  Business plan & Billing
+                  {t("user.profile.businessPlanBilling")}
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3">
                   SarahCatlynne@gmail.com
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  Password: *********
+                  {t("user.profile.passwordMasked")}
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  Phone: 07896541232
+                  {t("user.profile.phoneMasked")}
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  Active: July 25, 2025 till August 1, 2025
+                  {t("user.profile.activeDateRange")}
                 </Text>
               </View>
             </View>
@@ -131,11 +135,10 @@ const Subscription = () => {
 
             <View className="px-2.5 py-5">
               <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center">
-                Billed through Googlepay
+                {t("user.profile.billedThroughGooglePay")}
               </Text>
               <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-14">
-                Contact Googlepay to update our payment details or end your
-                billing throut googlepay
+                {t("user.profile.googlePayBillingNote")}
               </Text>
             </View>
 
@@ -146,7 +149,7 @@ const Subscription = () => {
               className="my-5"
             >
               <Text className="font-proximanova-bold text-[#F34F4F] text-center">
-                Cancel Plan
+                {t("user.profile.cancelPlan")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -165,8 +168,8 @@ const Subscription = () => {
                   color="black"
                 />
               }
-              text="User plan"
-              subtitle="Mobile"
+              text={t("user.profile.userPlan")}
+              subtitle={t("user.profile.mobile")}
               className="my-5"
               arrowIcon={
                 <Entypo name="chevron-thin-right" size={20} color="#111111" />
@@ -185,8 +188,8 @@ const Subscription = () => {
               icon={
                 <SimpleLineIcons name="briefcase" size={24} color="black" />
               }
-              text="Business plan "
-              subtitle="Mobile"
+              text={t("user.profile.businessPlan")}
+              subtitle={t("user.profile.mobile")}
               className="my-5"
               arrowIcon={
                 <Entypo name="chevron-thin-right" size={20} color="#111111" />
@@ -196,7 +199,7 @@ const Subscription = () => {
         </View>
 
         <Text className="text-center text-secondary dark:text-dark-secondary text-sm">
-          subscription auto-renews until manually cancelled.
+          {t("user.profile.subscriptionAutoRenew")}
         </Text>
       </ScrollView>
 

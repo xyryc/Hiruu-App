@@ -28,7 +28,21 @@
       "deleteAction": "Delete",
       "logoutTitle": "Are you sure you want to logout your account?",
       "logoutSubtitle": "You will be signed out from your account. Your data will remain safe and intact.",
-      "logoutAction": "Logout"
+      "logoutAction": "Logout",
+      "cancelPlanTitle": "Cancel Your Plan?",
+      "cancelPlanSubtitle": "Your current plan will remain active until [expiry date]. You can continue using features until then.",
+      "cancelPlan": "Cancel Plan",
+      "userPlanBilling": "User Plan & Billing",
+      "businessPlanBilling": "Business Plan & Billing",
+      "passwordMasked": "Password: *********",
+      "phoneMasked": "Phone: 07896541232",
+      "activeDateRange": "Active: July 25, 2025 till August 1, 2025",
+      "billedThroughGooglePay": "Billed through Google Pay",
+      "googlePayBillingNote": "Contact Google Pay to update your payment details or end your billing through Google Pay.",
+      "userPlan": "User plan",
+      "businessPlan": "Business plan",
+      "mobile": "Mobile",
+      "subscriptionAutoRenew": "Subscription auto-renews until manually cancelled."
     },
     "setup": {
       "selectLocation": "Select location",
