@@ -56,10 +56,17 @@ const Verify = () => {
     const otpCode = otp.join("");
 
     try {
-      const result = await verifyAccount({
-        email: params.email as string,
+      const payload = {
         code: otpCode,
-      });
+        ...(params.email
+          ? { email: params.email as string }
+          : {
+              phoneNumber: params.phoneNumber as string,
+              countryCode: (params.countryCode as string) || "+1",
+            }),
+      };
+
+      const result = await verifyAccount(payload);
 
       if (result?.success) {
         router.push("/(setup)/user-setup/progress");
@@ -71,9 +78,14 @@ const Verify = () => {
   };
 
   const handleResendOTP = async () => {
-    if (!params.email) return;
+    const payload = params.email
+      ? { email: params.email as string }
+      : {
+          phoneNumber: params.phoneNumber as string,
+          countryCode: (params.countryCode as string) || "+1",
+        };
 
-    const result = await resendOTP({ email: params.email as string });
+    const result = await resendOTP(payload);
 
     if (result?.success) {
       toast.success("OTP sent successfully!");

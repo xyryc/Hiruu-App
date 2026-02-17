@@ -28,6 +28,7 @@ const SignUp = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
   const [isValidPhone, setIsValidPhone] = useState(true);
   const router = useRouter();
 
@@ -36,10 +37,17 @@ const SignUp = () => {
   let phoneRef: any = null;
 
   const handlePhoneChange = () => {
-    const number = phoneRef.getValue();
+    const number = phoneRef?.getValue?.() || "";
+    const selectedCountryCode = `+${phoneRef?.getCountryCode?.() || "1"}`;
+    const digits = String(number).replace(/\D/g, "");
+    const countryDigits = selectedCountryCode.replace(/\D/g, "");
+    const localNumber = digits.startsWith(countryDigits)
+      ? digits.slice(countryDigits.length)
+      : digits;
     const isValid = phoneRef.isValidNumber();
 
-    setPhoneNumber(number);
+    setCountryCode(selectedCountryCode);
+    setPhoneNumber(localNumber);
     setIsValidPhone(isValid);
   };
 
@@ -81,12 +89,32 @@ const SignUp = () => {
         toast.error(translateApiMessage(messageKey));
       }
     } else if (selectedTab === "phone") {
-      // Temporarily disabled until phone verification endpoint is clarified
-      Alert.alert(
-        t("common.error"),
-        "Phone registration is temporarily unavailable. Please use email registration."
-      );
-      return;
+      if (!phoneNumber || !isValidPhone) {
+        Alert.alert(t("common.error"), t("validation.invalidPhone"));
+        return;
+      }
+
+      try {
+        const result = await register({
+          phoneNumber,
+          countryCode,
+          role: "user" as const,
+          fcmToken: undefined,
+        });
+
+        if (result?.success) {
+          toast.success(
+            translateApiMessage(result?.message || "auth_phone_registration_success")
+          );
+          router.push({
+            pathname: "/(auth)/verify",
+            params: { phoneNumber, countryCode },
+          });
+        }
+      } catch (error) {
+        const messageKey = error instanceof Error ? error.message : "UNKNOWN_ERROR";
+        toast.error(translateApiMessage(messageKey));
+      }
     }
   };
 
@@ -244,7 +272,7 @@ const SignUp = () => {
 
                 {!isValidPhone && phoneNumber && (
                   <Text className="text-red-500 text-xs mt-1 ml-1">
-                    Please enter a valid phone number
+                    {t("validation.invalidPhone")}
                   </Text>
                 )}
               </View>

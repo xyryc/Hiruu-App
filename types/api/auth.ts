@@ -3,6 +3,7 @@ export interface RegisterData {
   password?: string;
   countryCode?: string;
   phoneNumber?: string;
+  fcmToken?: string;
   role: "user" | "provider";
   firstName?: string;
   lastName?: string;
@@ -45,7 +46,9 @@ export interface ChangePasswordData {
 }
 
 export interface ResendOTPData {
-  email: string;
+  email?: string;
+  phoneNumber?: string;
+  countryCode?: string;
 }
 
 export interface AddContactData {

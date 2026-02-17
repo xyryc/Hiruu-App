@@ -21,6 +21,8 @@
     "error": "Error"
   },
   "api": {
+    "auth_phone_registration_success": "Phone registration successful.",
+    "auth_phone_already_taken": "Phone number is already taken.",
     "auth_email_already_taken": "Email is already taken.",
     "auth_invalid_credentials": "Invalid email or password.",
     "bad_request": "Please check your input and try again.",
@@ -36,6 +38,7 @@
   "validation": {
     "fillAllFields": "Please fill in all fields",
     "invalidEmail": "Please enter a valid email address",
+    "invalidPhone": "Please enter a valid phone number",
     "passwordTooShort": "Password must be at least 6 characters",
     "validationError": "Validation Error",
     "enterName": "Please enter your name",
