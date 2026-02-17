@@ -19,7 +19,7 @@ import {
   View,
 } from "react-native";
 import QRCode from "react-native-qrcode-svg";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { captureRef } from "react-native-view-shot";
 
 const QrGenerate = () => {
@@ -30,14 +30,21 @@ const QrGenerate = () => {
   const [deepLinkUrl, setDeepLinkUrl] = useState("")
   const [businessName, setBusinessName] = useState("")
   const [businessLogoUrl, setBusinessLogoUrl] = useState("")
+  const insets = useSafeAreaInsets()
 
   const [inviteCode, setInviteCode] = useState("")
   const { userBusiness, generateBusinessCode, isLoading } = useBusinessStore();
 
+  console.log("invite code response", userBusiness)
+
+
   const generatedeepLinkUrl = async () => {
     const businessId = userBusiness?.id;
     if (!businessId) return;
+
     const result = await generateBusinessCode(businessId)
+    console.log("invite code response", result)
+
     const invite = result?.code || ""
     setInviteCode(invite)
     setDeepLinkUrl(
@@ -134,36 +141,34 @@ const QrGenerate = () => {
 
   const [isModal, setIsModal] = useState(false);
 
-
-
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
       edges={["left", "right", "bottom"]}
     >
       {/* Header */}
-      <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-10 px-5">
-        <ScreenHeader
-          className="my-4"
-          onPressBack={() => router.back()}
-          title="Invite Employee"
-          titleClass="text-primary dark:text-dark-primary"
-          iconColor={isDark ? "#fff" : "#111"}
-          components={
-            <TouchableOpacity
-              onPress={downloadQRCode}
-              disabled={isGenerating}
-              className="h-10 w-10 bg-white rounded-full flex-row items-center justify-center"
-            >
-              {isGenerating ? (
-                <ActivityIndicator size="small" color="black" />
-              ) : (
-                <Feather name="download" size={20} color="black" />
-              )}
-            </TouchableOpacity>
-          }
-        />
-      </View>
+
+      <ScreenHeader
+        className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+        style={{ paddingTop: insets.top + 10, paddingBottom: 16 }}
+        onPressBack={() => router.back()}
+        title="Invite Employee"
+        titleClass="text-primary dark:text-dark-primary"
+        iconColor={isDark ? "#fff" : "#111"}
+        components={
+          <TouchableOpacity
+            onPress={downloadQRCode}
+            disabled={isGenerating}
+            className="h-10 w-10 bg-white rounded-full flex-row items-center justify-center"
+          >
+            {isGenerating ? (
+              <ActivityIndicator size="small" color="black" />
+            ) : (
+              <Feather name="download" size={20} color="black" />
+            )}
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
         {/* QR Code Container */}

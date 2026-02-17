@@ -54,7 +54,7 @@ const QuickAction = ({ className }: QuickActionProps) => {
           title={user.role === "user" ? "OT Request" : "Shift Request"}
           onPress={() => {
             user.role === "user"
-              ? router.push("/screens/home/shift/overtime-action")
+              ? router.push("/screens/home/shift/overtime-request")
               : router.push("/screens/home/team/shift-requests");
           }}
         />
@@ -65,7 +65,7 @@ const QuickAction = ({ className }: QuickActionProps) => {
           onPress={() => {
             user.role === "user"
               ? router.push("/screens/home/leave/history")
-              : router.push("/screens/home/team/manage");
+              : router.push("/screens/home/team/manage-team");
           }}
         />
 
@@ -89,7 +89,7 @@ const QuickAction = ({ className }: QuickActionProps) => {
           title={user.role === "user" ? "Swap Request" : "Week Schedule"}
           onPress={() => {
             user.role === "user"
-              ? router.push("/screens/home/shift/swap-action")
+              ? router.push("/screens/home/shift/swap-request")
               : router.push("/screens/schedule/business/weekly-schedule");
           }}
         />
