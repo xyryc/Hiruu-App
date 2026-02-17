@@ -37,19 +37,19 @@ const AssignRoleModal: React.FC<any> = ({
             </TouchableOpacity>
           </View>
 
-          <SafeAreaView edges={["bottom"]} className="pb-14">
+          <SafeAreaView edges={["bottom"]}>
             {/* Header */}
-            <View className="px-6 py-7 flex-row justify-between">
+            <View className="px-6 pt-7 pb-3 flex-row justify-between">
               <Text className="font-proximanova-bold text-xl" numberOfLines={1}>
                 Assign Role
               </Text>
               <View className="h-10 w-10 bg-[#eeeeee] rounded-full flex-row items-center justify-center">
-                <Feather name="edit" size={20} color="black" />
+                <Feather name="edit" size={16} color="black" />
               </View>
             </View>
 
             {/* Search Bar */}
-            <View className="flex-row items-center border border-[#EEEEEE] rounded-xl px-3 py-2 mx-5 mt-4">
+            <View className="flex-row items-center border border-[#EEEEEE] rounded-xl px-3 py-2 mx-5">
               <EvilIcons name="search" size={24} color="#666" />
               <TextInput
                 placeholder="Search here..."
@@ -59,7 +59,7 @@ const AssignRoleModal: React.FC<any> = ({
             </View>
 
             {/* Business List */}
-            <ScrollView className="px-6 mt-5">
+            <ScrollView className="px-4">
               {assignRole.map((role: any) => (
                 <TouchableOpacity
                   onPress={() => setSelectedAssignRole(role.id)}

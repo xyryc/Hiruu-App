@@ -327,20 +327,27 @@ const BusinessProfile = () => {
               </View>
             </View>
 
-            <View className="mx-5 px-4 py-3 border border-[#eeeeee] mt-4 rounded-xl">
-              <View className="flex-row justify-between items-center p-2">
-                <View className="flex-row gap-2">
-                  <Feather name="users" size={18} color="black" />
-                  <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                    Total Employee
-                  </Text>
-                </View>
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                  50 +
+            <TouchableOpacity
+              onPress={() => {
+                router.push({
+                  pathname: "/screens/profile/business/employee-list",
+                  params: { businessId },
+                });
+              }}
+              className="flex-row justify-between items-center px-4 py-3 mx-5 my-4 border border-[#eeeeee] rounded-xl">
+              <View className="flex-row gap-2">
+                <Feather name="users" size={18} color="black" />
+                <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                  Total Employee
                 </Text>
               </View>
+              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                50 +
+              </Text>
+            </TouchableOpacity>
 
-              <View className="flex-row justify-between items-center mt-2.5 p-2">
+            <View className="mx-5 px-4 py-3 border border-[#eeeeee] rounded-xl">
+              <View className="flex-row justify-between items-center p-2">
                 <View className="flex-row gap-2">
                   <MaterialCommunityIcons
                     name="file-document-check-outline"
@@ -356,7 +363,7 @@ const BusinessProfile = () => {
                 </Text>
               </View>
 
-              <View className="flex-row justify-between items-center mt-2.5 p-2">
+              <View className="flex-row justify-between items-center p-2">
                 {/* recruiting badge */}
                 <View className="flex-row gap-2">
                   <MaterialCommunityIcons
