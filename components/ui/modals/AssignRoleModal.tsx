@@ -2,6 +2,7 @@ import { Entypo, EvilIcons, Feather, Ionicons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import React from "react";
 import {
+  ActivityIndicator,
   Modal,
   ScrollView,
   Text,
@@ -18,6 +19,7 @@ const AssignRoleModal: React.FC<any> = ({
   assignRole,
   setSelectedAssignRole,
   selectedAssignRole,
+  loading = false,
 }) => {
   return (
     <Modal
@@ -59,35 +61,47 @@ const AssignRoleModal: React.FC<any> = ({
             </View>
 
             {/* Business List */}
-            <ScrollView className="px-4">
-              {assignRole.map((role: any) => (
-                <TouchableOpacity
-                  onPress={() => setSelectedAssignRole(role.id)}
-                  key={role.id}
-                  className={`flex-row items-center py-4 px-4 mb-3 rounded-xl border-b border-[#eeeeee] ${selectedAssignRole === role.id ? "bg-[#4FB2F3]" : ""}  `}
-                >
-                  {/* Business Name */}
-                  <Text
-                    className={`flex-1 font-proximanova-semibold ${selectedAssignRole === role.id ? "text-white" : "text-primary"} `}
+            <ScrollView className="px-4"
+              contentContainerStyle={{
+                paddingTop: 20,
+                paddingBottom: 20
+              }}
+            >
+              {loading ? (
+                <View className="py-8 items-center justify-center">
+                  <ActivityIndicator size="small" color="#4FB2F3" />
+                  <Text className="mt-2 text-sm text-secondary">Loading roles...</Text>
+                </View>
+              ) : (
+                assignRole.map((role: any) => (
+                  <TouchableOpacity
+                    onPress={() => setSelectedAssignRole(role.id)}
+                    key={role.id}
+                    className={`flex-row items-center py-4 px-4 rounded-xl border-b border-[#eeeeee] ${selectedAssignRole === role.id ? "bg-[#4FB2F3]" : ""}  `}
                   >
-                    {role.name}
-                  </Text>
+                    {/* Business Name */}
+                    <Text
+                      className={`flex-1 font-proximanova-semibold ${selectedAssignRole === role.id ? "text-white" : "text-primary"} `}
+                    >
+                      {role.name}
+                    </Text>
 
-                  {/* Selection Indicator */}
-                  {selectedAssignRole === role.id && (
-                    <Ionicons
-                      name="checkmark-circle-sharp"
-                      size={24}
-                      color="white"
-                    />
-                  )}
-                  {selectedAssignRole === role.id || (
-                    <View
-                      className={`w-6 h-6 rounded-full border border-[#7a7a7a] justify-center items-center`}
-                    />
-                  )}
-                </TouchableOpacity>
-              ))}
+                    {/* Selection Indicator */}
+                    {selectedAssignRole === role.id && (
+                      <Ionicons
+                        name="checkmark-circle-sharp"
+                        size={24}
+                        color="white"
+                      />
+                    )}
+                    {selectedAssignRole === role.id || (
+                      <View
+                        className={`w-6 h-6 rounded-full border border-[#7a7a7a] justify-center items-center`}
+                      />
+                    )}
+                  </TouchableOpacity>
+                ))
+              )}
             </ScrollView>
             <PrimaryButton title="Apply" className="mx-5 mb-5" />
           </SafeAreaView>

@@ -1,7 +1,9 @@
-import AssignRoleModal from "@/components/ui/modals/AssignRoleModal";
 import ScreenHeader from "@/components/header/ScreenHeader";
+import AssignRoleModal from "@/components/ui/modals/AssignRoleModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
+import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -11,8 +13,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { Image } from "expo-image";
-import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
@@ -23,37 +23,18 @@ type EmployeeItem = {
   avatar: string | null;
 };
 
-const MOCK_EMPLOYEES: EmployeeItem[] = [
-  {
-    id: "mock-1",
-    name: "Alex Carter",
-    email: "alex.carter@example.com",
-    avatar: null,
-  },
-  {
-    id: "mock-2",
-    name: "Mia Turner",
-    email: "mia.turner@example.com",
-    avatar: null,
-  },
-  {
-    id: "mock-3",
-    name: "Noah Brooks",
-    email: "noah.brooks@example.com",
-    avatar: null,
-  },
-];
-
 const EmployeeListScreen = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ businessId?: string }>();
-  const { selectedBusinesses, getBusinessProfile, getMyBusinessRoles } = useBusinessStore();
+  const { selectedBusinesses, getBusinessEmployees, getMyBusinessRoles } = useBusinessStore();
   const resolvedBusinessId = params.businessId || selectedBusinesses[0];
   const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState<EmployeeItem[]>([]);
+  const [failedAvatars, setFailedAvatars] = useState<Record<string, boolean>>({});
   const [roles, setRoles] = useState<Array<{ id: string; name: string }>>([]);
+  const [rolesLoading, setRolesLoading] = useState(false);
   const [roleModalVisible, setRoleModalVisible] = useState(false);
   const [selectedAssignRole, setSelectedAssignRole] = useState<string | null>(null);
 
@@ -65,16 +46,11 @@ const EmployeeListScreen = () => {
     const loadEmployees = async () => {
       try {
         setLoading(true);
-        const business = await getBusinessProfile(resolvedBusinessId);
-        const source = Array.isArray(business?.employments)
-          ? business.employments
-          : Array.isArray(business?.employees)
-            ? business.employees
-            : [];
+        const source = await getBusinessEmployees(resolvedBusinessId);
 
         const mapped = source
           .map((item: any) => {
-            const user = item?.user || item;
+            const user = item?.user;
             if (!user?.id) return null;
             return {
               id: user.id,
@@ -86,12 +62,12 @@ const EmployeeListScreen = () => {
           .filter(Boolean) as EmployeeItem[];
 
         if (isMounted) {
-          setEmployees(mapped.length > 0 ? mapped : MOCK_EMPLOYEES);
+          setEmployees(mapped);
         }
       } catch (error: any) {
         toast.error(error?.message || "Failed to load employees");
         if (isMounted) {
-          setEmployees(MOCK_EMPLOYEES);
+          setEmployees([]);
         }
       } finally {
         if (isMounted) {
@@ -105,7 +81,7 @@ const EmployeeListScreen = () => {
     return () => {
       isMounted = false;
     };
-  }, [resolvedBusinessId, getBusinessProfile]);
+  }, [resolvedBusinessId, getBusinessEmployees]);
 
   const emptyLabel = useMemo(() => {
     if (!resolvedBusinessId) return "No business selected.";
@@ -120,6 +96,7 @@ const EmployeeListScreen = () => {
     if (!resolvedBusinessId) return;
 
     try {
+      setRolesLoading(true);
       const roleList = await getMyBusinessRoles(resolvedBusinessId);
       const mappedRoles = (Array.isArray(roleList) ? roleList : [])
         .filter((role: any) => role?.id && role?.role?.name && !role?.isDeleted)
@@ -131,6 +108,8 @@ const EmployeeListScreen = () => {
     } catch (error: any) {
       toast.error(error?.message || "Failed to load role list");
       setRoles([]);
+    } finally {
+      setRolesLoading(false);
     }
   };
 
@@ -162,7 +141,7 @@ const EmployeeListScreen = () => {
           renderItem={({ item }) => (
             <View className="flex-row items-center gap-3 border border-[#EEEEEE] dark:border-gray-800 rounded-xl px-4 py-3 mb-3">
               <Image
-                source={item.avatar || require("@/assets/images/placeholder.png")}
+                source={item?.avatar || require("@/assets/images/placeholder.png")}
                 style={{ width: 42, height: 42, borderRadius: 999 }}
                 contentFit="cover"
               />
@@ -190,6 +169,7 @@ const EmployeeListScreen = () => {
         visible={roleModalVisible}
         onClose={() => setRoleModalVisible(false)}
         assignRole={roles}
+        loading={rolesLoading}
         selectedAssignRole={selectedAssignRole}
         setSelectedAssignRole={setSelectedAssignRole}
       />

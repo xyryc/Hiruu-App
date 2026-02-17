@@ -39,6 +39,7 @@ interface BusinessState {
   getShiftTemplateById: (businessId: string, templateId: string) => Promise<any>;
   deleteShiftTemplate: (businessId: string, templateId: string) => Promise<any>;
   getBusinessProfile: (businessId: string) => Promise<any>;
+  getBusinessEmployees: (businessId: string) => Promise<any[]>;
   updateMyBusinessProfile: (businessId: string, payload: any) => Promise<any>;
   deleteBusinessRole: (businessId: string, roleId: string) => Promise<any>;
   setSelectedBusinesses: (ids: string[]) => void;
@@ -684,6 +685,28 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
         error: new Error(errorMessage),
       });
       throw new Error(errorMessage);
+    }
+  },
+
+  getBusinessEmployees: async (businessId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/employment/businesses/${businessId}/employees`
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to fetch employees";
+        throw new Error(errorMsg);
+      }
+
+      return Array.isArray(result.data) ? result.data : [];
+    } catch (error) {
+      console.error("Fetch business employees error:", error);
+      throw error;
     }
   },
 
