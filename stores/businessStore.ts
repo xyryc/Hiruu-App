@@ -46,6 +46,7 @@ interface BusinessState {
   createBusinessProfile: (payload: any) => Promise<any>;
   generateBusinessCode: (businessId: string) => Promise<any>;
   joinBusiness: (businessId: string, inviteCode: string) => Promise<any>;
+  resetBusinessSession: () => void;
   clearError: () => void;
 }
 
@@ -692,6 +693,16 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       throw new Error(errorMessage);
     }
   },
+
+  resetBusinessSession: () =>
+    set({
+      userBusiness: null,
+      myBusinesses: [],
+      selectedBusinesses: [],
+      myBusinessesLoading: false,
+      loading: false,
+      error: null,
+    }),
 
   clearError: () => set({ error: null }),
 }));

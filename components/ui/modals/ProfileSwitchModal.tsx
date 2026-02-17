@@ -55,7 +55,7 @@ const ProfileSwitchModal: React.FC<ProfileSwitchModalProps> = ({
         }
       }
 
-      getMyBusinesses().catch(() => undefined);
+      getMyBusinesses(true).catch(() => undefined);
     };
 
     loadData();

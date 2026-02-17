@@ -1,4 +1,5 @@
 import { authService } from "@/services/authService";
+import { useBusinessStore } from "@/stores/businessStore";
 import {
   AddContactData,
   ChangePasswordData,
@@ -309,6 +310,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
 
       await authService.clearAuthData();
+      useBusinessStore.getState().resetBusinessSession();
       set({
         user: null,
         accessToken: null,
@@ -317,6 +319,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     } catch (error) {
       console.error("Failed to logout:", error);
       await authService.clearAuthData();
+      useBusinessStore.getState().resetBusinessSession();
       set({
         user: null,
         accessToken: null,
