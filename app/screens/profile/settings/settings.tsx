@@ -33,26 +33,26 @@ const Settings = () => {
 
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  // language
+  const { t } = useTranslation();
 
   const delData = {
-    title: "Are you sure you want to delete your account?",
-    subtitle:
-      "Once deleted, all your data including shifts, chats, and profile will be permanently removed.",
+    title: t("user.profile.deleteAccountTitle"),
+    subtitle: t("user.profile.deleteAccountSubtitle"),
     img: delImg,
     color: "#F34F4F26",
     border: "#F34F4F",
-    buttonName: "Delete",
+    buttonName: t("user.profile.deleteAction"),
     buttonColor: "#F34F4F",
   };
 
   const logOutData = {
-    title: "Are you sure you want to Logout your account?",
-    subtitle:
-      "You will be signed out from your account. Your data will remain safe and intact.",
+    title: t("user.profile.logoutTitle"),
+    subtitle: t("user.profile.logoutSubtitle"),
     img: logOutImg,
     color: "#E5F4FD",
     border: "#4FB2F3",
-    buttonName: "Logout",
+    buttonName: t("user.profile.logoutAction"),
     buttonColor: "#11293A",
   };
 
@@ -67,9 +67,6 @@ const Settings = () => {
       setIsModal(true);
     }
   };
-
-  // language
-  const { t } = useTranslation();
 
   return (
     <SafeAreaView
@@ -97,17 +94,17 @@ const Settings = () => {
         <View className="bg-[#FCF7E4] px-3 py-4 mt-8 rounded-xl flex-row justify-between border border-[#EEEEEE]">
           <View>
             <Text className="text-lg font-proximanova-semibold text-[#11293A]">
-              Grow and Manage All Your
+              {t("user.profile.growBusinessLine1")}
             </Text>
             <Text className="text-lg font-proximanova-semibold text-[#11293A]">
-              Businesses Effortlessly
+              {t("user.profile.growBusinessLine2")}
             </Text>
 
             <TouchableOpacity
               onPress={() => router.push("/business-setup")}
               className="bg-[#11293A] rounded-full py-1.5 px-4 mt-5">
               <Text className="text-sm font-proximanova-semibold text-[#ffffff] text-center">
-                Create Business Profile
+                {t("user.profile.createBusinessProfile")}
               </Text>
             </TouchableOpacity>
           </View>

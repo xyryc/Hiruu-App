@@ -52,7 +52,7 @@ const preferences = () => {
           //   click={() => router.push("/(user)/profile/settings/preferences")}
           icon={<Ionicons name="language-outline" size={24} color="#11293A" />}
           className="mt-8"
-          text={t("user.profile.appPreferences")}
+          text={t("user.profile.language")}
           arrowIcon={
             <Entypo name="chevron-thin-down" size={20} color="black" />
           }
@@ -63,22 +63,22 @@ const preferences = () => {
         />
 
         <SettingsCard
-          subtitle="Notify me 3 hours before shift"
+          subtitle={t("user.profile.smartAlarmSubtitle")}
           //   click={() => router.push("/(user)/profile/settings/preferences")}
           icon={<Ionicons name="alarm-outline" size={24} color="black" />}
           className="mt-4"
-          text="Smart Alarm"
+          text={t("user.profile.smartAlarm")}
           arrowIcon={
             <ToggleButton isOn={isOn} setIsOn={() => setIsOn(!isOn)} />
           }
         />
 
         <SettingsCard
-          subtitle="Asia/kolkata"
+          subtitle={t("user.profile.timeZoneValue")}
           //   click={() => router.push("/(user)/profile/settings/preferences")}
           icon={<AntDesign name="global" size={24} color="black" />}
           className="mt-4"
-          text="Time Zone"
+          text={t("user.profile.timeZone")}
           arrowIcon={
             <Entypo name="chevron-thin-down" size={20} color="black" />
           }
@@ -88,7 +88,7 @@ const preferences = () => {
           //   click={() => router.push("/(user)/profile/settings/preferences")}
           icon={<Ionicons name="volume-high-outline" size={24} color="black" />}
           className="mt-4"
-          text="App Sound"
+          text={t("user.profile.appSound")}
           arrowIcon={
             <ToggleButton
               isOn={isSoundOn}
@@ -107,8 +107,8 @@ const preferences = () => {
             />
           }
           className="mt-4"
-          text="Theme Mode"
-          subtitle="Light Mode"
+          text={t("user.profile.themeMode")}
+          subtitle={t("user.profile.lightMode")}
           arrowIcon={<AnimatedThemeToggle />}
         />
 
@@ -122,7 +122,7 @@ const preferences = () => {
             />
           }
           className="mt-4 pb-4"
-          text="Available Working Days"
+          text={t("user.profile.availableWorkingDays")}
           arrowIcon={
             <Entypo
               name={schedule ? "chevron-thin-up" : "chevron-thin-down"}
