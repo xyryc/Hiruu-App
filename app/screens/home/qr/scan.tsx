@@ -266,7 +266,9 @@ const QrScanner = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
+                disabled={loading}
                 onPress={async () => {
+                  if (loading) return;
                   if (!scannedData) return;
 
                   const parsed = parseJoinBusinessQR(scannedData);
@@ -286,11 +288,20 @@ const QrScanner = () => {
                   }
                 }}
 
-                className="flex-1 bg-primary dark:bg-dark-primary rounded-full py-3"
+                className={`flex-1 rounded-full py-3 ${loading ? "bg-[#9ED7FA]" : "bg-primary dark:bg-dark-primary"}`}
               >
-                <Text className="text-white text-center font-semibold">
-                  Use Data
-                </Text>
+                {loading ? (
+                  <View className="flex-row items-center justify-center gap-2">
+                    <ActivityIndicator size="small" color="#fff" />
+                    <Text className="text-white text-center font-semibold">
+                      Joining...
+                    </Text>
+                  </View>
+                ) : (
+                  <Text className="text-white text-center font-semibold">
+                    Use Data
+                  </Text>
+                )}
               </TouchableOpacity>
             </View>
           </View>

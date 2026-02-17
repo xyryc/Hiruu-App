@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
 type EmployeeItem = {
@@ -47,6 +47,7 @@ const MOCK_EMPLOYEES: EmployeeItem[] = [
 const EmployeeListScreen = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ businessId?: string }>();
   const { selectedBusinesses, getBusinessProfile, getMyBusinessRoles } = useBusinessStore();
   const resolvedBusinessId = params.businessId || selectedBusinesses[0];
@@ -120,10 +121,12 @@ const EmployeeListScreen = () => {
 
     try {
       const roleList = await getMyBusinessRoles(resolvedBusinessId);
-      const mappedRoles = (Array.isArray(roleList) ? roleList : []).map((role: any) => ({
-        id: role?.id,
-        name: role?.name || "Unnamed role",
-      }));
+      const mappedRoles = (Array.isArray(roleList) ? roleList : [])
+        .filter((role: any) => role?.id && role?.role?.name && !role?.isDeleted)
+        .map((role: any) => ({
+          id: role.id,
+          name: role.role.name,
+        }));
       setRoles(mappedRoles);
     } catch (error: any) {
       toast.error(error?.message || "Failed to load role list");
@@ -132,9 +135,10 @@ const EmployeeListScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-dark-background" edges={["top", "left", "right"]}>
+    <SafeAreaView className="flex-1 bg-white dark:bg-dark-background" edges={["left", "right", "bottom"]}>
       <ScreenHeader
-        className="px-5 py-3"
+        className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+        style={{ paddingTop: insets.top + 10, paddingBottom: 16 }}
         onPressBack={() => router.back()}
         title="Employee List"
         titleClass="text-primary dark:text-dark-primary"
