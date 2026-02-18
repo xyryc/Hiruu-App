@@ -17,6 +17,7 @@ interface BusinessState {
   myBusinessesLoading: boolean;
   selectedBusinesses: string[];
   weeklyShiftSelections: Record<string, any[]>;
+  weeklyRoleAssignments: Record<string, Record<string, string[]>>;
 
   fetchBusinesses: (search?: string) => Promise<any>;
   getMyBusinesses: (force?: boolean) => Promise<any>;
@@ -29,6 +30,7 @@ interface BusinessState {
     payload: any
   ) => Promise<any>;
   getMyBusinessRoles: (businessId: string) => Promise<any>;
+  getBusinessRolesDetailed: (businessId: string) => Promise<any[]>;
   getBusinessRoleById: (businessId: string, roleId: string) => Promise<any>;
   assignBusinessRoleToEmployment: (
     businessId: string,
@@ -51,6 +53,10 @@ interface BusinessState {
   setSelectedBusinesses: (ids: string[]) => void;
   setWeeklyShiftSelection: (day: string, templates: any[]) => void;
   clearWeeklyShiftSelections: () => void;
+  setWeeklyRoleAssignment: (
+    key: string,
+    assignments: Record<string, string[]>
+  ) => void;
   createCompanyManual: (companyData: any) => Promise<any>;
   createBusinessProfile: (payload: any) => Promise<any>;
   generateBusinessCode: (businessId: string) => Promise<any>;
@@ -68,6 +74,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
   myBusinessesLoading: false,
   selectedBusinesses: [],
   weeklyShiftSelections: {},
+  weeklyRoleAssignments: {},
 
   setSelectedBusinesses: (ids) => set({ selectedBusinesses: ids }),
   setWeeklyShiftSelection: (day, templates) =>
@@ -78,6 +85,13 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       },
     })),
   clearWeeklyShiftSelections: () => set({ weeklyShiftSelections: {} }),
+  setWeeklyRoleAssignment: (key, assignments) =>
+    set((state) => ({
+      weeklyRoleAssignments: {
+        ...state.weeklyRoleAssignments,
+        [key]: assignments,
+      },
+    })),
 
   fetchBusinesses: async (search = "") => {
     try {
@@ -243,6 +257,28 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       return result.data || [];
     } catch (error) {
       console.error("Fetch roles error:", error);
+      throw error;
+    }
+  },
+
+  getBusinessRolesDetailed: async (businessId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/businesses/${businessId}/roles/detailed`
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to fetch detailed roles";
+        throw new Error(errorMsg);
+      }
+
+      return Array.isArray(result.data) ? result.data : [];
+    } catch (error) {
+      console.error("Fetch detailed business roles error:", error);
       throw error;
     }
   },
@@ -758,6 +794,8 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       myBusinessesLoading: false,
       loading: false,
       error: null,
+      weeklyShiftSelections: {},
+      weeklyRoleAssignments: {},
     }),
 
   clearError: () => set({ error: null }),

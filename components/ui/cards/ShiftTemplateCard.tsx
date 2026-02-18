@@ -19,6 +19,7 @@ const ShiftTemplateCard = ({
   templateId,
   businessId,
   onDelete,
+  assignParams,
 }: any) => {
   const scrollX = new Animated.Value(0);
   const roleChips =
@@ -34,7 +35,12 @@ const ShiftTemplateCard = ({
           <View className="flex-row gap-1.5 items-center mx-3">
             {weekly && (
               <TouchableOpacity
-                onPress={() => router.push("/screens/schedule/business/assign")}
+                onPress={() =>
+                  router.push({
+                    pathname: "/screens/schedule/business/assign",
+                    params: assignParams,
+                  })
+                }
                 className="h-10 w-10 rounded-full bg-[#FFF] flex-row justify-center items-center"
               >
                 <AntDesign name="user-add" size={16} color="black" />

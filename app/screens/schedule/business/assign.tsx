@@ -1,10 +1,13 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import { useBusinessStore } from "@/stores/businessStore";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   KeyboardAvoidingView,
@@ -15,59 +18,145 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-
-const tabs = [
-  "Cashier (1/3)",
-  "Bartender (3/5)",
-  "Waiter (7/10)",
-  "Reception (5/7)",
-  "Others (2/5)",
-];
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const Assign = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const [selectedTab, setSelectedTab] = React.useState("Cashier (1/3)");
-  const [selectedCashiers, setSelectedCashiers] = useState<number[]>([]);
+  const params = useLocalSearchParams<{ day?: string; templateId?: string }>();
+  const day = typeof params.day === "string" ? params.day : "";
+  const templateId = typeof params.templateId === "string" ? params.templateId : "";
+  const assignmentKey = `${day}::${templateId}`;
+  const {
+    selectedBusinesses,
+    weeklyShiftSelections,
+    weeklyRoleAssignments,
+    setWeeklyRoleAssignment,
+    getBusinessRolesDetailed,
+  } = useBusinessStore();
+  const businessId = selectedBusinesses[0];
 
-  // Sample cashier data
-  const cashierData = [
-    {
-      id: 1,
-      name: "Rohan Mehta",
-      role: "Cashier",
-      avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-    },
-    {
-      id: 2,
-      name: "Priya Shah",
-      role: "Cashier",
-      avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    },
-    {
-      id: 3,
-      name: "Amit Patel",
-      role: "Cashier",
-      avatar: "https://randomuser.me/api/portraits/men/86.jpg",
-    },
-  ];
+  const [search, setSearch] = useState("");
+  const [rolesDetailed, setRolesDetailed] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedRoleId, setSelectedRoleId] = useState<string | null>(null);
+  const [selectedEmployeesByRole, setSelectedEmployeesByRole] = useState<
+    Record<string, string[]>
+  >({});
 
-  // Function to handle cashier selection and toggle (for multiple selections)
-  const handleCashierPress = (id: number) => {
-    setSelectedCashiers((prev) => {
-      // If the cashier is already selected, remove them from the array (deselect)
-      if (prev.includes(id)) {
-        return prev.filter((cashierId) => cashierId !== id);
-      } else {
-        // If the cashier is not selected, add them to the array (select)
-        return [...prev, id];
-      }
+  const selectedTemplate = useMemo(() => {
+    const dayTemplates = Array.isArray(weeklyShiftSelections[day])
+      ? weeklyShiftSelections[day]
+      : [];
+    return dayTemplates.find((item: any) => item?.id === templateId) || null;
+  }, [day, templateId, weeklyShiftSelections]);
+
+  const requiredRoles = useMemo(
+    () =>
+      Array.isArray(selectedTemplate?.roleRequirements)
+        ? selectedTemplate.roleRequirements
+        : [],
+    [selectedTemplate]
+  );
+
+  const loadDetailedRoles = useCallback(async () => {
+    if (!businessId) {
+      setRolesDetailed([]);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const data = await getBusinessRolesDetailed(businessId);
+      const normalized = Array.isArray(data) ? data : [];
+      setRolesDetailed(normalized);
+      setSelectedRoleId(null);
+      setSelectedEmployeesByRole(weeklyRoleAssignments[assignmentKey] || {});
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to load role data");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [assignmentKey, businessId, getBusinessRolesDetailed, weeklyRoleAssignments]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadDetailedRoles();
+    }, [loadDetailedRoles])
+  );
+
+  const tabs = useMemo(() => {
+    if (requiredRoles.length === 0) {
+      return rolesDetailed.map((role: any) => ({
+        id: role?.id,
+        label: role?.role || "Role",
+        requiredCount: 0,
+        selectedCount: selectedEmployeesByRole[role?.id]?.length || 0,
+      }));
+    }
+
+    return requiredRoles.map((required: any) => {
+      return {
+        id: required?.roleId,
+        label:
+          required?.businessRoleName ||
+          required?.roleName ||
+          rolesDetailed.find((role) => role?.id === required?.roleId)?.role ||
+          "Role",
+        requiredCount: Number(required?.count || 0),
+        selectedCount: selectedEmployeesByRole[required?.roleId]?.length || 0,
+      };
     });
+  }, [requiredRoles, rolesDetailed, selectedEmployeesByRole]);
+
+  const selectedRoleDetail = useMemo(() => {
+    if (!selectedRoleId) return null;
+    return rolesDetailed.find((role) => role?.id === selectedRoleId) || null;
+  }, [rolesDetailed, selectedRoleId]);
+
+  const members = useMemo(() => {
+    if (!selectedRoleId) return [];
+    const source = Array.isArray(selectedRoleDetail?.assignedEmployees)
+      ? selectedRoleDetail.assignedEmployees
+      : [];
+    const q = search.trim().toLowerCase();
+    if (!q) return source;
+    return source.filter((item: any) => {
+      const name = item?.user?.name?.toLowerCase?.() || "";
+      const email = item?.user?.email?.toLowerCase?.() || "";
+      return name.includes(q) || email.includes(q);
+    });
+  }, [search, selectedRoleDetail]);
+
+  const isAssignEnabled = useMemo(() => {
+    if (tabs.length === 0) return false;
+    return tabs.every(
+      (item) =>
+        item.requiredCount <= 0 ||
+        (selectedEmployeesByRole[item.id]?.length || 0) >= item.requiredCount
+    );
+  }, [selectedEmployeesByRole, tabs]);
+
+  const handleToggleEmployee = (roleId: string, employmentId: string) => {
+    setSelectedEmployeesByRole((prev) => {
+      const current = prev[roleId] || [];
+      const next = current.includes(employmentId)
+        ? current.filter((id) => id !== employmentId)
+        : [...current, employmentId];
+      return { ...prev, [roleId]: next };
+    });
+  };
+
+  const handleAssign = () => {
+    if (!isAssignEnabled) {
+      toast.error("Required role count not met.");
+      return;
+    }
+    setWeeklyRoleAssignment(assignmentKey, selectedEmployeesByRole);
+    toast.success("Assignments saved.");
+    router.back();
   };
 
   return (
@@ -89,32 +178,27 @@ const Assign = () => {
             iconColor={isDark ? "#fff" : "#111"}
             components={
               <View className="h-10 w-10 bg-white rounded-full flex-row justify-center items-center">
-                <MaterialCommunityIcons
-                  name="line-scan"
-                  size={18}
-                  color="black"
-                />
+                <MaterialCommunityIcons name="line-scan" size={18} color="black" />
               </View>
             }
           />
 
-          {/* Role Tabs */}
-          <View className="mx-4  ">
+          <View className="mx-4">
             <FlatList
               data={tabs}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  onPress={() => setSelectedTab(item)}
+                  onPress={() => setSelectedRoleId(item.id)}
                   className="mx-1.5"
                 >
                   <Text
-                    className={` ${selectedTab === item ? "border-b-2 border-primary dark:border-dark-primary" : ""} font-proximanova-semibold text-primary dark:text-dark-primary pb-3`}
+                    className={`${selectedRoleId === item.id ? "border-b-2 border-primary dark:border-dark-primary" : ""} font-proximanova-semibold text-primary dark:text-dark-primary pb-3`}
                   >
-                    {item}
+                    {`${item.label} (${item.selectedCount}/${item.requiredCount})`}
                   </Text>
                 </TouchableOpacity>
               )}
-              keyExtractor={(item) => item}
+              keyExtractor={(item) => item.id}
               horizontal
               showsHorizontalScrollIndicator={false}
             />
@@ -122,17 +206,16 @@ const Assign = () => {
         </View>
 
         <View className="border mt-9 border-[#eeeeee] rounded-[10px] px-4 flex-row items-center mx-5">
-          {/* Search Icon */}
           <Ionicons
             name="search"
             size={16}
             color={isDark ? "#fff" : "#7A7A7A"}
             style={{ marginRight: 10 }}
           />
-
-          {/* Search Input */}
           <TextInput
             placeholder="Search here..."
+            value={search}
+            onChangeText={setSearch}
             placeholderTextColor={isDark ? "#fff" : "#7A7A7A"}
             style={{
               flex: 1,
@@ -147,38 +230,78 @@ const Assign = () => {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 120 }}
         >
-          {cashierData.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              onPress={() => handleCashierPress(item.id)}
-              className={`flex-row items-center p-4 mt-4 rounded-xl border border-[#eeeeee] `}
-            >
-              <Image
-                source={{ uri: item.avatar }}
-                className="w-12 h-12 rounded-full mr-3"
-              />
-              <View className="flex-1">
-                <Text className="text-base font-proximanova-semibold text-primary dark:text-dark-primary">
-                  {item.name}
-                </Text>
-                <Text className="text-sm text-secondary dark:text-dark-secondary font-proximanova-regular">
-                  {item.role}
-                </Text>
-              </View>
-              <Ionicons
-                name="checkmark-circle"
-                size={24}
-                color={
-                  selectedCashiers.includes(item.id) ? "#11293A" : "#7A7A7A"
-                }
-              />
-            </TouchableOpacity>
-          ))}
+          {isLoading ? (
+            <View className="py-10 items-center">
+              <ActivityIndicator size="large" />
+            </View>
+          ) : !selectedRoleId ? (
+            <View className="py-10 items-center">
+              <Text className="text-sm text-secondary dark:text-dark-secondary">
+                Select a role to assign employees.
+              </Text>
+            </View>
+          ) : members.length === 0 ? (
+            <View className="py-10 items-center">
+              <Text className="text-sm text-secondary dark:text-dark-secondary">
+                No assigned employees found.
+              </Text>
+            </View>
+          ) : (
+            members.map((item: any) => (
+              <TouchableOpacity
+                key={item?.employmentId}
+                onPress={() => handleToggleEmployee(selectedRoleId, item?.employmentId)}
+                className="flex-row items-center p-4 mt-4 rounded-xl border border-[#eeeeee]"
+              >
+                <Image
+                  source={
+                    item?.user?.avatar
+                      ? {
+                          uri: item.user.avatar.startsWith("http")
+                            ? item.user.avatar
+                            : `${process.env.EXPO_PUBLIC_API_URL}${item.user.avatar}`,
+                        }
+                      : require("@/assets/images/placeholder.png")
+                  }
+                  className="w-12 h-12 rounded-full mr-3"
+                />
+                <View className="flex-1">
+                  <Text className="text-base font-proximanova-semibold text-primary dark:text-dark-primary">
+                    {item?.user?.name || "Unknown"}
+                  </Text>
+                  <Text className="text-sm text-secondary dark:text-dark-secondary font-proximanova-regular">
+                    {item?.user?.email || "No email"}
+                  </Text>
+                </View>
+                <Ionicons
+                  name={
+                    selectedEmployeesByRole[selectedRoleId]?.includes(
+                      item?.employmentId
+                    )
+                      ? "checkmark-circle"
+                      : "radio-button-off"
+                  }
+                  size={24}
+                  color={
+                    selectedEmployeesByRole[selectedRoleId]?.includes(
+                      item?.employmentId
+                    )
+                      ? "#11293A"
+                      : "#7A7A7A"
+                  }
+                />
+              </TouchableOpacity>
+            ))
+          )}
         </ScrollView>
 
-        {/* button  */}
-        <View className='absolute bottom-10 w-full'>
-          <PrimaryButton className="mx-5" title="Assign" />
+        <View className="absolute bottom-10 w-full">
+          <PrimaryButton
+            className="mx-5"
+            title="Assign"
+            onPress={handleAssign}
+            disabled={!isAssignEnabled}
+          />
         </View>
       </SafeAreaView>
     </KeyboardAvoidingView>

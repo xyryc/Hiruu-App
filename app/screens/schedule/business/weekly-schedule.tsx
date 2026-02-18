@@ -127,6 +127,7 @@ const SavedShiftTemplate = () => {
                       businessLogo={template?.business?.logo}
                       templateId={template?.id}
                       businessId={template?.businessId}
+                      assignParams={{ day: day.label, templateId: template?.id }}
                     />
                   ))}
                 </View>
