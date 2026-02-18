@@ -20,6 +20,8 @@ const AssignRoleModal: React.FC<any> = ({
   setSelectedAssignRole,
   selectedAssignRole,
   loading = false,
+  onApply,
+  applying = false,
 }) => {
   return (
     <Modal
@@ -103,7 +105,12 @@ const AssignRoleModal: React.FC<any> = ({
                 ))
               )}
             </ScrollView>
-            <PrimaryButton title="Apply" className="mx-5 mb-5" />
+            <PrimaryButton
+              title={applying ? "Applying..." : "Apply"}
+              className="mx-5 mb-5"
+              onPress={onApply}
+              disabled={loading || applying}
+            />
           </SafeAreaView>
         </View>
       </BlurView>

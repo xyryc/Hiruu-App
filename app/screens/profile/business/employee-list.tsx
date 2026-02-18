@@ -1,6 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import AssignRoleModal from "@/components/ui/modals/AssignRoleModal";
 import { useBusinessStore } from "@/stores/businessStore";
+import { translateApiMessage } from "@/utils/apiMessages";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
@@ -28,7 +29,12 @@ const EmployeeListScreen = () => {
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ businessId?: string }>();
-  const { selectedBusinesses, getBusinessEmployees, getMyBusinessRoles } = useBusinessStore();
+  const {
+    selectedBusinesses,
+    getBusinessEmployees,
+    getMyBusinessRoles,
+    assignBusinessRoleToEmployment,
+  } = useBusinessStore();
   const resolvedBusinessId = params.businessId || selectedBusinesses[0];
   const [loading, setLoading] = useState(false);
   const [employees, setEmployees] = useState<EmployeeItem[]>([]);
@@ -37,6 +43,10 @@ const EmployeeListScreen = () => {
   const [rolesLoading, setRolesLoading] = useState(false);
   const [roleModalVisible, setRoleModalVisible] = useState(false);
   const [selectedAssignRole, setSelectedAssignRole] = useState<string | null>(null);
+  const [selectedEmploymentId, setSelectedEmploymentId] = useState<string | null>(
+    null
+  );
+  const [assigningRole, setAssigningRole] = useState(false);
 
   useEffect(() => {
     if (!resolvedBusinessId) return;
@@ -51,9 +61,9 @@ const EmployeeListScreen = () => {
         const mapped = source
           .map((item: any) => {
             const user = item?.user;
-            if (!user?.id) return null;
+            if (!item?.id || !user?.id) return null;
             return {
-              id: user.id,
+              id: item?.id,
               name: user.name || "N/A",
               email: user.email || "N/A",
               avatar: user.avatar || null,
@@ -89,7 +99,8 @@ const EmployeeListScreen = () => {
     return "No employees found.";
   }, [loading, resolvedBusinessId]);
 
-  const openRoleModal = async () => {
+  const openRoleModal = async (employmentId: string) => {
+    setSelectedEmploymentId(employmentId);
     setRoleModalVisible(true);
     setSelectedAssignRole(null);
 
@@ -110,6 +121,28 @@ const EmployeeListScreen = () => {
       setRoles([]);
     } finally {
       setRolesLoading(false);
+    }
+  };
+
+  const handleApplyRole = async () => {
+    if (!resolvedBusinessId || !selectedEmploymentId || !selectedAssignRole) {
+      toast.error("Please select a role.");
+      return;
+    }
+
+    try {
+      setAssigningRole(true);
+      const result = await assignBusinessRoleToEmployment(
+        resolvedBusinessId,
+        selectedEmploymentId,
+        selectedAssignRole
+      );
+      toast.success(translateApiMessage(result?.message || "business_role_assigned"));
+      setRoleModalVisible(false);
+    } catch (error: any) {
+      toast.error(translateApiMessage(error?.message || "Failed to assign role"));
+    } finally {
+      setAssigningRole(false);
     }
   };
 
@@ -155,7 +188,7 @@ const EmployeeListScreen = () => {
               </View>
 
               <TouchableOpacity
-                onPress={openRoleModal}
+                onPress={() => openRoleModal(item.id)}
                 className="h-8 w-8 rounded-full bg-[#F5F5F5] items-center justify-center"
               >
                 <Ionicons name="ellipsis-vertical" size={16} color={isDark ? "#fff" : "#111"} />
@@ -170,6 +203,8 @@ const EmployeeListScreen = () => {
         onClose={() => setRoleModalVisible(false)}
         assignRole={roles}
         loading={rolesLoading}
+        onApply={handleApplyRole}
+        applying={assigningRole}
         selectedAssignRole={selectedAssignRole}
         setSelectedAssignRole={setSelectedAssignRole}
       />

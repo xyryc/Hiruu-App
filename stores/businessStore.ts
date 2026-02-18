@@ -29,6 +29,11 @@ interface BusinessState {
   ) => Promise<any>;
   getMyBusinessRoles: (businessId: string) => Promise<any>;
   getBusinessRoleById: (businessId: string, roleId: string) => Promise<any>;
+  assignBusinessRoleToEmployment: (
+    businessId: string,
+    employmentId: string,
+    roleId: string
+  ) => Promise<any>;
   createShiftTemplate: (businessId: string, payload: any) => Promise<any>;
   updateShiftTemplate: (
     businessId: string,
@@ -685,6 +690,29 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
         error: new Error(errorMessage),
       });
       throw new Error(errorMessage);
+    }
+  },
+
+  assignBusinessRoleToEmployment: async (businessId, employmentId, roleId) => {
+    try {
+      const response = await axiosInstance.post(
+        `/businesses/${businessId}/roles/assign/${employmentId}`,
+        { roleId }
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to assign business role";
+        throw new Error(errorMsg);
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Assign business role error:", error);
+      throw error;
     }
   },
 
