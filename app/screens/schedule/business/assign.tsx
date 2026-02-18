@@ -249,7 +249,7 @@ const Assign = () => {
           ) : members.length === 0 ? (
             <View className="py-10 items-center">
               <Text className="text-sm text-secondary dark:text-dark-secondary">
-                No assigned employees found.
+                No employees found.
               </Text>
             </View>
           ) : (
@@ -263,10 +263,10 @@ const Assign = () => {
                   source={
                     item?.user?.avatar
                       ? {
-                          uri: item.user.avatar.startsWith("http")
-                            ? item.user.avatar
-                            : `${process.env.EXPO_PUBLIC_API_URL}${item.user.avatar}`,
-                        }
+                        uri: item.user.avatar.startsWith("http")
+                          ? item.user.avatar
+                          : `${process.env.EXPO_PUBLIC_API_URL}${item.user.avatar}`,
+                      }
                       : require("@/assets/images/placeholder.png")
                   }
                   className="w-12 h-12 rounded-full mr-3"

@@ -44,6 +44,10 @@ interface BusinessState {
     payload: any
   ) => Promise<any>;
   getShiftTemplates: (businessId: string) => Promise<any>;
+  createWeeklyScheduleFromTemplates: (
+    businessId: string,
+    payload: any
+  ) => Promise<any>;
   getShiftTemplateById: (businessId: string, templateId: string) => Promise<any>;
   deleteShiftTemplate: (businessId: string, templateId: string) => Promise<any>;
   getBusinessProfile: (businessId: string) => Promise<any>;
@@ -344,6 +348,29 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       return Array.isArray(result.data) ? result.data : [];
     } catch (error) {
       console.error("Fetch shift templates error:", error);
+      throw error;
+    }
+  },
+
+  createWeeklyScheduleFromTemplates: async (businessId, payload) => {
+    try {
+      const response = await axiosInstance.post(
+        `/weekly-schedule/${businessId}/templates`,
+        payload
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to create weekly schedule";
+        throw new Error(errorMsg);
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error("Create weekly schedule from templates error:", error);
       throw error;
     }
   },
