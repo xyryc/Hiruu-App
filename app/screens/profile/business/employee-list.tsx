@@ -22,6 +22,7 @@ type EmployeeItem = {
   name: string;
   email: string;
   avatar: string | null;
+  roleName: string | null;
 };
 
 const EmployeeListScreen = () => {
@@ -67,6 +68,7 @@ const EmployeeListScreen = () => {
               name: user.name || "N/A",
               email: user.email || "N/A",
               avatar: user.avatar || null,
+              roleName: item?.role?.role?.name || item?.role?.name || null,
             } as EmployeeItem;
           })
           .filter(Boolean) as EmployeeItem[];
@@ -130,6 +132,19 @@ const EmployeeListScreen = () => {
       return;
     }
 
+    const selectedRole = roles.find((role) => role.id === selectedAssignRole);
+    const nextRoleName = selectedRole?.name || "Not assigned";
+    const previousEmployees = employees;
+
+    // Optimistic UI update for role assignment on the list card.
+    setEmployees((prev) =>
+      prev.map((employee) =>
+        employee.id === selectedEmploymentId
+          ? { ...employee, roleName: nextRoleName }
+          : employee
+      )
+    );
+
     try {
       setAssigningRole(true);
       const result = await assignBusinessRoleToEmployment(
@@ -140,6 +155,7 @@ const EmployeeListScreen = () => {
       toast.success(translateApiMessage(result?.message || "business_role_assigned"));
       setRoleModalVisible(false);
     } catch (error: any) {
+      setEmployees(previousEmployees);
       toast.error(translateApiMessage(error?.message || "Failed to assign role"));
     } finally {
       setAssigningRole(false);
@@ -184,6 +200,9 @@ const EmployeeListScreen = () => {
                 </Text>
                 <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
                   {item.email}
+                </Text>
+                <Text className="font-proximanova-regular text-xs text-secondary dark:text-dark-secondary mt-0.5">
+                  Role: {item.roleName || "Not assigned"}
                 </Text>
               </View>
 
