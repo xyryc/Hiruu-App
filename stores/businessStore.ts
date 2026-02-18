@@ -16,6 +16,7 @@ interface BusinessState {
   myBusinesses: any[];
   myBusinessesLoading: boolean;
   selectedBusinesses: string[];
+  weeklyShiftSelections: Record<string, any[]>;
 
   fetchBusinesses: (search?: string) => Promise<any>;
   getMyBusinesses: (force?: boolean) => Promise<any>;
@@ -48,6 +49,8 @@ interface BusinessState {
   updateMyBusinessProfile: (businessId: string, payload: any) => Promise<any>;
   deleteBusinessRole: (businessId: string, roleId: string) => Promise<any>;
   setSelectedBusinesses: (ids: string[]) => void;
+  setWeeklyShiftSelection: (day: string, templates: any[]) => void;
+  clearWeeklyShiftSelections: () => void;
   createCompanyManual: (companyData: any) => Promise<any>;
   createBusinessProfile: (payload: any) => Promise<any>;
   generateBusinessCode: (businessId: string) => Promise<any>;
@@ -64,8 +67,17 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
   myBusinesses: [],
   myBusinessesLoading: false,
   selectedBusinesses: [],
+  weeklyShiftSelections: {},
 
   setSelectedBusinesses: (ids) => set({ selectedBusinesses: ids }),
+  setWeeklyShiftSelection: (day, templates) =>
+    set((state) => ({
+      weeklyShiftSelections: {
+        ...state.weeklyShiftSelections,
+        [day]: Array.isArray(templates) ? templates : [],
+      },
+    })),
+  clearWeeklyShiftSelections: () => set({ weeklyShiftSelections: {} }),
 
   fetchBusinesses: async (search = "") => {
     try {

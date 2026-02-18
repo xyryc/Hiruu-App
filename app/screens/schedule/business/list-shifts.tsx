@@ -3,7 +3,7 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { useBusinessStore } from "@/stores/businessStore";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useCallback, useState } from "react";
 import {
@@ -26,11 +26,18 @@ const ListofShifts = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const { selectedBusinesses, getShiftTemplates } = useBusinessStore();
+  const params = useLocalSearchParams<{ day?: string }>();
+  const day = typeof params.day === "string" ? params.day : "";
+  const {
+    selectedBusinesses,
+    getShiftTemplates,
+    weeklyShiftSelections,
+    setWeeklyShiftSelection,
+  } = useBusinessStore();
   const businessId = selectedBusinesses[0];
   const [templates, setTemplates] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedShiftId, setSelectedShiftId] = useState<string | null>(null);
+  const [selectedShiftIds, setSelectedShiftIds] = useState<string[]>([]);
 
   const to12Hour = (value?: string) => {
     if (!value) return "--:--";
@@ -53,13 +60,22 @@ const ListofShifts = () => {
     try {
       setIsLoading(true);
       const data = await getShiftTemplates(businessId);
-      setTemplates(Array.isArray(data) ? data : []);
+      const normalized = Array.isArray(data) ? data : [];
+      setTemplates(normalized);
+      if (day) {
+        const preselectedIds = Array.isArray(weeklyShiftSelections[day])
+          ? weeklyShiftSelections[day]
+              .map((template: any) => template?.id)
+              .filter(Boolean)
+          : [];
+        setSelectedShiftIds(preselectedIds);
+      }
     } catch (error: any) {
       toast.error(error?.message || "Failed to fetch shifts");
     } finally {
       setIsLoading(false);
     }
-  }, [businessId, getShiftTemplates]);
+  }, [businessId, day, getShiftTemplates, weeklyShiftSelections]);
 
   useFocusEffect(
     useCallback(() => {
@@ -68,7 +84,31 @@ const ListofShifts = () => {
   );
 
   const handleShiftPress = (id: string) => {
-    setSelectedShiftId((prev) => (prev === id ? null : id));
+    setSelectedShiftIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleNext = () => {
+    if (selectedShiftIds.length === 0) {
+      toast.error("Please select at least one shift template.");
+      return;
+    }
+
+    if (day) {
+      const selectedTemplates = templates.filter((template) =>
+        selectedShiftIds.includes(template?.id)
+      );
+      if (selectedTemplates.length === 0) {
+        toast.error("Selected shift templates not found.");
+        return;
+      }
+      setWeeklyShiftSelection(day, selectedTemplates);
+      router.back();
+      return;
+    }
+
+    router.back();
   };
 
   return (
@@ -133,12 +173,12 @@ const ListofShifts = () => {
 
                   <Ionicons
                     name={
-                      selectedShiftId === item?.id
+                      selectedShiftIds.includes(item?.id)
                         ? "checkmark-circle"
                         : "radio-button-off"
                     }
                     size={24}
-                    color={selectedShiftId === item?.id ? "#11293A" : "#C7C7CC"}
+                    color={selectedShiftIds.includes(item?.id) ? "#11293A" : "#C7C7CC"}
                   />
                 </TouchableOpacity>
               ))}
@@ -148,7 +188,12 @@ const ListofShifts = () => {
 
         {/* button  */}
         <View className='absolute bottom-10 w-full'>
-          <PrimaryButton className="mx-5" title="Next" />
+          <PrimaryButton
+            className="mx-5"
+            title="Next"
+            onPress={handleNext}
+            disabled={selectedShiftIds.length === 0}
+          />
         </View>
       </SafeAreaView>
     </KeyboardAvoidingView>
