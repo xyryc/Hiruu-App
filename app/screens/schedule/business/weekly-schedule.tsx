@@ -105,19 +105,20 @@ const SavedShiftTemplate = () => {
 
                   {selectedTemplates.map((template: any) => (
                     <ShiftTemplateCard
+                      weekly={true}
                       key={`${day.label}-${template?.id}`}
                       className="mt-3"
                       title={template?.name || `${day.label} Shift`}
                       timeRange={`${to12Hour(template?.startTime)} - ${to12Hour(template?.endTime)}`}
                       breakTimeRange={
                         Array.isArray(template?.breakDuration) &&
-                        template.breakDuration.length > 0
+                          template.breakDuration.length > 0
                           ? template.breakDuration
-                              .map(
-                                (item: any) =>
-                                  `${to12Hour(item?.startTime)} - ${to12Hour(item?.endTime)}`
-                              )
-                              .join(", ")
+                            .map(
+                              (item: any) =>
+                                `${to12Hour(item?.startTime)} - ${to12Hour(item?.endTime)}`
+                            )
+                            .join(", ")
                           : "No break"
                       }
                       location={template?.business?.name || "Location not defined"}
