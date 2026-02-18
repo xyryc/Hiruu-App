@@ -2,18 +2,19 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import SelectDropdown from "@/components/ui/dropdown/SelectDropdown";
 import TimePicker from "@/components/ui/inputs/TimePicker";
+import RoleSelector from "@/components/ui/modals/RoleSelector";
 import { useBusinessStore } from "@/stores/businessStore";
 import { useJobStore } from "@/stores/jobStore";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
   Text,
-  TextInput,
   View,
+  TextInput,
 } from "react-native";
 import {
   SafeAreaView,
@@ -26,10 +27,15 @@ const PostJob = () => {
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
   const selectedBusinesses = useBusinessStore((s) => s.selectedBusinesses);
+  const getRoles = useBusinessStore((s) => s.getRoles);
   const createRecruitment = useJobStore((s) => s.createRecruitment);
   const isSubmitting = useJobStore((s) => s.isLoading);
 
-  const [jobName, setJobName] = useState("");
+  const [selectedRole, setSelectedRole] = useState<{ id: string; name: string } | null>(null);
+  const [roleOptions, setRoleOptions] = useState<{ id: string; name: string }[]>(
+    []
+  );
+  const [rolesLoading, setRolesLoading] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
   const [gender, setGender] = useState("");
   const [shiftType, setShiftType] = useState("");
@@ -42,6 +48,32 @@ const PostJob = () => {
   const [salaryMin, setSalaryMin] = useState("");
   const [salaryMax, setSalaryMax] = useState("");
   const [openings, setOpenings] = useState("");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRoles = async () => {
+      try {
+        setRolesLoading(true);
+        const data = await getRoles();
+        if (isMounted) {
+          const normalized = (Array.isArray(data) ? data : [])
+            .filter((item: any) => item?.id && item?.name)
+            .map((item: any) => ({ id: item.id, name: item.name }));
+          setRoleOptions(normalized);
+        }
+      } finally {
+        if (isMounted) {
+          setRolesLoading(false);
+        }
+      }
+    };
+
+    loadRoles();
+    return () => {
+      isMounted = false;
+    };
+  }, [getRoles]);
 
   const genderOptions = useMemo(
     () => [
@@ -87,8 +119,8 @@ const PostJob = () => {
       return;
     }
 
-    if (!jobName.trim()) {
-      toast.error("Job name is required.");
+    if (!selectedRole?.name?.trim()) {
+      toast.error("Role is required.");
       return;
     }
 
@@ -128,7 +160,7 @@ const PostJob = () => {
     }
 
     const payload = {
-      name: jobName.trim(),
+      name: selectedRole.name.trim(),
       description: jobDescription.trim(),
       gender,
       experience: experience.trim(),
@@ -176,14 +208,15 @@ const PostJob = () => {
           contentContainerStyle={{ paddingBottom: 120 }}
         >
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">
-            Job Name
+            Role
           </Text>
-          <TextInput
-            value={jobName}
-            onChangeText={setJobName}
-            className="px-4 py-3 text-sm font-proximanova-regular text-primary dark:text-dark-primary border border-[#EEEEEE] mt-2.5 rounded-[10px]"
-            placeholder="Cashier"
-            placeholderTextColor="#7D7D7D"
+          <RoleSelector
+            className="mt-2.5"
+            roles={roleOptions}
+            loading={rolesLoading}
+            selectedRole={selectedRole}
+            placeholder="Select role"
+            onSelectRole={(role) => setSelectedRole(role)}
           />
 
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">

@@ -5,7 +5,7 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -110,6 +110,12 @@ const Assign = () => {
       };
     });
   }, [requiredRoles, rolesDetailed, selectedEmployeesByRole]);
+
+  useEffect(() => {
+    if (!selectedRoleId && tabs.length > 0) {
+      setSelectedRoleId(tabs[0].id);
+    }
+  }, [selectedRoleId, tabs]);
 
   const selectedRoleDetail = useMemo(() => {
     if (!selectedRoleId) return null;

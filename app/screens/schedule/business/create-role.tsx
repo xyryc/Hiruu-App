@@ -45,7 +45,7 @@ const CreateRole = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const { selectedBusinesses, createBusinessRole, getPermissions } =
+  const { selectedBusinesses, createBusinessRole, getPermissions, getRoles } =
     useBusinessStore();
   const [search, setSearch] = useState("");
   const [description, setDescription] = useState("");
@@ -53,6 +53,8 @@ const CreateRole = () => {
   const [permissionGroups, setPermissionGroups] = useState<PermissionGroup[]>(
     []
   );
+  const [roleOptions, setRoleOptions] = useState<RoleItem[]>([]);
+  const [rolesLoading, setRolesLoading] = useState(false);
   const [permissionValues, setPermissionValues] = useState<
     Record<string, number>
   >({});
@@ -112,6 +114,34 @@ const CreateRole = () => {
       isMounted = false;
     };
   }, [getPermissions]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRoles = async () => {
+      try {
+        setRolesLoading(true);
+        const data = await getRoles();
+        if (isMounted) {
+          const normalized = (Array.isArray(data) ? data : [])
+            .filter((item: any) => item?.id && item?.name)
+            .map((item: any) => ({ id: item.id, name: item.name }));
+          setRoleOptions(normalized);
+        }
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load roles");
+      } finally {
+        if (isMounted) {
+          setRolesLoading(false);
+        }
+      }
+    };
+
+    loadRoles();
+    return () => {
+      isMounted = false;
+    };
+  }, [getRoles]);
 
   const filteredGroups = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -221,8 +251,14 @@ const CreateRole = () => {
         <ScrollView showsVerticalScrollIndicator={false} className="mx-5">
           {/* predefine role */}
           <View className="mt-4">
+            <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
+              Predefined role
+            </Text>
+
             <RoleSelector
               key={roleSelectorKey}
+              roles={roleOptions}
+              loading={rolesLoading}
               onSelectRole={(role) => setSelectedRole(role)}
             />
           </View>

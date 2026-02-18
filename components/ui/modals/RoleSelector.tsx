@@ -1,4 +1,3 @@
-import { useBusinessStore } from "@/stores/businessStore";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -9,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { toast } from "sonner-native";
 
 type RoleItem = {
   id: string;
@@ -18,52 +16,30 @@ type RoleItem = {
 
 type RoleSelectorProps = {
   className?: string;
+  roles?: RoleItem[];
+  loading?: boolean;
+  placeholder?: string;
   onSelectRole?: (role: RoleItem | null) => void;
   selectedRole?: RoleItem | null;
 };
 
 const RoleSelector = ({
   className,
+  roles = [],
+  loading = false,
+  placeholder = "Select Role",
   onSelectRole,
   selectedRole,
 }: RoleSelectorProps) => {
-  const { getRoles } = useBusinessStore();
   const [localSelectedRole, setLocalSelectedRole] = useState<RoleItem | null>(
     selectedRole || null
   );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [roles, setRoles] = useState<RoleItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     setLocalSelectedRole(selectedRole || null);
   }, [selectedRole]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadRoles = async () => {
-      try {
-        setIsLoading(true);
-        const data = await getRoles();
-        if (isMounted) {
-          setRoles(Array.isArray(data) ? data : []);
-        }
-      } catch (error: any) {
-        toast.error(error?.message || "Failed to load roles");
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadRoles();
-    return () => {
-      isMounted = false;
-    };
-  }, [getRoles]);
 
   const filteredRoles = useMemo(
     () =>
@@ -87,10 +63,6 @@ const RoleSelector = ({
 
   return (
     <View className={`${className}`}>
-      <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
-        Predefined role
-      </Text>
-
       {/* Role Selector Button */}
       <TouchableOpacity
         onPress={handleDropdownToggle}
@@ -99,7 +71,7 @@ const RoleSelector = ({
         <Text
           className={`flex-1 font-proximanova-semibold text-sm text-primary dark:text-dark-primary capitalize`}
         >
-          {localSelectedRole ? localSelectedRole.name : "Select Role"}
+          {localSelectedRole ? localSelectedRole.name : placeholder}
         </Text>
         <View className="flex-row items-center gap-1.5">
           <View className="py-1 px-5 bg-[#11293A] rounded-full">
@@ -140,15 +112,18 @@ const RoleSelector = ({
 
           {/* Roles List using ScrollView */}
           <ScrollView
-            style={{ maxHeight: 200 }}
-            showsVerticalScrollIndicator={true}
+            style={{ maxHeight: 260 }}
+            nestedScrollEnabled
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator
+            contentContainerStyle={{ paddingBottom: 8 }}
           >
-            {isLoading && (
+            {loading && (
               <View className="p-4 items-center">
                 <ActivityIndicator size="small" />
               </View>
             )}
-            {!isLoading &&
+            {!loading &&
               filteredRoles.map((item, index) => (
                 <TouchableOpacity
                   style={{
@@ -166,7 +141,7 @@ const RoleSelector = ({
                   </Text>
                 </TouchableOpacity>
               ))}
-            {!isLoading && filteredRoles.length === 0 && (
+            {!loading && filteredRoles.length === 0 && (
               <View className="p-4 items-center">
                 <Text className="text-base text-gray-600">No roles found</Text>
               </View>
