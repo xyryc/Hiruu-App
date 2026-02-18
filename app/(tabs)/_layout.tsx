@@ -71,7 +71,7 @@ export default function TabLayout() {
         name="user-schedule"
         options={{
           title: "",
-          href: isBusinessProfile ? null : "/user-schedule",
+          href: isBusinessProfile ? null : undefined,
           tabBarIcon: () => (
             <View className="bg-[#4FB2F3] h-14 w-14 rounded-full items-center justify-center border-2 border-[#4FB2F34D]">
               <Ionicons name="calendar" size={24} color="white" />
@@ -84,7 +84,7 @@ export default function TabLayout() {
         name="business-schedule"
         options={{
           title: "",
-          href: isBusinessProfile ? "/business-schedule" : null,
+          href: isBusinessProfile ? undefined : null,
           tabBarIcon: () => (
             <View className="bg-[#4FB2F3] h-14 w-14 rounded-full items-center justify-center">
               <Ionicons name="calendar" size={24} color="white" />
@@ -98,7 +98,7 @@ export default function TabLayout() {
         name="user-jobs"
         options={{
           title: "Jobs",
-          href: isBusinessProfile ? null : "/user-jobs",
+          href: isBusinessProfile ? null : undefined,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "briefcase" : "briefcase-outline"}
@@ -114,7 +114,7 @@ export default function TabLayout() {
         name="business-jobs"
         options={{
           title: "Jobs",
-          href: isBusinessProfile ? "/business-jobs" : null,
+          href: isBusinessProfile ? undefined : null,
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
               name={focused ? "briefcase" : "briefcase-outline"}
@@ -130,7 +130,7 @@ export default function TabLayout() {
         name="user-profile"
         options={{
           title: "Profile",
-          href: isBusinessProfile ? null : "/user-profile",
+          href: isBusinessProfile ? null : undefined,
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome
               name={focused ? "user" : "user-o"}
@@ -146,7 +146,7 @@ export default function TabLayout() {
         name="business-profile"
         options={{
           title: "Profile",
-          href: isBusinessProfile ? "/business-profile" : null,
+          href: isBusinessProfile ? undefined : null,
           tabBarIcon: ({ color, focused }) => (
             <FontAwesome
               name={focused ? "user" : "user-o"}

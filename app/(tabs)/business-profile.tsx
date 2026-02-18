@@ -435,12 +435,16 @@ const BusinessProfile = () => {
         onSelectUserProfile={() => {
           setIsProfileSwitchOpen(false);
           setSelectedBusinesses([]);
-          router.replace("/(tabs)/user-profile");
+          requestAnimationFrame(() => {
+            router.replace("/(tabs)/user-profile");
+          });
         }}
         onSelectBusinessProfile={(nextBusinessId) => {
           setIsProfileSwitchOpen(false);
           setSelectedBusinesses([nextBusinessId]);
-          router.replace("/(tabs)/business-profile");
+          requestAnimationFrame(() => {
+            router.replace("/(tabs)/business-profile");
+          });
         }}
       />
     </SafeAreaView>

@@ -40,6 +40,7 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
   }, [businesses.length, getMyBusinesses, visible]);
 
   useEffect(() => {
+    if (!visible) return;
     if (!hasSingleBusiness) return;
     const onlyBusinessId = displayedBusinesses[0]?.id;
     if (!onlyBusinessId) return;
@@ -50,7 +51,13 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
       return;
     }
     onSelectionChange([onlyBusinessId]);
-  }, [displayedBusinesses, hasSingleBusiness, onSelectionChange, selectedBusinesses]);
+  }, [
+    displayedBusinesses,
+    hasSingleBusiness,
+    onSelectionChange,
+    selectedBusinesses,
+    visible,
+  ]);
 
   const toggleSelectAll = () => {
     if (!hasMultipleBusinesses) return;

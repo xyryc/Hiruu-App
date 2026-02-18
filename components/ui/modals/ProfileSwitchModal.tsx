@@ -67,7 +67,7 @@ const ProfileSwitchModal: React.FC<ProfileSwitchModalProps> = ({
   return (
     <Modal
       visible={visible}
-      animationType="fade"
+      animationType="slide"
       transparent={true}
       onRequestClose={onClose}
     >
@@ -103,7 +103,6 @@ const ProfileSwitchModal: React.FC<ProfileSwitchModalProps> = ({
                   <Text className="text-xs text-secondary">{profile.email}</Text>
                 )}
               </View>
-
 
               {selectedBusinessId === null && (
                 <Ionicons name="checkmark-circle" size={24} color="#4FB2F3" />
@@ -151,6 +150,7 @@ const ProfileSwitchModal: React.FC<ProfileSwitchModalProps> = ({
               ))}
             </ScrollView>
           </SafeAreaView>
+
         </View>
       </BlurView>
     </Modal>

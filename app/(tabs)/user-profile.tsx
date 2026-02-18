@@ -128,12 +128,16 @@ const profile = () => {
             onSelectUserProfile={() => {
               setIsProfileSwitchOpen(false);
               setSelectedBusinesses([]);
-              router.replace("/(tabs)/user-profile");
+              requestAnimationFrame(() => {
+                router.replace("/(tabs)/user-profile");
+              });
             }}
             onSelectBusinessProfile={(businessId) => {
               setIsProfileSwitchOpen(false);
               setSelectedBusinesses([businessId]);
-              router.replace("/(tabs)/business-profile");
+              requestAnimationFrame(() => {
+                router.replace("/(tabs)/business-profile");
+              });
             }}
           />
 
