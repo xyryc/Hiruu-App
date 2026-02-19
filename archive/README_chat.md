@@ -41,23 +41,287 @@ This module implements a comprehensive messaging system with real-time capabilit
 ## WebSocket Events
 
 ### Connection
-- Connect to `/chat` namespace with JWT token
-- Automatic room joining based on user's chat rooms
+- Connect to `/chat` and `/calls` namespaces with JWT token
+- Automatic chat room joining is done on `/chat` connection based on user's chat rooms
 
-### Client Events
-- `send_message` - Send a new message
-- `typing_start` - Start typing indicator
-- `typing_stop` - Stop typing indicator
-- `mark_as_read` - Mark messages as read
-- `join_chat` - Join specific chat room
-- `leave_chat` - Leave specific chat room
+```javascript
+// Chat namespace
+const chatSocket = io('http://localhost:3000/chat', {
+  auth: { token: '<JWT_TOKEN>' }
+});
 
-### Server Events
-- `new_message` - New message received
-- `user_typing` - User typing status
-- `message_read` - Message read receipt
-- `user_online` - User came online
-- `user_offline` - User went offline
+// Calls namespace
+const callsSocket = io('http://localhost:3000/calls', {
+  auth: { token: '<JWT_TOKEN>' }
+});
+```
+
+### Chat Namespace (`/chat`)
+
+#### Client -> Server
+- `send_message`
+```json
+{
+  "chatRoomId": "room-uuid",
+  "content": "Hello team",
+  "type": "text",
+  "replyToId": "message-uuid",
+  "mentions": ["user-uuid-1", "user-uuid-2"]
+}
+```
+- `typing_start`
+```json
+{
+  "chatRoomId": "room-uuid"
+}
+```
+- `typing_stop`
+```json
+{
+  "chatRoomId": "room-uuid"
+}
+```
+- `mark_as_read`
+```json
+{
+  "chatRoomId": "room-uuid",
+  "messageId": "message-uuid"
+}
+```
+- `join_chat`
+```json
+{
+  "chatRoomId": "room-uuid"
+}
+```
+- `leave_chat`
+```json
+{
+  "chatRoomId": "room-uuid"
+}
+```
+
+#### Server -> Client
+- `new_message`
+```json
+{
+  "chatRoomId": "room-uuid",
+  "message": {}
+}
+```
+- `user_typing`
+```json
+{
+  "userId": "user-uuid",
+  "userName": "John",
+  "chatRoomId": "room-uuid",
+  "isTyping": true
+}
+```
+- `message_read`
+```json
+{
+  "userId": "user-uuid",
+  "userName": "John",
+  "chatRoomId": "room-uuid",
+  "messageId": "message-uuid"
+}
+```
+- `joined_chat`
+```json
+{
+  "chatRoomId": "room-uuid"
+}
+```
+- `left_chat`
+```json
+{
+  "chatRoomId": "room-uuid"
+}
+```
+- `user_online`
+```json
+{
+  "userId": "user-uuid",
+  "name": "John",
+  "avatar": "https://..."
+}
+```
+- `user_offline`
+```json
+{
+  "userId": "user-uuid"
+}
+```
+- `error`
+```json
+{
+  "message": "Error details"
+}
+```
+
+### Calls Namespace (`/calls`)
+
+#### Client -> Server
+- `join_call`
+```json
+{
+  "callId": "call-uuid"
+}
+```
+- `leave_call`
+```json
+{
+  "callId": "call-uuid"
+}
+```
+- `offer`
+```json
+{
+  "callId": "call-uuid",
+  "targetUserId": "user-uuid",
+  "offer": {}
+}
+```
+- `answer`
+```json
+{
+  "callId": "call-uuid",
+  "targetUserId": "user-uuid",
+  "answer": {}
+}
+```
+- `ice_candidate`
+```json
+{
+  "callId": "call-uuid",
+  "targetUserId": "user-uuid",
+  "candidate": {}
+}
+```
+- `media_state_changed`
+```json
+{
+  "callId": "call-uuid",
+  "isMicMuted": true,
+  "isCameraOff": false,
+  "isSharingScreen": false
+}
+```
+- `call_status_changed`
+```json
+{
+  "callId": "call-uuid",
+  "status": "left",
+  "reason": "Busy"
+}
+```
+
+#### Server -> Client
+- `call_participants`
+```json
+{
+  "callId": "call-uuid",
+  "participants": [
+    {
+      "userId": "user-uuid",
+      "userName": "John",
+      "avatar": "https://...",
+      "status": "joined",
+      "isMicMuted": false,
+      "isCameraOff": false,
+      "isSharingScreen": false
+    }
+  ]
+}
+```
+- `participant_joined`
+```json
+{
+  "userId": "user-uuid",
+  "userName": "John",
+  "avatar": "https://..."
+}
+```
+- `participant_left`
+```json
+{
+  "userId": "user-uuid",
+  "userName": "John"
+}
+```
+- `participant_disconnected`
+```json
+{
+  "userId": "user-uuid",
+  "userName": "John"
+}
+```
+- `participant_media_changed`
+```json
+{
+  "userId": "user-uuid",
+  "userName": "John",
+  "isMicMuted": true,
+  "isCameraOff": false,
+  "isSharingScreen": false
+}
+```
+- `participant_status_changed`
+```json
+{
+  "userId": "user-uuid",
+  "userName": "John",
+  "status": "left",
+  "reason": "Busy"
+}
+```
+- `incoming_call`
+```json
+{
+  "callId": "call-uuid"
+}
+```
+- `call_ended`
+```json
+{
+  "callId": "call-uuid",
+  "reason": "completed",
+  "endedAt": "2026-02-19T10:00:00.000Z"
+}
+```
+- `offer`
+```json
+{
+  "callId": "call-uuid",
+  "fromUserId": "user-uuid",
+  "fromUserName": "John",
+  "offer": {}
+}
+```
+- `answer`
+```json
+{
+  "callId": "call-uuid",
+  "fromUserId": "user-uuid",
+  "fromUserName": "John",
+  "answer": {}
+}
+```
+- `ice_candidate`
+```json
+{
+  "callId": "call-uuid",
+  "fromUserId": "user-uuid",
+  "candidate": {}
+}
+```
+- `error`
+```json
+{
+  "message": "Error details"
+}
+```
 
 ## Usage Examples
 

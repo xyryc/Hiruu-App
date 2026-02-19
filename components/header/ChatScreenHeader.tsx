@@ -1,9 +1,18 @@
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
+import { ActivityIndicator } from "react-native";
 import { Text, TouchableOpacity, View } from "react-native";
 
-const ChatScreenHeader = () => {
+interface ChatScreenHeaderProps {
+  onAudioCallPress?: () => void;
+  isStartingAudioCall?: boolean;
+}
+
+const ChatScreenHeader = ({
+  onAudioCallPress,
+  isStartingAudioCall = false,
+}: ChatScreenHeaderProps) => {
   const router = useRouter();
 
   return (
@@ -19,8 +28,16 @@ const ChatScreenHeader = () => {
       </View>
 
       <View className="flex-row items-center gap-4">
-        <TouchableOpacity className="w-10 h-10 items-center justify-center rounded-full bg-[#F5F5F5] border-[0.5px] border-[#B2B1B165]">
-          <Ionicons name="call-outline" size={20} color="black" />
+        <TouchableOpacity
+          className="w-10 h-10 items-center justify-center rounded-full bg-[#F5F5F5] border-[0.5px] border-[#B2B1B165]"
+          onPress={onAudioCallPress}
+          disabled={isStartingAudioCall}
+        >
+          {isStartingAudioCall ? (
+            <ActivityIndicator size="small" color="#111111" />
+          ) : (
+            <Ionicons name="call-outline" size={20} color="black" />
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity className="w-10 h-10 items-center justify-center rounded-full bg-[#F5F5F5] border-[0.5px] border-[#b2b1b165]">

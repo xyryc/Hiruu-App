@@ -5,8 +5,10 @@ import RenderMessage from "@/components/ui/cards/RenderMessage";
 import ChatInput from "@/components/ui/inputs/ChatInput";
 import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
 import { useChat } from "@/hooks/useChat";
+import { callService } from "@/services/callService";
+import { socketService } from "@/services/socketService";
 import { useAuthStore } from "@/stores/authStore";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
@@ -25,8 +27,10 @@ const ChatScreen = () => {
   const [actualRoomId, setActualRoomId] = useState<string | null>(null);
   const [loadingRoom, setLoadingRoom] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [startingAudioCall, setStartingAudioCall] = useState(false);
   const messagesListRef = useRef<FlatList<any> | null>(null);
   const { user } = useAuthStore();
+  const router = useRouter();
   const params = useLocalSearchParams<{ roomId?: string; userId?: string }>();
 
   // Backend expects roomId from route params.
@@ -159,12 +163,73 @@ const ChatScreen = () => {
     setRefreshing(false);
   }, [refreshMessages]);
 
+  const handleStartAudioCall = useCallback(async () => {
+    if (!actualRoomId || startingAudioCall) return;
+
+    try {
+      setStartingAudioCall(true);
+      const response = await callService.initiateAudioCall(actualRoomId);
+      const callData = response?.data;
+      const callId =
+        callData?.id || callData?.callId || callData?.call?.id || null;
+
+      if (!callId) {
+        toast.error("Call started but call id is missing");
+        return;
+      }
+
+      router.push({
+        pathname: "/screens/jobs/audio-call",
+        params: { callId, roomId: actualRoomId, mode: "outgoing" },
+      });
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to start audio call");
+    } finally {
+      setStartingAudioCall(false);
+    }
+  }, [actualRoomId, router, startingAudioCall]);
+
   useEffect(() => {
     if (!mappedMessages.length) return;
     requestAnimationFrame(() => {
       messagesListRef.current?.scrollToEnd({ animated: true });
     });
   }, [mappedMessages.length]);
+
+  useEffect(() => {
+    if (!actualRoomId) return;
+
+    let incomingHandler: ((data: any) => void) | null = null;
+
+    const setupCallsSocket = async () => {
+      try {
+        await socketService.connectCalls();
+        incomingHandler = (data: any) => {
+          const call = data?.call || data?.data || data;
+          const callRoomId = call?.chatRoomId;
+          const callId = call?.id;
+
+          if (!callId || callRoomId !== actualRoomId) return;
+
+          router.push({
+            pathname: "/screens/jobs/audio-call",
+            params: { callId, roomId: actualRoomId, mode: "incoming" },
+          });
+        };
+        socketService.onIncomingCall(incomingHandler);
+      } catch {
+        // No-op; calling remains available through REST initiate.
+      }
+    };
+
+    setupCallsSocket();
+
+    return () => {
+      if (incomingHandler) {
+        socketService.offIncomingCall(incomingHandler);
+      }
+    };
+  }, [actualRoomId, router]);
 
   // Show loading state while getting room ID
   if (loadingRoom || !actualRoomId) {
@@ -191,7 +256,10 @@ const ChatScreen = () => {
         {/* message content */}
         <View className="bg-[#E5F4FD80] flex-1">
           {/* Header */}
-          <ChatScreenHeader />
+          <ChatScreenHeader
+            onAudioCallPress={handleStartAudioCall}
+            isStartingAudioCall={startingAudioCall}
+          />
 
           {/* Connection Status */}
           {!connected && (

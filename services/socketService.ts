@@ -3,8 +3,10 @@ import { io, Socket } from 'socket.io-client';
 
 class SocketService {
     private socket: Socket | null = null;
+    private callsSocket: Socket | null = null;
     private token: string | null = null;
     private isConnecting: boolean = false;
+    private isCallsConnecting: boolean = false;
 
     async connect(): Promise<Socket> {
         // Return existing connection
@@ -77,9 +79,14 @@ class SocketService {
         if (this.socket) {
             this.socket.disconnect();
             this.socket = null;
-            this.token = null;
-            this.isConnecting = false;
         }
+        if (this.callsSocket) {
+            this.callsSocket.disconnect();
+            this.callsSocket = null;
+        }
+        this.token = null;
+        this.isConnecting = false;
+        this.isCallsConnecting = false;
     }
 
     getSocket(): Socket | null {
@@ -88,6 +95,57 @@ class SocketService {
 
     isConnected(): boolean {
         return this.socket?.connected || false;
+    }
+
+    async connectCalls(): Promise<Socket> {
+        if (this.callsSocket?.connected) {
+            return this.callsSocket;
+        }
+
+        if (this.isCallsConnecting) {
+            return new Promise((resolve) => {
+                const checkInterval = setInterval(() => {
+                    if (!this.isCallsConnecting && this.callsSocket) {
+                        clearInterval(checkInterval);
+                        resolve(this.callsSocket);
+                    }
+                }, 100);
+            });
+        }
+
+        this.isCallsConnecting = true;
+
+        try {
+            this.token = this.token || await AsyncStorage.getItem('auth_access_token');
+            let baseURL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000';
+            baseURL = baseURL.replace(/\/api\/v1\/?$/, '');
+
+            this.callsSocket = io(`${baseURL}/calls`, {
+                auth: { token: this.token },
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
+                reconnectionAttempts: 5,
+            });
+
+            this.callsSocket.on('connect', () => {
+                this.isCallsConnecting = false;
+            });
+
+            this.callsSocket.on('connect_error', () => {
+                this.isCallsConnecting = false;
+            });
+
+            this.callsSocket.on('disconnect', () => {
+                this.isCallsConnecting = false;
+            });
+
+            return this.callsSocket;
+        } catch (error) {
+            this.isCallsConnecting = false;
+            throw error;
+        }
     }
 
     joinChat(chatRoomId: string) {
@@ -140,6 +198,26 @@ class SocketService {
 
     offUserTyping(callback?: (data: any) => void) {
         this.socket?.off('user_typing', callback);
+    }
+
+    getCallsSocket(): Socket | null {
+        return this.callsSocket;
+    }
+
+    onIncomingCall(callback: (data: any) => void) {
+        this.callsSocket?.on('incoming_call', callback);
+    }
+
+    offIncomingCall(callback?: (data: any) => void) {
+        this.callsSocket?.off('incoming_call', callback);
+    }
+
+    onCallEnded(callback: (data: any) => void) {
+        this.callsSocket?.on('call_ended', callback);
+    }
+
+    offCallEnded(callback?: (data: any) => void) {
+        this.callsSocket?.off('call_ended', callback);
     }
 }
 
