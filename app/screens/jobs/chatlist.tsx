@@ -1,8 +1,8 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import ChatListItem from "@/components/ui/cards/ChatListItem";
 import SearchBar from "@/components/ui/inputs/SearchBar";
-import { useAuthStore } from "@/stores/authStore";
 import { chatService } from "@/services/chatService";
+import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useMemo, useState } from "react";
@@ -128,13 +128,19 @@ const ChatList = () => {
             return (
               <ChatListItem
                 key={room.id}
-                onPress={() => router.push("/screens/jobs/chatscreen")}
+                onPress={() =>
+                  router.push({
+                    pathname: "/screens/jobs/chatscreen",
+                    params: { roomId: room.id },
+                  })
+                }
                 title={title}
                 subtitle={subtitle}
                 time={time}
                 avatar={avatar}
                 unreadCount={room.unreadCount || 0}
               />
+
             );
           })
         )}

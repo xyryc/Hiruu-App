@@ -5,7 +5,6 @@ import RenderMessage from "@/components/ui/cards/RenderMessage";
 import ChatInput from "@/components/ui/inputs/ChatInput";
 import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
 import { useChat } from "@/hooks/useChat";
-import { chatService } from "@/services/chatService";
 import { useAuthStore } from "@/stores/authStore";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
@@ -28,58 +27,29 @@ const ChatScreen = () => {
   const [loadingRoom, setLoadingRoom] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuthStore();
-  const params = useLocalSearchParams();
+  const params = useLocalSearchParams<{ roomId?: string; userId?: string }>();
 
-  // This might be a roomId or a userId (for creating/getting a direct chat)
-  const paramId = typeof params?.roomId === "string"
-    ? params.roomId
-    : "b8712c1d-9473-4450-989e-9497cb675211";
+  // Backend expects roomId from route params.
+  const roomId =
+    typeof params?.roomId === "string" ? params.roomId : undefined;
 
-  // Get or create chat room (only run once per paramId change)
+
+  // Initialize room strictly from params.roomId.
   useEffect(() => {
-    let isMounted = true;
-
-    const initializeChat = async () => {
-      try {
-        setLoadingRoom(true);
-
-        // Check if paramId is a valid room ID by trying to load messages
-        try {
-          await chatService.getRoomMessages(paramId, 1, 1);
-          if (isMounted) {
-            setActualRoomId(paramId);
-          }
-        } catch (error: any) {
-          // If it fails, assume it's a user ID and create/get direct chat
-          const result = await chatService.createDirectChat(paramId);
-          const roomId = result?.data?.id;
-
-          if (roomId && isMounted) {
-            setActualRoomId(roomId);
-          } else {
-            throw new Error('Failed to get room ID from response');
-          }
-        }
-      } catch (error: any) {
-        console.error('Failed to initialize chat:', error.message);
-        if (isMounted) {
-          toast.error('Failed to load chat');
-        }
-      } finally {
-        if (isMounted) {
-          setLoadingRoom(false);
-        }
-      }
-    };
-
-    if (user?.id && !actualRoomId) {
-      initializeChat();
+    setLoadingRoom(true);
+    if (!user?.id) {
+      setLoadingRoom(false);
+      return;
     }
-
-    return () => {
-      isMounted = false;
-    };
-  }, [paramId, user?.id]);
+    if (!roomId) {
+      toast.error("Missing chat room id");
+      setActualRoomId(null);
+      setLoadingRoom(false);
+      return;
+    }
+    setActualRoomId(roomId);
+    setLoadingRoom(false);
+  }, [roomId, user?.id]);
 
   // IMPORTANT: Always call useChat hook unconditionally
   // Pass empty string if roomId not ready yet
