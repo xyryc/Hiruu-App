@@ -7,7 +7,7 @@ import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
 import { useChat } from "@/hooks/useChat";
 import { useAuthStore } from "@/stores/authStore";
 import { useLocalSearchParams } from "expo-router";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -25,6 +25,7 @@ const ChatScreen = () => {
   const [actualRoomId, setActualRoomId] = useState<string | null>(null);
   const [loadingRoom, setLoadingRoom] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const messagesListRef = useRef<FlatList<any> | null>(null);
   const { user } = useAuthStore();
   const params = useLocalSearchParams<{ roomId?: string; userId?: string }>();
 
@@ -158,6 +159,13 @@ const ChatScreen = () => {
     setRefreshing(false);
   }, [refreshMessages]);
 
+  useEffect(() => {
+    if (!mappedMessages.length) return;
+    requestAnimationFrame(() => {
+      messagesListRef.current?.scrollToEnd({ animated: true });
+    });
+  }, [mappedMessages.length]);
+
   // Show loading state while getting room ID
   if (loadingRoom || !actualRoomId) {
     return (
@@ -202,6 +210,7 @@ const ChatScreen = () => {
 
           {/* Messages */}
           <FlatList
+            ref={messagesListRef}
             data={mappedMessages}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={{ paddingHorizontal: 16 }}
