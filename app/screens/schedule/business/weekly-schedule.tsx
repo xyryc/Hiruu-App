@@ -123,8 +123,7 @@ const SavedShiftTemplate = () => {
 
     try {
       setIsSubmitting(true);
-      const result = await createWeeklyScheduleFromTemplates(businessId, payload);
-      console.log("result", result)
+      await createWeeklyScheduleFromTemplates(businessId, payload);
       toast.success("Weekly schedule created successfully.");
       router.back();
     } catch (error: any) {
