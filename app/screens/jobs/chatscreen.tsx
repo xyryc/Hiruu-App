@@ -6,7 +6,6 @@ import ChatInput from "@/components/ui/inputs/ChatInput";
 import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
 import { useChat } from "@/hooks/useChat";
 import { useAuthStore } from "@/stores/authStore";
-import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -89,23 +88,52 @@ const ChatScreen = () => {
     return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   }, []);
 
+  const formatDateLabel = useCallback((dateString?: string | null) => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return "";
+
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+
+    const isSameDay = (a: Date, b: Date) =>
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate();
+
+    if (isSameDay(date, today)) return "Today";
+    if (isSameDay(date, yesterday)) return "Yesterday";
+
+    return date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+  }, []);
+
   const mappedMessages = useMemo(() => {
     const currentUserId = user?.id;
-    return [...messages]
-      .sort((a, b) => {
-        const aTime = new Date(a.createdAt || 0).getTime();
-        const bTime = new Date(b.createdAt || 0).getTime();
-        return aTime - bTime;
-      })
-      .map((msg) => ({
+    const sortedMessages = [...messages].sort((a, b) => {
+      const aTime = new Date(a.createdAt || 0).getTime();
+      const bTime = new Date(b.createdAt || 0).getTime();
+      return aTime - bTime;
+    });
+
+    return sortedMessages.map((msg, index) => {
+      const prev = sortedMessages[index - 1];
+      const currentDateLabel = formatDateLabel(msg.createdAt);
+      const prevDateLabel = prev ? formatDateLabel(prev.createdAt) : "";
+
+      return {
         id: msg.id,
         text: msg.content || "",
         time: formatTime(msg.createdAt),
         isSent: msg.senderId === currentUserId,
         status: msg.status,
         avatar: msg.sender?.avatar || require("@/assets/images/placeholder.png"),
-      }));
-  }, [messages, user?.id, formatTime]);
+        showDateSeparator: index === 0 || currentDateLabel !== prevDateLabel,
+        dateLabel: currentDateLabel,
+      };
+    });
+  }, [messages, user?.id, formatDateLabel, formatTime]);
 
   const handleSend = useCallback(async () => {
     if (!message.trim() || sending) return;
@@ -179,7 +207,20 @@ const ChatScreen = () => {
             contentContainerStyle={{ paddingHorizontal: 16 }}
             showsVerticalScrollIndicator={false}
             inverted={false}
-            renderItem={({ item: msg }) => <RenderMessage msg={msg} />}
+            renderItem={({ item: msg }) => (
+              <>
+                {msg.showDateSeparator ? (
+                  <View className="flex-row items-center justify-center my-6">
+                    <View className="h-[1px] flex-1 bg-[#D1D5DB]" />
+                    <Text className="mx-4 text-xs font-proximanova-regular text-primary">
+                      {msg.dateLabel}
+                    </Text>
+                    <View className="h-[1px] flex-1 bg-[#D1D5DB]" />
+                  </View>
+                ) : null}
+                <RenderMessage msg={msg} />
+              </>
+            )}
             ListEmptyComponent={
               loading ? (
                 <View className="py-6 items-center">
@@ -188,27 +229,6 @@ const ChatScreen = () => {
               ) : (
                 <NoMessages />
               )
-            }
-            ListFooterComponent={
-              mappedMessages.length > 0 ? (
-                <View className="flex-row items-center justify-center my-6">
-                  <LinearGradient
-                    colors={["transparent", "#D1D5DB"]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    className="h-[1px] flex-1"
-                  />
-                  <Text className="mx-4 text-xs font-proximanova-regular text-primary">
-                    Today
-                  </Text>
-                  <LinearGradient
-                    colors={["#D1D5DB", "transparent"]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    className="h-[1px] flex-1"
-                  />
-                </View>
-              ) : null
             }
             refreshControl={
               <RefreshControl

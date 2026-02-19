@@ -31,6 +31,7 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
     const [connected, setConnected] = useState(false);
     const { user } = useAuthStore();
     const isMounted = useRef(true);
+    const typingResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     // Load initial messages
     const loadMessages = useCallback(async () => {
@@ -55,6 +56,24 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
             }
         }
     }, [roomId, onError]);
+
+    const clearTypingState = useCallback(() => {
+        setIsTyping(false);
+        setTypingUser(null);
+        if (typingResetTimeoutRef.current) {
+            clearTimeout(typingResetTimeoutRef.current);
+            typingResetTimeoutRef.current = null;
+        }
+    }, []);
+
+    const scheduleTypingReset = useCallback(() => {
+        if (typingResetTimeoutRef.current) {
+            clearTimeout(typingResetTimeoutRef.current);
+        }
+        typingResetTimeoutRef.current = setTimeout(() => {
+            clearTypingState();
+        }, 2000);
+    }, [clearTypingState]);
 
     // Send message
     const sendMessage = useCallback(
@@ -98,9 +117,10 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
                 setMessages((prev) => prev.filter((msg) => !msg.id.startsWith('temp-')));
             } finally {
                 setSending(false);
+                clearTypingState();
             }
         },
-        [roomId, user, sending, onError]
+        [roomId, user, sending, onError, clearTypingState]
     );
 
     // Typing indicators
@@ -141,6 +161,7 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
                 // Listen for new messages
                 const handleNewMessage = (data: any) => {
                     if (data.message && data.message.chatRoomId === roomId) {
+                        clearTypingState();
                         setMessages((prev) => {
                             // Remove temp message if exists
                             const filtered = prev.filter((msg) => !msg.id.startsWith('temp-'));
@@ -155,18 +176,58 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
 
                 // Listen for typing indicators
                 const handleUserTyping = (data: any) => {
-                    if (data.chatRoomId === roomId && data.userId !== user?.id) {
+                    const payload = data || {};
+                    const typingUserId =
+                        payload.userId ||
+                        payload.senderId ||
+                        payload.user?.id ||
+                        payload.sender?.id;
+
+                    // Ignore own typing events even if backend shape changes.
+                    if (typingUserId && typingUserId === user?.id) {
+                        return;
+                    }
+
+                    const eventRoomId = payload.chatRoomId || payload.roomId || payload.chatId;
+                    if (!eventRoomId || eventRoomId !== roomId) {
+                        return;
+                    }
+
+                    const isUserTyping = payload.isTyping !== false && payload.typing !== false;
+                    if (isUserTyping) {
                         setIsTyping(true);
-                        setTypingUser(data.userName || 'Someone');
+                        setTypingUser(
+                            payload.userName ||
+                            payload.name ||
+                            payload.user?.name ||
+                            payload.sender?.name ||
+                            'Someone'
+                        );
+                        scheduleTypingReset();
+                    } else {
+                        clearTypingState();
                     }
                 };
 
-                // Listen for stop typing
+                // Listen for explicit stop-typing event when backend emits it.
                 const handleTypingStop = (data: any) => {
-                    if (data.chatRoomId === roomId) {
-                        setIsTyping(false);
-                        setTypingUser(null);
+                    const payload = data || {};
+                    const eventRoomId = payload.chatRoomId || payload.roomId || payload.chatId;
+                    if (!eventRoomId || eventRoomId !== roomId) {
+                        return;
                     }
+
+                    const typingUserId =
+                        payload.userId ||
+                        payload.senderId ||
+                        payload.user?.id ||
+                        payload.sender?.id;
+
+                    if (typingUserId && typingUserId === user?.id) {
+                        return;
+                    }
+
+                    clearTypingState();
                 };
 
                 const handleError = (error: any) => {
@@ -214,7 +275,16 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [roomId]); // Only re-run when roomId changes
+    }, [roomId, user?.id, clearTypingState, scheduleTypingReset]);
+
+    useEffect(() => {
+        return () => {
+            if (typingResetTimeoutRef.current) {
+                clearTimeout(typingResetTimeoutRef.current);
+                typingResetTimeoutRef.current = null;
+            }
+        };
+    }, []);
 
     return {
         messages,
