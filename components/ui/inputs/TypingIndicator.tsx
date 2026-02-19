@@ -48,7 +48,7 @@ const TypingIndicator: React.FC<TypingIndicatorProps> = ({ isTyping = false, use
   if (!isTyping) return null;
 
   return (
-    <View className="flex-row items-center mb-4 gap-2">
+    <View className="flex-row items-center pl-4 py-4 gap-2 bg-[#E5F4FD80]">
       <View className="flex-row gap-1.5 bg-white px-3 py-2 rounded-2xl rounded-bl-sm">
         <Animated.View
           className="w-2 h-2 rounded-full bg-gray-400"

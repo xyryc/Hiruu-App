@@ -91,14 +91,20 @@ const ChatScreen = () => {
 
   const mappedMessages = useMemo(() => {
     const currentUserId = user?.id;
-    return messages.map((msg) => ({
-      id: msg.id,
-      text: msg.content || "",
-      time: formatTime(msg.createdAt),
-      isSent: msg.senderId === currentUserId,
-      status: msg.status,
-      avatar: msg.sender?.avatar || require("@/assets/images/placeholder.png"),
-    }));
+    return [...messages]
+      .sort((a, b) => {
+        const aTime = new Date(a.createdAt || 0).getTime();
+        const bTime = new Date(b.createdAt || 0).getTime();
+        return aTime - bTime;
+      })
+      .map((msg) => ({
+        id: msg.id,
+        text: msg.content || "",
+        time: formatTime(msg.createdAt),
+        isSent: msg.senderId === currentUserId,
+        status: msg.status,
+        avatar: msg.sender?.avatar || require("@/assets/images/placeholder.png"),
+      }));
   }, [messages, user?.id, formatTime]);
 
   const handleSend = useCallback(async () => {
@@ -172,11 +178,8 @@ const ChatScreen = () => {
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={{ paddingHorizontal: 16 }}
             showsVerticalScrollIndicator={false}
-            inverted={true}
+            inverted={false}
             renderItem={({ item: msg }) => <RenderMessage msg={msg} />}
-            ListHeaderComponent={
-              <TypingIndicator isTyping={isTyping} userName={typingUser || undefined} />
-            }
             ListEmptyComponent={
               loading ? (
                 <View className="py-6 items-center">
@@ -216,6 +219,8 @@ const ChatScreen = () => {
             }
           />
         </View>
+
+        <TypingIndicator isTyping={isTyping} userName={typingUser || undefined} />
 
         {/* Input Bar */}
         <ChatInput
