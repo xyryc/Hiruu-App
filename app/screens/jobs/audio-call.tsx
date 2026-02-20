@@ -221,9 +221,10 @@ const AudioCallScreen = () => {
 
   useEffect(() => {
     const playState = async () => {
-      const shouldPlayIncoming = isIncomingPending;
+      const isConnected = remoteJoined || Boolean(startedAt);
+      const shouldPlayIncoming = isIncomingPending && !isConnected;
       const shouldPlayRingback =
-        mode === "outgoing" && !isIncomingPending && !remoteJoined;
+        mode === "outgoing" && !isIncomingPending && !isConnected;
 
       if (shouldPlayIncoming) {
         const incoming = ensureIncomingTone();
@@ -241,7 +242,13 @@ const AudioCallScreen = () => {
     };
 
     void playState();
-  }, [isIncomingPending, mode, remoteJoined]);
+  }, [isIncomingPending, mode, remoteJoined, startedAt]);
+
+  useEffect(() => {
+    if (!(remoteJoined || startedAt)) return;
+    void stopTone(incomingToneRef.current);
+    void stopTone(ringbackToneRef.current);
+  }, [remoteJoined, startedAt]);
 
   const leaveOnce = () => {
     if (!callId || hasLeftRef.current) return;
@@ -622,6 +629,8 @@ const AudioCallScreen = () => {
       setJoining(false);
       setRemoteJoined(true);
       setParticipantsCount((prev) => Math.max(2, prev));
+      await stopTone(incomingToneRef.current);
+      await stopTone(ringbackToneRef.current);
       await ensureWebRTC();
     } catch (error: any) {
       const message =
