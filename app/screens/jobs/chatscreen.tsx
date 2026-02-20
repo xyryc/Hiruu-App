@@ -11,6 +11,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   FlatList,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   RefreshControl,
@@ -27,6 +28,7 @@ const ChatScreen = () => {
   const [loadingRoom, setLoadingRoom] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [startingAudioCall, setStartingAudioCall] = useState(false);
+  const [androidKeyboardOffset, setAndroidKeyboardOffset] = useState(0);
   const messagesListRef = useRef<FlatList<any> | null>(null);
   const { user } = useAuthStore();
   const router = useRouter();
@@ -326,6 +328,22 @@ const ChatScreen = () => {
     });
   }, [mappedMessages.length]);
 
+  useEffect(() => {
+    if (Platform.OS !== "android") return;
+
+    const showSub = Keyboard.addListener("keyboardDidShow", (event) => {
+      setAndroidKeyboardOffset(event.endCoordinates?.height || 0);
+    });
+    const hideSub = Keyboard.addListener("keyboardDidHide", () => {
+      setAndroidKeyboardOffset(0);
+    });
+
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
   // Show loading state while getting room ID
   if (loadingRoom || !actualRoomId) {
     return (
@@ -346,7 +364,7 @@ const ChatScreen = () => {
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+        keyboardVerticalOffset={0}
       >
         {/* message content */}
         <View className="bg-[#E5F4FD80] flex-1">
@@ -409,21 +427,24 @@ const ChatScreen = () => {
                 tintColor="#4FB2F3"
               />
             }
+            keyboardShouldPersistTaps="handled"
           />
         </View>
 
-        <TypingIndicator isTyping={isTyping} userName={typingUser || undefined} />
+        <View style={{ marginBottom: Platform.OS === "android" ? androidKeyboardOffset : 0 }}>
+          <TypingIndicator isTyping={isTyping} userName={typingUser || undefined} />
 
-        {/* Input Bar */}
-        <ChatInput
-          message={message}
-          setMessage={setMessage}
-          onSend={handleSend}
-          onTyping={handleTyping}
-          onStopTyping={handleStopTyping}
-          isSending={sending}
-          disabled={!connected}
-        />
+          {/* Input Bar */}
+          <ChatInput
+            message={message}
+            setMessage={setMessage}
+            onSend={handleSend}
+            onTyping={handleTyping}
+            onStopTyping={handleStopTyping}
+            isSending={sending}
+            disabled={!connected}
+          />
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
