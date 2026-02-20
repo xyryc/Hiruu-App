@@ -46,6 +46,12 @@ const AudioCallScreen = () => {
   const [rejecting, setRejecting] = useState(false);
   const [isIncomingPending, setIsIncomingPending] = useState(mode === "incoming");
   const [webrtcReady, setWebrtcReady] = useState(false);
+  const [localAudioReady, setLocalAudioReady] = useState(false);
+  const [remoteAudioReady, setRemoteAudioReady] = useState(false);
+  const [pcConnectionState, setPcConnectionState] = useState("new");
+  const [pcIceState, setPcIceState] = useState("new");
+  const [pcSignalingState, setPcSignalingState] = useState("stable");
+  const [lastWebrtcError, setLastWebrtcError] = useState<string>("");
   const hasLeftRef = useRef(false);
   const hasClosedRef = useRef(false);
   const hasAcceptedIncomingRef = useRef(mode !== "incoming");
@@ -124,6 +130,11 @@ const AudioCallScreen = () => {
         localStreamRef.current = null;
       }
       setWebrtcReady(false);
+      setLocalAudioReady(false);
+      setRemoteAudioReady(false);
+      setPcConnectionState("closed");
+      setPcIceState("closed");
+      setPcSignalingState("closed");
     } catch {
       // no-op
     }
@@ -145,6 +156,7 @@ const AudioCallScreen = () => {
       audio: true,
       video: false,
     });
+    setLocalAudioReady(stream.getAudioTracks?.().length > 0);
     localStreamRef.current = stream;
     stream.getTracks().forEach((track: any) => pc.addTrack(track, stream));
 
@@ -157,11 +169,25 @@ const AudioCallScreen = () => {
 
     pc.ontrack = () => {
       // Remote audio track received; playback is handled by native WebRTC audio session.
+      setRemoteAudioReady(true);
+    };
+
+    pc.onconnectionstatechange = () => {
+      setPcConnectionState(String(pc.connectionState || ""));
+    };
+
+    pc.oniceconnectionstatechange = () => {
+      setPcIceState(String(pc.iceConnectionState || ""));
+    };
+
+    pc.onsignalingstatechange = () => {
+      setPcSignalingState(String(pc.signalingState || ""));
     };
 
     pcRef.current = pc;
-    setWebrtcReady(true);
-    return pc;
+      setWebrtcReady(true);
+      setLastWebrtcError("");
+      return pc;
   };
 
   const flushPendingCandidates = async () => {
@@ -178,11 +204,16 @@ const AudioCallScreen = () => {
   };
 
   const createAndSendOffer = async () => {
-    if (!callId || hasSentOfferRef.current) return;
+    if (!callId) return;
     const targetUserId = remoteUserIdRef.current;
     if (!targetUserId) return;
 
     const pc = await ensureWebRTC();
+    if (hasSentOfferRef.current && pc.localDescription && !pc.remoteDescription) {
+      socketService.sendOffer(callId, targetUserId, pc.localDescription);
+      return;
+    }
+    if (hasSentOfferRef.current) return;
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
     socketService.sendOffer(callId, targetUserId, offer);
@@ -192,8 +223,12 @@ const AudioCallScreen = () => {
   const stopTone = async (player: any) => {
     if (!player) return;
     try {
-      player.pause();
-      await player.seekTo(0);
+      if (typeof player.stop === "function") {
+        player.stop();
+      } else {
+        player.pause?.();
+        await player.seekTo?.(0);
+      }
     } catch {
       // no-op
     }
@@ -291,6 +326,12 @@ const AudioCallScreen = () => {
         const participants = Array.isArray(details?.data?.participants)
           ? details.data.participants
           : [];
+        const initialRemote = participants.find(
+          (item: any) => item?.userId && item.userId !== user?.id
+        );
+        if (initialRemote?.userId) {
+          remoteUserIdRef.current = initialRemote.userId;
+        }
         const me = participants.find((item: any) => item?.userId === user?.id);
         const myRole = String(me?.role || "").toLowerCase();
         const myStatus = String(me?.status || "").toLowerCase();
@@ -385,7 +426,6 @@ const AudioCallScreen = () => {
             void createAndSendOffer();
           }
           if (
-            hasConnectedOnceRef.current &&
             remoteParticipants.length > 0 &&
             !hasRemoteActive
           ) {
@@ -427,9 +467,17 @@ const AudioCallScreen = () => {
             }
             return;
           }
+          remoteUserIdRef.current = participantId;
+          if (mode === "outgoing" && status === "joined") {
+            hasConnectedOnceRef.current = true;
+            setRemoteJoined(true);
+            setJoining(false);
+            void stopTone(incomingToneRef.current);
+            void stopTone(ringbackToneRef.current);
+            void createAndSendOffer();
+          }
           if (status === "declined" || status === "missed" || status === "left") {
-            toast.success("Call ended");
-            router.back();
+            closeCallScreen();
           }
         };
 
@@ -477,6 +525,7 @@ const AudioCallScreen = () => {
             await pc.setLocalDescription(answer);
             socketService.sendAnswer(callId, fromUserId, answer);
           } catch (error: any) {
+            setLastWebrtcError(error?.message || "offer handling failed");
             toast.error(error?.message || "Failed to process incoming call offer");
           }
         };
@@ -489,7 +538,13 @@ const AudioCallScreen = () => {
             const pc = await ensureWebRTC();
             await pc.setRemoteDescription(new RTCSessionDescription(answer));
             await flushPendingCandidates();
+            hasConnectedOnceRef.current = true;
+            setRemoteJoined(true);
+            setJoining(false);
+            void stopTone(incomingToneRef.current);
+            void stopTone(ringbackToneRef.current);
           } catch (error: any) {
+            setLastWebrtcError(error?.message || "answer handling failed");
             toast.error(error?.message || "Failed to process call answer");
           }
         };
@@ -573,6 +628,12 @@ const AudioCallScreen = () => {
         const participants = Array.isArray(details?.data?.participants)
           ? details.data.participants
           : [];
+        const hasRemoteJoined = participants.some(
+          (item: any) =>
+            item?.userId &&
+            item.userId !== user?.id &&
+            String(item?.status || "").toLowerCase() === "joined"
+        );
         const hasRemoteActive = participants.some(
           (item: any) =>
             item?.userId &&
@@ -581,6 +642,16 @@ const AudioCallScreen = () => {
               String(item?.status || "").toLowerCase()
             )
         );
+
+        if (hasRemoteJoined) {
+          hasConnectedOnceRef.current = true;
+          setRemoteJoined(true);
+          setJoining(false);
+          setIsIncomingPending(false);
+          setParticipantsCount((prev) => Math.max(2, prev));
+          void stopTone(incomingToneRef.current);
+          void stopTone(ringbackToneRef.current);
+        }
 
         if (["ended", "completed", "cancelled"].includes(status)) {
           closeCallScreen();
@@ -689,6 +760,26 @@ const AudioCallScreen = () => {
           <Text className="font-proximanova-regular text-[#94A3B8] mt-1 text-xs">
             Audio: {webrtcReady ? "connected" : "preparing"}
           </Text>
+          <View className="mt-3 bg-[#111827] rounded-lg px-3 py-2 w-full">
+            <Text className="text-[#93C5FD] text-[11px] font-proximanova-semibold">
+              WebRTC Debug
+            </Text>
+            <Text className="text-[#CBD5E1] text-[10px] font-proximanova-regular mt-1">
+              localAudio: {localAudioReady ? "yes" : "no"} | remoteAudio:{" "}
+              {remoteAudioReady ? "yes" : "no"}
+            </Text>
+            <Text className="text-[#CBD5E1] text-[10px] font-proximanova-regular">
+              pc: {pcConnectionState} | ice: {pcIceState}
+            </Text>
+            <Text className="text-[#CBD5E1] text-[10px] font-proximanova-regular">
+              signaling: {pcSignalingState}
+            </Text>
+            {lastWebrtcError ? (
+              <Text className="text-[#FCA5A5] text-[10px] font-proximanova-regular mt-1">
+                error: {lastWebrtcError}
+              </Text>
+            ) : null}
+          </View>
           {joining ? (
             <ActivityIndicator className="mt-4" color="#ffffff" />
           ) : null}
