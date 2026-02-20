@@ -1,10 +1,12 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import JobCard from "@/components/ui/cards/JobCard";
 import SearchBar from "@/components/ui/inputs/SearchBar";
+import { useBusinessStore } from '@/stores/businessStore';
+import axiosInstance from '@/utils/axios';
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import {
   ScrollView,
   StatusBar,
@@ -16,6 +18,19 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserJobs = () => {
   const router = useRouter();
+  const selectedBusinesses = useBusinessStore((s) => s.selectedBusinesses);
+
+  const businessId = selectedBusinesses[0];
+  //  THIS IS FOR FEATURES JOB API
+  useEffect(() => {
+    axiosInstance.get(`recruitment/${businessId}/featured`)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }, []);
 
   return (
     <SafeAreaView
@@ -94,9 +109,6 @@ const UserJobs = () => {
             showsHorizontalScrollIndicator={false}
             className="pl-5"
           >
-            <JobCard className="mr-2.5" />
-            <JobCard className="mr-2.5" />
-            <JobCard className="mr-2.5" />
             <JobCard className="mr-2.5" />
           </ScrollView>
         </View>

@@ -4,7 +4,7 @@ import { AxiosError } from "axios";
 import { create } from "zustand";
 
 type CreateRecruitmentPayload = {
-  name: string;
+  roleId: string;
   description: string;
   gender: string;
   experience: string;

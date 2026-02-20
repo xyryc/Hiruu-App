@@ -44,7 +44,7 @@ const Login = () => {
           setEmail(savedEmail);
         }
       } catch {
-        // no-op
+        console.log("Error loading last email");
       }
     };
 

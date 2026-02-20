@@ -41,13 +41,11 @@ const RoleSelector = ({
     setLocalSelectedRole(selectedRole || null);
   }, [selectedRole]);
 
-  const filteredRoles = useMemo(
-    () =>
-      roles.filter((role) =>
-        role.name.toLowerCase().includes(searchQuery.toLowerCase())
-      ),
-    [roles, searchQuery]
-  );
+  const filteredRoles = useMemo(() => {
+    return roles.filter((role) =>
+      role.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [roles, searchQuery]);
 
   const handleRoleSelect = (role: RoleItem) => {
     setLocalSelectedRole(role);

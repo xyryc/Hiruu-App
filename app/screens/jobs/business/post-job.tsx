@@ -13,8 +13,8 @@ import {
   Platform,
   ScrollView,
   Text,
-  View,
   TextInput,
+  View,
 } from "react-native";
 import {
   SafeAreaView,
@@ -28,8 +28,11 @@ const PostJob = () => {
   const insets = useSafeAreaInsets();
   const selectedBusinesses = useBusinessStore((s) => s.selectedBusinesses);
   const getRoles = useBusinessStore((s) => s.getRoles);
+  const getMyBusinessRoles = useBusinessStore((s) => s.getMyBusinessRoles);
   const createRecruitment = useJobStore((s) => s.createRecruitment);
   const isSubmitting = useJobStore((s) => s.isLoading);
+
+  const businessId = selectedBusinesses[0];
 
   const [selectedRole, setSelectedRole] = useState<{ id: string; name: string } | null>(null);
   const [roleOptions, setRoleOptions] = useState<{ id: string; name: string }[]>(
@@ -55,13 +58,29 @@ const PostJob = () => {
     const loadRoles = async () => {
       try {
         setRolesLoading(true);
-        const data = await getRoles();
+
+        // Fetch ONLY business-specific roles
+        const businessRoles = await getMyBusinessRoles(businessId).catch(e => {
+          console.error("getMyBusinessRoles error:", e);
+          return [];
+        });
+
         if (isMounted) {
-          const normalized = (Array.isArray(data) ? data : [])
-            .filter((item: any) => item?.id && item?.name)
-            .map((item: any) => ({ id: item.id, name: item.name }));
-          setRoleOptions(normalized);
+          const validRoles = (Array.isArray(businessRoles) ? businessRoles : [])
+            .filter((item: any) => item?.role?.name || item?.name) // Check for name in either place
+            .map((item: any) => ({
+              id: item.id, // Use the BusinessRole ID (top level)
+              name: item.role?.name || item.name // Prefer nested name
+            }));
+
+          setRoleOptions(validRoles);
+
+          if (validRoles.length === 0) {
+            toast("No roles found for this business. Please create a role first.");
+          }
         }
+      } catch (error) {
+        console.error("[PostJob] Failed to load roles:", error);
       } finally {
         if (isMounted) {
           setRolesLoading(false);
@@ -73,7 +92,7 @@ const PostJob = () => {
     return () => {
       isMounted = false;
     };
-  }, [getRoles]);
+  }, [getRoles, getMyBusinessRoles, businessId]);
 
   const genderOptions = useMemo(
     () => [
@@ -113,13 +132,15 @@ const PostJob = () => {
   };
 
   const handlePostJob = async () => {
+    // Correctly retrieve businessId from store
     const businessId = selectedBusinesses[0];
     if (!businessId) {
       toast.error("Please select a business profile first.");
       return;
     }
 
-    if (!selectedRole?.name?.trim()) {
+    // Role ID validation
+    if (!selectedRole?.id) {
       toast.error("Role is required.");
       return;
     }
@@ -159,19 +180,20 @@ const PostJob = () => {
       return;
     }
 
+    // Payload formatted as per senior engineer standards
     const payload = {
-      name: selectedRole.name.trim(),
+      roleId: selectedRole.id, // Using selectedRole ID
       description: jobDescription.trim(),
       gender,
-      experience: experience.trim(),
+      experience: experience.trim() || "0",
       ageMin: parsedAgeMin,
       ageMax: parsedAgeMax,
       shiftStartTime: formatTime24(shiftStartTime),
       shiftEndTime: formatTime24(shiftEndTime),
       salaryMin: parsedSalaryMin,
       salaryMax: parsedSalaryMax,
-      requiredSkills: [],
-      salaryType: "hourly" as const,
+      requiredSkills: [], // Placeholder for future enhancement
+      salaryType: (jobType === "hourly" ? "hourly" : "monthly") as "hourly" | "monthly",
       numberOfOpenings: parsedOpenings,
     };
 
@@ -180,7 +202,10 @@ const PostJob = () => {
       toast.success("Job posted successfully.");
       router.back();
     } catch (error: any) {
-      toast.error(error?.message || "Failed to post job");
+      // Professional error handling with specific feedback
+      const errorMessage = error instanceof Error ? error.message : "Failed to post job";
+      toast.error(errorMessage);
+      console.error("[PostJob] API Error:", error);
     }
   };
 
