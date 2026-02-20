@@ -6,7 +6,6 @@ import ChatInput from "@/components/ui/inputs/ChatInput";
 import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
 import { useChat } from "@/hooks/useChat";
 import { callService } from "@/services/callService";
-import { socketService } from "@/services/socketService";
 import { useAuthStore } from "@/stores/authStore";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -195,41 +194,6 @@ const ChatScreen = () => {
       messagesListRef.current?.scrollToEnd({ animated: true });
     });
   }, [mappedMessages.length]);
-
-  useEffect(() => {
-    if (!actualRoomId) return;
-
-    let incomingHandler: ((data: any) => void) | null = null;
-
-    const setupCallsSocket = async () => {
-      try {
-        await socketService.connectCalls();
-        incomingHandler = (data: any) => {
-          const call = data?.call || data?.data || data;
-          const callRoomId = call?.chatRoomId;
-          const callId = call?.id;
-
-          if (!callId || callRoomId !== actualRoomId) return;
-
-          router.push({
-            pathname: "/screens/jobs/audio-call",
-            params: { callId, roomId: actualRoomId, mode: "incoming" },
-          });
-        };
-        socketService.onIncomingCall(incomingHandler);
-      } catch {
-        // No-op; calling remains available through REST initiate.
-      }
-    };
-
-    setupCallsSocket();
-
-    return () => {
-      if (incomingHandler) {
-        socketService.offIncomingCall(incomingHandler);
-      }
-    };
-  }, [actualRoomId, router]);
 
   // Show loading state while getting room ID
   if (loadingRoom || !actualRoomId) {

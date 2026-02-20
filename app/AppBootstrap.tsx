@@ -1,3 +1,4 @@
+import { useIncomingCallListener } from "@/hooks/useIncomingCallListener";
 import { useSocketLifecycle } from "@/hooks/useSocketLifecycle";
 import { useAuthStore } from "@/stores/authStore";
 import { useFonts } from "expo-font";
@@ -36,6 +37,7 @@ const AppBootstrap = () => {
   }, [fontsLoaded, initializeAuth]);
 
   useSocketLifecycle(Boolean(user && appIsReady));
+  useIncomingCallListener(Boolean(user && appIsReady));
 
   if (!appIsReady) {
     return <SplashScreen />;

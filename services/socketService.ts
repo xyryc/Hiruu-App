@@ -219,6 +219,47 @@ class SocketService {
     offCallEnded(callback?: (data: any) => void) {
         this.callsSocket?.off('call_ended', callback);
     }
+
+    joinCall(callId: string) {
+        if (!this.callsSocket?.connected) return;
+        this.callsSocket.emit('join_call', { callId });
+    }
+
+    leaveCall(callId: string) {
+        if (!this.callsSocket?.connected) return;
+        this.callsSocket.emit('leave_call', { callId });
+    }
+
+    changeCallStatus(callId: string, status: string, reason?: string) {
+        if (!this.callsSocket?.connected) return;
+        this.callsSocket.emit('call_status_changed', { callId, status, reason });
+    }
+
+    changeMediaState(callId: string, isMicMuted: boolean, isCameraOff = true, isSharingScreen = false) {
+        if (!this.callsSocket?.connected) return;
+        this.callsSocket.emit('media_state_changed', {
+            callId,
+            isMicMuted,
+            isCameraOff,
+            isSharingScreen,
+        });
+    }
+
+    onCallParticipants(callback: (data: any) => void) {
+        this.callsSocket?.on('call_participants', callback);
+    }
+
+    offCallParticipants(callback?: (data: any) => void) {
+        this.callsSocket?.off('call_participants', callback);
+    }
+
+    onParticipantJoined(callback: (data: any) => void) {
+        this.callsSocket?.on('participant_joined', callback);
+    }
+
+    offParticipantJoined(callback?: (data: any) => void) {
+        this.callsSocket?.off('participant_joined', callback);
+    }
 }
 
 export const socketService = new SocketService();

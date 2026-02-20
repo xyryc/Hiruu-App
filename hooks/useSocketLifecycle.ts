@@ -16,6 +16,9 @@ export const useSocketLifecycle = (enabled: boolean) => {
         socketService.connect().catch((error) => {
           console.error("Failed to connect to socket:", error);
         });
+        socketService.connectCalls().catch((error) => {
+          console.error("Failed to connect to calls socket:", error);
+        });
       }
     };
 
@@ -28,6 +31,9 @@ export const useSocketLifecycle = (enabled: boolean) => {
       if (prevState !== "active" && nextState === "active") {
         socketService.connect().catch((error) => {
           console.error("Failed to connect to socket:", error);
+        });
+        socketService.connectCalls().catch((error) => {
+          console.error("Failed to connect to calls socket:", error);
         });
         return;
       }
