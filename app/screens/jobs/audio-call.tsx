@@ -1,12 +1,16 @@
-import { Ionicons } from "@expo/vector-icons";
 import { callService } from "@/services/callService";
 import { socketService } from "@/services/socketService";
 import { useAuthStore } from "@/stores/authStore";
+import { Ionicons } from "@expo/vector-icons";
+import { createAudioPlayer, setAudioModeAsync } from "expo-audio";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
+
+const INCOMING_RINGTONE_SOURCE = require("@/assets/sounds/phone_ring_sfx.wav");
+const OUTGOING_RINGBACK_SOURCE = require("@/assets/sounds/phone_call_sfx.mp3");
 
 const AudioCallScreen = () => {
   const router = useRouter();
@@ -33,6 +37,8 @@ const AudioCallScreen = () => {
   const [isIncomingPending, setIsIncomingPending] = useState(mode === "incoming");
   const hasLeftRef = useRef(false);
   const hasJoinedCallRoomRef = useRef(false);
+  const incomingToneRef = useRef<any>(null);
+  const ringbackToneRef = useRef<any>(null);
 
   useEffect(() => {
     console.log("[CALL_DEBUG] audio-call:mounted", { callId, mode, roomId: params.roomId });
@@ -67,6 +73,67 @@ const AudioCallScreen = () => {
     }
   }, [mode]);
 
+  useEffect(() => {
+    setAudioModeAsync({
+      playsInSilentMode: true,
+      shouldPlayInBackground: false,
+    }).catch(() => { });
+  }, []);
+
+  const stopTone = async (player: any) => {
+    if (!player) return;
+    try {
+      player.pause();
+      await player.seekTo(0);
+    } catch {
+      // no-op
+    }
+  };
+
+  const ensureIncomingTone = () => {
+    if (incomingToneRef.current) return incomingToneRef.current;
+    const player = createAudioPlayer(INCOMING_RINGTONE_SOURCE, {
+      keepAudioSessionActive: true,
+    });
+    player.loop = true;
+    incomingToneRef.current = player;
+    return player;
+  };
+
+  const ensureRingbackTone = () => {
+    if (ringbackToneRef.current) return ringbackToneRef.current;
+    const player = createAudioPlayer(OUTGOING_RINGBACK_SOURCE, {
+      keepAudioSessionActive: true,
+    });
+    player.loop = true;
+    ringbackToneRef.current = player;
+    return player;
+  };
+
+  useEffect(() => {
+    const playState = async () => {
+      const shouldPlayIncoming = isIncomingPending;
+      const shouldPlayRingback =
+        mode === "outgoing" && !isIncomingPending && !remoteJoined;
+
+      if (shouldPlayIncoming) {
+        const incoming = ensureIncomingTone();
+        if (!incoming.playing) incoming.play();
+      } else {
+        await stopTone(incomingToneRef.current);
+      }
+
+      if (shouldPlayRingback) {
+        const ringback = ensureRingbackTone();
+        if (!ringback.playing) ringback.play();
+      } else {
+        await stopTone(ringbackToneRef.current);
+      }
+    };
+
+    void playState();
+  }, [isIncomingPending, mode, remoteJoined]);
+
   const leaveOnce = () => {
     if (!callId || hasLeftRef.current) return;
     hasLeftRef.current = true;
@@ -75,6 +142,8 @@ const AudioCallScreen = () => {
       socketService.leaveCall(callId);
       hasJoinedCallRoomRef.current = false;
     }
+    void stopTone(incomingToneRef.current);
+    void stopTone(ringbackToneRef.current);
   };
 
   useEffect(() => {
@@ -94,8 +163,15 @@ const AudioCallScreen = () => {
           ? details.data.participants
           : [];
         const me = participants.find((item: any) => item?.userId === user?.id);
+        const myRole = String(me?.role || "").toLowerCase();
         const myStatus = String(me?.status || "").toLowerCase();
-        const canJoinSocketRoom = !["left", "declined", "missed"].includes(myStatus);
+        const isIncomingReceiverPending =
+          mode === "incoming" &&
+          myRole === "receiver" &&
+          (myStatus === "invited" || myStatus === "ringing");
+        const canJoinSocketRoom =
+          !["left", "declined", "missed"].includes(myStatus) &&
+          !isIncomingReceiverPending;
         if (canJoinSocketRoom) {
           socketService.joinCall(callId);
           hasJoinedCallRoomRef.current = true;
@@ -183,7 +259,18 @@ const AudioCallScreen = () => {
         socketService.offParticipantStatusChanged(onParticipantStatusChanged);
       }
     };
-  }, [callId, router, user?.id]);
+  }, [callId, mode, router, user?.id]);
+
+  useEffect(() => {
+    return () => {
+      void stopTone(incomingToneRef.current);
+      void stopTone(ringbackToneRef.current);
+      incomingToneRef.current?.remove?.();
+      ringbackToneRef.current?.remove?.();
+      incomingToneRef.current = null;
+      ringbackToneRef.current = null;
+    };
+  }, []);
 
   const durationText = useMemo(() => {
     const mins = String(Math.floor(elapsed / 60)).padStart(2, "0");
@@ -203,6 +290,10 @@ const AudioCallScreen = () => {
     try {
       setAccepting(true);
       await callService.joinCall(callId);
+      if (!hasJoinedCallRoomRef.current) {
+        socketService.joinCall(callId);
+        hasJoinedCallRoomRef.current = true;
+      }
       setIsIncomingPending(false);
       setJoining(false);
     } catch (error: any) {
@@ -291,46 +382,46 @@ const AudioCallScreen = () => {
             </TouchableOpacity>
           </View>
         ) : (
-        <View className="flex-row items-center justify-center gap-6 mb-8">
-          <TouchableOpacity
-            onPress={() => {
-              const next = !muted;
-              setMuted(next);
-              if (callId) {
-                socketService.changeMediaState(callId, next);
-              }
-            }}
-            className="w-14 h-14 rounded-full bg-[#1E293B] items-center justify-center"
-          >
-            <Ionicons
-              name={muted ? "mic-off-outline" : "mic-outline"}
-              size={24}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
+          <View className="flex-row items-center justify-center gap-6 mb-8">
+            <TouchableOpacity
+              onPress={() => {
+                const next = !muted;
+                setMuted(next);
+                if (callId) {
+                  socketService.changeMediaState(callId, next);
+                }
+              }}
+              className="w-14 h-14 rounded-full bg-[#1E293B] items-center justify-center"
+            >
+              <Ionicons
+                name={muted ? "mic-off-outline" : "mic-outline"}
+                size={24}
+                color="#FFFFFF"
+              />
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={handleEnd}
-            className="w-16 h-16 rounded-full bg-[#EF4444] items-center justify-center"
-          >
-            {ending ? (
-              <ActivityIndicator color="#FFFFFF" />
-            ) : (
-              <Ionicons name="call" size={26} color="#FFFFFF" />
-            )}
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleEnd}
+              className="w-16 h-16 rounded-full bg-[#EF4444] items-center justify-center"
+            >
+              {ending ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Ionicons name="call" size={26} color="#FFFFFF" />
+              )}
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => setSpeakerOn((prev) => !prev)}
-            className="w-14 h-14 rounded-full bg-[#1E293B] items-center justify-center"
-          >
-            <Ionicons
-              name={speakerOn ? "volume-high-outline" : "volume-mute-outline"}
-              size={24}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              onPress={() => setSpeakerOn((prev) => !prev)}
+              className="w-14 h-14 rounded-full bg-[#1E293B] items-center justify-center"
+            >
+              <Ionicons
+                name={speakerOn ? "volume-high-outline" : "volume-mute-outline"}
+                size={24}
+                color="#FFFFFF"
+              />
+            </TouchableOpacity>
+          </View>
         )}
       </View>
     </SafeAreaView>
