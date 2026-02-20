@@ -115,15 +115,26 @@ const AudioCallScreen = () => {
           const active = participants.filter((item: any) =>
             item?.status === "joined" || item?.status === "ringing"
           );
+          const hasSelfInPayload = participants.some(
+            (item: any) => item?.userId === user?.id
+          );
 
           if (!mounted) return;
-          setParticipantsCount(active.length || participants.length || 1);
           const hasOtherJoined = participants.some(
             (item: any) =>
               item?.userId &&
               item.userId !== user?.id &&
               item?.status === "joined"
           );
+          let nextCount = active.length || participants.length || 1;
+          // Some backend payloads omit the current user from participant snapshots.
+          if (hasOtherJoined && !hasSelfInPayload) {
+            nextCount += 1;
+          }
+          if (hasOtherJoined) {
+            nextCount = Math.max(2, nextCount);
+          }
+          setParticipantsCount(nextCount);
           setRemoteJoined(hasOtherJoined);
           if (hasOtherJoined) setJoining(false);
         };
