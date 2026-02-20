@@ -1,17 +1,21 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import JobRequestCard from "@/components/ui/cards/JobRequestCard";
 import SearchBar from "@/components/ui/inputs/SearchBar";
+import { useBusinessStore } from "@/stores/businessStore";
+import { useJobStore } from "@/stores/jobStore";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   ScrollView,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const JobRequest = () => {
   const router = useRouter();
@@ -19,6 +23,55 @@ const JobRequest = () => {
   const isDark = colorScheme === "dark";
   const tabs = ["send request", "received"];
   const [isActive, setIsActive] = useState("send request");
+
+  const [sentApps, setSentApps] = useState<any[]>([]);
+  const [receivedApps, setReceivedApps] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const selectedBusinesses = useBusinessStore((s) => s.selectedBusinesses);
+  const getMyApplications = useJobStore((s) => s.getMyApplications);
+  const getReceivedApplications = useJobStore((s) => s.getReceivedApplications);
+
+  const businessId = selectedBusinesses[0];
+
+  const loadApplications = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const [sent, received] = await Promise.all([
+        getMyApplications(),
+        businessId ? getReceivedApplications(businessId) : Promise.resolve([]),
+      ]);
+      setSentApps(sent);
+      setReceivedApps(received);
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to load applications");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getMyApplications, getReceivedApplications, businessId]);
+
+  useEffect(() => {
+    loadApplications();
+  }, [loadApplications]);
+
+  const filteredData = useMemo(() => {
+    const list = isActive === "send request" ? sentApps : receivedApps;
+    if (!searchQuery.trim()) return list;
+
+    const query = searchQuery.toLowerCase();
+    return list.filter((item: any) => {
+      const jobName = item?.recruitment?.role?.role?.name || item?.recruitment?.name || "";
+      const businessName = item?.recruitment?.business?.name || "";
+      const applicantName = item?.user?.name || "";
+
+      return (
+        jobName.toLowerCase().includes(query) ||
+        businessName.toLowerCase().includes(query) ||
+        applicantName.toLowerCase().includes(query)
+      );
+    });
+  }, [isActive, sentApps, receivedApps, searchQuery]);
 
   return (
     <SafeAreaView className="flex-1 bg-[#E5F4FD] dark:bg-dark-background">
@@ -47,47 +100,63 @@ const JobRequest = () => {
       />
 
       <View className="flex-row justify-center mx-5">
-        {tabs.map((tab, index) => (
-          <TouchableOpacity
-            key={index}
-            className={`w-1/2 flex-row items-center justify-center gap-2 border-b  pb-2 ${isActive === tab && "border-[#11293A] border-b-2"}`}
-            onPress={() => setIsActive(tab)}
-          >
-            <Text
-              className={`text-center capitalize ${isActive === tab ? "font-proximanova-semibold text-primary dark:text-dark-primary" : "font-proximanova-regular text-secondary dark:text-dark-secondary"} `}
+        {tabs.map((tab, index) => {
+          const count = tab === "send request" ? sentApps.length : receivedApps.length;
+          return (
+            <TouchableOpacity
+              key={index}
+              className={`w-1/2 flex-row items-center justify-center gap-2 border-b pb-2 ${isActive === tab && "border-[#11293A] border-b-2"
+                }`}
+              onPress={() => setIsActive(tab)}
             >
-              {tab}
-            </Text>
-
-            <View className="w-6 h-6 bg-[#4FB2F3] rounded-full items-center justify-center">
-              <Text className="font-proximanova-semibold text-sm text-white">
-                3
+              <Text
+                className={`text-center capitalize ${isActive === tab
+                  ? "font-proximanova-semibold text-primary dark:text-dark-primary"
+                  : "font-proximanova-regular text-secondary dark:text-dark-secondary"
+                  } `}
+              >
+                {tab}
               </Text>
-            </View>
-          </TouchableOpacity>
-        ))}
+
+              <View className="w-6 h-6 bg-[#4FB2F3] rounded-full items-center justify-center">
+                <Text className="font-proximanova-semibold text-sm text-white">
+                  {count}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="bg-white px-5"
+        className="bg-white px-5 pt-5"
       >
-        <SearchBar className="mt-5 mb-4" />
+        <SearchBar onSearch={setSearchQuery} className="mb-4" />
 
-        <JobRequestCard
-          className="bg-white border border-[#EEEEEE] mb-4"
-          status={isActive}
-        />
-
-        <JobRequestCard
-          className="bg-white border border-[#EEEEEE] mb-4"
-          status={isActive}
-        />
-
-        <JobRequestCard
-          className="bg-white border border-[#EEEEEE] mb-4"
-          status={isActive}
-        />
+        {isLoading ? (
+          <View className="py-20 items-center justify-center">
+            <ActivityIndicator size="large" color="#4FB2F3" />
+            <Text className="mt-4 font-proximanova-regular text-secondary">
+              Loading requests...
+            </Text>
+          </View>
+        ) : filteredData.length > 0 ? (
+          filteredData.map((item: any) => (
+            <JobRequestCard
+              key={item.id}
+              job={item.recruitment}
+              className="bg-white border border-[#EEEEEE] mb-4"
+              status={isActive as "send request" | "received"}
+            />
+          ))
+        ) : (
+          <View className="py-20 items-center justify-center">
+            <Text className="font-proximanova-regular text-secondary">
+              No {isActive} found.
+            </Text>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

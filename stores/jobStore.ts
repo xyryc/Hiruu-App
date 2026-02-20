@@ -24,6 +24,10 @@ interface JobState {
   error: Error | null;
   getPublicRecruitments: () => Promise<any[]>;
   getRecruitmentsByBusiness: (businessId: string) => Promise<any[]>;
+  getFeaturedRecruitments: (businessId: string) => Promise<any[]>;
+  getRecruitmentById: (businessId: string, id: string) => Promise<any>;
+  getReceivedApplications: (businessId: string) => Promise<any[]>;
+  getMyApplications: () => Promise<any[]>;
   createRecruitment: (
     businessId: string,
     payload: CreateRecruitmentPayload
@@ -90,6 +94,96 @@ export const useJobStore = create<JobState>((set) => ({
         translateApiMessage(axiosError.response?.data?.message) ||
         axiosError.message ||
         "Failed to fetch business recruitments";
+      throw new Error(message);
+    }
+  },
+
+  getFeaturedRecruitments: async (businessId: string) => {
+    try {
+      const response = await axiosInstance.get(`/recruitment/${businessId}/featured`);
+      const result = response.data;
+
+      if (!result?.success) {
+        const messageKey = result?.message || "UNKNOWN_ERROR";
+        const message = translateApiMessage(messageKey);
+        throw new Error(message);
+      }
+
+      return Array.isArray(result?.data) ? result.data : [];
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const message =
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to fetch featured jobs";
+      throw new Error(message);
+    }
+  },
+
+  getRecruitmentById: async (businessId: string, id: string) => {
+    try {
+      const response = await axiosInstance.get(`/recruitment/${businessId}/${id}`);
+      const result = response.data;
+
+      if (!result?.success) {
+        const messageKey = result?.message || "UNKNOWN_ERROR";
+        const message = translateApiMessage(messageKey);
+        throw new Error(message);
+      }
+
+      return result.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const message =
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to fetch job details";
+      throw new Error(message);
+    }
+  },
+
+  getReceivedApplications: async (businessId: string) => {
+    try {
+      const response = await axiosInstance.get(
+        `/recruitment-application/business/${businessId}`
+      );
+      const result = response.data;
+
+      if (!result?.success) {
+        const messageKey = result?.message || "UNKNOWN_ERROR";
+        const message = translateApiMessage(messageKey);
+        throw new Error(message);
+      }
+
+      return Array.isArray(result?.data) ? result.data : [];
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const message =
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to fetch received applications";
+      throw new Error(message);
+    }
+  },
+
+  getMyApplications: async () => {
+    try {
+      const response = await axiosInstance.get("/recruitment-application/my-applications");
+      const result = response.data;
+
+      if (!result?.success) {
+        const messageKey = result?.message || "UNKNOWN_ERROR";
+        const message = translateApiMessage(messageKey);
+        throw new Error(message);
+      }
+
+      return Array.isArray(result?.data) ? result.data : [];
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const message =
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to fetch my applications";
       throw new Error(message);
     }
   },

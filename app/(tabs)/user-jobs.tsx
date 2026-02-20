@@ -2,11 +2,12 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import JobCard from "@/components/ui/cards/JobCard";
 import SearchBar from "@/components/ui/inputs/SearchBar";
 import { useBusinessStore } from '@/stores/businessStore';
+import { useJobStore } from '@/stores/jobStore';
 import axiosInstance from '@/utils/axios';
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
-import React, { useEffect } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ScrollView,
   StatusBar,
@@ -15,12 +16,16 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from 'sonner-native';
 
 const UserJobs = () => {
   const router = useRouter();
   const selectedBusinesses = useBusinessStore((s) => s.selectedBusinesses);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [jobs, setJobs] = useState<any[]>([]);
   const businessId = selectedBusinesses[0];
+  const getPublicRecruitments = useJobStore((s) => s.getPublicRecruitments);
+
   //  THIS IS FOR FEATURES JOB API
   useEffect(() => {
     axiosInstance.get(`recruitment/${businessId}/featured`)
@@ -31,7 +36,26 @@ const UserJobs = () => {
         console.log(error);
       })
   }, []);
+  const loadJobs = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const data = await getPublicRecruitments();
+      setJobs(Array.isArray(data) ? data : []);
+    } catch (error: any) {
+      setJobs([]);
+      toast.error(error?.message || "Failed to fetch jobs");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getPublicRecruitments]);
 
+  useFocusEffect(
+    useCallback(() => {
+      loadJobs();
+    }, [loadJobs])
+  );
+
+  console.log("Jobs : ", jobs);
   return (
     <SafeAreaView
       className="flex-1 bg-white dark:bg-dark-background"
@@ -127,11 +151,23 @@ const UserJobs = () => {
               </Text>
             </TouchableOpacity>
           </View>
-
-          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
-          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
-          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
-          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
+          {isLoading ? (
+            <View className="py-10 items-center">
+              <Text className="font-proximanova-regular text-secondary">Loading jobs...</Text>
+            </View>
+          ) : jobs.length > 0 ? (
+            jobs.map((item: any) => (
+              <JobCard
+                key={item.id}
+                job={item}
+                className="bg-white border border-[#EEEEEE] mb-4"
+              />
+            ))
+          ) : (
+            <View className="py-10 items-center">
+              <Text className="font-proximanova-regular text-secondary">No suggested jobs found.</Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
