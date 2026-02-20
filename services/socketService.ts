@@ -276,12 +276,67 @@ class SocketService {
         this.callsSocket?.off('participant_joined', callback);
     }
 
+    onParticipantLeft(callback: (data: any) => void) {
+        this.callsSocket?.on('participant_left', callback);
+    }
+
+    offParticipantLeft(callback?: (data: any) => void) {
+        this.callsSocket?.off('participant_left', callback);
+    }
+
+    onParticipantDisconnected(callback: (data: any) => void) {
+        this.callsSocket?.on('participant_disconnected', callback);
+    }
+
+    offParticipantDisconnected(callback?: (data: any) => void) {
+        this.callsSocket?.off('participant_disconnected', callback);
+    }
+
     onParticipantStatusChanged(callback: (data: any) => void) {
         this.callsSocket?.on('participant_status_changed', callback);
     }
 
     offParticipantStatusChanged(callback?: (data: any) => void) {
         this.callsSocket?.off('participant_status_changed', callback);
+    }
+
+    sendOffer(callId: string, targetUserId: string, offer: any) {
+        if (!this.callsSocket?.connected) return;
+        this.callsSocket.emit('offer', { callId, targetUserId, offer });
+    }
+
+    sendAnswer(callId: string, targetUserId: string, answer: any) {
+        if (!this.callsSocket?.connected) return;
+        this.callsSocket.emit('answer', { callId, targetUserId, answer });
+    }
+
+    sendIceCandidate(callId: string, targetUserId: string, candidate: any) {
+        if (!this.callsSocket?.connected) return;
+        this.callsSocket.emit('ice_candidate', { callId, targetUserId, candidate });
+    }
+
+    onOffer(callback: (data: any) => void) {
+        this.callsSocket?.on('offer', callback);
+    }
+
+    offOffer(callback?: (data: any) => void) {
+        this.callsSocket?.off('offer', callback);
+    }
+
+    onAnswer(callback: (data: any) => void) {
+        this.callsSocket?.on('answer', callback);
+    }
+
+    offAnswer(callback?: (data: any) => void) {
+        this.callsSocket?.off('answer', callback);
+    }
+
+    onIceCandidate(callback: (data: any) => void) {
+        this.callsSocket?.on('ice_candidate', callback);
+    }
+
+    offIceCandidate(callback?: (data: any) => void) {
+        this.callsSocket?.off('ice_candidate', callback);
     }
 }
 

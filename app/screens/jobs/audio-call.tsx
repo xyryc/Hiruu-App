@@ -2,9 +2,19 @@ import { callService } from "@/services/callService";
 import { socketService } from "@/services/socketService";
 import { useAuthStore } from "@/stores/authStore";
 import { Ionicons } from "@expo/vector-icons";
-import { createAudioPlayer, setAudioModeAsync } from "expo-audio";
+import {
+  createAudioPlayer,
+  requestRecordingPermissionsAsync,
+  setAudioModeAsync,
+} from "expo-audio";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import {
+  mediaDevices,
+  RTCPeerConnection,
+  RTCIceCandidate,
+  RTCSessionDescription,
+} from "react-native-webrtc";
 import { ActivityIndicator, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -35,8 +45,17 @@ const AudioCallScreen = () => {
   const [accepting, setAccepting] = useState(false);
   const [rejecting, setRejecting] = useState(false);
   const [isIncomingPending, setIsIncomingPending] = useState(mode === "incoming");
+  const [webrtcReady, setWebrtcReady] = useState(false);
   const hasLeftRef = useRef(false);
+  const hasClosedRef = useRef(false);
+  const hasAcceptedIncomingRef = useRef(mode !== "incoming");
+  const hasConnectedOnceRef = useRef(false);
   const hasJoinedCallRoomRef = useRef(false);
+  const hasSentOfferRef = useRef(false);
+  const remoteUserIdRef = useRef<string | null>(null);
+  const pcRef = useRef<RTCPeerConnection | null>(null);
+  const localStreamRef = useRef<any>(null);
+  const pendingCandidatesRef = useRef<any[]>([]);
   const incomingToneRef = useRef<any>(null);
   const ringbackToneRef = useRef<any>(null);
 
@@ -67,18 +86,108 @@ const AudioCallScreen = () => {
     if (mode !== "incoming") {
       setJoining(false);
       setIsIncomingPending(false);
+      hasAcceptedIncomingRef.current = true;
     } else {
       setJoining(true);
       setIsIncomingPending(true);
+      hasAcceptedIncomingRef.current = false;
     }
+    hasConnectedOnceRef.current = false;
   }, [mode]);
 
   useEffect(() => {
     setAudioModeAsync({
       playsInSilentMode: true,
       shouldPlayInBackground: false,
+      allowsRecording: true,
     }).catch(() => { });
   }, []);
+
+  const cleanupWebRTC = async () => {
+    try {
+      pendingCandidatesRef.current = [];
+      hasSentOfferRef.current = false;
+      if (pcRef.current) {
+        pcRef.current.onicecandidate = null;
+        pcRef.current.ontrack = null;
+        pcRef.current.close();
+        pcRef.current = null;
+      }
+      if (localStreamRef.current) {
+        localStreamRef.current.getTracks?.().forEach((track: any) => {
+          try {
+            track.stop();
+          } catch {
+            // no-op
+          }
+        });
+        localStreamRef.current = null;
+      }
+      setWebrtcReady(false);
+    } catch {
+      // no-op
+    }
+  };
+
+  const ensureWebRTC = async () => {
+    if (pcRef.current) return pcRef.current;
+
+    const permission = await requestRecordingPermissionsAsync();
+    if (!permission.granted) {
+      throw new Error("Microphone permission denied");
+    }
+
+    const pc = new RTCPeerConnection({
+      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+    });
+
+    const stream = await mediaDevices.getUserMedia({
+      audio: true,
+      video: false,
+    });
+    localStreamRef.current = stream;
+    stream.getTracks().forEach((track: any) => pc.addTrack(track, stream));
+
+    pc.onicecandidate = (event) => {
+      const candidate = event?.candidate;
+      const targetUserId = remoteUserIdRef.current;
+      if (!candidate || !targetUserId || !callId) return;
+      socketService.sendIceCandidate(callId, targetUserId, candidate);
+    };
+
+    pc.ontrack = () => {
+      // Remote audio track received; playback is handled by native WebRTC audio session.
+    };
+
+    pcRef.current = pc;
+    setWebrtcReady(true);
+    return pc;
+  };
+
+  const flushPendingCandidates = async () => {
+    const pc = pcRef.current;
+    if (!pc || !pc.remoteDescription) return;
+    while (pendingCandidatesRef.current.length > 0) {
+      const candidate = pendingCandidatesRef.current.shift();
+      try {
+        await pc.addIceCandidate(new RTCIceCandidate(candidate));
+      } catch {
+        // ignore malformed candidate
+      }
+    }
+  };
+
+  const createAndSendOffer = async () => {
+    if (!callId || hasSentOfferRef.current) return;
+    const targetUserId = remoteUserIdRef.current;
+    if (!targetUserId) return;
+
+    const pc = await ensureWebRTC();
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    socketService.sendOffer(callId, targetUserId, offer);
+    hasSentOfferRef.current = true;
+  };
 
   const stopTone = async (player: any) => {
     if (!player) return;
@@ -144,6 +253,14 @@ const AudioCallScreen = () => {
     }
     void stopTone(incomingToneRef.current);
     void stopTone(ringbackToneRef.current);
+    void cleanupWebRTC();
+  };
+
+  const closeCallScreen = (message = "Call ended") => {
+    if (hasClosedRef.current) return;
+    hasClosedRef.current = true;
+    toast.success(message);
+    router.back();
   };
 
   useEffect(() => {
@@ -154,6 +271,11 @@ const AudioCallScreen = () => {
     let onJoined: ((payload: any) => void) | null = null;
     let onEnded: ((payload: any) => void) | null = null;
     let onParticipantStatusChanged: ((payload: any) => void) | null = null;
+    let onParticipantLeft: ((payload: any) => void) | null = null;
+    let onParticipantDisconnected: ((payload: any) => void) | null = null;
+    let onOffer: ((payload: any) => void) | null = null;
+    let onAnswer: ((payload: any) => void) | null = null;
+    let onIceCandidate: ((payload: any) => void) | null = null;
 
     const bindCallSocket = async () => {
       try {
@@ -184,12 +306,22 @@ const AudioCallScreen = () => {
           const participants = Array.isArray(payload?.participants)
             ? payload.participants
             : [];
+          const remoteParticipants = participants.filter(
+            (item: any) => item?.userId && item.userId !== user?.id
+          );
+          const hasRemoteActive = remoteParticipants.some((item: any) =>
+            ["joined", "ringing", "invited"].includes(
+              String(item?.status || "").toLowerCase()
+            )
+          );
           const active = participants.filter((item: any) =>
             item?.status === "joined" || item?.status === "ringing"
           );
           const hasSelfInPayload = participants.some(
             (item: any) => item?.userId === user?.id
           );
+          const me = participants.find((item: any) => item?.userId === user?.id);
+          const myStatus = String(me?.status || "").toLowerCase();
 
           if (!mounted) return;
           const hasOtherJoined = participants.some(
@@ -198,6 +330,10 @@ const AudioCallScreen = () => {
               item.userId !== user?.id &&
               item?.status === "joined"
           );
+          const remote = participants.find(
+            (item: any) => item?.userId && item.userId !== user?.id
+          );
+          remoteUserIdRef.current = remote?.userId || remoteUserIdRef.current;
           let nextCount = active.length || participants.length || 1;
           // Some backend payloads omit the current user from participant snapshots.
           if (hasOtherJoined && !hasSelfInPayload) {
@@ -206,9 +342,48 @@ const AudioCallScreen = () => {
           if (hasOtherJoined) {
             nextCount = Math.max(2, nextCount);
           }
+          // Backend may return a partial participant list (self only) on receiver side.
+          // After accept/join, force connected UI/count.
+          const shouldForceIncomingConnected =
+            mode === "incoming" &&
+            !isIncomingPending &&
+            hasAcceptedIncomingRef.current;
+          if (
+            shouldForceIncomingConnected &&
+            (myStatus === "joined" || !myStatus || !hasOtherJoined)
+          ) {
+            setRemoteJoined(true);
+            hasConnectedOnceRef.current = true;
+            nextCount = Math.max(2, nextCount);
+          } else {
+            if (hasOtherJoined) {
+              hasConnectedOnceRef.current = true;
+              setRemoteJoined(true);
+            } else {
+              setRemoteJoined((prev) =>
+                hasConnectedOnceRef.current ? prev : false
+              );
+            }
+          }
           setParticipantsCount(nextCount);
-          setRemoteJoined(hasOtherJoined);
           if (hasOtherJoined) setJoining(false);
+          if (
+            mode === "incoming" &&
+            !isIncomingPending &&
+            (myStatus === "joined" || shouldForceIncomingConnected)
+          ) {
+            setJoining(false);
+          }
+          if (hasOtherJoined && mode === "outgoing") {
+            void createAndSendOffer();
+          }
+          if (
+            hasConnectedOnceRef.current &&
+            remoteParticipants.length > 0 &&
+            !hasRemoteActive
+          ) {
+            closeCallScreen();
+          }
         };
 
         onJoined = (payload: any) => {
@@ -217,22 +392,114 @@ const AudioCallScreen = () => {
           setRemoteJoined(true);
           setJoining(false);
           setParticipantsCount((prev) => Math.max(2, prev + 1));
+          remoteUserIdRef.current = participantId;
+          if (mode === "outgoing") {
+            void createAndSendOffer();
+          }
         };
 
         onEnded = (payload: any) => {
           const endedCallId = payload?.callId;
           if (!mounted || endedCallId !== callId) return;
-          toast.success("Call ended");
-          router.back();
+          closeCallScreen();
         };
 
         onParticipantStatusChanged = (payload: any) => {
+          const eventCallId = payload?.callId;
+          if (eventCallId && eventCallId !== callId) return;
           const participantId = payload?.userId;
           const status = String(payload?.status || "").toLowerCase();
-          if (!mounted || !participantId || participantId === user?.id) return;
+          if (!mounted || !participantId) return;
+          if (participantId === user?.id) {
+            if (mode === "incoming" && status === "joined") {
+              hasAcceptedIncomingRef.current = true;
+              setIsIncomingPending(false);
+              setJoining(false);
+              setRemoteJoined(true);
+              setParticipantsCount((prev) => Math.max(2, prev));
+            }
+            return;
+          }
           if (status === "declined" || status === "missed" || status === "left") {
             toast.success("Call ended");
             router.back();
+          }
+        };
+
+        const closeIfRemoteEvent = (payload: any) => {
+          const eventCallId = payload?.callId;
+          if (!eventCallId || eventCallId !== callId) return;
+          const participantId = payload?.userId;
+          if (!participantId || participantId === user?.id) return;
+          void (async () => {
+            try {
+              const details = await callService.getCallById(callId);
+              const participants = Array.isArray(details?.data?.participants)
+                ? details.data.participants
+                : [];
+              const hasOtherStillActive = participants.some(
+                (item: any) =>
+                  item?.userId &&
+                  item.userId !== user?.id &&
+                  ["joined", "ringing", "invited"].includes(
+                    String(item?.status || "").toLowerCase()
+                  )
+              );
+              if (hasOtherStillActive) return;
+            } catch {
+              // If call lookup fails, fall back to closing to avoid stale UI.
+            }
+            closeCallScreen();
+          })();
+        };
+
+        onParticipantLeft = (payload: any) => closeIfRemoteEvent(payload);
+        onParticipantDisconnected = (payload: any) => closeIfRemoteEvent(payload);
+
+        onOffer = async (payload: any) => {
+          const eventCallId = payload?.callId;
+          const fromUserId = payload?.fromUserId;
+          const offer = payload?.offer;
+          if (!eventCallId || eventCallId !== callId || !offer || !fromUserId) return;
+          remoteUserIdRef.current = fromUserId;
+          try {
+            const pc = await ensureWebRTC();
+            await pc.setRemoteDescription(new RTCSessionDescription(offer));
+            await flushPendingCandidates();
+            const answer = await pc.createAnswer();
+            await pc.setLocalDescription(answer);
+            socketService.sendAnswer(callId, fromUserId, answer);
+          } catch (error: any) {
+            toast.error(error?.message || "Failed to process incoming call offer");
+          }
+        };
+
+        onAnswer = async (payload: any) => {
+          const eventCallId = payload?.callId;
+          const answer = payload?.answer;
+          if (!eventCallId || eventCallId !== callId || !answer) return;
+          try {
+            const pc = await ensureWebRTC();
+            await pc.setRemoteDescription(new RTCSessionDescription(answer));
+            await flushPendingCandidates();
+          } catch (error: any) {
+            toast.error(error?.message || "Failed to process call answer");
+          }
+        };
+
+        onIceCandidate = async (payload: any) => {
+          const eventCallId = payload?.callId;
+          const candidate = payload?.candidate;
+          if (!eventCallId || eventCallId !== callId || !candidate) return;
+          const pc = pcRef.current;
+          if (!pc || !pc.remoteDescription) {
+            pendingCandidatesRef.current.push(candidate);
+            return;
+          }
+          try {
+            await pc.addIceCandidate(new RTCIceCandidate(candidate));
+          } catch {
+            // ignore malformed candidate
           }
         };
 
@@ -240,6 +507,11 @@ const AudioCallScreen = () => {
         socketService.onParticipantJoined(onJoined);
         socketService.onCallEnded(onEnded);
         socketService.onParticipantStatusChanged(onParticipantStatusChanged);
+        socketService.onParticipantLeft(onParticipantLeft);
+        socketService.onParticipantDisconnected(onParticipantDisconnected);
+        socketService.onOffer(onOffer);
+        socketService.onAnswer(onAnswer);
+        socketService.onIceCandidate(onIceCandidate);
       } catch (error: any) {
         if (mounted) {
           toast.error(error?.message || "Failed to connect call socket");
@@ -258,19 +530,69 @@ const AudioCallScreen = () => {
       if (onParticipantStatusChanged) {
         socketService.offParticipantStatusChanged(onParticipantStatusChanged);
       }
+      if (onParticipantLeft) {
+        socketService.offParticipantLeft(onParticipantLeft);
+      }
+      if (onParticipantDisconnected) {
+        socketService.offParticipantDisconnected(onParticipantDisconnected);
+      }
+      if (onOffer) socketService.offOffer(onOffer);
+      if (onAnswer) socketService.offAnswer(onAnswer);
+      if (onIceCandidate) socketService.offIceCandidate(onIceCandidate);
     };
   }, [callId, mode, router, user?.id]);
 
   useEffect(() => {
+    hasClosedRef.current = false;
     return () => {
       void stopTone(incomingToneRef.current);
       void stopTone(ringbackToneRef.current);
+      void cleanupWebRTC();
       incomingToneRef.current?.remove?.();
       ringbackToneRef.current?.remove?.();
       incomingToneRef.current = null;
       ringbackToneRef.current = null;
     };
   }, []);
+
+  useEffect(() => {
+    if (!callId) return;
+    let isMounted = true;
+    const interval = setInterval(async () => {
+      if (!isMounted || hasClosedRef.current) return;
+      try {
+        const details = await callService.getCallById(callId);
+        const status = String(details?.data?.status || "").toLowerCase();
+        const participants = Array.isArray(details?.data?.participants)
+          ? details.data.participants
+          : [];
+        const hasRemoteActive = participants.some(
+          (item: any) =>
+            item?.userId &&
+            item.userId !== user?.id &&
+            ["joined", "ringing", "invited"].includes(
+              String(item?.status || "").toLowerCase()
+            )
+        );
+
+        if (["ended", "completed", "cancelled"].includes(status)) {
+          closeCallScreen();
+          return;
+        }
+
+        if (hasConnectedOnceRef.current && !hasRemoteActive) {
+          closeCallScreen();
+        }
+      } catch {
+        // no-op
+      }
+    }, 2500);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [callId, user?.id]);
 
   const durationText = useMemo(() => {
     const mins = String(Math.floor(elapsed / 60)).padStart(2, "0");
@@ -290,12 +612,17 @@ const AudioCallScreen = () => {
     try {
       setAccepting(true);
       await callService.joinCall(callId);
+      hasAcceptedIncomingRef.current = true;
+      hasConnectedOnceRef.current = true;
       if (!hasJoinedCallRoomRef.current) {
         socketService.joinCall(callId);
         hasJoinedCallRoomRef.current = true;
       }
       setIsIncomingPending(false);
       setJoining(false);
+      setRemoteJoined(true);
+      setParticipantsCount((prev) => Math.max(2, prev));
+      await ensureWebRTC();
     } catch (error: any) {
       const message =
         error?.response?.data?.message || error?.message || "Failed to accept call";
@@ -349,6 +676,9 @@ const AudioCallScreen = () => {
           </Text>
           <Text className="font-proximanova-regular text-[#94A3B8] mt-1 text-xs">
             Participants: {participantsCount}
+          </Text>
+          <Text className="font-proximanova-regular text-[#94A3B8] mt-1 text-xs">
+            Audio: {webrtcReady ? "connected" : "preparing"}
           </Text>
           {joining ? (
             <ActivityIndicator className="mt-4" color="#ffffff" />

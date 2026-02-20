@@ -11,7 +11,10 @@
     "ios": {
       "supportsTablet": true,
       "userInterfaceStyle": "automatic",
-      "bundleIdentifier": "com.xyryc.Hirru"
+      "bundleIdentifier": "com.xyryc.Hirru",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Allow Hiruu to access your microphone for audio calls."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -25,7 +28,8 @@
         "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
         "android.permission.READ_MEDIA_IMAGES",
         "android.permission.READ_MEDIA_VIDEO",
-        "android.permission.CAMERA"
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
