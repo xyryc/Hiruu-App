@@ -99,6 +99,7 @@ class SocketService {
 
     async connectCalls(): Promise<Socket> {
         if (this.callsSocket?.connected) {
+            console.log('[CALL_DEBUG] calls-socket:already-connected');
             return this.callsSocket;
         }
 
@@ -114,6 +115,7 @@ class SocketService {
         }
 
         this.isCallsConnecting = true;
+        console.log('[CALL_DEBUG] calls-socket:connecting:start');
 
         try {
             this.token = this.token || await AsyncStorage.getItem('auth_access_token');
@@ -130,19 +132,23 @@ class SocketService {
             });
 
             this.callsSocket.on('connect', () => {
+                console.log('[CALL_DEBUG] calls-socket:connected');
                 this.isCallsConnecting = false;
             });
 
-            this.callsSocket.on('connect_error', () => {
+            this.callsSocket.on('connect_error', (error) => {
+                console.log('[CALL_DEBUG] calls-socket:connect_error', error?.message || error);
                 this.isCallsConnecting = false;
             });
 
-            this.callsSocket.on('disconnect', () => {
+            this.callsSocket.on('disconnect', (reason) => {
+                console.log('[CALL_DEBUG] calls-socket:disconnect', reason);
                 this.isCallsConnecting = false;
             });
 
             return this.callsSocket;
         } catch (error) {
+            console.log('[CALL_DEBUG] calls-socket:connecting:exception', error);
             this.isCallsConnecting = false;
             throw error;
         }
@@ -222,21 +228,30 @@ class SocketService {
 
     joinCall(callId: string) {
         if (!this.callsSocket?.connected) return;
+        console.log('[CALL_DEBUG] emit:join_call', { callId });
         this.callsSocket.emit('join_call', { callId });
     }
 
     leaveCall(callId: string) {
         if (!this.callsSocket?.connected) return;
+        console.log('[CALL_DEBUG] emit:leave_call', { callId });
         this.callsSocket.emit('leave_call', { callId });
     }
 
     changeCallStatus(callId: string, status: string, reason?: string) {
         if (!this.callsSocket?.connected) return;
+        console.log('[CALL_DEBUG] emit:call_status_changed', { callId, status, reason });
         this.callsSocket.emit('call_status_changed', { callId, status, reason });
     }
 
     changeMediaState(callId: string, isMicMuted: boolean, isCameraOff = true, isSharingScreen = false) {
         if (!this.callsSocket?.connected) return;
+        console.log('[CALL_DEBUG] emit:media_state_changed', {
+            callId,
+            isMicMuted,
+            isCameraOff,
+            isSharingScreen,
+        });
         this.callsSocket.emit('media_state_changed', {
             callId,
             isMicMuted,

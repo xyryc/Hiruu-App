@@ -26,6 +26,11 @@ class CallService {
     const response = await axiosInstance.get(`/calls/rooms/${chatRoomId}/active`);
     return response.data;
   }
+
+  async getCallById(callId: string): Promise<any> {
+    const response = await axiosInstance.get(`/calls/${callId}`);
+    return response.data;
+  }
 }
 
 export const callService = new CallService();

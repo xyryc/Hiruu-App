@@ -165,9 +165,69 @@ const ChatScreen = () => {
   const handleStartAudioCall = useCallback(async () => {
     if (!actualRoomId || startingAudioCall) return;
 
+    const getMyParticipantStatus = (call: any) => {
+      const participants = Array.isArray(call?.participants) ? call.participants : [];
+      const me = participants.find((p: any) => p?.userId === user?.id);
+      return String(me?.status || "").toLowerCase();
+    };
+
+    const hasOtherActiveParticipant = (call: any) => {
+      const participants = Array.isArray(call?.participants) ? call.participants : [];
+      return participants.some((p: any) => {
+        if (!p?.userId || p.userId === user?.id) return false;
+        const status = String(p?.status || "").toLowerCase();
+        return status === "invited" || status === "ringing" || status === "joined";
+      });
+    };
+
+    const getModeForCall = (call: any) =>
+      call?.initiatedBy === user?.id ? "outgoing" : "incoming";
+
     try {
+      console.log("[CALL_DEBUG] initiate-call:start", { roomId: actualRoomId });
+
+      // Pre-check active call to avoid stale-call initiate errors.
+      try {
+        const activeResponse = await callService.getActiveCall(actualRoomId);
+        const activeCall = activeResponse?.data;
+        if (activeCall?.id) {
+          const myStatus = getMyParticipantStatus(activeCall);
+          const isInitiator = activeCall?.initiatedBy === user?.id;
+          const hasOtherActive = hasOtherActiveParticipant(activeCall);
+          console.log("[CALL_DEBUG] initiate-call:active-precheck", {
+            callId: activeCall.id,
+            callStatus: activeCall?.status,
+            myStatus,
+            isInitiator,
+            hasOtherActive,
+          });
+
+          // If I initiated and no one else is active, close stale call then create a fresh call.
+          if (isInitiator && (myStatus === "left" || !hasOtherActive)) {
+            try {
+              await callService.endCall(activeCall.id);
+            } catch (endErr) {
+              console.log("[CALL_DEBUG] initiate-call:active-precheck:end-error", endErr);
+            }
+          } else {
+            router.push({
+              pathname: "/screens/jobs/audio-call",
+              params: {
+                callId: activeCall.id,
+                roomId: actualRoomId,
+                mode: getModeForCall(activeCall),
+              },
+            });
+            return;
+          }
+        }
+      } catch {
+        // No active call in this room, continue with initiate.
+      }
+
       setStartingAudioCall(true);
       const response = await callService.initiateAudioCall(actualRoomId);
+      console.log("[CALL_DEBUG] initiate-call:response", response);
       const callData = response?.data;
       const callId =
         callData?.id || callData?.callId || callData?.call?.id || null;
@@ -182,11 +242,62 @@ const ChatScreen = () => {
         params: { callId, roomId: actualRoomId, mode: "outgoing" },
       });
     } catch (error: any) {
-      toast.error(error?.message || "Failed to start audio call");
+      console.log("[CALL_DEBUG] initiate-call:error", error);
+      const apiMessage =
+        error?.response?.data?.message || error?.message || "Failed to start audio call";
+
+      if (
+        typeof apiMessage === "string" &&
+        apiMessage.toLowerCase().includes("already an ongoing call")
+      ) {
+        try {
+          const activeResponse = await callService.getActiveCall(actualRoomId);
+          const activeCall = activeResponse?.data;
+          const activeCallId = activeCall?.id;
+          if (activeCallId) {
+            const isInitiator = activeCall?.initiatedBy === user?.id;
+            const myStatus = getMyParticipantStatus(activeCall);
+            const hasOtherActive = hasOtherActiveParticipant(activeCall);
+            if (isInitiator && (myStatus === "left" || !hasOtherActive)) {
+              try {
+                await callService.endCall(activeCallId);
+                const retry = await callService.initiateAudioCall(actualRoomId);
+                const retryCallId = retry?.data?.id;
+                if (retryCallId) {
+                  router.push({
+                    pathname: "/screens/jobs/audio-call",
+                    params: {
+                      callId: retryCallId,
+                      roomId: actualRoomId,
+                      mode: "outgoing",
+                    },
+                  });
+                  return;
+                }
+              } catch (retryError) {
+                console.log("[CALL_DEBUG] initiate-call:retry-after-end:error", retryError);
+              }
+            }
+            router.push({
+              pathname: "/screens/jobs/audio-call",
+              params: {
+                callId: activeCallId,
+                roomId: actualRoomId,
+                mode: isInitiator ? "outgoing" : "incoming",
+              },
+            });
+            return;
+          }
+        } catch (activeError) {
+          console.log("[CALL_DEBUG] initiate-call:active-call:fetch-error", activeError);
+        }
+      }
+
+      toast.error(apiMessage);
     } finally {
       setStartingAudioCall(false);
     }
-  }, [actualRoomId, router, startingAudioCall]);
+  }, [actualRoomId, router, startingAudioCall, user?.id]);
 
   useEffect(() => {
     if (!mappedMessages.length) return;

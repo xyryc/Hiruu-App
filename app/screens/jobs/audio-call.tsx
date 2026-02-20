@@ -3,7 +3,7 @@ import { callService } from "@/services/callService";
 import { socketService } from "@/services/socketService";
 import { useAuthStore } from "@/stores/authStore";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -28,6 +28,11 @@ const AudioCallScreen = () => {
   const [participantsCount, setParticipantsCount] = useState(1);
   const [startedAt] = useState(Date.now());
   const [elapsed, setElapsed] = useState(0);
+  const hasLeftRef = useRef(false);
+
+  useEffect(() => {
+    console.log("[CALL_DEBUG] audio-call:mounted", { callId, mode, roomId: params.roomId });
+  }, [callId, mode, params.roomId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -41,16 +46,37 @@ const AudioCallScreen = () => {
     const joinIncoming = async () => {
       if (mode !== "incoming" || !callId) return;
       try {
-        await callService.joinCall(callId);
+        const details = await callService.getCallById(callId);
+        const participants = Array.isArray(details?.data?.participants)
+          ? details.data.participants
+          : [];
+        const me = participants.find((p: any) => p?.userId === user?.id);
+        const status = String(me?.status || "").toLowerCase();
+        const role = String(me?.role || "").toLowerCase();
+
+        if (role === "receiver" && (status === "invited" || status === "ringing")) {
+          await callService.joinCall(callId);
+        }
       } catch (error: any) {
-        toast.error(error?.message || "Failed to join call");
+        const message =
+          error?.response?.data?.message || error?.message || "Failed to join call";
+        if (!String(message).toLowerCase().includes("cannot join this call")) {
+          toast.error(message);
+        }
       } finally {
         setJoining(false);
       }
     };
 
     joinIncoming();
-  }, [callId, mode]);
+  }, [callId, mode, user?.id]);
+
+  const leaveOnce = () => {
+    if (!callId || hasLeftRef.current) return;
+    hasLeftRef.current = true;
+    socketService.changeCallStatus(callId, "left", "User left");
+    socketService.leaveCall(callId);
+  };
 
   useEffect(() => {
     if (!callId) return;
@@ -117,8 +143,7 @@ const AudioCallScreen = () => {
 
     return () => {
       mounted = false;
-      socketService.changeCallStatus(callId, "left", "User left");
-      socketService.leaveCall(callId);
+      leaveOnce();
       if (onParticipants) socketService.offCallParticipants(onParticipants);
       if (onJoined) socketService.offParticipantJoined(onJoined);
       if (onEnded) socketService.offCallEnded(onEnded);
@@ -145,8 +170,7 @@ const AudioCallScreen = () => {
 
     try {
       setEnding(true);
-      socketService.changeCallStatus(callId, "left", "User ended call");
-      socketService.leaveCall(callId);
+      leaveOnce();
       await callService.endCall(callId);
     } catch (error: any) {
       toast.error(error?.message || "Failed to end call");
