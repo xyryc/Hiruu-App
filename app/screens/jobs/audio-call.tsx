@@ -3,18 +3,18 @@ import { socketService } from "@/services/socketService";
 import { useAuthStore } from "@/stores/authStore";
 import { Ionicons } from "@expo/vector-icons";
 import {
+  mediaDevices,
+  RTCIceCandidate,
+  RTCPeerConnection,
+  RTCSessionDescription,
+} from "@livekit/react-native-webrtc";
+import {
   createAudioPlayer,
   requestRecordingPermissionsAsync,
   setAudioModeAsync,
 } from "expo-audio";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import {
-  mediaDevices,
-  RTCPeerConnection,
-  RTCIceCandidate,
-  RTCSessionDescription,
-} from "react-native-webrtc";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -185,9 +185,9 @@ const AudioCallScreen = () => {
     };
 
     pcRef.current = pc;
-      setWebrtcReady(true);
-      setLastWebrtcError("");
-      return pc;
+    setWebrtcReady(true);
+    setLastWebrtcError("");
+    return pc;
   };
 
   const flushPendingCandidates = async () => {
