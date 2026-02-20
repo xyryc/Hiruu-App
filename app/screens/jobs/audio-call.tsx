@@ -26,8 +26,11 @@ const AudioCallScreen = () => {
   const [speakerOn, setSpeakerOn] = useState(true);
   const [remoteJoined, setRemoteJoined] = useState(false);
   const [participantsCount, setParticipantsCount] = useState(1);
-  const [startedAt] = useState(Date.now());
+  const [startedAt, setStartedAt] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [accepting, setAccepting] = useState(false);
+  const [rejecting, setRejecting] = useState(false);
+  const [isIncomingPending, setIsIncomingPending] = useState(mode === "incoming");
   const hasLeftRef = useRef(false);
   const hasJoinedCallRoomRef = useRef(false);
 
@@ -36,6 +39,11 @@ const AudioCallScreen = () => {
   }, [callId, mode, params.roomId]);
 
   useEffect(() => {
+    if (!startedAt) {
+      setElapsed(0);
+      return;
+    }
+
     const interval = setInterval(() => {
       setElapsed(Math.floor((Date.now() - startedAt) / 1000));
     }, 1000);
@@ -44,33 +52,20 @@ const AudioCallScreen = () => {
   }, [startedAt]);
 
   useEffect(() => {
-    const joinIncoming = async () => {
-      if (mode !== "incoming" || !callId) return;
-      try {
-        const details = await callService.getCallById(callId);
-        const participants = Array.isArray(details?.data?.participants)
-          ? details.data.participants
-          : [];
-        const me = participants.find((p: any) => p?.userId === user?.id);
-        const status = String(me?.status || "").toLowerCase();
-        const role = String(me?.role || "").toLowerCase();
+    if (remoteJoined && !startedAt) {
+      setStartedAt(Date.now());
+    }
+  }, [remoteJoined, startedAt]);
 
-        if (role === "receiver" && (status === "invited" || status === "ringing")) {
-          await callService.joinCall(callId);
-        }
-      } catch (error: any) {
-        const message =
-          error?.response?.data?.message || error?.message || "Failed to join call";
-        if (!String(message).toLowerCase().includes("cannot join this call")) {
-          toast.error(message);
-        }
-      } finally {
-        setJoining(false);
-      }
-    };
-
-    joinIncoming();
-  }, [callId, mode, user?.id]);
+  useEffect(() => {
+    if (mode !== "incoming") {
+      setJoining(false);
+      setIsIncomingPending(false);
+    } else {
+      setJoining(true);
+      setIsIncomingPending(true);
+    }
+  }, [mode]);
 
   const leaveOnce = () => {
     if (!callId || hasLeftRef.current) return;
@@ -89,6 +84,7 @@ const AudioCallScreen = () => {
     let onParticipants: ((payload: any) => void) | null = null;
     let onJoined: ((payload: any) => void) | null = null;
     let onEnded: ((payload: any) => void) | null = null;
+    let onParticipantStatusChanged: ((payload: any) => void) | null = null;
 
     const bindCallSocket = async () => {
       try {
@@ -150,13 +146,24 @@ const AudioCallScreen = () => {
         onEnded = (payload: any) => {
           const endedCallId = payload?.callId;
           if (!mounted || endedCallId !== callId) return;
-          toast.message("Call ended");
+          toast.success("Call ended");
           router.back();
+        };
+
+        onParticipantStatusChanged = (payload: any) => {
+          const participantId = payload?.userId;
+          const status = String(payload?.status || "").toLowerCase();
+          if (!mounted || !participantId || participantId === user?.id) return;
+          if (status === "declined" || status === "missed" || status === "left") {
+            toast.success("Call ended");
+            router.back();
+          }
         };
 
         socketService.onCallParticipants(onParticipants);
         socketService.onParticipantJoined(onJoined);
         socketService.onCallEnded(onEnded);
+        socketService.onParticipantStatusChanged(onParticipantStatusChanged);
       } catch (error: any) {
         if (mounted) {
           toast.error(error?.message || "Failed to connect call socket");
@@ -172,6 +179,9 @@ const AudioCallScreen = () => {
       if (onParticipants) socketService.offCallParticipants(onParticipants);
       if (onJoined) socketService.offParticipantJoined(onJoined);
       if (onEnded) socketService.offCallEnded(onEnded);
+      if (onParticipantStatusChanged) {
+        socketService.offParticipantStatusChanged(onParticipantStatusChanged);
+      }
     };
   }, [callId, router, user?.id]);
 
@@ -182,10 +192,39 @@ const AudioCallScreen = () => {
   }, [elapsed]);
 
   const callStatusText = useMemo(() => {
+    if (isIncomingPending) return "Incoming call...";
     if (joining) return "Connecting...";
     if (!remoteJoined) return "Ringing...";
     return durationText;
-  }, [durationText, joining, remoteJoined]);
+  }, [durationText, isIncomingPending, joining, remoteJoined]);
+
+  const handleAccept = async () => {
+    if (!callId || accepting) return;
+    try {
+      setAccepting(true);
+      await callService.joinCall(callId);
+      setIsIncomingPending(false);
+      setJoining(false);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message || error?.message || "Failed to accept call";
+      toast.error(message);
+    } finally {
+      setAccepting(false);
+    }
+  };
+
+  const handleReject = async () => {
+    if (!callId || rejecting) return;
+    try {
+      setRejecting(true);
+      socketService.changeCallStatus(callId, "declined", "User declined");
+      leaveOnce();
+    } finally {
+      setRejecting(false);
+      router.back();
+    }
+  };
 
   const handleEnd = async () => {
     if (!callId || ending) {
@@ -225,6 +264,33 @@ const AudioCallScreen = () => {
           ) : null}
         </View>
 
+        {isIncomingPending ? (
+          <View className="flex-row items-center justify-center gap-8 mb-8">
+            <TouchableOpacity
+              onPress={handleReject}
+              disabled={rejecting || accepting}
+              className="w-16 h-16 rounded-full bg-[#EF4444] items-center justify-center"
+            >
+              {rejecting ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Ionicons name="call" size={26} color="#FFFFFF" />
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={handleAccept}
+              disabled={accepting || rejecting}
+              className="w-16 h-16 rounded-full bg-[#22C55E] items-center justify-center"
+            >
+              {accepting ? (
+                <ActivityIndicator color="#FFFFFF" />
+              ) : (
+                <Ionicons name="call" size={26} color="#FFFFFF" />
+              )}
+            </TouchableOpacity>
+          </View>
+        ) : (
         <View className="flex-row items-center justify-center gap-6 mb-8">
           <TouchableOpacity
             onPress={() => {
@@ -265,6 +331,7 @@ const AudioCallScreen = () => {
             />
           </TouchableOpacity>
         </View>
+        )}
       </View>
     </SafeAreaView>
   );

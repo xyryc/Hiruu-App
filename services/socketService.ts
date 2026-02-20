@@ -275,6 +275,14 @@ class SocketService {
     offParticipantJoined(callback?: (data: any) => void) {
         this.callsSocket?.off('participant_joined', callback);
     }
+
+    onParticipantStatusChanged(callback: (data: any) => void) {
+        this.callsSocket?.on('participant_status_changed', callback);
+    }
+
+    offParticipantStatusChanged(callback?: (data: any) => void) {
+        this.callsSocket?.off('participant_status_changed', callback);
+    }
 }
 
 export const socketService = new SocketService();
