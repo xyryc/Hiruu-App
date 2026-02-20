@@ -111,7 +111,7 @@ export default function Step1({
       onComplete();
     } catch (error: any) {
       toast.error(error.message || t("user.setup.profileUpdateError"));
-      console.error("Profile update error:", error);
+      console.log("Profile update error:", error);
     }
   };
 

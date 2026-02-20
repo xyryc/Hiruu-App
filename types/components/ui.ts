@@ -237,13 +237,13 @@ export interface WorkShiftCardProps {
   onLoginPress: () => void;
   requestLog?: boolean;
   status?:
-    | "ongoing"
-    | "upcoming"
-    | "completed"
-    | "pending"
-    | "approved"
-    | "rejected"
-    | "accepted";
+  | "ongoing"
+  | "upcoming"
+  | "completed"
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "accepted";
 }
 
 export interface ScreenHeaderProps {
@@ -277,17 +277,30 @@ export interface JobCardProps {
   compact?: boolean;
   job?: {
     id: string;
-    name: string;
+    name?: string;
     salaryMin: number;
     salaryMax: number;
     salaryType: string;
     shiftStartTime?: string;
     shiftEndTime?: string;
+    gender?: string;
+    experience?: string;
+    ageMin?: number;
+    ageMax?: number;
+    numberOfOpenings?: number;
     business?: {
       id: string;
       name: string;
-      logo?: string;
+      logo?: string | null;
       address?: string;
+    } | null;
+    role?: {
+      id: string;
+      description?: string;
+      role?: {
+        id: string;
+        name: string;
+      };
     } | null;
     _count?: {
       recruitmentApplications?: number;

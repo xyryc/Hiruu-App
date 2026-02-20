@@ -45,7 +45,7 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
                 setMessages(Array.isArray(data) ? data.reverse() : []);
             }
         } catch (error) {
-            console.error('Failed to load messages:', error);
+            console.log('Failed to load messages:', error);
             if (onError) {
                 onError(error as Error);
             }
@@ -91,7 +91,7 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
                     });
                 }
             } catch (error) {
-                console.error('Failed to send message:', error);
+                console.log('Failed to send message:', error);
                 if (onError) {
                     onError(error as Error);
                 }
@@ -170,7 +170,7 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
                 };
 
                 const handleError = (error: any) => {
-                    console.error('Socket error in chat:', error.message || error);
+                    console.log('Socket error in chat:', error.message || error);
                     if (onError) {
                         onError(new Error(error.message || 'Socket error occurred'));
                     }
@@ -188,7 +188,7 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
                     handleError,
                 };
             } catch (error) {
-                console.error('Socket setup error:', error);
+                console.log('Socket setup error:', error);
                 setConnected(false);
             }
         };

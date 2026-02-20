@@ -122,7 +122,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return companies;
     } catch (error) {
-      console.error("Fetch businesses error:", error);
+      console.log("Fetch businesses error:", error);
       throw error;
     }
   },
@@ -154,7 +154,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       return result.data;
     } catch (error) {
       set({ myBusinessesLoading: false });
-      console.error("Fetch my businesses error:", error);
+      console.log("Fetch my businesses error:", error);
       throw error;
     }
   },
@@ -172,7 +172,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return Array.isArray(result.data) ? result.data : [];
     } catch (error) {
-      console.error("Fetch predefined roles error:", error);
+      console.log("Fetch predefined roles error:", error);
       throw error;
     }
   },
@@ -192,7 +192,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data || {};
     } catch (error) {
-      console.error("Fetch permissions error:", error);
+      console.log("Fetch permissions error:", error);
       throw error;
     }
   },
@@ -215,7 +215,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data;
     } catch (error) {
-      console.error("Create business role error:", error);
+      console.log("Create business role error:", error);
       throw error;
     }
   },
@@ -238,7 +238,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data;
     } catch (error) {
-      console.error("Update business role error:", error);
+      console.log("Update business role error:", error);
       throw error;
     }
   },
@@ -260,7 +260,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data || [];
     } catch (error) {
-      console.error("Fetch roles error:", error);
+      console.log("Fetch roles error:", error);
       throw error;
     }
   },
@@ -282,7 +282,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return Array.isArray(result.data) ? result.data : [];
     } catch (error) {
-      console.error("Fetch detailed business roles error:", error);
+      console.log("Fetch detailed business roles error:", error);
       throw error;
     }
   },
@@ -304,7 +304,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data || null;
     } catch (error) {
-      console.error("Fetch role details error:", error);
+      console.log("Fetch role details error:", error);
       throw error;
     }
   },
@@ -327,7 +327,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data;
     } catch (error) {
-      console.error("Create shift template error:", error);
+      console.log("Create shift template error:", error);
       throw error;
     }
   },
@@ -347,7 +347,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return Array.isArray(result.data) ? result.data : [];
     } catch (error) {
-      console.error("Fetch shift templates error:", error);
+      console.log("Fetch shift templates error:", error);
       throw error;
     }
   },
@@ -370,7 +370,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data;
     } catch (error) {
-      console.error("Create weekly schedule from templates error:", error);
+      console.log("Create weekly schedule from templates error:", error);
       throw error;
     }
   },
@@ -393,7 +393,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data;
     } catch (error) {
-      console.error("Update shift template error:", error);
+      console.log("Update shift template error:", error);
       throw error;
     }
   },
@@ -415,7 +415,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data || null;
     } catch (error) {
-      console.error("Fetch shift template by id error:", error);
+      console.log("Fetch shift template by id error:", error);
       throw error;
     }
   },
@@ -437,7 +437,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data;
     } catch (error) {
-      console.error("Delete shift template error:", error);
+      console.log("Delete shift template error:", error);
       throw error;
     }
   },
@@ -457,7 +457,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data;
     } catch (error) {
-      console.error("Fetch business profile error:", error);
+      console.log("Fetch business profile error:", error);
       throw error;
     }
   },
@@ -479,7 +479,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result.data;
     } catch (error) {
-      console.error("Delete role error:", error);
+      console.log("Delete role error:", error);
       throw error;
     }
   },
@@ -685,7 +685,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
           ? result.data.join("\n")
           : null;
         const message = validation || translateApiMessage(messageKey);
-        console.error("Create business failed:", {
+        console.log("Create business failed:", {
           status: response.status,
           body: rawText,
         });
@@ -786,7 +786,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return result;
     } catch (error) {
-      console.error("Assign business role error:", error);
+      console.log("Assign business role error:", error);
       throw error;
     }
   },
@@ -808,7 +808,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
       return Array.isArray(result.data) ? result.data : [];
     } catch (error) {
-      console.error("Fetch business employees error:", error);
+      console.log("Fetch business employees error:", error);
       throw error;
     }
   },

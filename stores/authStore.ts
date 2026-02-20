@@ -92,7 +92,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set({ isInitialized: true });
       }
     } catch (error) {
-      console.error("Failed to initialize auth:", error);
+      console.log("Failed to initialize auth:", error);
       set({ isInitialized: true });
     }
   },
@@ -317,7 +317,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         refreshToken: null,
       });
     } catch (error) {
-      console.error("Failed to logout:", error);
+      console.log("Failed to logout:", error);
       await authService.clearAuthData();
       useBusinessStore.getState().resetBusinessSession();
       set({

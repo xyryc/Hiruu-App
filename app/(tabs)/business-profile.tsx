@@ -5,6 +5,7 @@ import RatingProgress from "@/components/ui/cards/RatingProgress";
 import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import ProfileSwitchModal from "@/components/ui/modals/ProfileSwitchModal";
 import { useBusinessStore } from "@/stores/businessStore";
+import { useJobStore } from "@/stores/jobStore";
 import {
   EvilIcons,
   Feather,
@@ -36,6 +37,8 @@ const BusinessProfile = () => {
   const [loading, setLoading] = useState(false);
   const [recruitingUpdateLoading, setRecruitingUpdateLoading] = useState(false);
   const [isProfileSwitchOpen, setIsProfileSwitchOpen] = useState(false);
+  const [jobData, setJobData] = useState<any[]>([]);
+  const [jobLoading, setJobLoading] = useState(false);
   const {
     selectedBusinesses,
     getBusinessProfile,
@@ -107,6 +110,26 @@ const BusinessProfile = () => {
       setRecruitingUpdateLoading(false);
     }
   };
+
+  // GET BUSINESS RECRUITMENTS
+  const getRecruitmentsByBusiness = useJobStore((s) => s.getRecruitmentsByBusiness);
+
+  useEffect(() => {
+    if (!businessId) return;
+    const loadRecruitments = async () => {
+      try {
+        setJobLoading(true);
+        const data = await getRecruitmentsByBusiness(businessId);
+        setJobData(data);
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load job postings");
+        setJobData([]);
+      } finally {
+        setJobLoading(false);
+      }
+    };
+    loadRecruitments();
+  }, [businessId]);
 
   return (
     <SafeAreaView
@@ -414,17 +437,31 @@ const BusinessProfile = () => {
         {/* job tabs */}
         {selectedTab === "job" && (
           <View className="mx-5">
-            <Text className="my-4">Open Positions</Text>
-
-            <JobCard
-              className="bg-white border border-[#EEEEEE] mb-4"
-            />
-            <JobCard
-              className="bg-white border border-[#EEEEEE] mb-4"
-            />
-            <JobCard
-              className="bg-white border border-[#EEEEEE] mb-4"
-            />
+            <Text className="my-4 font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
+              Open Positions
+            </Text>
+            {jobLoading ? (
+              <View className="py-8 items-center">
+                <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                  Loading jobs...
+                </Text>
+              </View>
+            ) : jobData.length === 0 ? (
+              <View className="py-8 items-center">
+                <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+                  No open positions yet.
+                </Text>
+              </View>
+            ) : (
+              jobData.map((job: any) => (
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  compact={true}
+                  className="bg-white border border-[#EEEEEE] mb-4"
+                />
+              ))
+            )}
           </View>
         )}
       </ScrollView>

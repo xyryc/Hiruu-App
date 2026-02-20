@@ -61,7 +61,7 @@ export default function Step3({
       // console.log("from step 3", profileData);
     } catch (error: any) {
       toast.error(error.message || t("user.setup.profileUpdateError"));
-      console.error("Profile update error:", error);
+      console.log("Profile update error:", error);
     }
   };
 

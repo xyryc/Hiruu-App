@@ -14,7 +14,7 @@ export const useSocketLifecycle = (enabled: boolean) => {
     const connectIfNeeded = () => {
       if (AppState.currentState === "active") {
         socketService.connect().catch((error) => {
-          console.error("Failed to connect to socket:", error);
+          console.log("Failed to connect to socket:", error);
         });
       }
     };
@@ -27,7 +27,7 @@ export const useSocketLifecycle = (enabled: boolean) => {
 
       if (prevState !== "active" && nextState === "active") {
         socketService.connect().catch((error) => {
-          console.error("Failed to connect to socket:", error);
+          console.log("Failed to connect to socket:", error);
         });
         return;
       }

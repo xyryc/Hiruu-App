@@ -44,6 +44,6 @@ export const saveLanguage = async (language: string) => {
     await AsyncStorage.setItem(LANGUAGE_KEY, language);
     await i18n.changeLanguage(language);
   } catch (error) {
-    console.error("Error saving language:", error);
+    console.log("Error saving language:", error);
   }
 };

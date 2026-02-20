@@ -61,7 +61,7 @@ const PostJob = () => {
 
         // Fetch ONLY business-specific roles
         const businessRoles = await getMyBusinessRoles(businessId).catch(e => {
-          console.error("getMyBusinessRoles error:", e);
+          console.log("getMyBusinessRoles error:", e);
           return [];
         });
 
@@ -80,7 +80,7 @@ const PostJob = () => {
           }
         }
       } catch (error) {
-        console.error("[PostJob] Failed to load roles:", error);
+        console.log("[PostJob] Failed to load roles:", error);
       } finally {
         if (isMounted) {
           setRolesLoading(false);
@@ -192,11 +192,11 @@ const PostJob = () => {
       shiftEndTime: formatTime24(shiftEndTime),
       salaryMin: parsedSalaryMin,
       salaryMax: parsedSalaryMax,
-      requiredSkills: [], // Placeholder for future enhancement
+      requiredSkills: [],
       salaryType: (jobType === "hourly" ? "hourly" : "monthly") as "hourly" | "monthly",
       numberOfOpenings: parsedOpenings,
     };
-
+    console.log("JobData :", payload);
     try {
       await createRecruitment(businessId, payload);
       toast.success("Job posted successfully.");
@@ -205,7 +205,7 @@ const PostJob = () => {
       // Professional error handling with specific feedback
       const errorMessage = error instanceof Error ? error.message : "Failed to post job";
       toast.error(errorMessage);
-      console.error("[PostJob] API Error:", error);
+      console.log("[PostJob] API Error:", error);
     }
   };
 

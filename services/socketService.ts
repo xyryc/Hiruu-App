@@ -50,12 +50,12 @@ class SocketService {
             });
 
             this.socket.on('connect_error', (error) => {
-                console.error('❌ Socket connection error:', error.message);
+                console.log('❌ Socket connection error:', error.message);
                 this.isConnecting = false;
             });
 
             this.socket.on('error', (error) => {
-                console.error('❌ Socket error:', error);
+                console.log('❌ Socket error:', error);
             });
 
             this.socket.on('disconnect', (reason) => {
@@ -67,7 +67,7 @@ class SocketService {
 
             return this.socket;
         } catch (error) {
-            console.error('❌ Failed to connect socket:', error);
+            console.log('❌ Failed to connect socket:', error);
             this.isConnecting = false;
             throw error;
         }
@@ -102,7 +102,7 @@ class SocketService {
 
     sendMessage(data: { chatRoomId: string; content: string }) {
         if (!this.socket?.connected) {
-            console.error('❌ Socket not connected');
+            console.log('❌ Socket not connected');
             return;
         }
 

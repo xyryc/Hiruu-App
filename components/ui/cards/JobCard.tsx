@@ -23,6 +23,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
     [job?.salaryType]
   );
 
+
   return (
     <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>
       <TouchableOpacity
@@ -40,7 +41,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
 
         <View>
           <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-1">
-            {job?.name || "Maintanence Staff"}{" "}
+            {job?.role?.role?.name || job?.name || "Job Position"}{" "}
             <MaterialCommunityIcons name="crown" size={14} color="#4FB2F3" />
           </Text>
           <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
@@ -61,7 +62,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
           <Text className="text-xl font-proximanova-semibold text-primary">
             {typeof job?.salaryMin === "number" && typeof job?.salaryMax === "number"
               ? `${job.salaryMin}-${job.salaryMax}`
-              : "5-10"}
+              : "0-0"}
             $
           </Text>
           <Text className="text-lg font-proximanova-regular text-secondary">
@@ -150,7 +151,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
         </>
       )}
 
-      <JobApplyModal visible={showModal} onClose={() => setShowModal(false)} />
+      <JobApplyModal visible={showModal} onClose={() => setShowModal(false)} job={job} />
     </View>
   );
 };

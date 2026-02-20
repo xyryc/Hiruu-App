@@ -115,7 +115,7 @@ const QrScanner = () => {
         );
       }
     } catch (error) {
-      console.error("Gallery scan error:", error);
+      console.log("Gallery scan error:", error);
       Alert.alert("Error", "Failed to scan QR code from image.");
     }
   };

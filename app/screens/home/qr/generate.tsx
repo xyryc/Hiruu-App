@@ -64,7 +64,7 @@ const QrGenerate = () => {
       setDeepLinkUrl(link);
       setBusinessName(business?.name || userBusiness?.name || "");
       setBusinessLogoUrl(business?.logo || userBusiness?.logo || "");
-    } catch {}
+    } catch { }
   }
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const QrGenerate = () => {
       await Clipboard.setStringAsync(inviteCode);
       toast.success("Code has been copied to clipboard");
     } catch (error) {
-      console.error("Error copying to clipboard:", error);
+      console.log("Error copying to clipboard:", error);
       toast.error("Failed to copy code to clipboard");
     }
   };
@@ -127,7 +127,7 @@ const QrGenerate = () => {
         toast.info("QR code is ready. You can take a screenshot to save it.");
       }
     } catch (error) {
-      console.error("Error capturing QR code:", error);
+      console.log("Error capturing QR code:", error);
       toast.error("Failed to save QR code. Please take a screenshot instead.");
     } finally {
       setIsGenerating(false);

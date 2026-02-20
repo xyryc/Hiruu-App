@@ -23,10 +23,12 @@ interface JobState {
   isLoading: boolean;
   error: Error | null;
   getPublicRecruitments: () => Promise<any[]>;
+  getRecruitmentsByBusiness: (businessId: string) => Promise<any[]>;
   createRecruitment: (
     businessId: string,
     payload: CreateRecruitmentPayload
   ) => Promise<any>;
+  applyForJob: (recruitmentId: string) => Promise<any>;
   clearError: () => void;
 }
 
@@ -63,7 +65,37 @@ export const useJobStore = create<JobState>((set) => ({
     }
   },
 
+  getRecruitmentsByBusiness: async (businessId: string) => {
+    try {
+      const response = await axiosInstance.get(`/recruitment/${businessId}`);
+      const result = response.data;
+
+      if (!result?.success) {
+        const messageKey = result?.message || "UNKNOWN_ERROR";
+        const validation = Array.isArray(result?.data)
+          ? result.data.join("\n")
+          : null;
+        const message = validation || translateApiMessage(messageKey);
+        throw new Error(message);
+      }
+
+      return Array.isArray(result?.data) ? result.data : [];
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const apiValidation = Array.isArray(axiosError.response?.data?.data)
+        ? axiosError.response?.data?.data?.join("\n")
+        : null;
+      const message =
+        apiValidation ||
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to fetch business recruitments";
+      throw new Error(message);
+    }
+  },
+
   createRecruitment: async (businessId, payload) => {
+
     set({ isLoading: true, error: null });
 
     try {
@@ -94,6 +126,41 @@ export const useJobStore = create<JobState>((set) => ({
         translateApiMessage(axiosError.response?.data?.message) ||
         axiosError.message ||
         "Failed to create recruitment";
+      const finalError = new Error(message);
+      set({ isLoading: false, error: finalError });
+      throw finalError;
+    }
+  },
+
+  applyForJob: async (recruitmentId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axiosInstance.post("/recruitment-application", {
+        recruitmentId,
+      });
+      const result = response.data;
+
+      if (!result?.success) {
+        const messageKey = result?.message || "UNKNOWN_ERROR";
+        const validation = Array.isArray(result?.data)
+          ? result.data.join("\n")
+          : null;
+        const message = validation || translateApiMessage(messageKey);
+        throw new Error(message);
+      }
+
+      set({ isLoading: false });
+      return result.data;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const apiValidation = Array.isArray(axiosError.response?.data?.data)
+        ? axiosError.response?.data?.data?.join("\n")
+        : null;
+      const message =
+        apiValidation ||
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to submit application";
       const finalError = new Error(message);
       set({ isLoading: false, error: finalError });
       throw finalError;

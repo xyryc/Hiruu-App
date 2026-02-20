@@ -241,7 +241,7 @@ class AuthService {
 
             await Promise.all(promises);
         } catch (error) {
-            console.error('Failed to store auth data:', error);
+            console.log('Failed to store auth data:', error);
             throw error;
         }
     }
@@ -255,7 +255,7 @@ class AuthService {
                 STORAGE_KEYS.REFRESH_TOKEN,
             ]);
         } catch (error) {
-            console.error('Failed to clear auth data:', error);
+            console.log('Failed to clear auth data:', error);
             throw error;
         }
     }
@@ -279,7 +279,7 @@ class AuthService {
                 refreshToken,
             };
         } catch (error) {
-            console.error('Failed to get stored auth data:', error);
+            console.log('Failed to get stored auth data:', error);
             return {
                 user: null,
                 accessToken: null,

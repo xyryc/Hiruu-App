@@ -62,7 +62,7 @@ const MultiSelectCompanyDropdown = ({
 
       setCompanies(transformedCompanies);
     } catch (error) {
-      console.error("Failed to load companies:", error);
+      console.log("Failed to load companies:", error);
       toast.error("Failed to load companies. Please try again.");
     } finally {
       setIsLoadingCompanies(false);
@@ -128,7 +128,7 @@ const MultiSelectCompanyDropdown = ({
         });
       }
     } catch (error) {
-      console.error("Error picking image:", error);
+      console.log("Error picking image:", error);
       Alert.alert("Error", "Failed to pick image. Please try again.");
     }
   };
@@ -180,7 +180,7 @@ const MultiSelectCompanyDropdown = ({
 
       toast.success("Company added successfully!");
     } catch (error) {
-      console.error("Error creating company:", error);
+      console.log("Error creating company:", error);
       toast.error(error.message || "Failed to add company. Please try again.");
     }
   };

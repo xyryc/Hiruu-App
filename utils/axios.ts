@@ -43,7 +43,7 @@ axiosInstance.interceptors.request.use(
 
       return config;
     } catch (error) {
-      console.error('Request interceptor error:', error);
+      console.log('Request interceptor error:', error);
       return config;
     }
   },
@@ -108,7 +108,7 @@ axiosInstance.interceptors.response.use(
 
     // Log errors in development
     if (process.env.NODE_ENV === 'development') {
-      console.error('API Error:', {
+      console.log('API Error:', {
         url: error.config?.url,
         method: error.config?.method,
         status: error.response?.status,

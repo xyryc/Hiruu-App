@@ -1,15 +1,14 @@
+import { Feather, Fontisto } from "@expo/vector-icons";
+import * as Contacts from "expo-contacts";
 import { Image } from "expo-image";
 import React, { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Alert,
   ActivityIndicator,
+  Alert,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { Feather, Fontisto } from "@expo/vector-icons";
-import * as Contacts from "expo-contacts";
 
 const ContactSection = () => {
   const [isLock, setIsLock] = useState(true);
@@ -62,7 +61,7 @@ const ContactSection = () => {
         );
       }
     } catch (error) {
-      console.error("Error requesting contacts permission:", error);
+      console.log("Error requesting contacts permission:", error);
       Alert.alert(
         "Error",
         "Something went wrong while requesting permission.",

@@ -1,18 +1,17 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-} from "react-native";
-import React, { useState } from "react";
-import { Image } from "expo-image";
 import ScreenHeader from "@/components/header/ScreenHeader";
-import { SafeAreaView } from "react-native-safe-area-context";
+import JobRequestCard from "@/components/ui/cards/JobRequestCard";
+import SearchBar from "@/components/ui/inputs/SearchBar";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
-import SearchBar from "@/components/ui/inputs/SearchBar";
-import JobRequestCard from "@/components/ui/cards/JobRequestCard";
+import React, { useState } from "react";
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const JobRequest = () => {
   const router = useRouter();

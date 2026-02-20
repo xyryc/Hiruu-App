@@ -1,3 +1,5 @@
+import { useJobStore } from "@/stores/jobStore";
+import { JobCardProps } from "@/types";
 import { Entypo, Fontisto, SimpleLineIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
@@ -9,19 +11,28 @@ import {
   Modal,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 import SimpleStatusBadge from "../badges/SimpleStatusBadge";
 import PrimaryButton from "../buttons/PrimaryButton";
 import SmallButton from "../buttons/SmallButton";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const JobApplyModal = ({ visible, onClose }: any) => {
+type JobApplyModalProps = {
+  visible: boolean;
+  onClose: () => void;
+  job?: JobCardProps["job"];
+};
+
+const JobApplyModal = ({ visible, onClose, job }: JobApplyModalProps) => {
   const [showDetails, setShowDetails] = useState(false);
   const slideAnim = useRef(new Animated.Value(SCREEN_WIDTH)).current;
   const router = useRouter();
+  const applyForJob = useJobStore((s) => s.applyForJob);
+  const isLoading = useJobStore((s) => s.isLoading);
 
   useEffect(() => {
     if (showDetails) {
@@ -35,6 +46,14 @@ const JobApplyModal = ({ visible, onClose }: any) => {
       slideAnim.setValue(SCREEN_WIDTH);
     }
   }, [showDetails]);
+
+  // Reset to initial state when modal closes
+  useEffect(() => {
+    if (!visible) {
+      setShowDetails(false);
+      slideAnim.setValue(SCREEN_WIDTH);
+    }
+  }, [visible]);
 
   const handleDone = () => {
     if (showDetails) {
@@ -51,8 +70,21 @@ const JobApplyModal = ({ visible, onClose }: any) => {
     }
   };
 
-  const handleApplyNow = () => {
-    setShowDetails(true);
+  const handleApplyNow = async () => {
+    if (!job?.id) {
+      toast.error("Invalid job. Please try again.");
+      return;
+    }
+    try {
+      await applyForJob(job.id);
+      setShowDetails(true);
+    } catch (error: any) {
+      // Close the modal first, then show the error toast
+      onClose();
+      setTimeout(() => {
+        toast.error(error?.message || "Failed to submit application.");
+      }, 350);
+    }
   };
 
   const handleBackToJobBoard = () => {
@@ -61,6 +93,23 @@ const JobApplyModal = ({ visible, onClose }: any) => {
     router.replace("/(tabs)/user-jobs");
   };
 
+  // Derived display values from the job object
+  const jobTitle = job?.role?.role?.name ?? job?.name ?? "Job Position";
+  const businessName = job?.business?.name ?? "Business";
+  const businessLogo = job?.business?.logo;
+  const businessAddress = job?.business?.address ?? "Location not specified";
+
+  const salaryLabel =
+    typeof job?.salaryMin === "number" && typeof job?.salaryMax === "number"
+      ? `Salary: $${job.salaryMin}-${job.salaryMax}/${job.salaryType === "monthly" ? "mo" : "hr"}`
+      : "Salary: Not specified";
+
+  const shiftLabel =
+    job?.shiftStartTime && job?.shiftEndTime
+      ? `Shift: ${job.shiftStartTime} – ${job.shiftEndTime}`
+      : null;
+
+  console.log("JobData : ", job);
   return (
     <Modal
       visible={visible}
@@ -81,9 +130,12 @@ const JobApplyModal = ({ visible, onClose }: any) => {
 
           {/* Modal Content */}
           <SafeAreaView edges={["bottom"]} className="px-5 py-7 items-center">
-            {/* image */}
+            {/* Business Logo */}
             <Image
-              source="https://images-platform.99static.com//gkoGE5-VZ1k4SXxg0mrUj7O0V38=/250x0:1750x1500/fit-in/500x500/99designs-contests-attachments/102/102585/attachment_102585463"
+              source={
+                businessLogo ||
+                "https://img.freepik.com/free-vector/elegant-luxury-hotel-logo_23-2147534418.jpg?semt=ais_hybrid&w=740&q=80"
+              }
               style={{
                 width: 100,
                 height: 100,
@@ -92,12 +144,12 @@ const JobApplyModal = ({ visible, onClose }: any) => {
               contentFit="cover"
             />
 
-            {/* name */}
+            {/* Business Name */}
             <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary mt-2.5">
-              Farout Beach Club
+              {businessName}
             </Text>
 
-            {/* location */}
+            {/* Location & Rating Row */}
             <View className="flex-row items-center justify-center mt-2.5 gap-7">
               <View className="flex-row items-center gap-2.5 border-r-hairline border-[#7A7A7A] pr-7">
                 <SimpleLineIcons
@@ -106,7 +158,7 @@ const JobApplyModal = ({ visible, onClose }: any) => {
                   color="#7A7A7A"
                 />
                 <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                  New York, North Bergen
+                  {businessAddress}
                 </Text>
               </View>
 
@@ -115,32 +167,35 @@ const JobApplyModal = ({ visible, onClose }: any) => {
               </Text>
             </View>
 
-            {/* badges */}
+            {/* Job Badges */}
             <View className="flex-row flex-wrap justify-center gap-2.5 mt-2.5">
-              <SimpleStatusBadge title="Hiring: Bartender" bgColor="#F5F5F5" />
-              <SimpleStatusBadge title="Salary: 5-10$/hr" bgColor="#F5F5F5" />
               <SimpleStatusBadge
-                title="Shift: 10:00 AM – 11:00 PM"
+                title={`Hiring: ${jobTitle}`}
                 bgColor="#F5F5F5"
               />
-              <SimpleStatusBadge title="4km away" bgColor="#F5F5F5" />
+              <SimpleStatusBadge title={salaryLabel} bgColor="#F5F5F5" />
+              {shiftLabel && (
+                <SimpleStatusBadge title={shiftLabel} bgColor="#F5F5F5" />
+              )}
             </View>
 
-            {/* note */}
+            {/* Note */}
             <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary text-center mt-2.5">
-              To apply for this job, please share Details so the business can
-              contact you.
+              To apply for this job, please share your details so the business
+              can contact you.
             </Text>
 
-            {/* button */}
+            {/* Apply Now Button */}
             <PrimaryButton
               title="Apply Now"
               className="mt-7"
               onPress={handleApplyNow}
+              loading={isLoading}
+              disabled={isLoading}
             />
           </SafeAreaView>
 
-          {/* Details Screen - Slides from Right */}
+          {/* Success Screen - Slides from Right */}
           <Animated.View
             style={{
               position: "absolute",
@@ -163,20 +218,19 @@ const JobApplyModal = ({ visible, onClose }: any) => {
                 style={{
                   width: 156,
                   height: 120,
-
                   alignSelf: "center",
                 }}
                 contentFit="cover"
               />
 
               <Text className="text-center text-lg font-proximanova-semibold mt-3 mb-2">
-                Application Sent! successfully
+                Application Sent Successfully!
               </Text>
 
-              {/* note */}
+              {/* Personalised success message */}
               <Text className="w-4/6 mx-auto text-sm font-proximanova-regular text-secondary dark:text-dark-secondary text-center mt-2.5">
-                You applied to Farout Beach Club. They may contact you soon.
-                Good luck!
+                You applied to {businessName} for the {jobTitle} position. They
+                may contact you soon. Good luck!
               </Text>
 
               <SmallButton

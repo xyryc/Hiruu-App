@@ -61,7 +61,7 @@ const ChatScreen = () => {
           }
         }
       } catch (error: any) {
-        console.error('Failed to initialize chat:', error.message);
+        console.log('Failed to initialize chat:', error.message);
         if (isMounted) {
           toast.error('Failed to load chat');
         }
