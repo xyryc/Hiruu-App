@@ -368,9 +368,6 @@ const AudioCallScreen = () => {
           const hasSelfInPayload = participants.some(
             (item: any) => item?.userId === user?.id
           );
-          const me = participants.find((item: any) => item?.userId === user?.id);
-          const myStatus = String(me?.status || "").toLowerCase();
-
           if (!mounted) return;
           const hasOtherJoined = participants.some(
             (item: any) =>
@@ -390,37 +387,18 @@ const AudioCallScreen = () => {
           if (hasOtherJoined) {
             nextCount = Math.max(2, nextCount);
           }
-          // Backend may return a partial participant list (self only) on receiver side.
-          // After accept/join, force connected UI/count.
-          const shouldForceIncomingConnected =
-            mode === "incoming" &&
-            !isIncomingPending &&
-            hasAcceptedIncomingRef.current;
-          if (
-            shouldForceIncomingConnected &&
-            (myStatus === "joined" || !myStatus || !hasOtherJoined)
-          ) {
-            setRemoteJoined(true);
+          if (hasOtherJoined) {
             hasConnectedOnceRef.current = true;
-            nextCount = Math.max(2, nextCount);
+            setRemoteJoined(true);
           } else {
-            if (hasOtherJoined) {
-              hasConnectedOnceRef.current = true;
-              setRemoteJoined(true);
-            } else {
-              setRemoteJoined((prev) =>
-                hasConnectedOnceRef.current ? prev : false
-              );
-            }
+            setRemoteJoined((prev) =>
+              hasConnectedOnceRef.current ? prev : false
+            );
           }
           setParticipantsCount(nextCount);
           if (hasOtherJoined) setJoining(false);
-          if (
-            mode === "incoming" &&
-            !isIncomingPending &&
-            (myStatus === "joined" || shouldForceIncomingConnected)
-          ) {
-            setJoining(false);
+          if (mode === "incoming" && !isIncomingPending && !hasOtherJoined) {
+            setJoining(true);
           }
           if (hasOtherJoined && mode === "outgoing") {
             void createAndSendOffer();
@@ -461,9 +439,7 @@ const AudioCallScreen = () => {
             if (mode === "incoming" && status === "joined") {
               hasAcceptedIncomingRef.current = true;
               setIsIncomingPending(false);
-              setJoining(false);
-              setRemoteJoined(true);
-              setParticipantsCount((prev) => Math.max(2, prev));
+              setJoining(true);
             }
             return;
           }
@@ -628,6 +604,12 @@ const AudioCallScreen = () => {
         const participants = Array.isArray(details?.data?.participants)
           ? details.data.participants
           : [];
+        const remoteParticipant = participants.find(
+          (item: any) => item?.userId && item.userId !== user?.id
+        );
+        if (remoteParticipant?.userId) {
+          remoteUserIdRef.current = remoteParticipant.userId;
+        }
         const hasRemoteJoined = participants.some(
           (item: any) =>
             item?.userId &&
@@ -644,13 +626,24 @@ const AudioCallScreen = () => {
         );
 
         if (hasRemoteJoined) {
-          hasConnectedOnceRef.current = true;
-          setRemoteJoined(true);
-          setJoining(false);
-          setIsIncomingPending(false);
-          setParticipantsCount((prev) => Math.max(2, prev));
-          void stopTone(incomingToneRef.current);
-          void stopTone(ringbackToneRef.current);
+          if (mode === "outgoing" || hasAcceptedIncomingRef.current) {
+            hasConnectedOnceRef.current = true;
+            setRemoteJoined(true);
+            setJoining(false);
+            setIsIncomingPending(false);
+            setParticipantsCount((prev) => Math.max(2, prev));
+            void stopTone(incomingToneRef.current);
+            void stopTone(ringbackToneRef.current);
+          }
+
+          // Fallback if signaling events are missed: keep sending offer until answer arrives.
+          if (
+            mode === "outgoing" &&
+            remoteUserIdRef.current &&
+            (!pcRef.current || !pcRef.current.remoteDescription)
+          ) {
+            void createAndSendOffer();
+          }
         }
 
         if (["ended", "completed", "cancelled"].includes(status)) {
@@ -658,7 +651,11 @@ const AudioCallScreen = () => {
           return;
         }
 
-        if (hasConnectedOnceRef.current && !hasRemoteActive) {
+        if (
+          (mode === "outgoing" || hasAcceptedIncomingRef.current) &&
+          hasConnectedOnceRef.current &&
+          !hasRemoteActive
+        ) {
           closeCallScreen();
         }
       } catch {
@@ -670,7 +667,7 @@ const AudioCallScreen = () => {
       isMounted = false;
       clearInterval(interval);
     };
-  }, [callId, user?.id]);
+  }, [callId, mode, user?.id]);
 
   const durationText = useMemo(() => {
     const mins = String(Math.floor(elapsed / 60)).padStart(2, "0");
@@ -691,15 +688,12 @@ const AudioCallScreen = () => {
       setAccepting(true);
       await callService.joinCall(callId);
       hasAcceptedIncomingRef.current = true;
-      hasConnectedOnceRef.current = true;
       if (!hasJoinedCallRoomRef.current) {
         socketService.joinCall(callId);
         hasJoinedCallRoomRef.current = true;
       }
       setIsIncomingPending(false);
-      setJoining(false);
-      setRemoteJoined(true);
-      setParticipantsCount((prev) => Math.max(2, prev));
+      setJoining(true);
       await stopTone(incomingToneRef.current);
       await stopTone(ringbackToneRef.current);
       await ensureWebRTC();

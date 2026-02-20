@@ -11,7 +11,7 @@ const normalizeId = (value: unknown) =>
     .toLowerCase();
 
 const ACTIVE_CALL_STATUSES = new Set(["initiated", "ringing", "ongoing"]);
-const OPENABLE_PARTICIPANT_STATUSES = new Set(["invited", "ringing", "joined"]);
+const OPENABLE_PARTICIPANT_STATUSES = new Set(["invited", "ringing"]);
 
 export const useIncomingCallListener = (enabled: boolean) => {
   const router = useRouter();
