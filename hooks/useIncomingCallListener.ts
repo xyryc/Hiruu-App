@@ -5,6 +5,14 @@ import { useAuthStore } from "@/stores/authStore";
 import { useRouter } from "expo-router";
 import { useEffect, useRef } from "react";
 
+const normalizeId = (value: unknown) =>
+  String(value ?? "")
+    .trim()
+    .toLowerCase();
+
+const ACTIVE_CALL_STATUSES = new Set(["initiated", "ringing", "ongoing"]);
+const OPENABLE_PARTICIPANT_STATUSES = new Set(["invited", "ringing", "joined"]);
+
 export const useIncomingCallListener = (enabled: boolean) => {
   const router = useRouter();
   const { user } = useAuthStore();
@@ -14,22 +22,18 @@ export const useIncomingCallListener = (enabled: boolean) => {
 
   useEffect(() => {
     if (!enabled) return;
+    console.log("[CALL_DEBUG][INCOMING] listener:enabled", { userId: user?.id });
 
     let incomingHandler: ((payload: any) => void) | null = null;
     let participantsHandler: ((payload: any) => void) | null = null;
     let pollingInterval: ReturnType<typeof setInterval> | null = null;
 
     const openIncomingCall = (callId: string, roomId = "") => {
-      console.log("[CALL_DEBUG] openIncomingCall:attempt", {
-        callId,
-        roomId,
-        lastHandled: lastHandledCallIdRef.current,
-      });
       if (!callId) return;
       if (lastHandledCallIdRef.current === callId) return;
 
+      console.log("[CALL_DEBUG][INCOMING] navigate:audio-call", { callId, roomId });
       lastHandledCallIdRef.current = callId;
-      console.log("[CALL_DEBUG] openIncomingCall:navigate", { callId, roomId });
       router.push({
         pathname: "/screens/jobs/audio-call",
         params: {
@@ -49,25 +53,35 @@ export const useIncomingCallListener = (enabled: boolean) => {
       try {
         const response = await callService.getCallById(callId);
         const call = response?.data || {};
-        const initiatedBy = normalizeId(call?.initiatedBy);
+        const callStatus = String(call?.status || "").toLowerCase();
+        const participants = Array.isArray(call?.participants) ? call.participants : [];
         const currentUserId = normalizeId(user.id);
-        const status = String(call?.status || "").toLowerCase();
 
-        console.log("[CALL_DEBUG] resolve-call", {
+        const me = participants.find(
+          (item: any) => normalizeId(item?.userId) === currentUserId
+        );
+        const myRole = String(me?.role || "").toLowerCase();
+        const myStatus = String(me?.status || "").toLowerCase();
+
+        if (!ACTIVE_CALL_STATUSES.has(callStatus)) return;
+
+        const shouldOpen =
+          myRole === "receiver" && OPENABLE_PARTICIPANT_STATUSES.has(myStatus);
+
+        console.log("[CALL_DEBUG][INCOMING] resolve", {
           callId,
-          initiatedBy: call?.initiatedBy,
-          currentUserId: user.id,
-          status,
+          callStatus,
+          myRole,
+          myStatus,
+          shouldOpen,
+          roomId,
         });
 
-        // Open only for receiver side.
-        if (initiatedBy && initiatedBy !== currentUserId) {
-          if (!status || ["initiated", "ringing", "joined"].includes(status)) {
-            openIncomingCall(callId, roomId || call?.chatRoomId || "");
-          }
+        if (shouldOpen) {
+          openIncomingCall(callId, roomId || call?.chatRoomId || "");
         }
       } catch (error) {
-        console.log("[CALL_DEBUG] resolve-call:error", { callId, error });
+        console.log("[CALL_DEBUG][INCOMING] resolve:error", { callId, error });
       } finally {
         if (resolvingCallIdRef.current === callId) {
           resolvingCallIdRef.current = null;
@@ -77,52 +91,29 @@ export const useIncomingCallListener = (enabled: boolean) => {
 
     const setup = async () => {
       try {
-        console.log("[CALL_DEBUG] incoming-listener:setup:start", {
-          enabled,
-          userId: user?.id,
-        });
+        console.log("[CALL_DEBUG][INCOMING] socket:connect:start");
         await socketService.connectCalls();
-        console.log("[CALL_DEBUG] incoming-listener:setup:connected");
+        console.log("[CALL_DEBUG][INCOMING] socket:connect:ok");
 
         incomingHandler = (payload: any) => {
-          console.log("[CALL_DEBUG] incoming_call:event", payload);
+          console.log("[CALL_DEBUG][INCOMING] event:incoming_call", payload);
           const call = payload?.call || payload?.data || payload;
           const callId = call?.callId || call?.id;
           const roomId = call?.chatRoomId || call?.roomId || "";
-
           void resolveAndOpenIfReceiver(callId, roomId);
         };
 
-        // Fallback: if backend skips incoming_call and only publishes call participants.
         participantsHandler = (payload: any) => {
-          console.log("[CALL_DEBUG] call_participants:event", payload);
+          console.log("[CALL_DEBUG][INCOMING] event:call_participants", payload);
           const callId = payload?.callId;
-          const participants = Array.isArray(payload?.participants)
-            ? payload.participants
-            : [];
-          if (!callId || !participants.length || !user?.id) return;
-
-          const currentUserId = normalizeId(user.id);
-          const participantIds = participants.map((p: any) =>
-            normalizeId(p?.userId)
-          );
-          const me = participants.find(
-            (p: any) => normalizeId(p?.userId) === currentUserId
-          );
-          console.log("[CALL_DEBUG] call_participants:match", {
-            userId: user.id,
-            participantIds,
-            hasMe: Boolean(me),
-          });
+          if (!callId) return;
           void resolveAndOpenIfReceiver(callId);
         };
 
         socketService.onIncomingCall(incomingHandler);
         socketService.onCallParticipants(participantsHandler);
-        console.log("[CALL_DEBUG] incoming-listener:handlers:attached");
-      } catch {
-        console.log("[CALL_DEBUG] incoming-listener:setup:error");
-        // calls socket not available now, keep app usable
+      } catch (error) {
+        console.log("[CALL_DEBUG][INCOMING] socket:connect:error", error);
       }
     };
 
@@ -131,9 +122,10 @@ export const useIncomingCallListener = (enabled: boolean) => {
       pollingActiveCallsRef.current = true;
       try {
         const roomsResponse = await chatService.getChatRooms();
-        const rooms = Array.isArray(roomsResponse?.data)
-          ? roomsResponse.data
+        const rooms = Array.isArray(roomsResponse?.data?.data)
+          ? roomsResponse.data.data
           : [];
+
         for (const room of rooms) {
           const roomId = room?.id;
           if (!roomId) continue;
@@ -142,32 +134,34 @@ export const useIncomingCallListener = (enabled: boolean) => {
             const call = active?.data;
             const callId = call?.id;
             if (!callId) continue;
+            const callStatus = String(call?.status || "").toLowerCase();
+            if (!ACTIVE_CALL_STATUSES.has(callStatus)) continue;
+            console.log("[CALL_DEBUG][INCOMING] poll:active-call", {
+              roomId,
+              callId,
+              callStatus,
+            });
             await resolveAndOpenIfReceiver(callId, roomId);
           } catch {
-            // no active call for this room or unauthorized for room
+            // no active call for room
           }
         }
-      } catch (error) {
-        console.log("[CALL_DEBUG] active-call:poll:error", error);
       } finally {
         pollingActiveCallsRef.current = false;
       }
     };
 
     setup();
+    void pollActiveCallsFallback();
     pollingInterval = setInterval(() => {
       void pollActiveCallsFallback();
     }, 3500);
 
     return () => {
-      console.log("[CALL_DEBUG] incoming-listener:cleanup");
+      console.log("[CALL_DEBUG][INCOMING] listener:cleanup");
       if (pollingInterval) clearInterval(pollingInterval);
       if (incomingHandler) socketService.offIncomingCall(incomingHandler);
       if (participantsHandler) socketService.offCallParticipants(participantsHandler);
     };
   }, [enabled, router, user?.id]);
 };
-    const normalizeId = (value: unknown) =>
-      String(value ?? "")
-        .trim()
-        .toLowerCase();

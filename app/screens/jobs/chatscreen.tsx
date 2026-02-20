@@ -171,10 +171,21 @@ const ChatScreen = () => {
       return String(me?.status || "").toLowerCase();
     };
 
+    const isTerminalStatus = (status: string) =>
+      status === "left" || status === "declined" || status === "missed";
+
     const hasOtherActiveParticipant = (call: any) => {
       const participants = Array.isArray(call?.participants) ? call.participants : [];
       return participants.some((p: any) => {
         if (!p?.userId || p.userId === user?.id) return false;
+        const status = String(p?.status || "").toLowerCase();
+        return status === "invited" || status === "ringing" || status === "joined";
+      });
+    };
+
+    const hasAnyActiveParticipant = (call: any) => {
+      const participants = Array.isArray(call?.participants) ? call.participants : [];
+      return participants.some((p: any) => {
         const status = String(p?.status || "").toLowerCase();
         return status === "invited" || status === "ringing" || status === "joined";
       });
@@ -194,16 +205,21 @@ const ChatScreen = () => {
           const myStatus = getMyParticipantStatus(activeCall);
           const isInitiator = activeCall?.initiatedBy === user?.id;
           const hasOtherActive = hasOtherActiveParticipant(activeCall);
+          const hasAnyActive = hasAnyActiveParticipant(activeCall);
           console.log("[CALL_DEBUG] initiate-call:active-precheck", {
             callId: activeCall.id,
             callStatus: activeCall?.status,
             myStatus,
             isInitiator,
             hasOtherActive,
+            hasAnyActive,
           });
 
           // If I initiated and no one else is active, close stale call then create a fresh call.
-          if (isInitiator && (myStatus === "left" || !hasOtherActive)) {
+          if (
+            (isInitiator && (isTerminalStatus(myStatus) || !hasOtherActive)) ||
+            (!isInitiator && isTerminalStatus(myStatus) && !hasAnyActive)
+          ) {
             try {
               await callService.endCall(activeCall.id);
             } catch (endErr) {
@@ -258,7 +274,11 @@ const ChatScreen = () => {
             const isInitiator = activeCall?.initiatedBy === user?.id;
             const myStatus = getMyParticipantStatus(activeCall);
             const hasOtherActive = hasOtherActiveParticipant(activeCall);
-            if (isInitiator && (myStatus === "left" || !hasOtherActive)) {
+            const hasAnyActive = hasAnyActiveParticipant(activeCall);
+            if (
+              (isInitiator && (isTerminalStatus(myStatus) || !hasOtherActive)) ||
+              (!isInitiator && isTerminalStatus(myStatus) && !hasAnyActive)
+            ) {
               try {
                 await callService.endCall(activeCallId);
                 const retry = await callService.initiateAudioCall(actualRoomId);

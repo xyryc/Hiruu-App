@@ -29,6 +29,7 @@ const AudioCallScreen = () => {
   const [startedAt] = useState(Date.now());
   const [elapsed, setElapsed] = useState(0);
   const hasLeftRef = useRef(false);
+  const hasJoinedCallRoomRef = useRef(false);
 
   useEffect(() => {
     console.log("[CALL_DEBUG] audio-call:mounted", { callId, mode, roomId: params.roomId });
@@ -75,7 +76,10 @@ const AudioCallScreen = () => {
     if (!callId || hasLeftRef.current) return;
     hasLeftRef.current = true;
     socketService.changeCallStatus(callId, "left", "User left");
-    socketService.leaveCall(callId);
+    if (hasJoinedCallRoomRef.current) {
+      socketService.leaveCall(callId);
+      hasJoinedCallRoomRef.current = false;
+    }
   };
 
   useEffect(() => {
@@ -89,7 +93,17 @@ const AudioCallScreen = () => {
     const bindCallSocket = async () => {
       try {
         await socketService.connectCalls();
-        socketService.joinCall(callId);
+        const details = await callService.getCallById(callId);
+        const participants = Array.isArray(details?.data?.participants)
+          ? details.data.participants
+          : [];
+        const me = participants.find((item: any) => item?.userId === user?.id);
+        const myStatus = String(me?.status || "").toLowerCase();
+        const canJoinSocketRoom = !["left", "declined", "missed"].includes(myStatus);
+        if (canJoinSocketRoom) {
+          socketService.joinCall(callId);
+          hasJoinedCallRoomRef.current = true;
+        }
 
         onParticipants = (payload: any) => {
           const sameCall = payload?.callId === callId;
