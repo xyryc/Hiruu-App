@@ -71,7 +71,7 @@ const CreateHoliday = () => {
             Report a Shift-related Issue
           </Text>
           <View className="mt-8">
-            <Text className="font-proximanova-semibold text-primary dark:text-dark-primary text-sm">
+            <Text className="mb-2.5 font-proximanova-semibold text-primary dark:text-dark-primary text-sm">
               Holiday Title
             </Text>
             <TextInput
@@ -117,11 +117,10 @@ const CreateHoliday = () => {
                   {holidayTypes.map((type, index) => (
                     <TouchableOpacity
                       key={index}
-                      className={`p-4 flex-row justify-between items-center ${
-                        index !== holidayTypes.length - 1
+                      className={`p-4 flex-row justify-between items-center ${index !== holidayTypes.length - 1
                           ? "border-b border-gray-100"
                           : ""
-                      }`}
+                        }`}
                       onPress={() => {
                         setHolidayType(type);
                         setShowHolidayDropdown(false);
@@ -129,11 +128,10 @@ const CreateHoliday = () => {
                     >
                       <Text
                         numberOfLines={1}
-                        className={`text-base ${
-                          holidayType === type
+                        className={`text-base ${holidayType === type
                             ? "text-blue-500 font-semibold"
                             : "text-gray-700"
-                        }`}
+                          }`}
                       >
                         {type}
                       </Text>
@@ -172,22 +170,20 @@ const CreateHoliday = () => {
                   {appliesToOptions.map((option, index) => (
                     <TouchableOpacity
                       key={index}
-                      className={`p-4 flex-row justify-between items-center ${
-                        index !== appliesToOptions.length - 1
+                      className={`p-4 flex-row justify-between items-center ${index !== appliesToOptions.length - 1
                           ? "border-b border-gray-100"
                           : ""
-                      }`}
+                        }`}
                       onPress={() => {
                         setAppliesTo(option);
                         setShowAppliesToDropdown(false);
                       }}
                     >
                       <Text
-                        className={`text-base ${
-                          appliesTo === option
+                        className={`text-base ${appliesTo === option
                             ? "text-blue-500 font-semibold"
                             : "text-gray-700"
-                        }`}
+                          }`}
                       >
                         {option}
                       </Text>
