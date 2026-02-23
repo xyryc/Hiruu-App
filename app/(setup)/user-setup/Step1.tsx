@@ -6,7 +6,7 @@ import GenderSelection from "@/components/ui/inputs/GenderSelection";
 import { useProfileStore } from "@/stores/profileStore";
 import { GenderOption } from "@/types";
 import { t } from "i18next";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, ScrollView, Text, TextInput, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import * as Progress from "react-native-progress";
@@ -14,6 +14,14 @@ import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import { toast } from "sonner-native";
 
 const AnimatedView = Animated.createAnimatedComponent(View);
+const GEOAPIFY_API_KEY = process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY;
+
+type LocationOption = {
+  label: string;
+  value: string;
+  latitude: number;
+  longitude: number;
+};
 
 export default function Step1({
   progress,
@@ -25,24 +33,113 @@ export default function Step1({
   const { updateProfile, isLoading } = useProfileStore();
 
   // Form state
-  const [fullName, setFullName] = useState("John Doe");
-  const [location, setLocation] = useState(null);
+  const [fullName, setFullName] = useState("");
+  const [location, setLocation] = useState<string | null>(null);
+  const [locationSearch, setLocationSearch] = useState("");
+  const [locationOptions, setLocationOptions] = useState<LocationOption[]>([]);
+  const [selectedLocationOption, setSelectedLocationOption] =
+    useState<LocationOption | null>(null);
+  const [selectedCoords, setSelectedCoords] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const hasShownGeoapifyMissingKey = useRef(false);
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const [selectedGender, setSelectedGender] = useState<GenderOption | null>(
     "male",
   );
 
-  const locations = [
-    {
-      label: "Central Park, New York, NY",
-      value: "Central Park, New York, NY",
-    },
-    { label: "Central Park, New York, NY", value: "AK" },
-    {
-      label: "central park South, New York, NY",
-      value: "central park South, New York, NY",
-    },
-  ];
+  useEffect(() => {
+    if (!locationSearch || locationSearch.trim().length < 3) {
+      setLocationOptions(selectedLocationOption ? [selectedLocationOption] : []);
+      setIsSearchingLocation(false);
+      return;
+    }
+
+    if (!GEOAPIFY_API_KEY) {
+      setLocationOptions(selectedLocationOption ? [selectedLocationOption] : []);
+      setIsSearchingLocation(false);
+      if (!hasShownGeoapifyMissingKey.current) {
+        hasShownGeoapifyMissingKey.current = true;
+        toast.error("Geoapify API key missing. Set EXPO_PUBLIC_GEOAPIFY_API_KEY.");
+      }
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(async () => {
+      try {
+        setIsSearchingLocation(true);
+        const query = encodeURIComponent(locationSearch.trim());
+        const response = await fetch(
+          `https://api.geoapify.com/v1/geocode/autocomplete?text=${query}&limit=8&apiKey=${GEOAPIFY_API_KEY}`,
+          { signal: controller.signal },
+        );
+
+        if (!response.ok) {
+          throw new Error(`Geoapify request failed: ${response.status}`);
+        }
+
+        const result = await response.json();
+        const features = Array.isArray(result?.features) ? result.features : [];
+        const nextOptions: LocationOption[] = features
+          .map((item: any) => {
+            const props = item?.properties || {};
+            const coordinates = Array.isArray(item?.geometry?.coordinates)
+              ? item.geometry.coordinates
+              : [];
+            const longitude = Number(coordinates[0]);
+            const latitude = Number(coordinates[1]);
+            const label =
+              props.formatted ||
+              [props.address_line1, props.address_line2].filter(Boolean).join(", ");
+
+            if (!label || Number.isNaN(latitude) || Number.isNaN(longitude)) {
+              return null;
+            }
+
+            return {
+              label,
+              value: label,
+              latitude,
+              longitude,
+            };
+          })
+          .filter(Boolean) as LocationOption[];
+
+        const uniqueByLabel = Array.from(
+          new Map(nextOptions.map((item) => [item.label, item])).values(),
+        );
+        if (selectedLocationOption) {
+          setLocationOptions(
+            Array.from(
+              new Map(
+                [selectedLocationOption, ...uniqueByLabel].map((item) => [
+                  item.label,
+                  item,
+                ]),
+              ).values(),
+            ),
+          );
+        } else {
+          setLocationOptions(uniqueByLabel);
+        }
+      } catch (error: any) {
+        if (error?.name !== "AbortError") {
+          setLocationOptions(selectedLocationOption ? [selectedLocationOption] : []);
+          toast.error("Failed to fetch location suggestions.");
+        }
+      } finally {
+        setIsSearchingLocation(false);
+      }
+    }, 350);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
+  }, [locationSearch, selectedLocationOption]);
 
   // Validation with i18n
   const validateStep1 = () => {
@@ -86,12 +183,13 @@ export default function Step1({
 
     try {
       // Prepare data for API - Just the data fields, no step wrapper
+      const fallbackAddress = "Central Park, New York, NY";
       const profileData = {
         name: fullName.trim(),
         address: {
-          address: location || "Central Park, New York, NY",
-          latitude: 40.785091,
-          longitude: -73.968285,
+          address: location || fallbackAddress,
+          latitude: selectedCoords?.latitude ?? 40.785091,
+          longitude: selectedCoords?.longitude ?? -73.968285,
         },
         dateOfBirth: dateOfBirth?.toISOString(),
         gender: selectedGender,
@@ -104,7 +202,7 @@ export default function Step1({
       // );
 
       // Call API - Pass data directly
-      const result = await updateProfile(profileData);
+      await updateProfile(profileData);
 
       // Success - move to next step
       // console.log("Profile updated:", result);
@@ -186,12 +284,25 @@ export default function Step1({
           </Text>
 
           <Dropdown
-            data={locations}
+            data={locationOptions}
             labelField="label"
             valueField="value"
+            search
+            searchPlaceholder="Search location"
             placeholder={t("user.setup.selectLocation")}
             value={location}
-            onChange={(item) => setLocation(item.value)}
+            onChange={(item: LocationOption) => {
+              setLocation(item.value);
+              setSelectedLocationOption(item);
+              setSelectedCoords({
+                latitude: item.latitude,
+                longitude: item.longitude,
+              });
+              setLocationOptions([item]);
+            }}
+            onChangeText={(text) => {
+              setLocationSearch(text);
+            }}
             style={{
               backgroundColor: "#ffffff",
               borderWidth: 1,
@@ -215,8 +326,19 @@ export default function Step1({
               fontSize: 14,
               color: "#3D3D3D",
             }}
+            inputSearchStyle={{
+              fontSize: 14,
+              color: "#111111",
+            }}
+            searchPlaceholderTextColor="#9CA3AF"
+            maxHeight={300}
             disable={isLoading}
           />
+          {isSearchingLocation ? (
+            <Text className="mt-2 text-xs font-proximanova-regular text-secondary">
+              Searching locations...
+            </Text>
+          ) : null}
         </View>
 
         {/* date of birth */}
