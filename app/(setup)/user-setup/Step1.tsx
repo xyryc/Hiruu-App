@@ -7,8 +7,7 @@ import { useProfileStore } from "@/stores/profileStore";
 import { GenderOption } from "@/types";
 import { t } from "i18next";
 import { useEffect, useRef, useState } from "react";
-import { Alert, ScrollView, Text, TextInput, View } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
+import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import { toast } from "sonner-native";
@@ -21,6 +20,10 @@ type LocationOption = {
   value: string;
   latitude: number;
   longitude: number;
+  placeId?: string;
+  city?: string;
+  state?: string;
+  country?: string;
 };
 
 export default function Step1({
@@ -44,6 +47,7 @@ export default function Step1({
     longitude: number;
   } | null>(null);
   const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [isLocationFocused, setIsLocationFocused] = useState(false);
   const hasShownGeoapifyMissingKey = useRef(false);
   const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const [selectedGender, setSelectedGender] = useState<GenderOption | null>(
@@ -104,6 +108,13 @@ export default function Step1({
               value: label,
               latitude,
               longitude,
+              placeId:
+                props.place_id ||
+                props.datasource?.raw?.place_id ||
+                props.datasource?.raw?.osm_id?.toString?.(),
+              city: props.city || props.county || props.suburb,
+              state: props.state || props.state_code,
+              country: props.country,
             };
           })
           .filter(Boolean) as LocationOption[];
@@ -190,6 +201,10 @@ export default function Step1({
           address: location || fallbackAddress,
           latitude: selectedCoords?.latitude ?? 40.785091,
           longitude: selectedCoords?.longitude ?? -73.968285,
+          placeId: selectedLocationOption?.placeId,
+          city: selectedLocationOption?.city,
+          state: selectedLocationOption?.state,
+          country: selectedLocationOption?.country,
         },
         dateOfBirth: dateOfBirth?.toISOString(),
         gender: selectedGender,
@@ -260,6 +275,7 @@ export default function Step1({
       {/* main content */}
       <ScrollView
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ paddingBottom: 100 }} // Add padding here
         className="flex-1" // Add flex-1 to ScrollView
       >
@@ -283,60 +299,61 @@ export default function Step1({
             Location
           </Text>
 
-          <Dropdown
-            data={locationOptions}
-            labelField="label"
-            valueField="value"
-            search
-            searchPlaceholder="Search location"
-            placeholder={t("user.setup.selectLocation")}
-            value={location}
-            onChange={(item: LocationOption) => {
-              setLocation(item.value);
-              setSelectedLocationOption(item);
-              setSelectedCoords({
-                latitude: item.latitude,
-                longitude: item.longitude,
-              });
-              setLocationOptions([item]);
+          <TextInput
+            value={locationSearch}
+            onFocus={() => setIsLocationFocused(true)}
+            onBlur={() => {
+              setTimeout(() => setIsLocationFocused(false), 250);
             }}
             onChangeText={(text) => {
               setLocationSearch(text);
+              setLocation(text);
+              if (selectedLocationOption && text !== selectedLocationOption.label) {
+                setSelectedLocationOption(null);
+                setSelectedCoords(null);
+              }
             }}
-            style={{
-              backgroundColor: "#ffffff",
-              borderWidth: 1,
-              borderColor: "#EEEEEE",
-              borderRadius: 10,
-              padding: 12,
-            }}
-            placeholderStyle={{
-              fontSize: 14,
-              color: "#9CA3AF",
-            }}
-            selectedTextStyle={{
-              fontSize: 14,
-              color: "#111111",
-            }}
-            containerStyle={{
-              borderRadius: 10,
-              backgroundColor: "white",
-            }}
-            itemTextStyle={{
-              fontSize: 14,
-              color: "#3D3D3D",
-            }}
-            inputSearchStyle={{
-              fontSize: 14,
-              color: "#111111",
-            }}
-            searchPlaceholderTextColor="#9CA3AF"
-            maxHeight={300}
-            disable={isLoading}
+            placeholder={t("user.setup.selectLocation")}
+            className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm"
+            autoCapitalize="none"
+            editable={!isLoading}
           />
+          {isLocationFocused &&
+            locationSearch.trim().length >= 3 &&
+            locationOptions.length > 0 ? (
+            <View className="mt-2 border border-[#EEEEEE] bg-white rounded-[10px] overflow-hidden">
+              {locationOptions.map((item, index) => (
+                <TouchableOpacity
+                  key={`${item.value}-${index}`}
+                  onPress={() => {
+                    setLocation(item.value);
+                    setLocationSearch(item.label);
+                    setSelectedLocationOption(item);
+                    setSelectedCoords({
+                      latitude: item.latitude,
+                      longitude: item.longitude,
+                    });
+                    setLocationOptions([item]);
+                    setIsLocationFocused(false);
+                  }}
+                  className="px-4 py-3 border-b border-[#F5F5F5]"
+                >
+                  <Text className="text-sm text-[#111111]">{item.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          ) : null}
           {isSearchingLocation ? (
             <Text className="mt-2 text-xs font-proximanova-regular text-secondary">
               Searching locations...
+            </Text>
+          ) : null}
+          {isLocationFocused &&
+            locationSearch.trim().length >= 3 &&
+            !isSearchingLocation &&
+            locationOptions.length === 0 ? (
+            <Text className="mt-2 text-xs font-proximanova-regular text-secondary">
+              No locations found.
             </Text>
           ) : null}
         </View>
@@ -353,7 +370,7 @@ export default function Step1({
         {/* gender */}
         <View className="mt-7">
           <Text className="text-sm font-proximanova-semibold mb-2.5">
-            Date of Birth
+            Gender
           </Text>
 
           <GenderSelection

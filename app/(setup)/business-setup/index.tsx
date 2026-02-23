@@ -10,24 +10,35 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { t } from "i18next";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { Dropdown } from "react-native-element-dropdown";
 import PhoneInput from "react-native-phone-input";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
+
+const GEOAPIFY_API_KEY = process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY;
+
+type LocationOption = {
+  label: string;
+  value: string;
+  latitude: number;
+  longitude: number;
+  placeId?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+};
 
 const BusinessSetup = () => {
   const router = useRouter();
@@ -56,7 +67,7 @@ const BusinessSetup = () => {
         } else {
           setCoverImage(result.assets[0].uri);
         }
-      } catch (error) {
+      } catch {
         Alert.alert("Error", "Failed to upload image");
       } finally {
         setUploading(false);
@@ -180,18 +191,113 @@ const BusinessSetup = () => {
   };
 
   // location
-  const [value, setValue] = useState(null);
-  const states = [
-    {
-      label: "Central Park, New York, NY",
-      value: "Central Park, New York, NY",
-    },
-    { label: "Central Park, New York, NY", value: "AK" },
-    {
-      label: "central park South, New York, NY",
-      value: "central park South, New York, NY",
-    },
-  ];
+  const [value, setValue] = useState<string | null>(null);
+  const [locationSearch, setLocationSearch] = useState("");
+  const [locationOptions, setLocationOptions] = useState<LocationOption[]>([]);
+  const [selectedLocationOption, setSelectedLocationOption] =
+    useState<LocationOption | null>(null);
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [isLocationFocused, setIsLocationFocused] = useState(false);
+  const hasShownGeoapifyMissingKey = useRef(false);
+
+  useEffect(() => {
+    if (!locationSearch || locationSearch.trim().length < 3) {
+      setLocationOptions(selectedLocationOption ? [selectedLocationOption] : []);
+      setIsSearchingLocation(false);
+      return;
+    }
+
+    if (!GEOAPIFY_API_KEY) {
+      setLocationOptions(selectedLocationOption ? [selectedLocationOption] : []);
+      setIsSearchingLocation(false);
+      if (!hasShownGeoapifyMissingKey.current) {
+        hasShownGeoapifyMissingKey.current = true;
+        toast.error("Geoapify API key missing. Set EXPO_PUBLIC_GEOAPIFY_API_KEY.");
+      }
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(async () => {
+      try {
+        setIsSearchingLocation(true);
+        const query = encodeURIComponent(locationSearch.trim());
+        const response = await fetch(
+          `https://api.geoapify.com/v1/geocode/autocomplete?text=${query}&limit=8&apiKey=${GEOAPIFY_API_KEY}`,
+          { signal: controller.signal },
+        );
+
+        if (!response.ok) {
+          throw new Error(`Geoapify request failed: ${response.status}`);
+        }
+
+        const result = await response.json();
+        const features = Array.isArray(result?.features) ? result.features : [];
+        const nextOptions: LocationOption[] = features
+          .map((item: any) => {
+            const props = item?.properties || {};
+            const coordinates = Array.isArray(item?.geometry?.coordinates)
+              ? item.geometry.coordinates
+              : [];
+            const longitude = Number(coordinates[0]);
+            const latitude = Number(coordinates[1]);
+            const label =
+              props.formatted ||
+              [props.address_line1, props.address_line2].filter(Boolean).join(", ");
+
+            if (!label || Number.isNaN(latitude) || Number.isNaN(longitude)) {
+              return null;
+            }
+
+            return {
+              label,
+              value: label,
+              latitude,
+              longitude,
+              placeId:
+                props.place_id ||
+                props.datasource?.raw?.place_id ||
+                props.datasource?.raw?.osm_id?.toString?.(),
+              city: props.city || props.county || props.suburb,
+              state: props.state || props.state_code,
+              country: props.country,
+            };
+          })
+          .filter(Boolean) as LocationOption[];
+
+        const uniqueByLabel = Array.from(
+          new Map(nextOptions.map((item) => [item.label, item])).values(),
+        );
+
+        if (selectedLocationOption) {
+          setLocationOptions(
+            Array.from(
+              new Map(
+                [selectedLocationOption, ...uniqueByLabel].map((item) => [
+                  item.label,
+                  item,
+                ]),
+              ).values(),
+            ),
+          );
+        } else {
+          setLocationOptions(uniqueByLabel);
+        }
+      } catch (error: any) {
+        if (error?.name !== "AbortError") {
+          setLocationOptions(selectedLocationOption ? [selectedLocationOption] : []);
+          toast.error("Failed to fetch location suggestions.");
+        }
+      } finally {
+        setIsSearchingLocation(false);
+      }
+    }, 350);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
+  }, [locationSearch, selectedLocationOption]);
 
   // business name
   const [businessName, setBusinessName] = useState("");
@@ -234,7 +340,7 @@ const BusinessSetup = () => {
     const payload = {
       name: businessName.trim(),
       description: about.trim(),
-      address: value || "Central Park, New York, NY",
+      address: value || locationSearch || "Central Park, New York, NY",
       phoneNumber: phonePayload.phoneNumber,
       countryCode: phonePayload.countryCode,
       email: email.trim(),
@@ -276,6 +382,7 @@ const BusinessSetup = () => {
 
         {/* content */}
         <ScrollView className="px-5" contentContainerClassName="pb-10"
+          keyboardShouldPersistTaps="handled"
           contentContainerStyle={{
             paddingBottom: 200
           }}
@@ -452,19 +559,59 @@ const BusinessSetup = () => {
               Location
             </Text>
 
-            <Dropdown
-              data={states}
-              labelField="label"
-              valueField="value"
-              placeholder="Select location"
-              value={value}
-              onChange={(item) => setValue(item.value)}
-              style={styles.dropdown}
-              placeholderStyle={styles.placeholderStyle}
-              selectedTextStyle={styles.selectedTextStyle}
-              containerStyle={styles.containerStyle}
-              itemTextStyle={styles.itemTextStyle}
+            <TextInput
+              value={locationSearch}
+              onFocus={() => setIsLocationFocused(true)}
+              onBlur={() => {
+                setTimeout(() => setIsLocationFocused(false), 250);
+              }}
+              onChangeText={(text) => {
+                setLocationSearch(text);
+                setValue(text);
+                if (selectedLocationOption && text !== selectedLocationOption.label) {
+                  setSelectedLocationOption(null);
+                }
+              }}
+              placeholder="Search location"
+              className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm"
+              autoCapitalize="none"
             />
+
+            {isLocationFocused &&
+            locationSearch.trim().length >= 3 &&
+            locationOptions.length > 0 ? (
+              <View className="mt-2 border border-[#EEEEEE] bg-white rounded-[10px] overflow-hidden">
+                {locationOptions.map((item, index) => (
+                  <TouchableOpacity
+                    key={`${item.value}-${index}`}
+                    onPress={() => {
+                      setValue(item.value);
+                      setLocationSearch(item.label);
+                      setSelectedLocationOption(item);
+                      setLocationOptions([item]);
+                      setIsLocationFocused(false);
+                    }}
+                    className="px-4 py-3 border-b border-[#F5F5F5]"
+                  >
+                    <Text className="text-sm text-[#111111]">{item.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ) : null}
+
+            {isSearchingLocation ? (
+              <Text className="mt-2 text-xs font-proximanova-regular text-secondary">
+                Searching locations...
+              </Text>
+            ) : null}
+            {isLocationFocused &&
+            locationSearch.trim().length >= 3 &&
+            !isSearchingLocation &&
+            locationOptions.length === 0 ? (
+              <Text className="mt-2 text-xs font-proximanova-regular text-secondary">
+                No locations found.
+              </Text>
+            ) : null}
           </View>
 
           {/* add a business */}
@@ -491,18 +638,18 @@ const BusinessSetup = () => {
 
             <ConnectSocials />
           </View>
-        </ScrollView>
 
-        {/* button */}
-        <View className='absolute bottom-32 inset-x-0'>
+          {/* button */}
           <PrimaryButton
             // onPress={() => router.push("/(tabs)/business-home")}
             onPress={handleCreateBusiness}
             title="Create Profile"
-            className="mx-5 my-4"
+            className="my-10"
             loading={isLoading}
           />
-        </View>
+        </ScrollView>
+
+
 
       </LinearGradient>
     </SafeAreaView>
@@ -510,29 +657,3 @@ const BusinessSetup = () => {
 };
 
 export default BusinessSetup;
-
-const styles = StyleSheet.create({
-  dropdown: {
-    backgroundColor: "#ffffff",
-    borderWidth: 1,
-    borderColor: "#EEEEEE",
-    borderRadius: 10,
-    padding: 12,
-  },
-  placeholderStyle: {
-    fontSize: 14,
-    color: "#9CA3AF",
-  },
-  selectedTextStyle: {
-    fontSize: 14,
-    color: "#111111",
-  },
-  containerStyle: {
-    borderRadius: 10,
-    backgroundColor: "white",
-  },
-  itemTextStyle: {
-    fontSize: 14,
-    color: "#3D3D3D",
-  },
-});
