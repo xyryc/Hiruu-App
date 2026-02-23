@@ -1,9 +1,10 @@
 import { ShiftHeaderProps } from "@/types";
-import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import BusinessSelectionTrigger from "../ui/dropdown/BusinessSelectionTrigger";
 import UserCalendarScheduleModal from "../ui/modals/UserCalendarScheduleModal";
 
 const ShiftHeader = ({
@@ -65,28 +66,11 @@ const ShiftHeader = ({
           Friday, 16 June, 2025
         </Text>
 
-        <TouchableOpacity
+        <BusinessSelectionTrigger
+          displayContent={displayContent as any}
           onPress={() => setShowModal(true)}
-          className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
-        >
-          {displayContent?.type === "all" ? (
-            <View className="pl-2.5 py-1.5">
-              <Text className="font-semibold text-sm text-primary">All</Text>
-            </View>
-          ) : (
-            <Image
-              source={displayContent?.content?.imageUrl}
-              style={{ width: 30, height: 30, borderRadius: 999 }}
-              contentFit="cover"
-            />
-          )}
-          <SimpleLineIcons
-            className="p-1.5"
-            name="arrow-down"
-            size={12}
-            color="#111111"
-          />
-        </TouchableOpacity>
+          compact
+        />
         <UserCalendarScheduleModal
           visible={isCalenderModal}
           onClose={() => setCalenderModal(false)}
@@ -97,4 +81,3 @@ const ShiftHeader = ({
 };
 
 export default ShiftHeader;
-

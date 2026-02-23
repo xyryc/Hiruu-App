@@ -1,12 +1,11 @@
 import businesses from "@/assets/data/businesses.json";
 import userData from "@/assets/data/user.json";
 import { WorkInsightsProps } from "@/types";
-import { SimpleLineIcons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import React, { useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import StatCardPrimary from "../ui/cards/StatCardPrimary";
 import StatCardSecondary from "../ui/cards/StatCardSecondary";
+import BusinessSelectionTrigger from "../ui/dropdown/BusinessSelectionTrigger";
 import MonthPicker from "../ui/inputs/MonthPicker";
 import BusinessSelectionModal from "../ui/modals/BusinessSelectionModal";
 
@@ -53,32 +52,11 @@ const WorkInsights = ({ className, title }: WorkInsightsProps | any) => {
               onDateChange={handleReportMonthChange}
             />
 
-            <TouchableOpacity
+            <BusinessSelectionTrigger
+              displayContent={displayContent as any}
               onPress={() => setShowModal(true)}
-              className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
-            >
-              {displayContent?.type === "all" ? (
-                <View className="pl-2.5 py-1.5">
-                  <Text className="font-semibold text-sm text-primary">
-                    {displayContent.content}
-                  </Text>
-                </View>
-              ) : (
-                displayContent.content?.imageUrl && (
-                  <Image
-                    source={displayContent.content.imageUrl}
-                    style={{ width: 30, height: 30, borderRadius: 999 }}
-                    contentFit="cover"
-                  />
-                )
-              )}
-              <SimpleLineIcons
-                className="p-1.5"
-                name="arrow-down"
-                size={12}
-                color="#111111"
-              />
-            </TouchableOpacity>
+              compact
+            />
           </View>
         )}
       </View>

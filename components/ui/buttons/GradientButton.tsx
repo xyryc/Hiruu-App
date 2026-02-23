@@ -20,7 +20,7 @@ const GradientButton = ({ title, icon, className }: GradientButtonProps) => {
       >
         <View className="flex-row gap-3">
           <Text className="font-proximanova-bold text-lg text-[#FFFFFF]">
-            {title}
+            {title}{" "}
           </Text>
           <View>{icon}</View>
         </View>

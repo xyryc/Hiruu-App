@@ -1,8 +1,9 @@
 import ShiftCard from "@/components/ui/cards/ShiftCard";
 import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
+import BusinessSelectionTrigger from "@/components/ui/dropdown/BusinessSelectionTrigger";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import { useBusinessStore } from "@/stores/businessStore";
-import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { RelativePathString, useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
@@ -238,45 +239,10 @@ const BusinessScheduleScreen = () => {
         {/* Shift Type Selector */}
         <View className="flex-row items-center gap-2.5 mb-5 pl-5">
           {/* business selection */}
-          <TouchableOpacity
+          <BusinessSelectionTrigger
+            displayContent={displayContent as any}
             onPress={() => setShowModal(true)}
-            className="bg-[#E5F4FD] flex-row items-center p-1 rounded-[26px]"
-          >
-            {displayContent?.type === "all" ? (
-              <View className="pl-2.5 py-1.5">
-                <Text className="font-semibold text-sm text-primary">All</Text>
-              </View>
-            ) : displayContent?.type === "single" ? (
-              <View className="">
-                {displayContent?.content?.logo || displayContent?.content?.imageUrl ? (
-                  <Image
-                    source={displayContent?.content?.logo || displayContent?.content?.imageUrl}
-                    style={{ width: 30, height: 30, borderRadius: 999 }}
-                    contentFit="cover"
-                  />
-                ) : (
-                  <View className="pl-2.5 py-1.5">
-                    <Text className="font-semibold text-sm text-primary">
-                      {displayContent?.content?.name || "Selected"}
-                    </Text>
-                  </View>
-                )}
-              </View>
-            ) : (
-              <View className="pl-2.5 py-1.5">
-                <Text className="font-semibold text-sm text-primary">
-                  {displayContent?.content}
-                </Text>
-              </View>
-            )}
-
-            <SimpleLineIcons
-              className="p-1.5"
-              name="arrow-down"
-              size={12}
-              color="#111111"
-            />
-          </TouchableOpacity>
+          />
 
           {/* shift selection */}
           <View className="flex-row items-center gap-1">

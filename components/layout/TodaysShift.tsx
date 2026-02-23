@@ -1,13 +1,12 @@
 import { useBusinessStore } from "@/stores/businessStore";
 import { TodaysShiftProps } from "@/types";
-import { SimpleLineIcons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import ActionCard from "../ui/cards/ActionCard";
 import NoTaskCard from "../ui/cards/NoTaskCard";
 import TaskCard from "../ui/cards/TaskCard";
+import BusinessSelectionTrigger from "../ui/dropdown/BusinessSelectionTrigger";
 import BusinessSelectionModal from "../ui/modals/BusinessSelectionModal";
 
 const TodaysShift = ({ className }: TodaysShiftProps) => {
@@ -55,48 +54,13 @@ const TodaysShift = ({ className }: TodaysShiftProps) => {
     <View className={`${className} px-4`}>
       <View className="flex-row justify-between items-center mb-4">
         <Text className="text-xl font-proximanova-semibold">
-          Your Today's Shifts
+          Your Today&apos;s Shifts
         </Text>
 
-        <TouchableOpacity
+        <BusinessSelectionTrigger
+          displayContent={displayContent as any}
           onPress={() => setShowModal(true)}
-          className="bg-[#E5F4FD] flex-row items-center p-1 rounded-[26px]"
-        >
-          {displayContent?.type === "all" ? (
-            <View className="pl-2.5 py-1.5">
-              <Text className="font-semibold text-sm text-primary">All</Text>
-            </View>
-          ) : displayContent?.type === "single" ? (
-            <View className="">
-              {displayContent?.content?.logo || displayContent?.content?.imageUrl ? (
-                <Image
-                  source={displayContent?.content?.logo || displayContent?.content?.imageUrl}
-                  style={{ width: 30, height: 30, borderRadius: 999 }}
-                  contentFit="cover"
-                />
-              ) : (
-                <View className="pl-2.5 py-1.5">
-                  <Text className="font-semibold text-sm text-primary">
-                    {displayContent?.content?.name || "Selected"}
-                  </Text>
-                </View>
-              )}
-            </View>
-          ) : (
-            <View className="pl-2.5 py-1.5">
-              <Text className="font-semibold text-sm text-primary">
-                {displayContent?.content}
-              </Text>
-            </View>
-          )}
-
-          <SimpleLineIcons
-            className="p-1.5"
-            name="arrow-down"
-            size={12}
-            color="#111111"
-          />
-        </TouchableOpacity>
+        />
       </View>
 
       {/* modal */}

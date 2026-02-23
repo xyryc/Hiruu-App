@@ -2,13 +2,13 @@ import businesses from "@/assets/data/businesses.json";
 import ScreenHeader from "@/components/header/ScreenHeader";
 import BusinessPlanChart from "@/components/ui/badges/PricingPlan";
 import GradientButton from "@/components/ui/buttons/GradientButton";
+import BusinessSelectionTrigger from "@/components/ui/dropdown/BusinessSelectionTrigger";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
-import { FontAwesome6, SimpleLineIcons } from "@expo/vector-icons";
-import { Image } from "expo-image";
+import { FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -63,30 +63,11 @@ const BusinessPlan = () => {
               Select your business
             </Text>
 
-            <TouchableOpacity
+            <BusinessSelectionTrigger
+              displayContent={displayContent as any}
               onPress={() => setShowModal(true)}
-              className="bg-[#E5F4FD] flex-row items-center p-0.5 rounded-[26px]"
-            >
-              {displayContent?.type === "all" ? (
-                <View className="pl-2.5 py-1.5">
-                  <Text className="font-semibold text-sm text-primary">
-                    All
-                  </Text>
-                </View>
-              ) : (
-                <Image
-                  source={displayContent?.content?.imageUrl}
-                  style={{ width: 30, height: 30, borderRadius: 999 }}
-                  contentFit="cover"
-                />
-              )}
-              <SimpleLineIcons
-                className="p-1.5"
-                name="arrow-down"
-                size={12}
-                color="#111111"
-              />
-            </TouchableOpacity>
+              compact
+            />
           </View>
         </View>
 
