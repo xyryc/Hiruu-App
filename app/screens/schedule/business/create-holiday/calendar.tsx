@@ -14,23 +14,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { DateData, Calendar as RNCalendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const holidayTypes = [
-  "Federal Holiday",
-  "State Holiday",
-  "Company Holiday",
-  "Religious Holiday",
-  "Custom Holiday",
-];
-
-const appliesToOptions = [
-  "All Employees",
-  "Full-Time Only",
-  "Part-Time Only",
-  "Specific Departments",
-  "Management Only",
-];
 
 const Calendar = () => {
   const delImg = require("@/assets/images/holiday-modal.svg");
@@ -41,7 +26,7 @@ const Calendar = () => {
   const [showPicker, setShowPicker] = useState(false);
   const [pickerMode, setPickerMode] = useState<"month" | "year">("month");
   const [selected, setSelected] = useState<number[]>([2, 16, 27]);
-  const [holiday, setHolidays] = useState<number[]>([1, 15, 26]);
+  const holiday = [1, 15, 26];
   const [isModal, setIsModal] = useState(false);
   const [isHolidayModal, setIsHolidayModal] = useState(false);
 
@@ -85,20 +70,15 @@ const Calendar = () => {
     "December",
   ];
 
-  const daysOfWeek = ["S", "M", "T", "W", "T", "F", "S"];
-
   const currentYear = currentViewDate.getFullYear();
   const currentMonth = currentViewDate.getMonth();
-  const today = new Date();
+  const deviceToday = new Date();
 
-  const getDaysInMonth = (year: number, month: number) => {
-    return new Array(new Date(year, month + 1, 0).getDate())
-      .fill(null)
-      .map((_, i) => i + 1);
-  };
-
-  const getFirstDayOfMonth = (year: number, month: number) => {
-    return new Date(year, month, 1).getDay();
+  const toDateKey = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   };
 
   const handleMonthSelect = (monthIndex: number) => {
@@ -112,26 +92,52 @@ const Calendar = () => {
     setPickerMode("month");
   };
 
-  const isToday = (day: number) => {
-    return (
-      day === today.getDate() &&
-      currentMonth === today.getMonth() &&
-      currentYear === today.getFullYear()
+  const years = Array.from({ length: 12 }, (_, i) => 2015 + i);
+
+  const monthDatePrefix = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`;
+  const todayDateKey = toDateKey(deviceToday);
+  const currentDateKey = `${monthDatePrefix}-01`;
+
+  const markedDates = holiday.reduce<Record<string, any>>((acc, day) => {
+    const dateKey = `${monthDatePrefix}-${String(day).padStart(2, "0")}`;
+    acc[dateKey] = { ...(acc[dateKey] || {}), textColor: "#EF4444" };
+    return acc;
+  }, {});
+
+  selected.forEach((day) => {
+    const dateKey = `${monthDatePrefix}-${String(day).padStart(2, "0")}`;
+    markedDates[dateKey] = {
+      ...(markedDates[dateKey] || {}),
+      selected: true,
+      selectedColor: "#E5F4FD",
+      selectedTextColor: "#111111",
+    };
+  });
+
+  if (todayDateKey.startsWith(monthDatePrefix)) {
+    markedDates[todayDateKey] = {
+      ...(markedDates[todayDateKey] || {}),
+      today: true,
+      selected: true,
+      selectedColor: "#4FB2F3",
+      selectedTextColor: "#FFFFFF",
+    };
+  }
+
+  const handleDayPress = (day: DateData) => {
+    const selectedDate = new Date(day.dateString);
+    const selectedYear = selectedDate.getFullYear();
+    const selectedMonth = selectedDate.getMonth();
+    const selectedDay = selectedDate.getDate();
+
+    if (selectedYear !== currentYear || selectedMonth !== currentMonth) return;
+
+    setSelected((prev) =>
+      prev.includes(selectedDay)
+        ? prev.filter((item) => item !== selectedDay)
+        : [...prev, selectedDay]
     );
   };
-
-  const isSelected = (day: number) => {
-    return selected.includes(day);
-  };
-  const isHoliday = (day: number) => {
-    return holiday.includes(day);
-  };
-
-  const daysInMonth = getDaysInMonth(currentYear, currentMonth);
-  const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
-  const emptyDays = Array(firstDay).fill(null);
-
-  const years = Array.from({ length: 12 }, (_, i) => 2015 + i);
 
   const renderHolidaysCard = () => {
     return (
@@ -206,52 +212,32 @@ const Calendar = () => {
 
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* calendar */}
-          <View className="my-4 w-[353px] mx-auto">
-            {/* Header */}
-            <View>
-              {/* Days of Week */}
-              <View className="flex-row justify-around">
-                {daysOfWeek.map((day, index) => (
-                  <Text
-                    key={index}
-                    className="font-proximanova-semibold text-[#4FB2F3] w-12 text-center"
-                  >
-                    {day}
-                  </Text>
-                ))}
-              </View>
-
-              {/* Calendar Grid */}
-              <View className="flex-row flex-wrap mt-4">
-                {/* Empty Days */}
-                {emptyDays.map((_, index) => (
-                  <View
-                    key={`empty-${index}`}
-                    className="w-9 h-9 mx-2.5 my-2.5 items-center justify-center rounded-full"
-                  />
-                ))}
-
-                {/* Days in Month */}
-                {daysInMonth.map((day) => (
-                  <TouchableOpacity
-                    key={day}
-                    className={`w-9 h-9 mx-2.5 my-2.5 items-center justify-center rounded-full ${
-                      isToday(day)
-                        ? "bg-blue-500"
-                        : isSelected(day)
-                          ? "bg-[#E5F4FD]"
-                          : ""
-                    }`}
-                  >
-                    <Text
-                      className={`${isToday(day) ? "text-white font-proximanova-semibold" : isHoliday(day) ? "text-red-500" : ""}`}
-                    >
-                      {day}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </View>
+          <View className="my-4 w-full">
+            <RNCalendar
+              current={currentDateKey}
+              hideArrows={true}
+              hideExtraDays={true}
+              disableMonthChange={false}
+              renderHeader={() => null}
+              onDayPress={handleDayPress}
+              onMonthChange={(month) => {
+                setCurrentViewDate(new Date(month.year, month.month - 1, 1));
+              }}
+              markedDates={markedDates}
+              theme={{
+                calendarBackground: "transparent",
+                textSectionTitleColor: "#4FB2F3",
+                dayTextColor: isDark ? "#FFFFFF" : "#111111",
+                monthTextColor: "transparent",
+                textMonthFontSize: 1,
+                textMonthFontFamily: "System",
+                textMonthFontWeight: "400",
+                textDayFontFamily: "System",
+                textDayHeaderFontFamily: "System",
+                textDayHeaderFontWeight: "600",
+                todayTextColor: "#4FB2F3",
+              }}
+            />
 
             <BusinessScheduleMonthYearsPickerModal
               showPicker={showPicker}
@@ -324,4 +310,3 @@ const Calendar = () => {
 };
 
 export default Calendar;
-
