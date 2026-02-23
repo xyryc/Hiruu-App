@@ -1,0 +1,296 @@
+import ScreenHeader from "@/components/header/ScreenHeader";
+import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import { useBusinessStore } from "@/stores/businessStore";
+import { router } from "expo-router";
+import { useColorScheme } from "nativewind";
+import React, { useMemo, useState } from "react";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Calendar, DateData } from "react-native-calendars";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
+
+type MarkedDates = Record<
+  string,
+  {
+    startingDay?: boolean;
+    endingDay?: boolean;
+    color?: string;
+    textColor?: string;
+    selected?: boolean;
+    selectedColor?: string;
+    selectedTextColor?: string;
+  }
+>;
+
+const daysData = [
+  { label: "Monday" },
+  { label: "Tuesday" },
+  { label: "Wednesday" },
+  { label: "Thursday" },
+  { label: "Friday" },
+  { label: "Saturday" },
+  { label: "Sunday" },
+];
+
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const toDate = (dateString: string) => {
+  const [year, month, day] = dateString.split("-").map(Number);
+  return new Date(year, (month || 1) - 1, day || 1);
+};
+
+const addDays = (date: Date, days: number) => {
+  const value = new Date(date);
+  value.setDate(value.getDate() + days);
+  return value;
+};
+
+const WeeklyScheduleApply = () => {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const insets = useSafeAreaInsets();
+  const { selectedBusinesses, weeklyShiftSelections, weeklyRoleAssignments } =
+    useBusinessStore();
+
+  const [selectedStartDate, setSelectedStartDate] = useState("");
+  const [selectedEndDate, setSelectedEndDate] = useState("");
+
+  const businessId = selectedBusinesses[0];
+
+  const selectedTemplateCount = useMemo(
+    () =>
+      daysData.reduce((total, day) => {
+        const selectedTemplates = Array.isArray(weeklyShiftSelections[day.label])
+          ? weeklyShiftSelections[day.label]
+          : [];
+        return total + selectedTemplates.length;
+      }, 0),
+    [weeklyShiftSelections]
+  );
+
+  const buildPayload = () => {
+    const items = daysData.flatMap((day) => {
+      const selectedTemplates = Array.isArray(weeklyShiftSelections[day.label])
+        ? weeklyShiftSelections[day.label]
+        : [];
+
+      return selectedTemplates
+        .filter((template: any) => Boolean(template?.id))
+        .map((template: any, index: number) => {
+          const assignmentKey = `${day.label}::${template?.id}`;
+          const selectedByRole = weeklyRoleAssignments[assignmentKey] || {};
+          const employmentIds = Array.from(
+            new Set(
+              Object.values(selectedByRole)
+                .flat()
+                .filter(Boolean)
+            )
+          );
+          const requiredEmployees = Array.isArray(template?.roleRequirements)
+            ? template.roleRequirements.reduce(
+                (total: number, role: any) => total + Number(role?.count || 0),
+                0
+              )
+            : employmentIds.length;
+
+          return {
+            shiftTemplateId: template?.id,
+            dayOfWeek: day.label.toLowerCase(),
+            sequence: index,
+            requiredEmployees: requiredEmployees > 0 ? requiredEmployees : 1,
+            notes: "",
+            employmentIds,
+          };
+        });
+    });
+
+    return {
+      businessId,
+      isDefault: false,
+      weekStartsOn: 0,
+      startDate: selectedStartDate,
+      endDate: selectedEndDate,
+      items,
+    };
+  };
+
+  const markedDates = useMemo(() => {
+    if (!selectedStartDate) return {} as MarkedDates;
+
+    if (!selectedEndDate || selectedStartDate === selectedEndDate) {
+      return {
+        [selectedStartDate]: {
+          selected: true,
+          selectedColor: "#4FB2F3",
+          selectedTextColor: "#FFFFFF",
+        },
+      } as MarkedDates;
+    }
+
+    const start = toDate(selectedStartDate);
+    const end = toDate(selectedEndDate);
+    const totalDays = Math.max(
+      0,
+      Math.floor((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000))
+    );
+    const marks: MarkedDates = {};
+
+    for (let index = 0; index <= totalDays; index += 1) {
+      const dateKey = formatDate(addDays(start, index));
+      marks[dateKey] = {
+        color: "#4FB2F3",
+        textColor: "#FFFFFF",
+        startingDay: index === 0,
+        endingDay: index === totalDays,
+      };
+    }
+
+    return marks;
+  }, [selectedEndDate, selectedStartDate]);
+
+  const selectedRangeLabel = useMemo(() => {
+    if (!selectedStartDate) return "No date selected";
+    if (!selectedEndDate) return selectedStartDate;
+    return `${selectedStartDate} to ${selectedEndDate}`;
+  }, [selectedEndDate, selectedStartDate]);
+
+  const handleDayPress = (day: DateData) => {
+    const startDate = toDate(day.dateString);
+    const endDate = addDays(startDate, 6);
+    setSelectedStartDate(formatDate(startDate));
+    setSelectedEndDate(formatDate(endDate));
+  };
+
+  const handleApply = () => {
+    if (!businessId) {
+      toast.error("Please select a business first.");
+      return;
+    }
+    if (!selectedStartDate || !selectedEndDate) {
+      toast.error("Please select a week start date.");
+      return;
+    }
+    const selectedDays =
+      Math.floor(
+        (toDate(selectedEndDate).getTime() - toDate(selectedStartDate).getTime()) /
+          (24 * 60 * 60 * 1000)
+      ) + 1;
+    if (selectedDays !== 7) {
+      toast.error("Schedule can only be applied for one week (7 days).");
+      return;
+    }
+    if (selectedTemplateCount === 0) {
+      toast.error("No schedule items found.");
+      return;
+    }
+
+    const payload = buildPayload();
+    if (!Array.isArray(payload.items) || payload.items.length === 0) {
+      toast.error("No schedule items found.");
+      return;
+    }
+
+    toast.success("Weekly schedule range saved. API integration pending.");
+    router.back();
+  };
+
+  return (
+    <SafeAreaView
+      className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
+      edges={["left", "right", "bottom"]}
+    >
+      <ScreenHeader
+        className="capitalize bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+        style={{ paddingTop: insets.top + 10, paddingBottom: 20 }}
+        onPressBack={() => router.back()}
+        title="Apply Weekly Schedule"
+        titleClass="text-primary dark:text-dark-primary"
+        iconColor={isDark ? "#fff" : "#111"}
+      />
+
+      <ScrollView className="mx-5 pt-4" showsVerticalScrollIndicator={false}>
+        <View className="border border-[#EEEEEE] dark:border-dark-border rounded-2xl p-4">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
+            Select Date Range
+          </Text>
+          <Text className="mt-1 font-proximanova-regular text-secondary dark:text-dark-secondary text-xs">
+            Tap a start date. A 7-day week will be selected automatically.
+          </Text>
+          <Text className="mt-3 font-proximanova-semibold text-[#4FB2F3]">
+            {selectedRangeLabel}
+          </Text>
+        </View>
+
+        <View className="mt-4 border border-[#EEEEEE] dark:border-dark-border rounded-2xl p-2">
+          <Calendar
+            markingType="period"
+            markedDates={markedDates}
+            onDayPress={handleDayPress}
+            enableSwipeMonths={true}
+            theme={{
+              backgroundColor: "transparent",
+              calendarBackground: "transparent",
+              textSectionTitleColor: isDark ? "#9CA3AF" : "#64748B",
+              selectedDayBackgroundColor: "#4FB2F3",
+              selectedDayTextColor: "#FFFFFF",
+              todayTextColor: "#4FB2F3",
+              dayTextColor: isDark ? "#F9FAFB" : "#111111",
+              textDisabledColor: "#C7CDD3",
+              monthTextColor: isDark ? "#F9FAFB" : "#111111",
+              indicatorColor: "#4FB2F3",
+              arrowColor: "#4FB2F3",
+            }}
+          />
+        </View>
+
+        <View className="mt-4 border border-[#EEEEEE] dark:border-dark-border rounded-2xl p-4">
+          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
+            Summary
+          </Text>
+          <View className="flex-row items-center justify-between mt-3">
+            <Text className="font-proximanova-regular text-secondary dark:text-dark-secondary">
+              Templates selected
+            </Text>
+            <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
+              {selectedTemplateCount}
+            </Text>
+          </View>
+          <View className="flex-row items-center justify-between mt-2">
+            <Text className="font-proximanova-regular text-secondary dark:text-dark-secondary">
+              Apply range
+            </Text>
+            <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
+              {selectedRangeLabel}
+            </Text>
+          </View>
+        </View>
+
+        <TouchableOpacity
+          className="mt-4 self-start"
+          onPress={() => {
+            setSelectedStartDate("");
+            setSelectedEndDate("");
+          }}
+        >
+          <Text className="font-proximanova-semibold text-[#4FB2F3]">
+            Clear selection
+          </Text>
+        </TouchableOpacity>
+
+        <PrimaryButton
+          title="Apply Schedule"
+          className="mt-6 mb-5"
+          onPress={handleApply}
+          disabled={!selectedStartDate || !selectedEndDate}
+        />
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
+
+export default WeeklyScheduleApply;
