@@ -9,7 +9,7 @@ import {
 } from "expo-audio";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import createAgoraRtcEngine, { RenderModeType, RtcSurfaceView, VideoSourceType } from "react-native-agora";
+import createAgoraRtcEngine, { RenderModeType, RtcConnection, RtcSurfaceView, UserOfflineReasonType, VideoSourceType } from "react-native-agora";
 import { ActivityIndicator, PermissionsAndroid, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -283,9 +283,15 @@ const AudioCallScreen = () => {
 
       const engine = createAgoraRtcEngine();
       const events = {
-        onJoinChannelSuccess: (_: string, uid: number) => {
-          console.log(`${AUDIO_DEBUG_PREFIX} agora:onJoinChannelSuccess`, { callId, uid });
-          localUidRef.current = uid;
+        onJoinChannelSuccess: (connection: RtcConnection, elapsed: number) => {
+          const localUid = Number(connection?.localUid || 0);
+          console.log(`${AUDIO_DEBUG_PREFIX} agora:onJoinChannelSuccess`, {
+            callId,
+            channelId: connection?.channelId,
+            localUid,
+            elapsed,
+          });
+          localUidRef.current = localUid;
           setLocalJoinedAgora(true);
           setJoining(false);
           setAgoraError("");
@@ -302,15 +308,23 @@ const AudioCallScreen = () => {
             }
           }
         },
-        onUserJoined: (uid: number) => {
-          console.log(`${AUDIO_DEBUG_PREFIX} agora:onUserJoined`, { callId, uid });
-          remoteUidsRef.current.add(uid);
+        onUserJoined: (connection: RtcConnection, remoteUid: number, elapsed: number) => {
+          const parsedRemoteUid = Number(remoteUid || 0);
+          console.log(`${AUDIO_DEBUG_PREFIX} agora:onUserJoined`, {
+            callId,
+            channelId: connection?.channelId,
+            localUid: connection?.localUid,
+            remoteUid: parsedRemoteUid,
+            elapsed,
+          });
+          if (!parsedRemoteUid) return;
+          remoteUidsRef.current.add(parsedRemoteUid);
           if (isVideoCall) {
-            setRemoteVideoUid(uid);
+            setRemoteVideoUid(parsedRemoteUid);
             try {
-              engine.muteRemoteVideoStream?.(uid, false);
+              engine.muteRemoteVideoStream?.(parsedRemoteUid, false);
               engine.setupRemoteVideo?.({
-                uid,
+                uid: parsedRemoteUid,
                 renderMode: RenderModeType.RenderModeHidden,
                 sourceType: VideoSourceType.VideoSourceRemote,
               });
@@ -323,10 +337,18 @@ const AudioCallScreen = () => {
           void stopTone(incomingToneRef.current);
           void stopTone(ringbackToneRef.current);
         },
-        onUserOffline: (uid: number) => {
-          console.log(`${AUDIO_DEBUG_PREFIX} agora:onUserOffline`, { callId, uid });
-          remoteUidsRef.current.delete(uid);
-          setRemoteVideoUid((prev) => (prev === uid ? null : prev));
+        onUserOffline: (connection: RtcConnection, remoteUid: number, reason: UserOfflineReasonType) => {
+          const parsedRemoteUid = Number(remoteUid || 0);
+          console.log(`${AUDIO_DEBUG_PREFIX} agora:onUserOffline`, {
+            callId,
+            channelId: connection?.channelId,
+            localUid: connection?.localUid,
+            remoteUid: parsedRemoteUid,
+            reason,
+          });
+          if (!parsedRemoteUid) return;
+          remoteUidsRef.current.delete(parsedRemoteUid);
+          setRemoteVideoUid((prev) => (prev === parsedRemoteUid ? null : prev));
           if (remoteUidsRef.current.size === 0) {
             setRemoteJoined(false);
           }
