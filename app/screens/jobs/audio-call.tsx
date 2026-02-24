@@ -308,9 +308,11 @@ const AudioCallScreen = () => {
           if (isVideoCall) {
             setRemoteVideoUid(uid);
             try {
+              engine.muteRemoteVideoStream?.(uid, false);
               engine.setupRemoteVideo?.({
                 uid,
                 renderMode: RenderModeType.RenderModeHidden,
+                sourceType: VideoSourceType.VideoSourceRemote,
               });
             } catch {
               // no-op
@@ -399,11 +401,13 @@ const AudioCallScreen = () => {
     }
   };
 
-  const leaveOnce = () => {
+  const leaveOnce = (options?: { skipStatusUpdate?: boolean }) => {
     if (!callId || hasLeftRef.current) return;
     console.log(`${AUDIO_DEBUG_PREFIX} leaveOnce`, { callId });
     hasLeftRef.current = true;
-    socketService.changeCallStatus(callId, "left", "User left");
+    if (!options?.skipStatusUpdate) {
+      socketService.changeCallStatus(callId, "left", "User left");
+    }
     if (hasJoinedCallRoomRef.current) {
       socketService.leaveCall(callId);
       hasJoinedCallRoomRef.current = false;
@@ -724,7 +728,7 @@ const AudioCallScreen = () => {
       setRejecting(true);
       socketService.changeCallStatus(callId, "declined", "User declined");
       await callService.updateCallStatus(callId, "declined");
-      leaveOnce();
+      leaveOnce({ skipStatusUpdate: true });
     } finally {
       setRejecting(false);
       router.back();
@@ -739,11 +743,14 @@ const AudioCallScreen = () => {
     try {
       console.log(`${AUDIO_DEBUG_PREFIX} handleEnd:start`, { callId });
       setEnding(true);
-      leaveOnce();
       await callService.endCall(callId);
     } catch (error: any) {
-      toast.error(error?.message || "Failed to end call");
+      const message = error?.response?.data?.message || error?.message || "Failed to end call";
+      if (!String(message).toLowerCase().includes("after leaving or declining")) {
+        toast.error(message);
+      }
     } finally {
+      leaveOnce({ skipStatusUpdate: true });
       setEnding(false);
       router.back();
     }
@@ -824,7 +831,11 @@ const AudioCallScreen = () => {
             {remoteVideoUid !== null ? (
               <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", backgroundColor: "#0A0F1F" }}>
                 <VideoView
-                  canvas={{ uid: remoteVideoUid, renderMode: RenderModeType.RenderModeHidden }}
+                  canvas={{
+                    uid: remoteVideoUid,
+                    renderMode: RenderModeType.RenderModeHidden,
+                    sourceType: VideoSourceType.VideoSourceRemote,
+                  }}
                   style={{ flex: 1 }}
                 />
               </View>
