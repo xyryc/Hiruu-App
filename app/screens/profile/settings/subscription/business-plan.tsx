@@ -1,18 +1,20 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import BusinessPlanChart from "@/components/ui/badges/PricingPlan";
+import BusinessPlanChart from "@/components/ui/subscription/BusinessPlanChart";
 import GradientButton from "@/components/ui/buttons/GradientButton";
 import BusinessSelectionTrigger from "@/components/ui/dropdown/BusinessSelectionTrigger";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import { useBusinessStore } from "@/stores/businessStore";
+import { useSubscriptionStore } from "@/stores/subscriptionStore";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const BusinessPlan = () => {
   const [showModal, setShowModal] = useState(false);
@@ -22,6 +24,8 @@ const BusinessPlan = () => {
     setSelectedBusinesses,
     getMyBusinesses,
   } = useBusinessStore();
+  const { businessPlans, isLoadingBusinessPlans, getBusinessPlans } =
+    useSubscriptionStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
@@ -36,6 +40,18 @@ const BusinessPlan = () => {
 
     loadBusinesses();
   }, [getMyBusinesses]);
+
+  useEffect(() => {
+    const loadPlans = async () => {
+      try {
+        await getBusinessPlans();
+      } catch (error: any) {
+        toast.error(error?.message || "Failed to load business plans");
+      }
+    };
+
+    loadPlans();
+  }, [getBusinessPlans]);
 
   // Get display content for header button
   const getDisplayContent = () => {
@@ -92,7 +108,16 @@ const BusinessPlan = () => {
         {/* line */}
         <View className="border-[#11111130] border-b h-[1px] w-[90%] rounded-full mb-2.5 mx-auto mt-3.5" />
 
-        <BusinessPlanChart />
+        {isLoadingBusinessPlans ? (
+          <View className="py-8 items-center">
+            <ActivityIndicator size="small" color="#4FB2F3" />
+            <Text className="mt-2 text-secondary dark:text-dark-secondary text-sm">
+              Loading plans...
+            </Text>
+          </View>
+        ) : (
+          <BusinessPlanChart businessPlans={businessPlans} />
+        )}
       </ScrollView>
 
       <View className="mx-5 mb-6 mt-4">
