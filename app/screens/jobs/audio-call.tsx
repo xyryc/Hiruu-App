@@ -9,7 +9,7 @@ import {
 } from "expo-audio";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import createAgoraRtcEngine, { RenderModeType, RtcSurfaceView, RtcTextureView, VideoSourceType } from "react-native-agora";
+import createAgoraRtcEngine, { RenderModeType, RtcSurfaceView, VideoSourceType } from "react-native-agora";
 import { ActivityIndicator, PermissionsAndroid, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -73,7 +73,7 @@ const AudioCallScreen = () => {
   const remoteUidsRef = useRef<Set<number>>(new Set());
   const joinedAgoraChannelRef = useRef(false);
   const isVideoCall = callType === "video";
-  const VideoView = Platform.OS === "android" ? RtcTextureView : RtcSurfaceView;
+  const VideoView = RtcSurfaceView;
 
   useEffect(() => {
     const nextType = params.callType === "video" ? "video" : "audio";
@@ -341,6 +341,13 @@ const AudioCallScreen = () => {
       engine.enableAudio();
       if (isVideoCall) {
         engine.enableVideo();
+        engine.enableLocalVideo?.(true);
+        engine.setupLocalVideo?.({
+          uid: 0,
+          renderMode: RenderModeType.RenderModeHidden,
+          sourceType: VideoSourceType.VideoSourceCameraPrimary,
+        });
+        engine.startPreview?.();
       }
       engine.setEnableSpeakerphone?.(speakerOn);
 
@@ -815,10 +822,12 @@ const AudioCallScreen = () => {
         {isVideoCall ? (
           <View className="flex-1 mt-6">
             {remoteVideoUid !== null ? (
-              <VideoView
-                canvas={{ uid: remoteVideoUid, renderMode: RenderModeType.RenderModeHidden }}
-                style={{ flex: 1, backgroundColor: "#0A0F1F" }}
-              />
+              <View style={{ flex: 1, borderRadius: 12, overflow: "hidden", backgroundColor: "#0A0F1F" }}>
+                <VideoView
+                  canvas={{ uid: remoteVideoUid, renderMode: RenderModeType.RenderModeHidden }}
+                  style={{ flex: 1 }}
+                />
+              </View>
             ) : (
               <View
                 style={{ flex: 1, borderRadius: 12, backgroundColor: "#0A0F1F", alignItems: "center", justifyContent: "center" }}
@@ -828,15 +837,24 @@ const AudioCallScreen = () => {
                 </Text>
               </View>
             )}
-            <View style={{ position: "absolute", right: 12, bottom: 12, width: 110, height: 160, borderRadius: 10, backgroundColor: "#111827" }}>
-              <VideoView
-                canvas={{
-                  uid: 0,
-                  renderMode: RenderModeType.RenderModeHidden,
-                  sourceType: VideoSourceType.VideoSourceCameraPrimary,
-                }}
-                style={{ flex: 1 }}
-              />
+            <View style={{ position: "absolute", right: 12, bottom: 12, width: 110, height: 160, borderRadius: 10, overflow: "hidden", backgroundColor: "#111827" }}>
+              {cameraOff || !localJoinedAgora ? (
+                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                  <Text className="font-proximanova-regular text-[10px] text-[#CBD5E1]">
+                    {cameraOff ? "Camera off" : "Connecting..."}
+                  </Text>
+                </View>
+              ) : (
+                <VideoView
+                  zOrderMediaOverlay
+                  canvas={{
+                    uid: 0,
+                    renderMode: RenderModeType.RenderModeHidden,
+                    sourceType: VideoSourceType.VideoSourceCameraPrimary,
+                  }}
+                  style={{ flex: 1 }}
+                />
+              )}
             </View>
           </View>
         ) : null}
