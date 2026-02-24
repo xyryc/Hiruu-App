@@ -8,8 +8,9 @@ import {
   setAudioModeAsync,
 } from "expo-audio";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator, StatusBar, Text, TouchableOpacity, View } from "react-native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import createAgoraRtcEngine, { RenderModeType, RtcSurfaceView, RtcTextureView, VideoSourceType } from "react-native-agora";
+import { ActivityIndicator, PermissionsAndroid, Platform, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
@@ -34,10 +35,12 @@ const AudioCallScreen = () => {
     callId?: string;
     roomId?: string;
     mode?: "outgoing" | "incoming";
+    callType?: "audio" | "video";
   }>();
 
   const callId = typeof params.callId === "string" ? params.callId : "";
   const mode = params.mode === "incoming" ? "incoming" : "outgoing";
+  const initialCallType = params.callType === "video" ? "video" : "audio";
   const { user } = useAuthStore();
 
   const [joining, setJoining] = useState(mode === "incoming");
@@ -51,9 +54,13 @@ const AudioCallScreen = () => {
   const [accepting, setAccepting] = useState(false);
   const [rejecting, setRejecting] = useState(false);
   const [isIncomingPending, setIsIncomingPending] = useState(mode === "incoming");
+  const [callType, setCallType] = useState<"audio" | "video">(initialCallType);
+  const [cameraOff, setCameraOff] = useState(initialCallType !== "video");
+  const [isFrontCamera, setIsFrontCamera] = useState(true);
   const [agoraReady, setAgoraReady] = useState(false);
   const [localJoinedAgora, setLocalJoinedAgora] = useState(false);
   const [agoraError, setAgoraError] = useState("");
+  const [remoteVideoUid, setRemoteVideoUid] = useState<number | null>(null);
 
   const hasLeftRef = useRef(false);
   const hasClosedRef = useRef(false);
@@ -65,6 +72,14 @@ const AudioCallScreen = () => {
   const localUidRef = useRef<number>(0);
   const remoteUidsRef = useRef<Set<number>>(new Set());
   const joinedAgoraChannelRef = useRef(false);
+  const isVideoCall = callType === "video";
+  const VideoView = Platform.OS === "android" ? RtcTextureView : RtcSurfaceView;
+
+  useEffect(() => {
+    const nextType = params.callType === "video" ? "video" : "audio";
+    setCallType(nextType);
+    setCameraOff(nextType !== "video");
+  }, [params.callType]);
 
   const getMyParticipantStatus = (callDetails: any) => {
     const participants = Array.isArray(callDetails?.data?.participants)
@@ -84,7 +99,7 @@ const AudioCallScreen = () => {
 
     try {
       console.log(`${AUDIO_DEBUG_PREFIX} ensureParticipantJoined:joinCall`, { callId });
-      await callService.joinCall(callId, { isMicMuted: muted, isCameraOff: true });
+      await callService.joinCall(callId, { isMicMuted: muted, isCameraOff: !isVideoCall });
     } catch {
       // If backend already transitioned status, refetch below.
     }
@@ -202,6 +217,10 @@ const AudioCallScreen = () => {
     const engine = agoraEngineRef.current;
     if (!engine) return;
     try {
+      if (isVideoCall) {
+        engine.stopPreview?.();
+        engine.disableVideo?.();
+      }
       if (joinedAgoraChannelRef.current && typeof engine.leaveChannel === "function") {
         await engine.leaveChannel();
       }
@@ -214,6 +233,7 @@ const AudioCallScreen = () => {
       joinedAgoraChannelRef.current = false;
       localUidRef.current = 0;
       remoteUidsRef.current.clear();
+      setRemoteVideoUid(null);
       setLocalJoinedAgora(false);
       setAgoraReady(false);
     }
@@ -233,6 +253,20 @@ const AudioCallScreen = () => {
       });
       if (!permission.granted) throw new Error("Microphone permission denied");
 
+      if (isVideoCall && Platform.OS === "android") {
+        const cameraPermission = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.CAMERA
+        );
+        console.log(`${AUDIO_DEBUG_PREFIX} ensureAgoraJoined:cameraPermission`, {
+          callId,
+          granted: cameraPermission === PermissionsAndroid.RESULTS.GRANTED,
+          result: cameraPermission,
+        });
+        if (cameraPermission !== PermissionsAndroid.RESULTS.GRANTED) {
+          throw new Error("Camera permission denied");
+        }
+      }
+
       const sessionResponse = await callService.createMediaSession(callId);
       const session: AgoraSession = sessionResponse?.data || {};
       console.log(`${AUDIO_DEBUG_PREFIX} ensureAgoraJoined:mediaSession`, {
@@ -247,8 +281,7 @@ const AudioCallScreen = () => {
         throw new Error("Invalid media session response");
       }
 
-      const agoraModule = require("react-native-agora");
-      const engine = agoraModule.createAgoraRtcEngine();
+      const engine = createAgoraRtcEngine();
       const events = {
         onJoinChannelSuccess: (_: string, uid: number) => {
           console.log(`${AUDIO_DEBUG_PREFIX} agora:onJoinChannelSuccess`, { callId, uid });
@@ -256,10 +289,33 @@ const AudioCallScreen = () => {
           setLocalJoinedAgora(true);
           setJoining(false);
           setAgoraError("");
+          if (isVideoCall) {
+            try {
+              engine.setupLocalVideo?.({
+                uid: 0,
+                renderMode: RenderModeType.RenderModeHidden,
+                sourceType: VideoSourceType.VideoSourceCameraPrimary,
+              });
+              engine.startPreview?.();
+            } catch {
+              // no-op
+            }
+          }
         },
         onUserJoined: (uid: number) => {
           console.log(`${AUDIO_DEBUG_PREFIX} agora:onUserJoined`, { callId, uid });
           remoteUidsRef.current.add(uid);
+          if (isVideoCall) {
+            setRemoteVideoUid(uid);
+            try {
+              engine.setupRemoteVideo?.({
+                uid,
+                renderMode: RenderModeType.RenderModeHidden,
+              });
+            } catch {
+              // no-op
+            }
+          }
           setRemoteJoined(true);
           setParticipantsCount(Math.max(2, remoteUidsRef.current.size + 1));
           void stopTone(incomingToneRef.current);
@@ -268,6 +324,7 @@ const AudioCallScreen = () => {
         onUserOffline: (uid: number) => {
           console.log(`${AUDIO_DEBUG_PREFIX} agora:onUserOffline`, { callId, uid });
           remoteUidsRef.current.delete(uid);
+          setRemoteVideoUid((prev) => (prev === uid ? null : prev));
           if (remoteUidsRef.current.size === 0) {
             setRemoteJoined(false);
           }
@@ -282,13 +339,16 @@ const AudioCallScreen = () => {
       engine.initialize({ appId: session.appId });
       engine.registerEventHandler(events);
       engine.enableAudio();
+      if (isVideoCall) {
+        engine.enableVideo();
+      }
       engine.setEnableSpeakerphone?.(speakerOn);
 
       const channelOptions = {
         autoSubscribeAudio: true,
-        autoSubscribeVideo: false,
+        autoSubscribeVideo: isVideoCall,
         publishMicrophoneTrack: true,
-        publishCameraTrack: false,
+        publishCameraTrack: isVideoCall && !cameraOff,
         channelProfile: 0,
         clientRoleType: 1,
       };
@@ -392,6 +452,11 @@ const AudioCallScreen = () => {
       try {
         await socketService.connectCalls();
         const details = await callService.getCallById(callId);
+        const detectedType = String(details?.data?.type || "").toLowerCase() === "video" ? "video" : "audio";
+        setCallType(detectedType);
+        if (detectedType === "video") {
+          setCameraOff(false);
+        }
         const participants = Array.isArray(details?.data?.participants) ? details.data.participants : [];
         const me = participants.find((item: any) => item?.userId === user.id);
         const myStatus = String(me?.status || "").toLowerCase();
@@ -582,6 +647,7 @@ const AudioCallScreen = () => {
     return [
       `callId: ${callId || "-"}`,
       `mode: ${mode}`,
+      `type: ${callType}`,
       `status: ${callStatusText}`,
       `joining: ${joining} | remoteJoined: ${remoteJoined}`,
       `incomingPending: ${isIncomingPending}`,
@@ -590,11 +656,14 @@ const AudioCallScreen = () => {
       `socketJoinedCallRoom: ${hasJoinedCallRoomRef.current}`,
       `hasLeft: ${hasLeftRef.current}`,
       `muted: ${muted} | speaker: ${speakerOn}`,
+      `cameraOff: ${cameraOff}`,
+      `cameraFacing: ${isFrontCamera ? "front" : "back"}`,
     ].join("\n");
   }, [
     callId,
     mode,
     callStatusText,
+    callType,
     joining,
     remoteJoined,
     isIncomingPending,
@@ -603,6 +672,8 @@ const AudioCallScreen = () => {
     localJoinedAgora,
     muted,
     speakerOn,
+    cameraOff,
+    isFrontCamera,
   ]);
 
   const handleAccept = async () => {
@@ -610,7 +681,7 @@ const AudioCallScreen = () => {
     try {
       console.log(`${AUDIO_DEBUG_PREFIX} handleAccept:start`, { callId });
       setAccepting(true);
-      await callService.joinCall(callId, { isMicMuted: false, isCameraOff: true });
+      await callService.joinCall(callId, { isMicMuted: false, isCameraOff: !isVideoCall });
       try {
         await callService.updateCallStatus(callId, "joined");
       } catch {
@@ -671,13 +742,57 @@ const AudioCallScreen = () => {
     }
   };
 
+  const handleToggleCamera = useCallback(() => {
+    if (!isVideoCall) return;
+    const next = !cameraOff;
+    setCameraOff(next);
+    try {
+      agoraEngineRef.current?.muteLocalVideoStream?.(next);
+      if (!next) {
+        agoraEngineRef.current?.startPreview?.();
+      } else {
+        agoraEngineRef.current?.stopPreview?.();
+      }
+    } catch {
+      // no-op
+    }
+    if (callId) {
+      socketService.changeMediaState(callId, muted, next, false);
+      void callService.updateMediaState(callId, {
+        isMicMuted: muted,
+        isCameraOff: next,
+        isSharingScreen: false,
+      });
+    }
+  }, [callId, cameraOff, isVideoCall, muted]);
+
+  const handleSwitchCamera = useCallback(() => {
+    if (!isVideoCall) return;
+    try {
+      agoraEngineRef.current?.switchCamera?.();
+      setIsFrontCamera((prev) => !prev);
+      console.log(`${AUDIO_DEBUG_PREFIX} switchCamera`, {
+        callId,
+        nextFacing: isFrontCamera ? "back" : "front",
+      });
+    } catch (error: any) {
+      console.log(`${AUDIO_DEBUG_PREFIX} switchCamera:error`, {
+        callId,
+        message: error?.message,
+      });
+      toast.error("Failed to switch camera");
+    }
+  }, [callId, isFrontCamera, isVideoCall]);
+
   return (
     <SafeAreaView className="flex-1 bg-[#0F172A]">
       <StatusBar barStyle="light-content" />
 
       <View className="flex-1 justify-between px-6 py-8">
         <View className="items-center mt-10">
-          <Text className="font-proximanova-bold text-white text-2xl">Audio Call</Text>
+          <Text className="font-proximanova-bold text-white text-2xl">
+            {isVideoCall ? "Video Call" : "Audio Call"}
+          </Text>
           <Text className="font-proximanova-regular text-[#CBD5E1] mt-2">{callStatusText}</Text>
           <Text className="font-proximanova-regular text-[#94A3B8] mt-1 text-xs">
             Participants: {participantsCount}
@@ -696,6 +811,35 @@ const AudioCallScreen = () => {
           </View>
           {joining ? <ActivityIndicator className="mt-4" color="#ffffff" /> : null}
         </View>
+
+        {isVideoCall ? (
+          <View className="flex-1 mt-6">
+            {remoteVideoUid !== null ? (
+              <VideoView
+                canvas={{ uid: remoteVideoUid, renderMode: RenderModeType.RenderModeHidden }}
+                style={{ flex: 1, backgroundColor: "#0A0F1F" }}
+              />
+            ) : (
+              <View
+                style={{ flex: 1, borderRadius: 12, backgroundColor: "#0A0F1F", alignItems: "center", justifyContent: "center" }}
+              >
+                <Text className="font-proximanova-regular text-[#CBD5E1]">
+                  Waiting for video...
+                </Text>
+              </View>
+            )}
+            <View style={{ position: "absolute", right: 12, bottom: 12, width: 110, height: 160, borderRadius: 10, backgroundColor: "#111827" }}>
+              <VideoView
+                canvas={{
+                  uid: 0,
+                  renderMode: RenderModeType.RenderModeHidden,
+                  sourceType: VideoSourceType.VideoSourceCameraPrimary,
+                }}
+                style={{ flex: 1 }}
+              />
+            </View>
+          </View>
+        ) : null}
 
         {isIncomingPending ? (
           <View className="flex-row items-center justify-center gap-8 mb-8">
@@ -724,14 +868,14 @@ const AudioCallScreen = () => {
             </TouchableOpacity>
           </View>
         ) : (
-          <View className="flex-row items-center justify-center gap-6 mb-8">
+          <View className="flex-row items-center justify-center gap-6 mb-8 mt-8">
             <TouchableOpacity
               onPress={async () => {
                 const next = !muted;
                 setMuted(next);
                 if (callId) {
                   socketService.changeMediaState(callId, next);
-                  void callService.updateMediaState(callId, { isMicMuted: next, isCameraOff: true, isSharingScreen: false });
+                  void callService.updateMediaState(callId, { isMicMuted: next, isCameraOff: !isVideoCall || cameraOff, isSharingScreen: false });
                 }
                 try {
                   agoraEngineRef.current?.muteLocalAudioStream?.(next);
@@ -770,13 +914,35 @@ const AudioCallScreen = () => {
                 }
               }}
               className="w-14 h-14 rounded-full bg-[#1E293B] items-center justify-center"
-            >
+              >
               <Ionicons
                 name={speakerOn ? "volume-high-outline" : "volume-mute-outline"}
                 size={24}
                 color="#FFFFFF"
               />
             </TouchableOpacity>
+
+            {isVideoCall ? (
+              <TouchableOpacity
+                onPress={handleToggleCamera}
+                className="w-14 h-14 rounded-full bg-[#1E293B] items-center justify-center"
+              >
+                <Ionicons
+                  name={cameraOff ? "videocam-off-outline" : "videocam-outline"}
+                  size={24}
+                  color="#FFFFFF"
+                />
+              </TouchableOpacity>
+            ) : null}
+
+            {isVideoCall ? (
+              <TouchableOpacity
+                onPress={handleSwitchCamera}
+                className="w-14 h-14 rounded-full bg-[#1E293B] items-center justify-center"
+              >
+                <Ionicons name="camera-reverse-outline" size={24} color="#FFFFFF" />
+              </TouchableOpacity>
+            ) : null}
           </View>
         )}
       </View>

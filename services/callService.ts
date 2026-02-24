@@ -1,15 +1,23 @@
 import axiosInstance from "@/utils/axios";
 
 class CallService {
-  async initiateAudioCall(chatRoomId: string): Promise<any> {
+  async initiateCall(chatRoomId: string, type: "audio" | "video" = "audio"): Promise<any> {
     const response = await axiosInstance.post(
       `/calls/rooms/${chatRoomId}/initiate`,
       {
-        type: "audio",
+        type,
       }
     );
 
     return response.data;
+  }
+
+  async initiateAudioCall(chatRoomId: string): Promise<any> {
+    return this.initiateCall(chatRoomId, "audio");
+  }
+
+  async initiateVideoCall(chatRoomId: string): Promise<any> {
+    return this.initiateCall(chatRoomId, "video");
   }
 
   async joinCall(

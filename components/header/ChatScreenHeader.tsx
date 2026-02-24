@@ -1,17 +1,20 @@
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { ActivityIndicator } from "react-native";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 
 interface ChatScreenHeaderProps {
   onAudioCallPress?: () => void;
+  onVideoCallPress?: () => void;
   isStartingAudioCall?: boolean;
+  isStartingVideoCall?: boolean;
 }
 
 const ChatScreenHeader = ({
   onAudioCallPress,
+  onVideoCallPress,
   isStartingAudioCall = false,
+  isStartingVideoCall = false,
 }: ChatScreenHeaderProps) => {
   const router = useRouter();
 
@@ -40,8 +43,16 @@ const ChatScreenHeader = ({
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity className="w-10 h-10 items-center justify-center rounded-full bg-[#F5F5F5] border-[0.5px] border-[#b2b1b165]">
-          <Ionicons name="videocam-outline" size={20} color="black" />
+        <TouchableOpacity
+          className="w-10 h-10 items-center justify-center rounded-full bg-[#F5F5F5] border-[0.5px] border-[#b2b1b165]"
+          onPress={onVideoCallPress}
+          disabled={isStartingVideoCall}
+        >
+          {isStartingVideoCall ? (
+            <ActivityIndicator size="small" color="#111111" />
+          ) : (
+            <Ionicons name="videocam-outline" size={20} color="black" />
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity>

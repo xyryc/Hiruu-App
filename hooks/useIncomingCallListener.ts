@@ -28,11 +28,11 @@ export const useIncomingCallListener = (enabled: boolean) => {
     let participantsHandler: ((payload: any) => void) | null = null;
     let pollingInterval: ReturnType<typeof setInterval> | null = null;
 
-    const openIncomingCall = (callId: string, roomId = "") => {
+    const openIncomingCall = (callId: string, roomId = "", callType: "audio" | "video" = "audio") => {
       if (!callId) return;
       if (lastHandledCallIdRef.current === callId) return;
 
-      console.log("[CALL_DEBUG][INCOMING] navigate:audio-call", { callId, roomId });
+      console.log("[CALL_DEBUG][INCOMING] navigate:audio-call", { callId, roomId, callType });
       lastHandledCallIdRef.current = callId;
       router.push({
         pathname: "/screens/jobs/audio-call",
@@ -40,6 +40,7 @@ export const useIncomingCallListener = (enabled: boolean) => {
           callId,
           roomId,
           mode: "incoming",
+          callType,
         },
       });
     };
@@ -78,7 +79,8 @@ export const useIncomingCallListener = (enabled: boolean) => {
         });
 
         if (shouldOpen) {
-          openIncomingCall(callId, roomId || call?.chatRoomId || "");
+          const callType = String(call?.type || "").toLowerCase() === "video" ? "video" : "audio";
+          openIncomingCall(callId, roomId || call?.chatRoomId || "", callType);
         }
       } catch (error) {
         console.log("[CALL_DEBUG][INCOMING] resolve:error", { callId, error });

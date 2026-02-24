@@ -28,6 +28,7 @@ const ChatScreen = () => {
   const [loadingRoom, setLoadingRoom] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [startingAudioCall, setStartingAudioCall] = useState(false);
+  const [startingVideoCall, setStartingVideoCall] = useState(false);
   const [androidKeyboardOffset, setAndroidKeyboardOffset] = useState(0);
   const messagesListRef = useRef<FlatList<any> | null>(null);
   const { user } = useAuthStore();
@@ -164,8 +165,9 @@ const ChatScreen = () => {
     setRefreshing(false);
   }, [refreshMessages]);
 
-  const handleStartAudioCall = useCallback(async () => {
-    if (!actualRoomId || startingAudioCall) return;
+  const handleStartCall = useCallback(async (callType: "audio" | "video") => {
+    if (!actualRoomId) return;
+    if ((callType === "audio" && startingAudioCall) || (callType === "video" && startingVideoCall)) return;
 
     const getMyParticipantStatus = (call: any) => {
       const participants = Array.isArray(call?.participants) ? call.participants : [];
@@ -195,9 +197,18 @@ const ChatScreen = () => {
 
     const getModeForCall = (call: any) =>
       call?.initiatedBy === user?.id ? "outgoing" : "incoming";
+    const getTypeForCall = (call: any) =>
+      String(call?.type || "").toLowerCase() === "video" ? "video" : "audio";
+    const setStarting = (value: boolean) => {
+      if (callType === "video") {
+        setStartingVideoCall(value);
+      } else {
+        setStartingAudioCall(value);
+      }
+    };
 
     try {
-      console.log("[CALL_DEBUG] initiate-call:start", { roomId: actualRoomId });
+      console.log("[CALL_DEBUG] initiate-call:start", { roomId: actualRoomId, callType });
 
       // Pre-check active call to avoid stale-call initiate errors.
       try {
@@ -234,6 +245,7 @@ const ChatScreen = () => {
                 callId: activeCall.id,
                 roomId: actualRoomId,
                 mode: getModeForCall(activeCall),
+                callType: getTypeForCall(activeCall),
               },
             });
             return;
@@ -243,8 +255,8 @@ const ChatScreen = () => {
         // No active call in this room, continue with initiate.
       }
 
-      setStartingAudioCall(true);
-      const response = await callService.initiateAudioCall(actualRoomId);
+      setStarting(true);
+      const response = await callService.initiateCall(actualRoomId, callType);
       console.log("[CALL_DEBUG] initiate-call:response", response);
       const callData = response?.data;
       const callId =
@@ -257,12 +269,12 @@ const ChatScreen = () => {
 
       router.push({
         pathname: "/screens/jobs/audio-call",
-        params: { callId, roomId: actualRoomId, mode: "outgoing" },
+        params: { callId, roomId: actualRoomId, mode: "outgoing", callType },
       });
     } catch (error: any) {
       console.log("[CALL_DEBUG] initiate-call:error", error);
       const apiMessage =
-        error?.response?.data?.message || error?.message || "Failed to start audio call";
+        error?.response?.data?.message || error?.message || `Failed to start ${callType} call`;
 
       if (
         typeof apiMessage === "string" &&
@@ -283,7 +295,7 @@ const ChatScreen = () => {
             ) {
               try {
                 await callService.endCall(activeCallId);
-                const retry = await callService.initiateAudioCall(actualRoomId);
+                const retry = await callService.initiateCall(actualRoomId, callType);
                 const retryCallId = retry?.data?.id;
                 if (retryCallId) {
                   router.push({
@@ -292,6 +304,7 @@ const ChatScreen = () => {
                       callId: retryCallId,
                       roomId: actualRoomId,
                       mode: "outgoing",
+                      callType,
                     },
                   });
                   return;
@@ -306,6 +319,7 @@ const ChatScreen = () => {
                 callId: activeCallId,
                 roomId: actualRoomId,
                 mode: isInitiator ? "outgoing" : "incoming",
+                callType: getTypeForCall(activeCall),
               },
             });
             return;
@@ -317,9 +331,17 @@ const ChatScreen = () => {
 
       toast.error(apiMessage);
     } finally {
-      setStartingAudioCall(false);
+      setStarting(false);
     }
-  }, [actualRoomId, router, startingAudioCall, user?.id]);
+  }, [actualRoomId, router, startingAudioCall, startingVideoCall, user?.id]);
+
+  const handleStartAudioCall = useCallback(() => {
+    void handleStartCall("audio");
+  }, [handleStartCall]);
+
+  const handleStartVideoCall = useCallback(() => {
+    void handleStartCall("video");
+  }, [handleStartCall]);
 
   useEffect(() => {
     if (!mappedMessages.length) return;
@@ -371,7 +393,9 @@ const ChatScreen = () => {
           {/* Header */}
           <ChatScreenHeader
             onAudioCallPress={handleStartAudioCall}
+            onVideoCallPress={handleStartVideoCall}
             isStartingAudioCall={startingAudioCall}
+            isStartingVideoCall={startingVideoCall}
           />
 
           {/* Connection Status */}
