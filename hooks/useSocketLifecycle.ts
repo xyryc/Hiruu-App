@@ -35,17 +35,11 @@ export const useSocketLifecycle = (enabled: boolean) => {
         socketService.connectCalls().catch((error) => {
           console.error("Failed to connect to calls socket:", error);
         });
-        return;
-      }
-
-      if (prevState === "active" && nextState.match(/inactive|background/)) {
-        socketService.disconnect();
       }
     });
 
     return () => {
       subscription.remove();
-      socketService.disconnect();
     };
   }, [enabled]);
 };

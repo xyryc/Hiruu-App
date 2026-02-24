@@ -3,24 +3,30 @@ import { socketService } from "@/services/socketService";
 import { useAuthStore } from "@/stores/authStore";
 import { Ionicons } from "@expo/vector-icons";
 import {
-  mediaDevices,
-  RTCIceCandidate,
-  RTCPeerConnection,
-  RTCSessionDescription,
-} from "@livekit/react-native-webrtc";
-import {
   createAudioPlayer,
   requestRecordingPermissionsAsync,
   setAudioModeAsync,
 } from "expo-audio";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { ActivityIndicator, StatusBar, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
 const INCOMING_RINGTONE_SOURCE = require("@/assets/sounds/phone_ring_sfx.wav");
 const OUTGOING_RINGBACK_SOURCE = require("@/assets/sounds/phone_call_sfx.mp3");
+
+type AgoraSession = {
+  appId?: string;
+  channelName?: string;
+  rtcToken?: string;
+  userAccount?: string;
+};
+
+const TERMINAL_CALL_STATUSES = new Set(["ended", "completed", "cancelled", "failed"]);
+const ACTIVE_PARTICIPANT_STATUSES = new Set(["invited", "ringing", "joined"]);
+const TERMINAL_PARTICIPANT_STATUSES = new Set(["left", "declined", "missed"]);
+const AUDIO_DEBUG_PREFIX = "[CALL_DEBUG][AUDIO]";
 
 const AudioCallScreen = () => {
   const router = useRouter();
@@ -45,40 +51,83 @@ const AudioCallScreen = () => {
   const [accepting, setAccepting] = useState(false);
   const [rejecting, setRejecting] = useState(false);
   const [isIncomingPending, setIsIncomingPending] = useState(mode === "incoming");
-  const [webrtcReady, setWebrtcReady] = useState(false);
-  const [localAudioReady, setLocalAudioReady] = useState(false);
-  const [remoteAudioReady, setRemoteAudioReady] = useState(false);
-  const [pcConnectionState, setPcConnectionState] = useState("new");
-  const [pcIceState, setPcIceState] = useState("new");
-  const [pcSignalingState, setPcSignalingState] = useState("stable");
-  const [lastWebrtcError, setLastWebrtcError] = useState<string>("");
+  const [agoraReady, setAgoraReady] = useState(false);
+  const [localJoinedAgora, setLocalJoinedAgora] = useState(false);
+  const [agoraError, setAgoraError] = useState("");
+
   const hasLeftRef = useRef(false);
   const hasClosedRef = useRef(false);
-  const hasAcceptedIncomingRef = useRef(mode !== "incoming");
-  const hasConnectedOnceRef = useRef(false);
   const hasJoinedCallRoomRef = useRef(false);
-  const hasSentOfferRef = useRef(false);
-  const remoteUserIdRef = useRef<string | null>(null);
-  const pcRef = useRef<RTCPeerConnection | null>(null);
-  const localStreamRef = useRef<any>(null);
-  const pendingCandidatesRef = useRef<any[]>([]);
+  const hasAcceptedIncomingRef = useRef(mode !== "incoming");
   const incomingToneRef = useRef<any>(null);
   const ringbackToneRef = useRef<any>(null);
+  const agoraEngineRef = useRef<any>(null);
+  const localUidRef = useRef<number>(0);
+  const remoteUidsRef = useRef<Set<number>>(new Set());
+  const joinedAgoraChannelRef = useRef(false);
 
-  useEffect(() => {
-    console.log("[CALL_DEBUG] audio-call:mounted", { callId, mode, roomId: params.roomId });
-  }, [callId, mode, params.roomId]);
+  const getMyParticipantStatus = (callDetails: any) => {
+    const participants = Array.isArray(callDetails?.data?.participants)
+      ? callDetails.data.participants
+      : [];
+    const me = participants.find((item: any) => item?.userId === user?.id);
+    return String(me?.status || "").toLowerCase();
+  };
+
+  const ensureParticipantJoined = async () => {
+    if (!callId || !user?.id) throw new Error("Missing call or user context");
+
+    let callDetails = await callService.getCallById(callId);
+    let myStatus = getMyParticipantStatus(callDetails);
+    console.log(`${AUDIO_DEBUG_PREFIX} ensureParticipantJoined:init`, { callId, myStatus });
+    if (myStatus === "joined") return;
+
+    try {
+      console.log(`${AUDIO_DEBUG_PREFIX} ensureParticipantJoined:joinCall`, { callId });
+      await callService.joinCall(callId, { isMicMuted: muted, isCameraOff: true });
+    } catch {
+      // If backend already transitioned status, refetch below.
+    }
+
+    callDetails = await callService.getCallById(callId);
+    myStatus = getMyParticipantStatus(callDetails);
+    console.log(`${AUDIO_DEBUG_PREFIX} ensureParticipantJoined:afterJoinCall`, {
+      callId,
+      myStatus,
+    });
+    if (myStatus === "joined") return;
+
+    if (!TERMINAL_PARTICIPANT_STATUSES.has(myStatus)) {
+      try {
+        console.log(`${AUDIO_DEBUG_PREFIX} ensureParticipantJoined:updateStatus`, {
+          callId,
+          status: "joined",
+        });
+        await callService.updateCallStatus(callId, "joined");
+        socketService.changeCallStatus(callId, "joined", "Joined call");
+      } catch {
+        // Refetch and validate final status below.
+      }
+    }
+
+    callDetails = await callService.getCallById(callId);
+    myStatus = getMyParticipantStatus(callDetails);
+    console.log(`${AUDIO_DEBUG_PREFIX} ensureParticipantJoined:final`, { callId, myStatus });
+    if (myStatus !== "joined") {
+      throw new Error(
+        `Cannot join media session while participant status is '${myStatus || "unknown"}'`
+      );
+    }
+  };
 
   useEffect(() => {
     if (!startedAt) {
       setElapsed(0);
       return;
     }
-
     const interval = setInterval(() => {
       setElapsed(Math.floor((Date.now() - startedAt) / 1000));
     }, 1000);
-
     return () => clearInterval(interval);
   }, [startedAt]);
 
@@ -98,7 +147,6 @@ const AudioCallScreen = () => {
       setIsIncomingPending(true);
       hasAcceptedIncomingRef.current = false;
     }
-    hasConnectedOnceRef.current = false;
   }, [mode]);
 
   useEffect(() => {
@@ -108,117 +156,6 @@ const AudioCallScreen = () => {
       allowsRecording: true,
     }).catch(() => { });
   }, []);
-
-  const cleanupWebRTC = async () => {
-    try {
-      pendingCandidatesRef.current = [];
-      hasSentOfferRef.current = false;
-      if (pcRef.current) {
-        pcRef.current.onicecandidate = null;
-        pcRef.current.ontrack = null;
-        pcRef.current.close();
-        pcRef.current = null;
-      }
-      if (localStreamRef.current) {
-        localStreamRef.current.getTracks?.().forEach((track: any) => {
-          try {
-            track.stop();
-          } catch {
-            // no-op
-          }
-        });
-        localStreamRef.current = null;
-      }
-      setWebrtcReady(false);
-      setLocalAudioReady(false);
-      setRemoteAudioReady(false);
-      setPcConnectionState("closed");
-      setPcIceState("closed");
-      setPcSignalingState("closed");
-    } catch {
-      // no-op
-    }
-  };
-
-  const ensureWebRTC = async () => {
-    if (pcRef.current) return pcRef.current;
-
-    const permission = await requestRecordingPermissionsAsync();
-    if (!permission.granted) {
-      throw new Error("Microphone permission denied");
-    }
-
-    const pc = new RTCPeerConnection({
-      iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-    });
-
-    const stream = await mediaDevices.getUserMedia({
-      audio: true,
-      video: false,
-    });
-    setLocalAudioReady(stream.getAudioTracks?.().length > 0);
-    localStreamRef.current = stream;
-    stream.getTracks().forEach((track: any) => pc.addTrack(track, stream));
-
-    pc.onicecandidate = (event) => {
-      const candidate = event?.candidate;
-      const targetUserId = remoteUserIdRef.current;
-      if (!candidate || !targetUserId || !callId) return;
-      socketService.sendIceCandidate(callId, targetUserId, candidate);
-    };
-
-    pc.ontrack = () => {
-      // Remote audio track received; playback is handled by native WebRTC audio session.
-      setRemoteAudioReady(true);
-    };
-
-    pc.onconnectionstatechange = () => {
-      setPcConnectionState(String(pc.connectionState || ""));
-    };
-
-    pc.oniceconnectionstatechange = () => {
-      setPcIceState(String(pc.iceConnectionState || ""));
-    };
-
-    pc.onsignalingstatechange = () => {
-      setPcSignalingState(String(pc.signalingState || ""));
-    };
-
-    pcRef.current = pc;
-    setWebrtcReady(true);
-    setLastWebrtcError("");
-    return pc;
-  };
-
-  const flushPendingCandidates = async () => {
-    const pc = pcRef.current;
-    if (!pc || !pc.remoteDescription) return;
-    while (pendingCandidatesRef.current.length > 0) {
-      const candidate = pendingCandidatesRef.current.shift();
-      try {
-        await pc.addIceCandidate(new RTCIceCandidate(candidate));
-      } catch {
-        // ignore malformed candidate
-      }
-    }
-  };
-
-  const createAndSendOffer = async () => {
-    if (!callId) return;
-    const targetUserId = remoteUserIdRef.current;
-    if (!targetUserId) return;
-
-    const pc = await ensureWebRTC();
-    if (hasSentOfferRef.current && pc.localDescription && !pc.remoteDescription) {
-      socketService.sendOffer(callId, targetUserId, pc.localDescription);
-      return;
-    }
-    if (hasSentOfferRef.current) return;
-    const offer = await pc.createOffer();
-    await pc.setLocalDescription(offer);
-    socketService.sendOffer(callId, targetUserId, offer);
-    hasSentOfferRef.current = true;
-  };
 
   const stopTone = async (player: any) => {
     if (!player) return;
@@ -254,12 +191,166 @@ const AudioCallScreen = () => {
     return player;
   };
 
+  const closeCallScreen = (message = "Call ended") => {
+    if (hasClosedRef.current) return;
+    hasClosedRef.current = true;
+    toast.success(message);
+    router.back();
+  };
+
+  const cleanupAgora = async () => {
+    const engine = agoraEngineRef.current;
+    if (!engine) return;
+    try {
+      if (joinedAgoraChannelRef.current && typeof engine.leaveChannel === "function") {
+        await engine.leaveChannel();
+      }
+      engine.unregisterEventHandler?.();
+      engine.release?.();
+    } catch {
+      // no-op
+    } finally {
+      agoraEngineRef.current = null;
+      joinedAgoraChannelRef.current = false;
+      localUidRef.current = 0;
+      remoteUidsRef.current.clear();
+      setLocalJoinedAgora(false);
+      setAgoraReady(false);
+    }
+  };
+
+  const ensureAgoraJoined = async () => {
+    if (!callId || joinedAgoraChannelRef.current || !user?.id) return;
+    try {
+      console.log(`${AUDIO_DEBUG_PREFIX} ensureAgoraJoined:start`, { callId, mode });
+      // Backend requires participant status=joined before media session.
+      await ensureParticipantJoined();
+
+      const permission = await requestRecordingPermissionsAsync();
+      console.log(`${AUDIO_DEBUG_PREFIX} ensureAgoraJoined:micPermission`, {
+        callId,
+        granted: permission.granted,
+      });
+      if (!permission.granted) throw new Error("Microphone permission denied");
+
+      const sessionResponse = await callService.createMediaSession(callId);
+      const session: AgoraSession = sessionResponse?.data || {};
+      console.log(`${AUDIO_DEBUG_PREFIX} ensureAgoraJoined:mediaSession`, {
+        callId,
+        hasAppId: Boolean(session.appId),
+        hasChannelName: Boolean(session.channelName),
+        hasRtcToken: Boolean(session.rtcToken),
+        hasUserAccount: Boolean(session.userAccount),
+        userAccount: session.userAccount || null,
+      });
+      if (!session.appId || !session.channelName || !session.rtcToken) {
+        throw new Error("Invalid media session response");
+      }
+
+      const agoraModule = require("react-native-agora");
+      const engine = agoraModule.createAgoraRtcEngine();
+      const events = {
+        onJoinChannelSuccess: (_: string, uid: number) => {
+          console.log(`${AUDIO_DEBUG_PREFIX} agora:onJoinChannelSuccess`, { callId, uid });
+          localUidRef.current = uid;
+          setLocalJoinedAgora(true);
+          setJoining(false);
+          setAgoraError("");
+        },
+        onUserJoined: (uid: number) => {
+          console.log(`${AUDIO_DEBUG_PREFIX} agora:onUserJoined`, { callId, uid });
+          remoteUidsRef.current.add(uid);
+          setRemoteJoined(true);
+          setParticipantsCount(Math.max(2, remoteUidsRef.current.size + 1));
+          void stopTone(incomingToneRef.current);
+          void stopTone(ringbackToneRef.current);
+        },
+        onUserOffline: (uid: number) => {
+          console.log(`${AUDIO_DEBUG_PREFIX} agora:onUserOffline`, { callId, uid });
+          remoteUidsRef.current.delete(uid);
+          if (remoteUidsRef.current.size === 0) {
+            setRemoteJoined(false);
+          }
+          setParticipantsCount(Math.max(1, remoteUidsRef.current.size + 1));
+        },
+        onError: (err: number) => {
+          console.log(`${AUDIO_DEBUG_PREFIX} agora:onError`, { callId, err });
+          setAgoraError(`Agora error: ${err}`);
+        },
+      };
+
+      engine.initialize({ appId: session.appId });
+      engine.registerEventHandler(events);
+      engine.enableAudio();
+      engine.setEnableSpeakerphone?.(speakerOn);
+
+      const channelOptions = {
+        autoSubscribeAudio: true,
+        autoSubscribeVideo: false,
+        publishMicrophoneTrack: true,
+        publishCameraTrack: false,
+        channelProfile: 0,
+        clientRoleType: 1,
+      };
+
+      if (session.userAccount && typeof engine.joinChannelWithUserAccount === "function") {
+        console.log(`${AUDIO_DEBUG_PREFIX} ensureAgoraJoined:joinChannelWithUserAccount`, {
+          callId,
+          channelName: session.channelName,
+          userAccount: session.userAccount,
+        });
+        engine.joinChannelWithUserAccount(
+          session.rtcToken,
+          session.channelName,
+          session.userAccount,
+          channelOptions
+        );
+      } else {
+        console.log(`${AUDIO_DEBUG_PREFIX} ensureAgoraJoined:joinChannelUidFallback`, {
+          callId,
+          channelName: session.channelName,
+        });
+        engine.joinChannel(
+          session.rtcToken,
+          session.channelName,
+          0,
+          channelOptions
+        );
+      }
+
+      agoraEngineRef.current = engine;
+      joinedAgoraChannelRef.current = true;
+      setAgoraReady(true);
+    } catch (error: any) {
+      console.log(`${AUDIO_DEBUG_PREFIX} ensureAgoraJoined:error`, {
+        callId,
+        message: error?.message,
+        responseMessage: error?.response?.data?.message,
+      });
+      setAgoraError(error?.message || "Failed to join media session");
+      toast.error(error?.message || "Failed to join media session");
+    }
+  };
+
+  const leaveOnce = () => {
+    if (!callId || hasLeftRef.current) return;
+    console.log(`${AUDIO_DEBUG_PREFIX} leaveOnce`, { callId });
+    hasLeftRef.current = true;
+    socketService.changeCallStatus(callId, "left", "User left");
+    if (hasJoinedCallRoomRef.current) {
+      socketService.leaveCall(callId);
+      hasJoinedCallRoomRef.current = false;
+    }
+    void stopTone(incomingToneRef.current);
+    void stopTone(ringbackToneRef.current);
+    void cleanupAgora();
+  };
+
   useEffect(() => {
     const playState = async () => {
       const isConnected = remoteJoined || Boolean(startedAt);
       const shouldPlayIncoming = isIncomingPending && !isConnected;
-      const shouldPlayRingback =
-        mode === "outgoing" && !isIncomingPending && !isConnected;
+      const shouldPlayRingback = mode === "outgoing" && !isIncomingPending && !isConnected;
 
       if (shouldPlayIncoming) {
         const incoming = ensureIncomingTone();
@@ -285,29 +376,10 @@ const AudioCallScreen = () => {
     void stopTone(ringbackToneRef.current);
   }, [remoteJoined, startedAt]);
 
-  const leaveOnce = () => {
-    if (!callId || hasLeftRef.current) return;
-    hasLeftRef.current = true;
-    socketService.changeCallStatus(callId, "left", "User left");
-    if (hasJoinedCallRoomRef.current) {
-      socketService.leaveCall(callId);
-      hasJoinedCallRoomRef.current = false;
-    }
-    void stopTone(incomingToneRef.current);
-    void stopTone(ringbackToneRef.current);
-    void cleanupWebRTC();
-  };
-
-  const closeCallScreen = (message = "Call ended") => {
-    if (hasClosedRef.current) return;
-    hasClosedRef.current = true;
-    toast.success(message);
-    router.back();
-  };
-
   useEffect(() => {
-    if (!callId) return;
+    if (!callId || !user?.id) return;
 
+    const bindEffectStartedAt = Date.now();
     let mounted = true;
     let onParticipants: ((payload: any) => void) | null = null;
     let onJoined: ((payload: any) => void) | null = null;
@@ -315,231 +387,89 @@ const AudioCallScreen = () => {
     let onParticipantStatusChanged: ((payload: any) => void) | null = null;
     let onParticipantLeft: ((payload: any) => void) | null = null;
     let onParticipantDisconnected: ((payload: any) => void) | null = null;
-    let onOffer: ((payload: any) => void) | null = null;
-    let onAnswer: ((payload: any) => void) | null = null;
-    let onIceCandidate: ((payload: any) => void) | null = null;
 
     const bindCallSocket = async () => {
       try {
         await socketService.connectCalls();
         const details = await callService.getCallById(callId);
-        const participants = Array.isArray(details?.data?.participants)
-          ? details.data.participants
-          : [];
-        const initialRemote = participants.find(
-          (item: any) => item?.userId && item.userId !== user?.id
-        );
-        if (initialRemote?.userId) {
-          remoteUserIdRef.current = initialRemote.userId;
-        }
-        const me = participants.find((item: any) => item?.userId === user?.id);
-        const myRole = String(me?.role || "").toLowerCase();
+        const participants = Array.isArray(details?.data?.participants) ? details.data.participants : [];
+        const me = participants.find((item: any) => item?.userId === user.id);
         const myStatus = String(me?.status || "").toLowerCase();
-        const isIncomingReceiverPending =
-          mode === "incoming" &&
-          myRole === "receiver" &&
-          (myStatus === "invited" || myStatus === "ringing");
-        const canJoinSocketRoom =
-          !["left", "declined", "missed"].includes(myStatus) &&
-          !isIncomingReceiverPending;
-        if (canJoinSocketRoom) {
+        const shouldJoinCallRoom = !["left", "declined", "missed"].includes(myStatus);
+
+        if (shouldJoinCallRoom) {
           socketService.joinCall(callId);
           hasJoinedCallRoomRef.current = true;
         }
 
-        onParticipants = (payload: any) => {
-          const sameCall = payload?.callId === callId;
-          if (!sameCall) return;
+        if (mode === "outgoing" && shouldJoinCallRoom) {
+          await ensureAgoraJoined();
+        }
 
-          const participants = Array.isArray(payload?.participants)
-            ? payload.participants
-            : [];
-          const remoteParticipants = participants.filter(
-            (item: any) => item?.userId && item.userId !== user?.id
+        onParticipants = (payload: any) => {
+          if (payload?.callId !== callId || !mounted) return;
+          const participantsList = Array.isArray(payload?.participants) ? payload.participants : [];
+          const active = participantsList.filter((item: any) =>
+            ACTIVE_PARTICIPANT_STATUSES.has(String(item?.status || "").toLowerCase())
           );
-          const hasRemoteActive = remoteParticipants.some((item: any) =>
-            ["joined", "ringing", "invited"].includes(
-              String(item?.status || "").toLowerCase()
-            )
-          );
-          const active = participants.filter((item: any) =>
-            item?.status === "joined" || item?.status === "ringing"
-          );
-          const hasSelfInPayload = participants.some(
-            (item: any) => item?.userId === user?.id
-          );
-          if (!mounted) return;
-          const hasOtherJoined = participants.some(
+          const hasOtherJoined = participantsList.some(
             (item: any) =>
               item?.userId &&
-              item.userId !== user?.id &&
-              item?.status === "joined"
+              item.userId !== user.id &&
+              String(item?.status || "").toLowerCase() === "joined"
           );
-          const remote = participants.find(
-            (item: any) => item?.userId && item.userId !== user?.id
-          );
-          remoteUserIdRef.current = remote?.userId || remoteUserIdRef.current;
-          let nextCount = active.length || participants.length || 1;
-          // Some backend payloads omit the current user from participant snapshots.
-          if (hasOtherJoined && !hasSelfInPayload) {
-            nextCount += 1;
-          }
-          if (hasOtherJoined) {
-            nextCount = Math.max(2, nextCount);
-          }
-          if (hasOtherJoined) {
-            hasConnectedOnceRef.current = true;
-            setRemoteJoined(true);
-          } else {
-            setRemoteJoined((prev) =>
-              hasConnectedOnceRef.current ? prev : false
-            );
-          }
-          setParticipantsCount(nextCount);
+          setParticipantsCount(Math.max(1, active.length || participantsList.length || 1));
+          setRemoteJoined(hasOtherJoined);
           if (hasOtherJoined) setJoining(false);
-          if (mode === "incoming" && !isIncomingPending && !hasOtherJoined) {
-            setJoining(true);
-          }
-          if (hasOtherJoined && mode === "outgoing") {
-            void createAndSendOffer();
-          }
-          if (
-            remoteParticipants.length > 0 &&
-            !hasRemoteActive
-          ) {
-            closeCallScreen();
-          }
         };
 
         onJoined = (payload: any) => {
           const participantId = payload?.userId;
-          if (!mounted || !participantId || participantId === user?.id) return;
+          if (!participantId || participantId === user.id || !mounted) return;
           setRemoteJoined(true);
           setJoining(false);
           setParticipantsCount((prev) => Math.max(2, prev + 1));
-          remoteUserIdRef.current = participantId;
-          if (mode === "outgoing") {
-            void createAndSendOffer();
-          }
         };
 
         onEnded = (payload: any) => {
-          const endedCallId = payload?.callId;
-          if (!mounted || endedCallId !== callId) return;
+          if (!mounted || payload?.callId !== callId) return;
           closeCallScreen();
         };
 
         onParticipantStatusChanged = (payload: any) => {
-          const eventCallId = payload?.callId;
-          if (eventCallId && eventCallId !== callId) return;
           const participantId = payload?.userId;
           const status = String(payload?.status || "").toLowerCase();
+          const eventCallId = payload?.callId;
           if (!mounted || !participantId) return;
-          if (participantId === user?.id) {
+          if (eventCallId && eventCallId !== callId) return;
+
+          if (participantId === user.id) {
             if (mode === "incoming" && status === "joined") {
-              hasAcceptedIncomingRef.current = true;
               setIsIncomingPending(false);
               setJoining(true);
             }
             return;
           }
-          remoteUserIdRef.current = participantId;
-          if (mode === "outgoing" && status === "joined") {
-            hasConnectedOnceRef.current = true;
+
+          if (status === "joined") {
             setRemoteJoined(true);
             setJoining(false);
-            void stopTone(incomingToneRef.current);
-            void stopTone(ringbackToneRef.current);
-            void createAndSendOffer();
           }
           if (status === "declined" || status === "missed" || status === "left") {
             closeCallScreen();
           }
         };
 
-        const closeIfRemoteEvent = (payload: any) => {
-          const eventCallId = payload?.callId;
-          if (!eventCallId || eventCallId !== callId) return;
+        const closeOnRemoteLeave = (payload: any) => {
           const participantId = payload?.userId;
-          if (!participantId || participantId === user?.id) return;
-          void (async () => {
-            try {
-              const details = await callService.getCallById(callId);
-              const participants = Array.isArray(details?.data?.participants)
-                ? details.data.participants
-                : [];
-              const hasOtherStillActive = participants.some(
-                (item: any) =>
-                  item?.userId &&
-                  item.userId !== user?.id &&
-                  ["joined", "ringing", "invited"].includes(
-                    String(item?.status || "").toLowerCase()
-                  )
-              );
-              if (hasOtherStillActive) return;
-            } catch {
-              // If call lookup fails, fall back to closing to avoid stale UI.
-            }
-            closeCallScreen();
-          })();
-        };
-
-        onParticipantLeft = (payload: any) => closeIfRemoteEvent(payload);
-        onParticipantDisconnected = (payload: any) => closeIfRemoteEvent(payload);
-
-        onOffer = async (payload: any) => {
           const eventCallId = payload?.callId;
-          const fromUserId = payload?.fromUserId;
-          const offer = payload?.offer;
-          if (!eventCallId || eventCallId !== callId || !offer || !fromUserId) return;
-          remoteUserIdRef.current = fromUserId;
-          try {
-            const pc = await ensureWebRTC();
-            await pc.setRemoteDescription(new RTCSessionDescription(offer));
-            await flushPendingCandidates();
-            const answer = await pc.createAnswer();
-            await pc.setLocalDescription(answer);
-            socketService.sendAnswer(callId, fromUserId, answer);
-          } catch (error: any) {
-            setLastWebrtcError(error?.message || "offer handling failed");
-            toast.error(error?.message || "Failed to process incoming call offer");
-          }
+          if (!mounted || !participantId || participantId === user.id) return;
+          if (eventCallId && eventCallId !== callId) return;
+          closeCallScreen();
         };
 
-        onAnswer = async (payload: any) => {
-          const eventCallId = payload?.callId;
-          const answer = payload?.answer;
-          if (!eventCallId || eventCallId !== callId || !answer) return;
-          try {
-            const pc = await ensureWebRTC();
-            await pc.setRemoteDescription(new RTCSessionDescription(answer));
-            await flushPendingCandidates();
-            hasConnectedOnceRef.current = true;
-            setRemoteJoined(true);
-            setJoining(false);
-            void stopTone(incomingToneRef.current);
-            void stopTone(ringbackToneRef.current);
-          } catch (error: any) {
-            setLastWebrtcError(error?.message || "answer handling failed");
-            toast.error(error?.message || "Failed to process call answer");
-          }
-        };
-
-        onIceCandidate = async (payload: any) => {
-          const eventCallId = payload?.callId;
-          const candidate = payload?.candidate;
-          if (!eventCallId || eventCallId !== callId || !candidate) return;
-          const pc = pcRef.current;
-          if (!pc || !pc.remoteDescription) {
-            pendingCandidatesRef.current.push(candidate);
-            return;
-          }
-          try {
-            await pc.addIceCandidate(new RTCIceCandidate(candidate));
-          } catch {
-            // ignore malformed candidate
-          }
-        };
+        onParticipantLeft = closeOnRemoteLeave;
+        onParticipantDisconnected = closeOnRemoteLeave;
 
         socketService.onCallParticipants(onParticipants);
         socketService.onParticipantJoined(onJoined);
@@ -547,45 +477,35 @@ const AudioCallScreen = () => {
         socketService.onParticipantStatusChanged(onParticipantStatusChanged);
         socketService.onParticipantLeft(onParticipantLeft);
         socketService.onParticipantDisconnected(onParticipantDisconnected);
-        socketService.onOffer(onOffer);
-        socketService.onAnswer(onAnswer);
-        socketService.onIceCandidate(onIceCandidate);
       } catch (error: any) {
-        if (mounted) {
-          toast.error(error?.message || "Failed to connect call socket");
-        }
+        if (mounted) toast.error(error?.message || "Failed to connect call socket");
       }
     };
 
-    bindCallSocket();
+    void bindCallSocket();
 
     return () => {
       mounted = false;
-      leaveOnce();
+      const mountedForMs = Date.now() - bindEffectStartedAt;
+      const isDevStrictModeCleanup = __DEV__ && mountedForMs < 120;
+      if (!isDevStrictModeCleanup) {
+        leaveOnce();
+      }
       if (onParticipants) socketService.offCallParticipants(onParticipants);
       if (onJoined) socketService.offParticipantJoined(onJoined);
       if (onEnded) socketService.offCallEnded(onEnded);
-      if (onParticipantStatusChanged) {
-        socketService.offParticipantStatusChanged(onParticipantStatusChanged);
-      }
-      if (onParticipantLeft) {
-        socketService.offParticipantLeft(onParticipantLeft);
-      }
-      if (onParticipantDisconnected) {
-        socketService.offParticipantDisconnected(onParticipantDisconnected);
-      }
-      if (onOffer) socketService.offOffer(onOffer);
-      if (onAnswer) socketService.offAnswer(onAnswer);
-      if (onIceCandidate) socketService.offIceCandidate(onIceCandidate);
+      if (onParticipantStatusChanged) socketService.offParticipantStatusChanged(onParticipantStatusChanged);
+      if (onParticipantLeft) socketService.offParticipantLeft(onParticipantLeft);
+      if (onParticipantDisconnected) socketService.offParticipantDisconnected(onParticipantDisconnected);
     };
-  }, [callId, mode, router, user?.id]);
+  }, [callId, mode, user?.id]);
 
   useEffect(() => {
     hasClosedRef.current = false;
     return () => {
       void stopTone(incomingToneRef.current);
       void stopTone(ringbackToneRef.current);
-      void cleanupWebRTC();
+      void cleanupAgora();
       incomingToneRef.current?.remove?.();
       ringbackToneRef.current?.remove?.();
       incomingToneRef.current = null;
@@ -595,21 +515,13 @@ const AudioCallScreen = () => {
 
   useEffect(() => {
     if (!callId) return;
-    let isMounted = true;
+    let mounted = true;
     const interval = setInterval(async () => {
-      if (!isMounted || hasClosedRef.current) return;
+      if (!mounted || hasClosedRef.current) return;
       try {
         const details = await callService.getCallById(callId);
         const status = String(details?.data?.status || "").toLowerCase();
-        const participants = Array.isArray(details?.data?.participants)
-          ? details.data.participants
-          : [];
-        const remoteParticipant = participants.find(
-          (item: any) => item?.userId && item.userId !== user?.id
-        );
-        if (remoteParticipant?.userId) {
-          remoteUserIdRef.current = remoteParticipant.userId;
-        }
+        const participants = Array.isArray(details?.data?.participants) ? details.data.participants : [];
         const hasRemoteJoined = participants.some(
           (item: any) =>
             item?.userId &&
@@ -620,14 +532,11 @@ const AudioCallScreen = () => {
           (item: any) =>
             item?.userId &&
             item.userId !== user?.id &&
-            ["joined", "ringing", "invited"].includes(
-              String(item?.status || "").toLowerCase()
-            )
+            ACTIVE_PARTICIPANT_STATUSES.has(String(item?.status || "").toLowerCase())
         );
 
         if (hasRemoteJoined) {
           if (mode === "outgoing" || hasAcceptedIncomingRef.current) {
-            hasConnectedOnceRef.current = true;
             setRemoteJoined(true);
             setJoining(false);
             setIsIncomingPending(false);
@@ -635,27 +544,14 @@ const AudioCallScreen = () => {
             void stopTone(incomingToneRef.current);
             void stopTone(ringbackToneRef.current);
           }
-
-          // Fallback if signaling events are missed: keep sending offer until answer arrives.
-          if (
-            mode === "outgoing" &&
-            remoteUserIdRef.current &&
-            (!pcRef.current || !pcRef.current.remoteDescription)
-          ) {
-            void createAndSendOffer();
-          }
         }
 
-        if (["ended", "completed", "cancelled"].includes(status)) {
+        if (TERMINAL_CALL_STATUSES.has(status)) {
           closeCallScreen();
           return;
         }
 
-        if (
-          (mode === "outgoing" || hasAcceptedIncomingRef.current) &&
-          hasConnectedOnceRef.current &&
-          !hasRemoteActive
-        ) {
+        if ((mode === "outgoing" || hasAcceptedIncomingRef.current) && !hasRemoteActive && remoteJoined) {
           closeCallScreen();
         }
       } catch {
@@ -664,10 +560,10 @@ const AudioCallScreen = () => {
     }, 2500);
 
     return () => {
-      isMounted = false;
+      mounted = false;
       clearInterval(interval);
     };
-  }, [callId, mode, user?.id]);
+  }, [callId, mode, remoteJoined, user?.id]);
 
   const durationText = useMemo(() => {
     const mins = String(Math.floor(elapsed / 60)).padStart(2, "0");
@@ -682,24 +578,62 @@ const AudioCallScreen = () => {
     return durationText;
   }, [durationText, isIncomingPending, joining, remoteJoined]);
 
+  const debugUiText = useMemo(() => {
+    return [
+      `callId: ${callId || "-"}`,
+      `mode: ${mode}`,
+      `status: ${callStatusText}`,
+      `joining: ${joining} | remoteJoined: ${remoteJoined}`,
+      `incomingPending: ${isIncomingPending}`,
+      `participants: ${participantsCount}`,
+      `agoraReady: ${agoraReady} | localJoined: ${localJoinedAgora}`,
+      `socketJoinedCallRoom: ${hasJoinedCallRoomRef.current}`,
+      `hasLeft: ${hasLeftRef.current}`,
+      `muted: ${muted} | speaker: ${speakerOn}`,
+    ].join("\n");
+  }, [
+    callId,
+    mode,
+    callStatusText,
+    joining,
+    remoteJoined,
+    isIncomingPending,
+    participantsCount,
+    agoraReady,
+    localJoinedAgora,
+    muted,
+    speakerOn,
+  ]);
+
   const handleAccept = async () => {
     if (!callId || accepting) return;
     try {
+      console.log(`${AUDIO_DEBUG_PREFIX} handleAccept:start`, { callId });
       setAccepting(true);
-      await callService.joinCall(callId);
+      await callService.joinCall(callId, { isMicMuted: false, isCameraOff: true });
+      try {
+        await callService.updateCallStatus(callId, "joined");
+      } catch {
+        // backend may set status via join call
+      }
       hasAcceptedIncomingRef.current = true;
       if (!hasJoinedCallRoomRef.current) {
         socketService.joinCall(callId);
         hasJoinedCallRoomRef.current = true;
       }
+      socketService.changeCallStatus(callId, "joined", "User accepted call");
       setIsIncomingPending(false);
       setJoining(true);
       await stopTone(incomingToneRef.current);
       await stopTone(ringbackToneRef.current);
-      await ensureWebRTC();
+      await ensureAgoraJoined();
     } catch (error: any) {
-      const message =
-        error?.response?.data?.message || error?.message || "Failed to accept call";
+      console.log(`${AUDIO_DEBUG_PREFIX} handleAccept:error`, {
+        callId,
+        message: error?.message,
+        responseMessage: error?.response?.data?.message,
+      });
+      const message = error?.response?.data?.message || error?.message || "Failed to accept call";
       toast.error(message);
     } finally {
       setAccepting(false);
@@ -711,6 +645,7 @@ const AudioCallScreen = () => {
     try {
       setRejecting(true);
       socketService.changeCallStatus(callId, "declined", "User declined");
+      await callService.updateCallStatus(callId, "declined");
       leaveOnce();
     } finally {
       setRejecting(false);
@@ -723,8 +658,8 @@ const AudioCallScreen = () => {
       router.back();
       return;
     }
-
     try {
+      console.log(`${AUDIO_DEBUG_PREFIX} handleEnd:start`, { callId });
       setEnding(true);
       leaveOnce();
       await callService.endCall(callId);
@@ -742,41 +677,24 @@ const AudioCallScreen = () => {
 
       <View className="flex-1 justify-between px-6 py-8">
         <View className="items-center mt-10">
-          <Text className="font-proximanova-bold text-white text-2xl">
-            Audio Call
-          </Text>
-          <Text className="font-proximanova-regular text-[#CBD5E1] mt-2">
-            {callStatusText}
-          </Text>
+          <Text className="font-proximanova-bold text-white text-2xl">Audio Call</Text>
+          <Text className="font-proximanova-regular text-[#CBD5E1] mt-2">{callStatusText}</Text>
           <Text className="font-proximanova-regular text-[#94A3B8] mt-1 text-xs">
             Participants: {participantsCount}
           </Text>
           <Text className="font-proximanova-regular text-[#94A3B8] mt-1 text-xs">
-            Audio: {webrtcReady ? "connected" : "preparing"}
+            Agora: {agoraReady ? "ready" : "initializing"} | Local: {localJoinedAgora ? "joined" : "pending"}
           </Text>
-          <View className="mt-3 bg-[#111827] rounded-lg px-3 py-2 w-full">
-            <Text className="text-[#93C5FD] text-[11px] font-proximanova-semibold">
-              WebRTC Debug
-            </Text>
-            <Text className="text-[#CBD5E1] text-[10px] font-proximanova-regular mt-1">
-              localAudio: {localAudioReady ? "yes" : "no"} | remoteAudio:{" "}
-              {remoteAudioReady ? "yes" : "no"}
-            </Text>
-            <Text className="text-[#CBD5E1] text-[10px] font-proximanova-regular">
-              pc: {pcConnectionState} | ice: {pcIceState}
-            </Text>
-            <Text className="text-[#CBD5E1] text-[10px] font-proximanova-regular">
-              signaling: {pcSignalingState}
-            </Text>
-            {lastWebrtcError ? (
-              <Text className="text-[#FCA5A5] text-[10px] font-proximanova-regular mt-1">
-                error: {lastWebrtcError}
-              </Text>
-            ) : null}
-          </View>
-          {joining ? (
-            <ActivityIndicator className="mt-4" color="#ffffff" />
+          {agoraError ? (
+            <Text className="font-proximanova-regular text-[#FCA5A5] mt-1 text-xs">{agoraError}</Text>
           ) : null}
+          <View className="mt-3 w-full rounded-lg bg-[#111827] p-3">
+            <Text className="font-proximanova-semibold text-[11px] text-[#93C5FD]">Debug</Text>
+            <Text className="mt-1 font-proximanova-regular text-[10px] text-[#CBD5E1]">
+              {debugUiText}
+            </Text>
+          </View>
+          {joining ? <ActivityIndicator className="mt-4" color="#ffffff" /> : null}
         </View>
 
         {isIncomingPending ? (
@@ -808,11 +726,17 @@ const AudioCallScreen = () => {
         ) : (
           <View className="flex-row items-center justify-center gap-6 mb-8">
             <TouchableOpacity
-              onPress={() => {
+              onPress={async () => {
                 const next = !muted;
                 setMuted(next);
                 if (callId) {
                   socketService.changeMediaState(callId, next);
+                  void callService.updateMediaState(callId, { isMicMuted: next, isCameraOff: true, isSharingScreen: false });
+                }
+                try {
+                  agoraEngineRef.current?.muteLocalAudioStream?.(next);
+                } catch {
+                  // no-op
                 }
               }}
               className="w-14 h-14 rounded-full bg-[#1E293B] items-center justify-center"
@@ -836,7 +760,15 @@ const AudioCallScreen = () => {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => setSpeakerOn((prev) => !prev)}
+              onPress={() => {
+                const next = !speakerOn;
+                setSpeakerOn(next);
+                try {
+                  agoraEngineRef.current?.setEnableSpeakerphone?.(next);
+                } catch {
+                  // no-op
+                }
+              }}
               className="w-14 h-14 rounded-full bg-[#1E293B] items-center justify-center"
             >
               <Ionicons

@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calls Socket Tester</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --err: #ef4444;
+      --line: #374151;
+      --btn: #2563eb;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: radial-gradient(circle at 10% 20%, #111827, #0b1220 55%, #030712);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px 24px;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr;
+    }
+    .card {
+      background: linear-gradient(180deg, var(--panel), var(--panel-2));
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    h1, h2 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+    .grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+    label {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #0b1020;
+      color: var(--text);
+      font-size: 13px;
+    }
+    textarea { min-height: 84px; resize: vertical; }
+    .row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    button {
+      padding: 8px 12px;
+      border: 1px solid #1d4ed8;
+      background: var(--btn);
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    button.alt {
+      background: transparent;
+      border-color: var(--line);
+    }
+    .status {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .status b.ok { color: var(--ok); }
+    .status b.warn { color: var(--warn); }
+    .status b.err { color: var(--err); }
+    pre {
+      margin: 0;
+      background: #020617;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      max-height: 360px;
+      overflow: auto;
+      font-size: 12px;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Calls Socket Tester (`/calls`)</h1>
+      <div class="grid">
+        <div>
+          <label>Server URL (without namespace)</label>
+          <input id="serverUrl" value="http://localhost:3000" />
+        </div>
+        <div>
+          <label>JWT Token</label>
+          <input id="token" placeholder="Paste access token here" />
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button id="connectBtn">Connect</button>
+        <button id="disconnectBtn" class="alt">Disconnect</button>
+        <button id="clearLogBtn" class="alt">Clear Logs</button>
+        <span class="status">Socket: <b id="connState" class="warn">DISCONNECTED</b></span>
+      </div>
+      <div class="hint">Open this file in two browser tabs with different JWTs to test peer signaling.</div>
+    </div>
+
+    <div class="card">
+      <h2>Call Actions</h2>
+      <div class="grid">
+        <div>
+          <label>Call ID</label>
+          <input id="callId" placeholder="call-uuid" />
+        </div>
+        <div>
+          <label>Target User ID (offer/answer/ice)</label>
+          <input id="targetUserId" placeholder="target-user-uuid" />
+        </div>
+        <div>
+          <label>Status (`call_status_changed`)</label>
+          <select id="callStatus">
+            <option value="invited">invited</option>
+            <option value="ringing">ringing</option>
+            <option value="joined" selected>joined</option>
+            <option value="left">left</option>
+            <option value="declined">declined</option>
+            <option value="missed">missed</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button id="joinCallBtn">Emit: join_call</button>
+        <button id="leaveCallBtn">Emit: leave_call</button>
+        <button id="statusBtn">Emit: call_status_changed</button>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button id="mediaBtn">Emit: media_state_changed</button>
+        <label><input id="isMicMuted" type="checkbox" /> mic muted</label>
+        <label><input id="isCameraOff" type="checkbox" /> camera off</label>
+        <label><input id="isSharingScreen" type="checkbox" /> sharing screen</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>WebRTC Payloads</h2>
+      <div class="grid">
+        <div>
+          <label>Offer JSON</label>
+          <textarea id="offerPayload">{ "sdp": "offer-sdp", "type": "offer" }</textarea>
+        </div>
+        <div>
+          <label>Answer JSON</label>
+          <textarea id="answerPayload">{ "sdp": "answer-sdp", "type": "answer" }</textarea>
+        </div>
+        <div>
+          <label>ICE Candidate JSON</label>
+          <textarea id="icePayload">{ "candidate": "candidate-data", "sdpMLineIndex": 0, "sdpMid": "0" }</textarea>
+        </div>
+      </div>
+      <div class="row" style="margin-top:10px;">
+        <button id="offerBtn">Emit: offer</button>
+        <button id="answerBtn">Emit: answer</button>
+        <button id="iceBtn">Emit: ice_candidate</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Live Logs</h2>
+      <pre id="log"></pre>
+    </div>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    let socket = null;
+
+    const el = (id) => document.getElementById(id);
+    const logEl = el("log");
+    const connState = el("connState");
+
+    function now() {
+      return new Date().toISOString();
+    }
+
+    function write(type, event, payload) {
+      const line = `[${now()}] ${type} ${event}` + (payload ? `\n${JSON.stringify(payload, null, 2)}` : "");
+      logEl.textContent = `${line}\n\n${logEl.textContent}`;
+    }
+
+    function setState(text, cls) {
+      connState.textContent = text;
+      connState.className = cls;
+    }
+
+    function getJson(text, fieldName) {
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        alert(`Invalid JSON in ${fieldName}: ${e.message}`);
+        throw e;
+      }
+    }
+
+    function requireSocket() {
+      if (!socket || !socket.connected) {
+        alert("Connect socket first.");
+        return false;
+      }
+      return true;
+    }
+
+    function bindCoreListeners(s) {
+      s.on("connect", () => {
+        setState("CONNECTED", "ok");
+        write("<-", "connect", { id: s.id });
+      });
+
+      s.on("disconnect", (reason) => {
+        setState("DISCONNECTED", "warn");
+        write("<-", "disconnect", { reason });
+      });
+
+      s.on("connect_error", (err) => {
+        setState("ERROR", "err");
+        write("<-", "connect_error", { message: err.message });
+      });
+
+      const events = [
+        "call_participants",
+        "participant_joined",
+        "participant_left",
+        "participant_disconnected",
+        "participant_media_changed",
+        "participant_status_changed",
+        "incoming_call",
+        "call_ended",
+        "offer",
+        "answer",
+        "ice_candidate",
+        "error"
+      ];
+
+      events.forEach((evt) => {
+        s.on(evt, (payload) => write("<-", evt, payload));
+      });
+    }
+
+    el("connectBtn").addEventListener("click", () => {
+      const serverUrl = el("serverUrl").value.trim();
+      const token = el("token").value.trim();
+      if (!serverUrl || !token) {
+        alert("Server URL and JWT token are required.");
+        return;
+      }
+
+      if (socket) {
+        socket.disconnect();
+      }
+
+      setState("CONNECTING", "warn");
+      socket = io(`${serverUrl}/calls`, {
+        transports: ["websocket"],
+        auth: { token }
+      });
+      bindCoreListeners(socket);
+      write("->", "connect", { namespace: "/calls", serverUrl });
+    });
+
+    el("disconnectBtn").addEventListener("click", () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    });
+
+    el("clearLogBtn").addEventListener("click", () => {
+      logEl.textContent = "";
+    });
+
+    el("joinCallBtn").addEventListener("click", () => {
+      if (!requireSocket()) return;
+      const payload = { callId: el("callId").value.trim() };
+      socket.emit("join_call", payload);
+      write("->", "join_call", payload);
+    });
+
+    el("leaveCallBtn").addEventListener("click", () => {
+      if (!requireSocket()) return;
+      const payload = { callId: el("callId").value.trim() };
+      socket.emit("leave_call", payload);
+      write("->", "leave_call", payload);
+    });
+
+    el("statusBtn").addEventListener("click", () => {
+      if (!requireSocket()) return;
+      const payload = {
+        callId: el("callId").value.trim(),
+        status: el("callStatus").value
+      };
+      socket.emit("call_status_changed", payload);
+      write("->", "call_status_changed", payload);
+    });
+
+    el("mediaBtn").addEventListener("click", () => {
+      if (!requireSocket()) return;
+      const payload = {
+        callId: el("callId").value.trim(),
+        isMicMuted: el("isMicMuted").checked,
+        isCameraOff: el("isCameraOff").checked,
+        isSharingScreen: el("isSharingScreen").checked
+      };
+      socket.emit("media_state_changed", payload);
+      write("->", "media_state_changed", payload);
+    });
+
+    el("offerBtn").addEventListener("click", () => {
+      if (!requireSocket()) return;
+      const payload = {
+        callId: el("callId").value.trim(),
+        targetUserId: el("targetUserId").value.trim(),
+        offer: getJson(el("offerPayload").value, "Offer JSON")
+      };
+      socket.emit("offer", payload);
+      write("->", "offer", payload);
+    });
+
+    el("answerBtn").addEventListener("click", () => {
+      if (!requireSocket()) return;
+      const payload = {
+        callId: el("callId").value.trim(),
+        targetUserId: el("targetUserId").value.trim(),
+        answer: getJson(el("answerPayload").value, "Answer JSON")
+      };
+      socket.emit("answer", payload);
+      write("->", "answer", payload);
+    });
+
+    el("iceBtn").addEventListener("click", () => {
+      if (!requireSocket()) return;
+      const payload = {
+        callId: el("callId").value.trim(),
+        targetUserId: el("targetUserId").value.trim(),
+        candidate: getJson(el("icePayload").value, "ICE JSON")
+      };
+      socket.emit("ice_candidate", payload);
+      write("->", "ice_candidate", payload);
+    });
+
+    write("i", "ready", { message: "Fill server URL + JWT, then connect." });
+  </script>
+</body>
+</html>

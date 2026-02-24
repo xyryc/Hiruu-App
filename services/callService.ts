@@ -12,8 +12,11 @@ class CallService {
     return response.data;
   }
 
-  async joinCall(callId: string): Promise<any> {
-    const response = await axiosInstance.post(`/calls/${callId}/join`);
+  async joinCall(
+    callId: string,
+    payload?: { isMicMuted?: boolean; isCameraOff?: boolean }
+  ): Promise<any> {
+    const response = await axiosInstance.post(`/calls/${callId}/join`, payload ?? {});
     return response.data;
   }
 
@@ -29,6 +32,27 @@ class CallService {
 
   async getCallById(callId: string): Promise<any> {
     const response = await axiosInstance.get(`/calls/${callId}`);
+    return response.data;
+  }
+
+  async createMediaSession(callId: string): Promise<any> {
+    const response = await axiosInstance.post(`/calls/${callId}/media/session`);
+    return response.data;
+  }
+
+  async updateCallStatus(callId: string, status: string, declineReason?: string): Promise<any> {
+    const response = await axiosInstance.patch(`/calls/${callId}/status`, {
+      status,
+      ...(declineReason ? { declineReason } : {}),
+    });
+    return response.data;
+  }
+
+  async updateMediaState(
+    callId: string,
+    payload: { isMicMuted?: boolean; isCameraOff?: boolean; isSharingScreen?: boolean }
+  ): Promise<any> {
+    const response = await axiosInstance.patch(`/calls/${callId}/media`, payload);
     return response.data;
   }
 }
