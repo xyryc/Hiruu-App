@@ -61,6 +61,11 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
 
   const toggleSelectAll = () => {
     if (!hasMultipleBusinesses) return;
+    if (isAllSelected) {
+      const firstBusinessId = displayedBusinesses[0]?.id;
+      onSelectionChange(firstBusinessId ? [firstBusinessId] : []);
+      return;
+    }
     onSelectionChange([]);
   };
 
@@ -70,16 +75,19 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
       return;
     }
 
-    // If clicking on already selected single business, switch to "All"
-    if (
-      selectedBusinesses.length === 1 &&
-      selectedBusinesses[0] === businessId
-    ) {
-      onSelectionChange([]);
-    } else {
-      // Select only this business
+    // In "All" mode ([]), first tap switches to explicit single selection.
+    if (selectedBusinesses.length === 0) {
       onSelectionChange([businessId]);
+      return;
     }
+
+    if (selectedBusinesses.includes(businessId)) {
+      const next = selectedBusinesses.filter((id) => id !== businessId);
+      onSelectionChange(next.length > 0 ? next : []);
+      return;
+    }
+
+    onSelectionChange([...selectedBusinesses, businessId]);
   };
 
   const handleDone = () => {

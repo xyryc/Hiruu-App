@@ -1,13 +1,13 @@
-import businesses from "@/assets/data/businesses.json";
 import ScreenHeader from "@/components/header/ScreenHeader";
 import BusinessPlanChart from "@/components/ui/badges/PricingPlan";
 import GradientButton from "@/components/ui/buttons/GradientButton";
 import BusinessSelectionTrigger from "@/components/ui/dropdown/BusinessSelectionTrigger";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
+import { useBusinessStore } from "@/stores/businessStore";
 import { FontAwesome6 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
 import {
   SafeAreaView,
@@ -15,21 +15,39 @@ import {
 } from "react-native-safe-area-context";
 
 const BusinessPlan = () => {
-  const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const {
+    myBusinesses,
+    selectedBusinesses,
+    setSelectedBusinesses,
+    getMyBusinesses,
+  } = useBusinessStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  useEffect(() => {
+    const loadBusinesses = async () => {
+      try {
+        await getMyBusinesses();
+      } catch {
+        // ignore
+      }
+    };
+
+    loadBusinesses();
+  }, [getMyBusinesses]);
 
   // Get display content for header button
   const getDisplayContent = () => {
     if (selectedBusinesses.length === 0) {
       return { type: "all", content: "All" };
     } else if (selectedBusinesses.length === 1) {
-      const selectedBusiness = businesses.find(
+      const selectedBusiness = myBusinesses.find(
         (b) => b.id === selectedBusinesses[0]
       );
       return { type: "single", content: selectedBusiness };
     }
+    return { type: "multi", content: `${selectedBusinesses.length} Selected` };
   };
 
   const displayContent = getDisplayContent();
@@ -94,7 +112,13 @@ const BusinessPlan = () => {
       <BusinessSelectionModal
         visible={showModal}
         onClose={() => setShowModal(false)}
-        businesses={businesses}
+        businesses={myBusinesses.map((b) => ({
+          id: b.id,
+          name: b.name,
+          address: b.address,
+          imageUrl: b.logo,
+          logo: b.logo,
+        }))}
         selectedBusinesses={selectedBusinesses}
         onSelectionChange={setSelectedBusinesses}
       />
