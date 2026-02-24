@@ -33,6 +33,21 @@ class ChatService {
     }
   }
 
+  async getChatRoom(roomId: string): Promise<any> {
+    try {
+      const response = await axiosInstance.get(`/chat/rooms/${roomId}`);
+      const result = response.data;
+
+      if (!result?.success) {
+        throw new Error(result?.message || "Failed to load chat room");
+      }
+
+      return result;
+    } catch (error: any) {
+      throw new Error(error?.message || "Failed to load chat room");
+    }
+  }
+
   async sendMessage(roomId: string, data: {
     content: string;
     replyToId?: string;

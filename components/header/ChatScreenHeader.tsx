@@ -1,9 +1,12 @@
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
-import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, Text, TouchableOpacity, View } from "react-native";
 
 interface ChatScreenHeaderProps {
+  title?: string;
+  avatar?: string | null;
+  isOnline?: boolean;
   onAudioCallPress?: () => void;
   onVideoCallPress?: () => void;
   isStartingAudioCall?: boolean;
@@ -11,6 +14,9 @@ interface ChatScreenHeaderProps {
 }
 
 const ChatScreenHeader = ({
+  title,
+  avatar,
+  isOnline,
   onAudioCallPress,
   onVideoCallPress,
   isStartingAudioCall = false,
@@ -25,9 +31,24 @@ const ChatScreenHeader = ({
           <Ionicons name="arrow-back-outline" size={24} color="black" />
         </TouchableOpacity>
 
-        <Text className="text-lg font-proximanova-semibold text-primary">
-          Md Talath Un Nabi Anik
-        </Text>
+        <Image
+          source={
+            avatar
+              ? { uri: avatar }
+              : require("@/assets/images/placeholder.png")
+          }
+          className="w-10 h-10 rounded-full"
+        />
+        <View className="ml-3">
+          <Text className="text-lg font-proximanova-semibold text-primary">
+            {title || "Chat"}
+          </Text>
+          {typeof isOnline === "boolean" ? (
+            <Text className="text-xs font-proximanova-regular text-secondary">
+              {isOnline ? "Online" : "Offline"}
+            </Text>
+          ) : null}
+        </View>
       </View>
 
       <View className="flex-row items-center gap-4">

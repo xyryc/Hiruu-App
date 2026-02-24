@@ -6,6 +6,7 @@ import ChatInput from "@/components/ui/inputs/ChatInput";
 import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
 import { useChat } from "@/hooks/useChat";
 import { callService } from "@/services/callService";
+import { chatService } from "@/services/chatService";
 import { useAuthStore } from "@/stores/authStore";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -30,6 +31,9 @@ const ChatScreen = () => {
   const [startingAudioCall, setStartingAudioCall] = useState(false);
   const [startingVideoCall, setStartingVideoCall] = useState(false);
   const [androidKeyboardOffset, setAndroidKeyboardOffset] = useState(0);
+  const [chatTitle, setChatTitle] = useState("Chat");
+  const [chatAvatar, setChatAvatar] = useState<string | null>(null);
+  const [chatIsOnline, setChatIsOnline] = useState<boolean | undefined>(undefined);
   const messagesListRef = useRef<FlatList<any> | null>(null);
   const { user } = useAuthStore();
   const router = useRouter();
@@ -56,6 +60,57 @@ const ChatScreen = () => {
     setActualRoomId(roomId);
     setLoadingRoom(false);
   }, [roomId, user?.id]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadRoom = async () => {
+      if (!actualRoomId || !user?.id) return;
+      try {
+        const result = await chatService.getChatRoom(actualRoomId);
+        const room = result?.data;
+
+        if (!room || !isMounted) return;
+
+        if (room.type !== "direct") {
+          setChatTitle(room.name || "Group Chat");
+          setChatAvatar(room.avatar || room?.business?.logo || null);
+          setChatIsOnline(undefined);
+          return;
+        }
+
+        const otherParticipant = (room.participants || []).find(
+          (participant: any) => participant?.userId && participant.userId !== user.id
+        );
+
+        const nextTitle =
+          otherParticipant?.nickname ||
+          otherParticipant?.user?.name ||
+          room.name ||
+          "Direct Chat";
+
+        setChatTitle(nextTitle);
+        setChatAvatar(otherParticipant?.user?.avatar || room.avatar || null);
+        setChatIsOnline(
+          typeof otherParticipant?.user?.isOnline === "boolean"
+            ? otherParticipant.user.isOnline
+            : undefined
+        );
+      } catch {
+        if (isMounted) {
+          setChatTitle("Chat");
+          setChatAvatar(null);
+          setChatIsOnline(undefined);
+        }
+      }
+    };
+
+    loadRoom();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [actualRoomId, user?.id]);
 
   // IMPORTANT: Always call useChat hook unconditionally
   // Pass empty string if roomId not ready yet
@@ -392,6 +447,9 @@ const ChatScreen = () => {
         <View className="bg-[#E5F4FD80] flex-1">
           {/* Header */}
           <ChatScreenHeader
+            title={chatTitle}
+            avatar={chatAvatar}
+            isOnline={chatIsOnline}
             onAudioCallPress={handleStartAudioCall}
             onVideoCallPress={handleStartVideoCall}
             isStartingAudioCall={startingAudioCall}
