@@ -33,6 +33,7 @@ export interface GradientButtonProps {
   title: string;
   icon: React.JSX.Element;
   onPress?: (event: GestureResponderEvent) => void;
+  disabled?: boolean;
 }
 
 export interface TitleHeaderProps {
@@ -237,13 +238,13 @@ export interface WorkShiftCardProps {
   onLoginPress: () => void;
   requestLog?: boolean;
   status?:
-    | "ongoing"
-    | "upcoming"
-    | "completed"
-    | "pending"
-    | "approved"
-    | "rejected"
-    | "accepted";
+  | "ongoing"
+  | "upcoming"
+  | "completed"
+  | "pending"
+  | "approved"
+  | "rejected"
+  | "accepted";
 }
 
 export interface ScreenHeaderProps {

@@ -1,12 +1,12 @@
+import FreeIcon from "@/assets/images/subscription/free.svg";
+import GrowthIcon from "@/assets/images/subscription/growth.svg";
+import ProIcon from "@/assets/images/subscription/pro.svg";
+import StarterIcon from "@/assets/images/subscription/starter.svg";
+import { BusinessPlanItem } from "@/stores/subscriptionStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import FreeIcon from "@/assets/images/subscription/free.svg";
-import StarterIcon from "@/assets/images/subscription/starter.svg";
-import GrowthIcon from "@/assets/images/subscription/growth.svg";
-import ProIcon from "@/assets/images/subscription/pro.svg";
-import { BusinessPlanItem } from "@/stores/subscriptionStore";
+import { Text, TouchableOpacity, View } from "react-native";
 
 const iconByTier: Record<string, any> = {
   free: FreeIcon,
@@ -94,37 +94,37 @@ const BusinessPlanChart = ({ businessPlans = [] }: { businessPlans?: BusinessPla
     () =>
       businessPlans.length > 0
         ? [...businessPlans]
-            .sort((a, b) => a.displayOrder - b.displayOrder)
-            .map((plan) => {
-              const features = plan.businessFeatures || {};
-              return {
-                id: plan.id,
-                name: plan.tier.charAt(0).toUpperCase() + plan.tier.slice(1),
-                icon: iconByTier[plan.tier] || ProIcon,
-                memberLimit: Number(features.memberLimit || 0),
-                features: [
-                  Boolean(features.scheduleReports),
-                  Boolean(features.premiumMark),
-                  Boolean(features.scheduleAI),
-                  Boolean(features.jobPostingBoost),
-                  Boolean(features.excelExport),
-                  Number(features.memberLimit || 0) > 0,
-                  Boolean(features.leaderboard),
-                ],
-                monthlyPrice: Number(plan.monthlyPrice || 0),
-                yearlyBasePrice: Number(
-                  plan.yearlyBasePrice ?? Number(plan.monthlyPrice || 0) * 12
-                ),
-                yearlyDiscountedPrice: Number(
-                  plan.yearlyDiscountedPrice ??
-                    plan.yearlyBasePrice ??
-                    Number(plan.monthlyPrice || 0) * 12
-                ),
-                yearlyDiscountPercentage: Number(plan.yearlyDiscountPercentage || 0),
-                isFeatured: Boolean(plan.isFeatured),
-                trialDays: Number(plan.trialDays || 0),
-              };
-            })
+          .sort((a, b) => a.displayOrder - b.displayOrder)
+          .map((plan) => {
+            const features = plan.businessFeatures || {};
+            return {
+              id: plan.id,
+              name: plan.tier.charAt(0).toUpperCase() + plan.tier.slice(1),
+              icon: iconByTier[plan.tier] || ProIcon,
+              memberLimit: Number(features.memberLimit || 0),
+              features: [
+                Boolean(features.scheduleReports),
+                Boolean(features.premiumMark),
+                Boolean(features.scheduleAI),
+                Boolean(features.jobPostingBoost),
+                Boolean(features.excelExport),
+                Number(features.memberLimit || 0) > 0,
+                Boolean(features.leaderboard),
+              ],
+              monthlyPrice: Number(plan.monthlyPrice || 0),
+              yearlyBasePrice: Number(
+                plan.yearlyBasePrice ?? Number(plan.monthlyPrice || 0) * 12
+              ),
+              yearlyDiscountedPrice: Number(
+                plan.yearlyDiscountedPrice ??
+                plan.yearlyBasePrice ??
+                Number(plan.monthlyPrice || 0) * 12
+              ),
+              yearlyDiscountPercentage: Number(plan.yearlyDiscountPercentage || 0),
+              isFeatured: Boolean(plan.isFeatured),
+              trialDays: Number(plan.trialDays || 0),
+            };
+          })
         : fallbackPlans,
     [businessPlans]
   );
@@ -192,11 +192,10 @@ const BusinessPlanChart = ({ businessPlans = [] }: { businessPlans?: BusinessPla
           {plans.map((plan) => (
             <TouchableOpacity
               key={plan.id}
-              className={`w-14 pt-2 rounded-lg items-center ${
-                selectedPlan === plan.id
-                  ? "border border-[#CFA873] bg-[#F7EDC0]"
-                  : "border border-[#EEEEEE] bg-white"
-              }`}
+              className={`w-14 pt-2 rounded-lg items-center ${selectedPlan === plan.id
+                ? "border border-[#CFA873] bg-[#F7EDC0]"
+                : "border border-[#EEEEEE] bg-white"
+                }`}
               onPress={() => handleSelect(plan.id)}
             >
               <Image
@@ -318,7 +317,7 @@ const BusinessPlanChart = ({ businessPlans = [] }: { businessPlans?: BusinessPla
                     Annual Plan
                   </Text>
                   <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary">
-                    10 Member
+                    {selectedPlanData?.memberLimit || 0} Member
                   </Text>
                 </View>
               </View>

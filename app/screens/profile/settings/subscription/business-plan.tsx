@@ -1,8 +1,8 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import BusinessPlanChart from "@/components/ui/subscription/BusinessPlanChart";
 import GradientButton from "@/components/ui/buttons/GradientButton";
 import BusinessSelectionTrigger from "@/components/ui/dropdown/BusinessSelectionTrigger";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
+import BusinessPlanChart from "@/components/ui/subscription/BusinessPlanChart";
 import { useBusinessStore } from "@/stores/businessStore";
 import { useSubscriptionStore } from "@/stores/subscriptionStore";
 import { FontAwesome6 } from "@expo/vector-icons";
@@ -87,11 +87,12 @@ const BusinessPlan = () => {
 
       <ScrollView
         className="flex-1"
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           paddingBottom: 60,
         }}
       >
-        <View className="mx-5">
+        {/* <View className="mx-5">
           <View className="flex-row justify-between mt-4 items-center">
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
               Select your business
@@ -106,7 +107,7 @@ const BusinessPlan = () => {
         </View>
 
         {/* line */}
-        <View className="border-[#11111130] border-b h-[1px] w-[90%] rounded-full mb-2.5 mx-auto mt-3.5" />
+        {/* <View className="border-[#11111130] border-b h-[1px] w-[90%] rounded-full mb-2.5 mx-auto mt-3.5" /> */} */}
 
         {isLoadingBusinessPlans ? (
           <View className="py-8 items-center">

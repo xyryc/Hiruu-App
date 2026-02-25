@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 
-const GradientButton = ({ title, icon, className }: GradientButtonProps) => {
+const GradientButton = ({ title, icon, className, disabled }: GradientButtonProps) => {
   return (
     <TouchableOpacity className={`${className}`}>
       <LinearGradient

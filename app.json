@@ -67,7 +67,14 @@
       "expo-web-browser",
       "expo-localization",
       "expo-audio",
-      "expo-asset"
+      "expo-asset",
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "merchant.com.xyryc.hirru",
+          "enableGooglePay": false
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true

@@ -1,13 +1,16 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import GradientButton from "@/components/ui/buttons/GradientButton";
+import { billingService } from '@/services/billingService';
 import { useSubscriptionStore } from "@/stores/subscriptionStore";
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { useStripe } from "@stripe/stripe-react-native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
+
 
 const UserPlan = () => {
   const { colorScheme } = useColorScheme();
@@ -73,6 +76,59 @@ const UserPlan = () => {
     };
   }, [getUserPlans]);
 
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const [isSubscribing, setIsSubscribing] = useState(false);
+
+  const handleSubscribe = async () => {
+    if (!paidPlan || !selectedPlan || isSubscribing) return;
+
+    try {
+      setIsSubscribing(true);
+
+      const interval: "month" | "year" =
+        selectedPlan === "annual" ? "year" : "month";
+
+      const sheetData = await billingService.createSubscriptionSheet({
+        planId: paidPlan.id,
+        interval,
+      });
+
+      const initResult = await initPaymentSheet({
+        merchantDisplayName: "Hiruu",
+        customerId: sheetData.customerId,
+        customerEphemeralKeySecret: sheetData.ephemeralKey,
+        paymentIntentClientSecret: sheetData.paymentIntentClientSecret,
+        allowsDelayedPaymentMethods: false,
+      });
+
+      if (initResult.error) {
+        toast.error(initResult.error.message || "Failed to initialize payment");
+        return;
+      }
+
+      const paymentResult = await presentPaymentSheet();
+
+      if (paymentResult.error) {
+        toast.error(paymentResult.error.message || "Payment failed");
+        return;
+      }
+
+      toast.success("Subscription activated");
+      // optional refresh:
+      // await billingService.getMySubscription();
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to subscribe"
+      );
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
+
+
+
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -125,7 +181,7 @@ const UserPlan = () => {
             onPress={() =>
               setSelectedPlan(selectedPlan === "monthly" ? null : "monthly")
             }
-            className={`${selectedPlan === "monthly" && "bg-[#4fb1f333] border-[#4E57FF]"} border flex-row justify-between items-center p-4 rounded-2xl`}
+            className={`${selectedPlan === "monthly" && "bg-[#4fb1f333] border-[#4E57FF]"} border flex-row justify-between items-center px-4 py-7 rounded-2xl`}
           >
             <View className="flex-row items-center gap-3">
               {selectedPlan === "monthly" ? (
@@ -151,7 +207,7 @@ const UserPlan = () => {
             onPress={() =>
               setSelectedPlan(selectedPlan === "annual" ? null : "annual")
             }
-            className={`${selectedPlan === "annual" && "border-[#4E57FF] bg-[#4fb1f333]"} flex-row justify-between items-center border p-4 mt-7 rounded-2xl`}
+            className={`${selectedPlan === "annual" && "border-[#4E57FF] bg-[#4fb1f333]"} flex-row justify-between items-center border px-4 py-7 mt-7 rounded-2xl`}
           >
             <View className="flex-row items-center gap-3">
               {selectedPlan === "annual" ? (
@@ -198,7 +254,9 @@ const UserPlan = () => {
 
         {/* Subscribe Button */}
         <GradientButton
-          title="Suscribe Now"
+          title={isSubscribing ? "Processing..." : "Subscribe Now"}
+          disabled={!paidPlan || !selectedPlan || isSubscribing}
+          onPress={handleSubscribe}
           icon={<FontAwesome6 name="crown" size={18} color="#FFFFFF" />}
         />
       </View>
