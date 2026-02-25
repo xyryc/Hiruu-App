@@ -1,34 +1,53 @@
 import axiosInstance from "@/utils/axios";
 
-export type CreateSubscriptionSheetPayload = {
+export type BillingCycle = "monthly" | "yearly";
+
+export type CreateSubscriptionIntentPayload = {
     planId: string;
-    interval: "month" | "year";
+    billingCycle: BillingCycle;
 };
 
-export type CreateSubscriptionSheetResponse = {
+export type CreateSubscriptionIntentResponse = {
+    mode: "setup";
+    setupIntentClientSecret: string;
     customerId: string;
-    ephemeralKey: string;
-    paymentIntentClientSecret: string;
+};
+
+export type ConfirmSubscriptionPayload = {
+    planId: string;
+    billingCycle: BillingCycle;
+    setupIntentId: string;
 };
 
 class BillingService {
-    async createSubscriptionSheet(payload: CreateSubscriptionSheetPayload) {
-        const response = await axiosInstance.post("/billing/subscription/sheet", payload);
+    async createSubscriptionIntent(payload: CreateSubscriptionIntentPayload) {
+        const response = await axiosInstance.post("/subscriptions/intent", payload);
         const result = response.data;
 
         if (!result?.success) {
-            throw new Error(result?.message || "Failed to create subscription sheet");
+            throw new Error(result?.message || "Failed to create subscription intent");
         }
 
-        return result.data as CreateSubscriptionSheetResponse;
+        return result.data as CreateSubscriptionIntentResponse;
     }
 
-    async getMySubscription() {
-        const response = await axiosInstance.get("/billing/subscription/me");
+    async confirmSubscription(payload: ConfirmSubscriptionPayload) {
+        const response = await axiosInstance.post("/subscriptions/confirm", payload);
         const result = response.data;
 
         if (!result?.success) {
-            throw new Error(result?.message || "Failed to fetch subscription");
+            throw new Error(result?.message || "Failed to confirm subscription");
+        }
+
+        return result.data;
+    }
+
+    async getMyActiveSubscription() {
+        const response = await axiosInstance.get("/subscriptions/my/active");
+        const result = response.data;
+
+        if (!result?.success) {
+            throw new Error(result?.message || "Failed to fetch active subscription");
         }
 
         return result.data;
