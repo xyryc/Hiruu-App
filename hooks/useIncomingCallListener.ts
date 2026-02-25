@@ -32,10 +32,14 @@ export const useIncomingCallListener = (enabled: boolean) => {
       if (!callId) return;
       if (lastHandledCallIdRef.current === callId) return;
 
-      console.log("[CALL_DEBUG][INCOMING] navigate:audio-call", { callId, roomId, callType });
+      const callPath =
+        callType === "video"
+          ? "/screens/jobs/video-call"
+          : "/screens/jobs/audio-call";
+      console.log("[CALL_DEBUG][INCOMING] navigate:call-screen", { callId, roomId, callType });
       lastHandledCallIdRef.current = callId;
       router.push({
-        pathname: "/screens/jobs/audio-call",
+        pathname: callPath,
         params: {
           callId,
           roomId,

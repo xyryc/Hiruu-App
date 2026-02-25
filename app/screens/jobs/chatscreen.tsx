@@ -254,6 +254,8 @@ const ChatScreen = () => {
       call?.initiatedBy === user?.id ? "outgoing" : "incoming";
     const getTypeForCall = (call: any) =>
       String(call?.type || "").toLowerCase() === "video" ? "video" : "audio";
+    const getCallPath = (type: "audio" | "video") =>
+      type === "video" ? "/screens/jobs/video-call" : "/screens/jobs/audio-call";
     const setStarting = (value: boolean) => {
       if (callType === "video") {
         setStartingVideoCall(value);
@@ -295,7 +297,7 @@ const ChatScreen = () => {
             }
           } else {
             router.push({
-              pathname: "/screens/jobs/audio-call",
+              pathname: getCallPath(getTypeForCall(activeCall)),
               params: {
                 callId: activeCall.id,
                 roomId: actualRoomId,
@@ -323,7 +325,7 @@ const ChatScreen = () => {
       }
 
       router.push({
-        pathname: "/screens/jobs/audio-call",
+        pathname: getCallPath(callType),
         params: { callId, roomId: actualRoomId, mode: "outgoing", callType },
       });
     } catch (error: any) {
@@ -354,7 +356,7 @@ const ChatScreen = () => {
                 const retryCallId = retry?.data?.id;
                 if (retryCallId) {
                   router.push({
-                    pathname: "/screens/jobs/audio-call",
+                    pathname: getCallPath(callType),
                     params: {
                       callId: retryCallId,
                       roomId: actualRoomId,
@@ -369,7 +371,7 @@ const ChatScreen = () => {
               }
             }
             router.push({
-              pathname: "/screens/jobs/audio-call",
+              pathname: getCallPath(getTypeForCall(activeCall)),
               params: {
                 callId: activeCallId,
                 roomId: actualRoomId,
