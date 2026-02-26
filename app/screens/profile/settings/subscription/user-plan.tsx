@@ -120,6 +120,8 @@ const UserPlan = () => {
       toast.success("Subscription activated");
 
       await loadActiveSubscription();
+
+      router.back()
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||

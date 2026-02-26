@@ -299,6 +299,7 @@ const Subscription = () => {
         onConfirm={handleCancelSubscription}
         title={t("user.profile.cancelPlanTitle")}
         subtitle={t("user.profile.cancelPlanSubtitle")}
+        expiryDate={formatDate(activeSubscription?.currentPeriodEnd)}
         icon={CancelImg}
         confirmLabel={isCancelling ? t("user.profile.cancelling") : t("user.profile.cancelPlan")}
         confirmColor="#F34F4F"
@@ -309,4 +310,3 @@ const Subscription = () => {
 };
 
 export default Subscription;
-

@@ -11,6 +11,7 @@ type ConfirmActionModalProps = {
   onConfirm: () => void | Promise<void>;
   title: string;
   subtitle?: string;
+  expiryDate?: string;
   icon?: ImageSource;
   confirmLabel?: string;
   cancelLabel?: string;
@@ -25,6 +26,7 @@ const ConfirmActionModal = ({
   onConfirm,
   title,
   subtitle,
+  expiryDate,
   icon,
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
@@ -33,6 +35,10 @@ const ConfirmActionModal = ({
   disabled = false,
 }: ConfirmActionModalProps) => {
   const isConfirmDisabled = disabled || loading;
+  const resolvedSubtitle =
+    subtitle && expiryDate
+      ? subtitle.replace("[expiry date]", expiryDate)
+      : subtitle;
 
   return (
     <Modal
@@ -72,9 +78,9 @@ const ConfirmActionModal = ({
             <Text className="text-center font-proximanova-semibold text-xl text-primary dark:text-dark-primary px-8 mt-5">
               {title}
             </Text>
-            {!!subtitle && (
+            {!!resolvedSubtitle && (
               <Text className="text-center text-sm font-proximanova-regular text-secondary dark:text-dark-secondary mt-2.5">
-                {subtitle}
+                {resolvedSubtitle}
               </Text>
             )}
 
