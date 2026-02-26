@@ -1,6 +1,9 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import SettingsCard from "@/components/ui/cards/SettingsCard";
 import LogoutDeleteModal from "@/components/ui/modals/LogoutDeleteModal";
+import { billingService } from '@/services/billingService';
+import { useAuthStore } from '@/stores/authStore';
+import { formatDate } from '@/utils/date';
 import {
   Entypo,
   Feather,
@@ -9,19 +12,41 @@ import {
 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-// import CancelImg from "@/assets/images/cancel.svg";
+
+type ActiveSubscription = {
+  id: string;
+  userId: string;
+  businessId: string | null;
+  status: string;
+  billingCycle: "monthly" | "yearly";
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  cancelAtPeriodEnd: boolean;
+  provider: string;
+  plan?: {
+    tier?: string;
+    currency?: string;
+    monthlyPrice?: string;
+    description?: string;
+    type?: "user" | "business";
+  };
+};
 
 const Subscription = () => {
   const CancelImg = require("@/assets/images/cancel.svg");
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-  const { t } = useTranslation();
-
   const [showModal, setShowModal] = useState(false);
+  const { t } = useTranslation();
+  const { user } = useAuthStore()
+  const [activeSubscription, setActiveSubscription] = useState<ActiveSubscription | null>(null);
+  const [isLoadingActiveSubscription, setIsLoadingActiveSubscription] = useState(false);
+  const [activeSubError, setActiveSubError] = useState<string | null>(null);
+
   const modalData = {
     title: t("user.profile.cancelPlanTitle"),
     subtitle: t("user.profile.cancelPlanSubtitle"),
@@ -29,6 +54,35 @@ const Subscription = () => {
     buttonName: t("user.profile.cancelPlan"),
     buttonColor: "#F34F4F",
   };
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchActiveSubscription = async () => {
+      try {
+        setIsLoadingActiveSubscription(true);
+        setActiveSubError(null);
+
+        const data = await billingService.getMyActiveSubscription();
+
+        if (!mounted) return;
+        setActiveSubscription(data ?? null);
+      } catch (error: any) {
+        if (!mounted) return;
+        setActiveSubscription(null);
+        setActiveSubError(error?.message || "Failed to load active subscription");
+      } finally {
+        if (mounted) setIsLoadingActiveSubscription(false);
+      }
+    };
+
+    fetchActiveSubscription();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
 
   return (
     <SafeAreaView
@@ -60,21 +114,22 @@ const Subscription = () => {
                   color="black"
                 />
               </View>
+
               <View>
                 <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary">
                   {t("user.profile.userPlanBilling")}
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3">
-                  SarahCatlynne@gmail.com
+                  {user?.email || "-"}
                 </Text>
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
+                {/* <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
                   {t("user.profile.passwordMasked")}
+                </Text> */}
+                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
+                  {user?.phoneNumber || t("user.profile.phoneMasked")}
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  {t("user.profile.phoneMasked")}
-                </Text>
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  {t("user.profile.activeDateRange")}
+                  {t("user.profile.activeDateRange")}: {formatDate(activeSubscription?.currentPeriodEnd)}
                 </Text>
               </View>
             </View>
@@ -82,13 +137,19 @@ const Subscription = () => {
             <View className="border-b border-[#EEEEEE]" />
 
             <View className="px-2.5 py-5">
-              <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center">
-                {t("user.profile.billedThroughGooglePay")}
+              <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center capitalize">
+                {activeSubscription?.provider
+                  ? `Billed through ${activeSubscription.provider}`
+                  : "Billing provider unavailable"}
               </Text>
-              <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-14">
-                {t("user.profile.googlePayBillingNote")}
+
+              <Text className="capitalize font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-14 text-center">
+                {activeSubscription
+                  ? `Status: ${activeSubscription.status} • ${activeSubscription.billingCycle}`
+                  : "No active subscription"}
               </Text>
             </View>
+
 
             <View className="border-b border-[#EEEEEE]" />
 

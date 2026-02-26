@@ -36,7 +36,7 @@
       "businessPlanBilling": "Business Plan & Billing",
       "passwordMasked": "Password: *********",
       "phoneMasked": "Phone: 07896541232",
-      "activeDateRange": "Active: July 25, 2025 till August 1, 2025",
+      "activeDateRange": "Active",
       "billedThroughGooglePay": "Billed through Google Pay",
       "googlePayBillingNote": "Contact Google Pay to update your payment details or end your billing through Google Pay.",
       "userPlan": "User plan",
