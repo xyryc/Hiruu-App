@@ -83,7 +83,6 @@ const Subscription = () => {
     };
   }, []);
 
-
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
@@ -105,63 +104,68 @@ const Subscription = () => {
         }}
         showsVerticalScrollIndicator={false}>
         <View className="m-5">
-          <View className="border border-[#EEEEEE] rounded-2xl">
-            <View className="px-2.5 py-5 flex-row gap-3">
-              <View className="h-[50px] w-[50px] bg-[#11293A1A] rounded-xl flex-row justify-center items-center">
-                <MaterialCommunityIcons
-                  name="receipt-text-outline"
-                  size={22}
-                  color="black"
-                />
-              </View>
+          {
+            activeSubscription && (
+              <View className="border border-[#EEEEEE] rounded-2xl">
+                <View className="px-2.5 py-5 flex-row gap-3">
+                  <View className="h-[50px] w-[50px] bg-[#11293A1A] rounded-xl flex-row justify-center items-center">
+                    <MaterialCommunityIcons
+                      name="receipt-text-outline"
+                      size={22}
+                      color="black"
+                    />
+                  </View>
 
-              <View>
-                <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary">
-                  {t("user.profile.userPlanBilling")}
-                </Text>
-                <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3">
-                  {user?.email || "-"}
-                </Text>
-                {/* <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
+                  <View>
+                    <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary">
+                      {t("user.profile.userPlanBilling")}
+                    </Text>
+                    <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3">
+                      {user?.email || "-"}
+                    </Text>
+                    {/* <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
                   {t("user.profile.passwordMasked")}
                 </Text> */}
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  {user?.phoneNumber || t("user.profile.phoneMasked")}
-                </Text>
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  {t("user.profile.activeDateRange")}: {formatDate(activeSubscription?.currentPeriodEnd)}
-                </Text>
+                    <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
+                      {user?.phoneNumber || t("user.profile.phoneMasked")}
+                    </Text>
+                    <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
+                      {t("user.profile.activeDateRange")}: {formatDate(activeSubscription?.currentPeriodEnd)}
+                    </Text>
+                  </View>
+                </View>
+
+                <View className="border-b border-[#EEEEEE]" />
+
+                <View className="px-2.5 py-5">
+                  <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center capitalize">
+                    {activeSubscription?.provider
+                      ? `Billed through ${activeSubscription.provider}`
+                      : "Billing provider unavailable"}
+                  </Text>
+
+                  <Text className="capitalize font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-14 text-center">
+                    {activeSubscription
+                      ? `Status: ${activeSubscription.status} • ${activeSubscription.billingCycle}`
+                      : "No active subscription"}
+                  </Text>
+                </View>
+
+
+                <View className="border-b border-[#EEEEEE]" />
+
+                <TouchableOpacity
+                  onPress={() => setShowModal(true)}
+                  className="my-5"
+                >
+                  <Text className="font-proximanova-bold text-[#F34F4F] text-center">
+                    {t("user.profile.cancelPlan")}
+                  </Text>
+                </TouchableOpacity>
               </View>
-            </View>
+            )
+          }
 
-            <View className="border-b border-[#EEEEEE]" />
-
-            <View className="px-2.5 py-5">
-              <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center capitalize">
-                {activeSubscription?.provider
-                  ? `Billed through ${activeSubscription.provider}`
-                  : "Billing provider unavailable"}
-              </Text>
-
-              <Text className="capitalize font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-14 text-center">
-                {activeSubscription
-                  ? `Status: ${activeSubscription.status} • ${activeSubscription.billingCycle}`
-                  : "No active subscription"}
-              </Text>
-            </View>
-
-
-            <View className="border-b border-[#EEEEEE]" />
-
-            <TouchableOpacity
-              onPress={() => setShowModal(true)}
-              className="my-5"
-            >
-              <Text className="font-proximanova-bold text-[#F34F4F] text-center">
-                {t("user.profile.cancelPlan")}
-              </Text>
-            </TouchableOpacity>
-          </View>
 
           {/* business plan */}
           <View className="border border-[#EEEEEE] rounded-2xl mt-4">
