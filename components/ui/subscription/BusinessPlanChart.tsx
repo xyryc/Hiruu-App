@@ -70,11 +70,19 @@ const fallbackPlans = [
   },
 ];
 
-const BusinessPlanChart = ({ businessPlans = [] }: { businessPlans?: BusinessPlanItem[] }) => {
+const BusinessPlanChart = ({
+  businessPlans = [],
+  initialTier,
+  initialBillingCycle,
+}: {
+  businessPlans?: BusinessPlanItem[];
+  initialTier?: string | null;
+  initialBillingCycle?: "monthly" | "yearly" | null;
+}) => {
   const [selectedPlan, setSelectedPlan] = useState("free");
   const mounted = useRef(true);
   const [selectedPlanTime, setSelectedPlanTime] = useState<
-    "monthly" | "annual" | null
+    "monthly" | "annual"
   >("annual");
 
   useEffect(() => {
@@ -137,6 +145,23 @@ const BusinessPlanChart = ({ businessPlans = [] }: { businessPlans?: BusinessPla
       plans.find((plan) => plan.isFeatured) || plans.find((plan) => plan.id !== "free");
     if (featured && mounted.current) setSelectedPlan(featured.id);
   }, [plans, selectedPlan]);
+
+  useEffect(() => {
+    if (!plans.length || !initialTier) return;
+    const matchedPlan =
+      plans.find(
+        (plan) =>
+          String(plan.name || "").toLowerCase() === String(initialTier).toLowerCase()
+      ) || null;
+    if (matchedPlan && mounted.current) {
+      setSelectedPlan(matchedPlan.id);
+    }
+  }, [initialTier, plans]);
+
+  useEffect(() => {
+    if (!initialBillingCycle || !mounted.current) return;
+    setSelectedPlanTime(initialBillingCycle === "yearly" ? "annual" : "monthly");
+  }, [initialBillingCycle]);
 
   const selectedPlanData =
     plans.find((plan) => plan.id === selectedPlan) || plans[0];
@@ -268,11 +293,7 @@ const BusinessPlanChart = ({ businessPlans = [] }: { businessPlans?: BusinessPla
           <View className="mt-4">
             {/* Monthly Plan */}
             <TouchableOpacity
-              onPress={() =>
-                setSelectedPlanTime(
-                  selectedPlanTime === "monthly" ? null : "monthly"
-                )
-              }
+              onPress={() => setSelectedPlanTime("monthly")}
               className={`${selectedPlanTime === "monthly" && "bg-[#4fb1f333] border-[#4E57FF]"} border flex-row justify-between items-center p-4 rounded-2xl`}
             >
               <View className="flex-row items-center gap-3">
@@ -298,11 +319,7 @@ const BusinessPlanChart = ({ businessPlans = [] }: { businessPlans?: BusinessPla
 
             {/* Annual Plan */}
             <TouchableOpacity
-              onPress={() =>
-                setSelectedPlanTime(
-                  selectedPlanTime === "annual" ? null : "annual"
-                )
-              }
+              onPress={() => setSelectedPlanTime("annual")}
               className={`${selectedPlanTime === "annual" && "border-[#4E57FF] bg-[#4fb1f333]"} flex-row justify-between items-center border p-4 mt-7 rounded-2xl`}
             >
               <View className="flex-row items-center gap-3">

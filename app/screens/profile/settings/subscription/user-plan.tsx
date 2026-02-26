@@ -17,7 +17,7 @@ const UserPlan = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const { userPlans, isLoadingUserPlans, getUserPlans } = useSubscriptionStore();
-  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual" | null>(
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual">(
     "annual"
   );
 
@@ -76,7 +76,7 @@ const UserPlan = () => {
       return;
     }
 
-    if (!paidPlan || !selectedPlan || isSubscribing) return;
+    if (!paidPlan || isSubscribing) return;
 
     try {
       setIsSubscribing(true);
@@ -225,9 +225,7 @@ const UserPlan = () => {
           {/* Monthly Plan */}
           <TouchableOpacity
             disabled={!paidPlan}
-            onPress={() =>
-              setSelectedPlan(selectedPlan === "monthly" ? null : "monthly")
-            }
+            onPress={() => setSelectedPlan("monthly")}
             className={`${selectedPlan === "monthly" && "bg-[#4fb1f333] border-[#4E57FF]"} border flex-row justify-between items-center px-4 py-7 rounded-2xl`}
           >
             <View className="flex-row items-center gap-3">
@@ -251,9 +249,7 @@ const UserPlan = () => {
           {/* Annual Plan */}
           <TouchableOpacity
             disabled={!paidPlan}
-            onPress={() =>
-              setSelectedPlan(selectedPlan === "annual" ? null : "annual")
-            }
+            onPress={() => setSelectedPlan("annual")}
             className={`${selectedPlan === "annual" && "border-[#4E57FF] bg-[#4fb1f333]"} flex-row justify-between items-center border px-4 py-7 mt-7 rounded-2xl`}
           >
             <View className="flex-row items-center gap-3">
@@ -314,7 +310,6 @@ const UserPlan = () => {
             loadingActiveSub ||
             isAlreadySubscribed ||
             !paidPlan ||
-            !selectedPlan ||
             isSubscribing
           }
           onPress={handleSubscribe}

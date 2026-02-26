@@ -18,6 +18,7 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const Subscription = () => {
   const CancelImg = require("@/assets/images/cancel.svg");
@@ -32,6 +33,7 @@ const Subscription = () => {
   const [isLoadingActiveSubscription, setIsLoadingActiveSubscription] = useState(false);
   const [activeSubError, setActiveSubError] = useState<string | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelTarget, setCancelTarget] = useState<ActiveSubscriptionItem | null>(null);
 
   const fetchActiveSubscriptions = useCallback(async () => {
     try {
@@ -84,14 +86,16 @@ const Subscription = () => {
   };
 
   const handleCancelSubscription = async () => {
-    if (!userSubscription?.id || isCancelling) return;
+    if (!cancelTarget?.id || isCancelling) return;
 
     try {
       setIsCancelling(true);
       setActiveSubError(null);
 
-      await billingService.cancelSubscription(userSubscription.id);
+      await billingService.cancelSubscription(cancelTarget.id);
+      toast.success(t("api.subscription_cancelled_successfully"));
       setShowModal(false);
+      setCancelTarget(null);
       await fetchActiveSubscriptions();
     } catch (error: any) {
       setActiveSubError(error?.message || "Failed to cancel subscription");
@@ -178,7 +182,10 @@ const Subscription = () => {
 
               <TouchableOpacity
                 disabled={isCancelling}
-                onPress={() => setShowModal(true)}
+                onPress={() => {
+                  setCancelTarget(userSubscription);
+                  setShowModal(true);
+                }}
                 className="my-5"
               >
                 <Text className="font-proximanova-bold text-[#F34F4F] text-center">
@@ -224,6 +231,21 @@ const Subscription = () => {
                   Status: {item.status} • {item.billingCycle}
                 </Text>
               </View>
+
+              <View className="border-b border-[#EEEEEE]" />
+
+              <TouchableOpacity
+                disabled={isCancelling}
+                onPress={() => {
+                  setCancelTarget(item);
+                  setShowModal(true);
+                }}
+                className="my-5"
+              >
+                <Text className="font-proximanova-bold text-[#F34F4F] text-center">
+                  {isCancelling ? t("user.profile.cancelling") : t("user.profile.cancelPlan")}
+                </Text>
+              </TouchableOpacity>
             </View>
           ))}
 
@@ -278,11 +300,14 @@ const Subscription = () => {
 
       <ConfirmActionModal
         visible={showModal}
-        onClose={() => setShowModal(false)}
+        onClose={() => {
+          setShowModal(false);
+          setCancelTarget(null);
+        }}
         onConfirm={handleCancelSubscription}
         title={t("user.profile.cancelPlanTitle")}
         subtitle={t("user.profile.cancelPlanSubtitle")}
-        expiryDate={formatDate(userSubscription?.currentPeriodEnd)}
+        expiryDate={formatDate(cancelTarget?.currentPeriodEnd)}
         icon={CancelImg}
         confirmLabel={isCancelling ? t("user.profile.cancelling") : t("user.profile.cancelPlan")}
         confirmColor="#F34F4F"

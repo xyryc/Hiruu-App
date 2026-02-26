@@ -3,14 +3,15 @@ import GradientButton from "@/components/ui/buttons/GradientButton";
 import BusinessSelectionTrigger from "@/components/ui/dropdown/BusinessSelectionTrigger";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import BusinessPlanChart from "@/components/ui/subscription/BusinessPlanChart";
-import { billingService } from "@/services/billingService";
+import { ActiveSubscriptionItem, billingService } from "@/services/billingService";
 import { useBusinessStore } from "@/stores/businessStore";
 import { useSubscriptionStore } from "@/stores/subscriptionStore";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { useStripe } from "@stripe/stripe-react-native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import {
   SafeAreaView,
@@ -32,6 +33,8 @@ const BusinessPlan = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const [activeSubscriptions, setActiveSubscriptions] = useState<ActiveSubscriptionItem[]>([]);
+  const [loadingActiveSub, setLoadingActiveSub] = useState(false);
 
   useEffect(() => {
     const loadBusinesses = async () => {
@@ -57,6 +60,24 @@ const BusinessPlan = () => {
     loadPlans();
   }, [getBusinessPlans]);
 
+  const loadActiveSubscriptions = useCallback(async () => {
+    try {
+      setLoadingActiveSub(true);
+      const data = await billingService.getMyActiveSubscription("active");
+      setActiveSubscriptions(data || []);
+    } catch {
+      setActiveSubscriptions([]);
+    } finally {
+      setLoadingActiveSub(false);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadActiveSubscriptions();
+    }, [loadActiveSubscriptions])
+  );
+
   const paidPlan = useMemo(() => {
     return [...businessPlans]
       .sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured) || a.displayOrder - b.displayOrder)
@@ -73,6 +94,21 @@ const BusinessPlan = () => {
     [myBusinesses, selectedBusinessId]
   );
 
+  const selectedBusinessActiveSubscription = useMemo(() => {
+    if (!selectedBusinessId) return null;
+    return (
+      activeSubscriptions.find(
+        (item) =>
+          item.businessId === selectedBusinessId &&
+          ["active", "trialing"].includes(String(item.status || "").toLowerCase())
+      ) || null
+    );
+  }, [activeSubscriptions, selectedBusinessId]);
+
+  const isAlreadySubscribed = useMemo(() => {
+    return !!selectedBusinessActiveSubscription;
+  }, [selectedBusinessActiveSubscription]);
+
   // Get display content for header button
   const getDisplayContent = () => {
     if (!selectedBusiness) {
@@ -86,6 +122,11 @@ const BusinessPlan = () => {
   const insets = useSafeAreaInsets();
 
   const handleSubscribe = async () => {
+    if (isAlreadySubscribed) {
+      toast.info("Already subscribed");
+      return;
+    }
+
     if (!paidPlan) {
       toast.error("No paid business plan available");
       return;
@@ -134,7 +175,8 @@ const BusinessPlan = () => {
       });
 
       toast.success("Business subscription activated");
-      await getBusinessPlans();
+      await Promise.all([getBusinessPlans(), loadActiveSubscriptions()]);
+      router.back();
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
@@ -189,7 +231,12 @@ const BusinessPlan = () => {
             </Text>
           </View>
         ) : (
-          <BusinessPlanChart businessPlans={businessPlans} />
+          <BusinessPlanChart
+            key={selectedBusinessId || "no-business"}
+            businessPlans={businessPlans}
+            initialTier={selectedBusinessActiveSubscription?.plan?.tier ?? null}
+            initialBillingCycle={selectedBusinessActiveSubscription?.billingCycle ?? null}
+          />
         )}
       </ScrollView>
 
@@ -199,8 +246,22 @@ const BusinessPlan = () => {
         </Text>
 
         <GradientButton
-          title={isSubscribing ? "Processing..." : "Subscribe Now"}
-          disabled={!selectedBusinessId || !paidPlan || isSubscribing}
+          title={
+            loadingActiveSub
+              ? "Checking..."
+              : isAlreadySubscribed
+                ? "Already Subscribed"
+                : isSubscribing
+                  ? "Processing..."
+                  : "Subscribe Now"
+          }
+          disabled={
+            loadingActiveSub ||
+            isAlreadySubscribed ||
+            !selectedBusinessId ||
+            !paidPlan ||
+            isSubscribing
+          }
           onPress={handleSubscribe}
           icon={<FontAwesome6 name="crown" size={18} color="#FFFFFF" />}
         />
