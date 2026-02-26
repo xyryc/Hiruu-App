@@ -32,6 +32,27 @@ export type CancelSubscriptionResponse = {
     provider?: string;
 };
 
+export type ActiveSubscriptionItem = {
+    id: string;
+    userId: string | null;
+    businessId: string | null;
+    status: string;
+    billingCycle: BillingCycle;
+    currentPeriodStart?: string;
+    currentPeriodEnd?: string;
+    endDate?: string;
+    cancelAtPeriodEnd: boolean;
+    provider?: string;
+    plan?: {
+        id?: string;
+        tier?: string;
+        type?: "user" | "business";
+        monthlyPrice?: string;
+        currency?: string;
+        description?: string;
+    };
+};
+
 class BillingService {
     async createSubscriptionIntent(payload: CreateSubscriptionIntentPayload) {
         const response = await axiosInstance.post("/subscriptions/intent", payload);
@@ -55,15 +76,17 @@ class BillingService {
         return result.data;
     }
 
-    async getMyActiveSubscription() {
-        const response = await axiosInstance.get("/subscriptions/my/active");
+    async getMyActiveSubscription(status: "active" | "trialing" = "active") {
+        const response = await axiosInstance.get("/subscriptions/my", {
+            params: { status },
+        });
         const result = response.data;
 
         if (!result?.success) {
             throw new Error(result?.message || "Failed to fetch active subscription");
         }
 
-        return result.data;
+        return (Array.isArray(result.data) ? result.data : []) as ActiveSubscriptionItem[];
     }
 
     async cancelSubscription(subscriptionId: string) {

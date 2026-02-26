@@ -1,6 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import GradientButton from "@/components/ui/buttons/GradientButton";
-import { billingService } from '@/services/billingService';
+import { ActiveSubscriptionItem, billingService } from '@/services/billingService';
 import { useSubscriptionStore } from "@/stores/subscriptionStore";
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -62,7 +62,7 @@ const UserPlan = () => {
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [isSubscribing, setIsSubscribing] = useState(false);
 
-  const [activeSubscription, setActiveSubscription] = useState<any>(null);
+  const [activeSubscription, setActiveSubscription] = useState<ActiveSubscriptionItem | null>(null);
   const [loadingActiveSub, setLoadingActiveSub] = useState(false);
 
   const getSetupIntentId = (clientSecret: string) => {
@@ -136,8 +136,9 @@ const UserPlan = () => {
   const loadActiveSubscription = useCallback(async () => {
     try {
       setLoadingActiveSub(true);
-      const data = await billingService.getMyActiveSubscription();
-      setActiveSubscription(data || null);
+      const data = await billingService.getMyActiveSubscription("active");
+      const userActive = data.find((item) => item?.plan?.type === "user" || !!item?.userId) || null;
+      setActiveSubscription(userActive);
     } catch {
       // no active sub or endpoint returns error; keep null
       setActiveSubscription(null);
