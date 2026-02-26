@@ -1,14 +1,16 @@
-import ScreenHeader from "@/components/header/ScreenHeader";
+﻿import ScreenHeader from "@/components/header/ScreenHeader";
 import GradientButton from "@/components/ui/buttons/GradientButton";
 import BusinessSelectionTrigger from "@/components/ui/dropdown/BusinessSelectionTrigger";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import BusinessPlanChart from "@/components/ui/subscription/BusinessPlanChart";
+import { billingService } from "@/services/billingService";
 import { useBusinessStore } from "@/stores/businessStore";
 import { useSubscriptionStore } from "@/stores/subscriptionStore";
 import { FontAwesome6 } from "@expo/vector-icons";
+import { useStripe } from "@stripe/stripe-react-native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import {
   SafeAreaView,
@@ -18,6 +20,7 @@ import { toast } from "sonner-native";
 
 const BusinessPlan = () => {
   const [showModal, setShowModal] = useState(false);
+  const [isSubscribing, setIsSubscribing] = useState(false);
   const {
     myBusinesses,
     selectedBusinesses,
@@ -28,6 +31,7 @@ const BusinessPlan = () => {
     useSubscriptionStore();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { initPaymentSheet, presentPaymentSheet } = useStripe();
 
   useEffect(() => {
     const loadBusinesses = async () => {
@@ -53,23 +57,94 @@ const BusinessPlan = () => {
     loadPlans();
   }, [getBusinessPlans]);
 
+  const paidPlan = useMemo(() => {
+    return [...businessPlans]
+      .sort((a, b) => Number(b.isFeatured) - Number(a.isFeatured) || a.displayOrder - b.displayOrder)
+      .find((item) => item.isActive && Number(item.monthlyPrice) > 0);
+  }, [businessPlans]);
+
+  const selectedBusinessId = useMemo(() => {
+    if (selectedBusinesses.length > 0) return selectedBusinesses[0];
+    return myBusinesses[0]?.id ?? null;
+  }, [myBusinesses, selectedBusinesses]);
+
+  const selectedBusiness = useMemo(
+    () => myBusinesses.find((b) => b.id === selectedBusinessId),
+    [myBusinesses, selectedBusinessId]
+  );
+
   // Get display content for header button
   const getDisplayContent = () => {
-    if (selectedBusinesses.length === 0) {
-      return { type: "all", content: "All" };
-    } else if (selectedBusinesses.length === 1) {
-      const selectedBusiness = myBusinesses.find(
-        (b) => b.id === selectedBusinesses[0]
-      );
-      return { type: "single", content: selectedBusiness };
+    if (!selectedBusiness) {
+      return { type: "all", content: "Select" };
     }
-    return { type: "multi", content: `${selectedBusinesses.length} Selected` };
+    return { type: "single", content: selectedBusiness };
   };
 
   const displayContent = getDisplayContent();
 
   const insets = useSafeAreaInsets();
-  // console.log(insets.top);
+
+  const handleSubscribe = async () => {
+    if (!paidPlan) {
+      toast.error("No paid business plan available");
+      return;
+    }
+
+    if (!selectedBusinessId) {
+      toast.error("Select a business first");
+      return;
+    }
+
+    if (isSubscribing) return;
+
+    try {
+      setIsSubscribing(true);
+      const billingCycle = "monthly";
+
+      const intentData = await billingService.createSubscriptionIntent({
+        planId: paidPlan.id,
+        billingCycle,
+        businessId: selectedBusinessId,
+      });
+
+      const initResult = await initPaymentSheet({
+        merchantDisplayName: "Hiruu",
+        customerId: intentData.customerId,
+        setupIntentClientSecret: intentData.setupIntentClientSecret,
+        allowsDelayedPaymentMethods: false,
+      });
+
+      if (initResult.error) {
+        toast.error(initResult.error.message || "Failed to initialize payment sheet");
+        return;
+      }
+
+      const paymentResult = await presentPaymentSheet();
+      if (paymentResult.error) {
+        toast.error(paymentResult.error.message || "Payment was not completed");
+        return;
+      }
+
+      await billingService.confirmSubscription({
+        setupIntentId: intentData.setupIntentClientSecret,
+        planId: paidPlan.id,
+        billingCycle,
+        businessId: selectedBusinessId,
+      });
+
+      toast.success("Business subscription activated");
+      await getBusinessPlans();
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Business subscription failed"
+      );
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -92,10 +167,10 @@ const BusinessPlan = () => {
           paddingBottom: 60,
         }}
       >
-        {/* <View className="mx-5">
+        <View className="mx-5">
           <View className="flex-row justify-between mt-4 items-center">
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
-              Select your business
+              Select business
             </Text>
 
             <BusinessSelectionTrigger
@@ -105,9 +180,6 @@ const BusinessPlan = () => {
             />
           </View>
         </View>
-
-        {/* line */}
-        {/* <View className="border-[#11111130] border-b h-[1px] w-[90%] rounded-full mb-2.5 mx-auto mt-3.5" /> */} */}
 
         {isLoadingBusinessPlans ? (
           <View className="py-8 items-center">
@@ -122,19 +194,18 @@ const BusinessPlan = () => {
       </ScrollView>
 
       <View className="mx-5 mb-6 mt-4">
-        {/* Subscription Text */}
         <Text className="text-center text-secondary dark:text-dark-secondary text-sm mb-4 capitalize">
           Subscription auto-renews until manually cancelled.
         </Text>
 
-        {/* Subscribe Button */}
         <GradientButton
-          title="Suscribe Now"
+          title={isSubscribing ? "Processing..." : "Subscribe Now"}
+          disabled={!selectedBusinessId || !paidPlan || isSubscribing}
+          onPress={handleSubscribe}
           icon={<FontAwesome6 name="crown" size={18} color="#FFFFFF" />}
         />
       </View>
 
-      {/* modal */}
       <BusinessSelectionModal
         visible={showModal}
         onClose={() => setShowModal(false)}
@@ -145,8 +216,11 @@ const BusinessPlan = () => {
           imageUrl: b.logo,
           logo: b.logo,
         }))}
-        selectedBusinesses={selectedBusinesses}
-        onSelectionChange={setSelectedBusinesses}
+        selectedBusinesses={selectedBusinessId ? [selectedBusinessId] : []}
+        onSelectionChange={(ids: string[]) => {
+          const nextId = ids[0] ? [ids[0]] : [];
+          setSelectedBusinesses(nextId);
+        }}
       />
     </SafeAreaView>
   );

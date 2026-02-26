@@ -5,6 +5,7 @@ export type BillingCycle = "monthly" | "yearly";
 export type CreateSubscriptionIntentPayload = {
     planId: string;
     billingCycle: BillingCycle;
+    businessId?: string;
 };
 
 export type CreateSubscriptionIntentResponse = {
@@ -17,6 +18,7 @@ export type ConfirmSubscriptionPayload = {
     planId: string;
     billingCycle: BillingCycle;
     setupIntentId: string;
+    businessId?: string;
 };
 
 export type CancelSubscriptionResponse = {
