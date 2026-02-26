@@ -6,7 +6,7 @@ import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
 import { useStripe } from "@stripe/stripe-react-native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -57,76 +57,112 @@ const UserPlan = () => {
     return Number.isInteger(dollars) ? `${dollars}` : dollars.toFixed(2);
   };
 
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchUserPlans = async () => {
-      try {
-        await getUserPlans();
-      } catch (error: any) {
-        if (!mounted) return;
-        toast.error(error?.message || "Failed to load user plans");
-      }
-    };
-
-    fetchUserPlans();
-
-    return () => {
-      mounted = false;
-    };
-  }, [getUserPlans]);
-
+  // payment
   const { initPaymentSheet, presentPaymentSheet } = useStripe();
   const [isSubscribing, setIsSubscribing] = useState(false);
 
+  const [activeSubscription, setActiveSubscription] = useState<any>(null);
+  const [loadingActiveSub, setLoadingActiveSub] = useState(false);
+
+  const getSetupIntentId = (clientSecret: string) => {
+    return clientSecret.split("_secret")[0];
+  };
+
+
   const handleSubscribe = async () => {
+    if (isAlreadySubscribed) {
+      toast.info("You already have an active subscription");
+      return;
+    }
+
     if (!paidPlan || !selectedPlan || isSubscribing) return;
 
     try {
       setIsSubscribing(true);
 
-      const interval: "month" | "year" =
-        selectedPlan === "annual" ? "year" : "month";
+      const billingCycle = selectedPlan === "annual" ? "yearly" : "monthly";
 
-      const sheetData = await billingService.createSubscriptionSheet({
+      // 1) backend creates setup intent
+      const intentData = await billingService.createSubscriptionIntent({
         planId: paidPlan.id,
-        interval,
+        billingCycle,
       });
 
+      // 2) initialize Stripe sheet with setup intent
       const initResult = await initPaymentSheet({
         merchantDisplayName: "Hiruu",
-        customerId: sheetData.customerId,
-        customerEphemeralKeySecret: sheetData.ephemeralKey,
-        paymentIntentClientSecret: sheetData.paymentIntentClientSecret,
+        customerId: intentData.customerId,
+        setupIntentClientSecret: intentData.setupIntentClientSecret,
         allowsDelayedPaymentMethods: false,
       });
 
       if (initResult.error) {
-        toast.error(initResult.error.message || "Failed to initialize payment");
+        toast.error(initResult.error.message || "Failed to initialize payment sheet");
         return;
       }
 
+      // 3) present sheet
       const paymentResult = await presentPaymentSheet();
 
       if (paymentResult.error) {
-        toast.error(paymentResult.error.message || "Payment failed");
+        toast.error(paymentResult.error.message || "Payment was not completed");
         return;
       }
 
+      // 4) confirm subscription on backend
+      await billingService.confirmSubscription({
+        planId: paidPlan.id,
+        billingCycle,
+        setupIntentId: getSetupIntentId(intentData.setupIntentClientSecret),
+      });
+
       toast.success("Subscription activated");
-      // optional refresh:
-      // await billingService.getMySubscription();
+
+      await loadActiveSubscription();
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
         error?.message ||
-        "Failed to subscribe"
+        "Subscription failed"
       );
     } finally {
       setIsSubscribing(false);
     }
   };
 
+  const loadActiveSubscription = useCallback(async () => {
+    try {
+      setLoadingActiveSub(true);
+      const data = await billingService.getMyActiveSubscription();
+      setActiveSubscription(data || null);
+    } catch {
+      // no active sub or endpoint returns error; keep null
+      setActiveSubscription(null);
+    } finally {
+      setLoadingActiveSub(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const init = async () => {
+      try {
+        await Promise.all([getUserPlans(), loadActiveSubscription()]);
+      } catch (error: any) {
+        if (!mounted) return;
+        toast.error(error?.message || "Failed to load subscription data");
+      }
+    };
+
+    init();
+
+    return () => {
+      mounted = false;
+    };
+  }, [getUserPlans, loadActiveSubscription]);
+
+  const isAlreadySubscribed = !!activeSubscription && ["active", "trialing"].includes(String(activeSubscription?.status || "").toLowerCase());
 
 
   return (
@@ -254,11 +290,26 @@ const UserPlan = () => {
 
         {/* Subscribe Button */}
         <GradientButton
-          title={isSubscribing ? "Processing..." : "Subscribe Now"}
-          disabled={!paidPlan || !selectedPlan || isSubscribing}
+          title={
+            loadingActiveSub
+              ? "Checking..."
+              : isAlreadySubscribed
+                ? "Already Subscribed"
+                : isSubscribing
+                  ? "Processing..."
+                  : "Subscribe Now"
+          }
+          disabled={
+            loadingActiveSub ||
+            isAlreadySubscribed ||
+            !paidPlan ||
+            !selectedPlan ||
+            isSubscribing
+          }
           onPress={handleSubscribe}
           icon={<FontAwesome6 name="crown" size={18} color="#FFFFFF" />}
         />
+
       </View>
     </SafeAreaView>
   );
