@@ -3,6 +3,7 @@ import GradientButton from "@/components/ui/buttons/GradientButton";
 import { billingService } from '@/services/billingService';
 import { useSubscriptionStore } from "@/stores/subscriptionStore";
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { useStripe } from "@stripe/stripe-react-native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -161,6 +162,13 @@ const UserPlan = () => {
       mounted = false;
     };
   }, [getUserPlans, loadActiveSubscription]);
+
+  useFocusEffect(
+    useCallback(() => {
+      getUserPlans();
+      loadActiveSubscription();
+    }, [getUserPlans, loadActiveSubscription])
+  );
 
   const isAlreadySubscribed = !!activeSubscription && ["active", "trialing"].includes(String(activeSubscription?.status || "").toLowerCase());
 

@@ -32,6 +32,8 @@
       "cancelPlanTitle": "Ακύρωση συνδρομής;",
       "cancelPlanSubtitle": "Η τρέχουσα συνδρομή σας θα παραμείνει ενεργή μέχρι την [ημερομηνία λήξης]. Μπορείτε να συνεχίσετε να χρησιμοποιείτε τις λειτουργίες μέχρι τότε.",
       "cancelPlan": "Ακύρωση συνδρομής",
+      "cancelling": "Ακύρωση...",
+      "cancelAtPeriodEnd": "Θα ακυρωθεί στο τέλος της περιόδου",
       "userPlanBilling": "Συνδρομή χρήστη & Χρέωση",
       "businessPlanBilling": "Συνδρομή επιχείρησης & Χρέωση",
       "passwordMasked": "Κωδικός: *********",
@@ -72,6 +74,8 @@
     "shift_template_updated_successfully": "Το πρότυπο βάρδιας ενημερώθηκε με επιτυχία.",
     "shift_template_deleted_successfully": "Το πρότυπο βάρδιας διαγράφηκε με επιτυχία.",
     "profile_updated_successfully": "Το προφίλ ενημερώθηκε με επιτυχία.",
+    "active_subscription_retrieved_successfully": "Η ενεργή συνδρομή ανακτήθηκε με επιτυχία.",
+    "subscription_cancelled_successfully": "Η συνδρομή ακυρώθηκε με επιτυχία.",
     "experiences.0.startDate must be a valid ISO 8601 date string": "Η ημερομηνία έναρξης εμπειρίας πρέπει να είναι έγκυρη μορφή ISO 8601."
   },
   "validation": {

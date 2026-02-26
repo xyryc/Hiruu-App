@@ -19,6 +19,17 @@ export type ConfirmSubscriptionPayload = {
     setupIntentId: string;
 };
 
+export type CancelSubscriptionResponse = {
+    id: string;
+    status: string;
+    cancelAtPeriodEnd: boolean;
+    autoRenew: boolean;
+    endDate?: string;
+    currentPeriodEnd?: string;
+    billingCycle?: BillingCycle;
+    provider?: string;
+};
+
 class BillingService {
     async createSubscriptionIntent(payload: CreateSubscriptionIntentPayload) {
         const response = await axiosInstance.post("/subscriptions/intent", payload);
@@ -51,6 +62,17 @@ class BillingService {
         }
 
         return result.data;
+    }
+
+    async cancelSubscription(subscriptionId: string) {
+        const response = await axiosInstance.post(`/subscriptions/${subscriptionId}/cancel`);
+        const result = response.data;
+
+        if (!result?.success) {
+            throw new Error(result?.message || "Failed to cancel subscription");
+        }
+
+        return result.data as CancelSubscriptionResponse;
     }
 }
 

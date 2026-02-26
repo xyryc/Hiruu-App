@@ -1,18 +1,19 @@
-import ScreenHeader from "@/components/header/ScreenHeader";
+﻿import ScreenHeader from "@/components/header/ScreenHeader";
 import SettingsCard from "@/components/ui/cards/SettingsCard";
-import LogoutDeleteModal from "@/components/ui/modals/LogoutDeleteModal";
-import { billingService } from '@/services/billingService';
-import { useAuthStore } from '@/stores/authStore';
-import { formatDate } from '@/utils/date';
+import ConfirmActionModal from "@/components/ui/modals/ConfirmActionModal";
+import { billingService } from "@/services/billingService";
+import { useAuthStore } from "@/stores/authStore";
+import { formatDate } from "@/utils/date";
 import {
   Entypo,
   Feather,
   MaterialCommunityIcons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -42,46 +43,67 @@ const Subscription = () => {
   const isDark = colorScheme === "dark";
   const [showModal, setShowModal] = useState(false);
   const { t } = useTranslation();
-  const { user } = useAuthStore()
+  const { user } = useAuthStore();
   const [activeSubscription, setActiveSubscription] = useState<ActiveSubscription | null>(null);
   const [isLoadingActiveSubscription, setIsLoadingActiveSubscription] = useState(false);
   const [activeSubError, setActiveSubError] = useState<string | null>(null);
+  const [isCancelling, setIsCancelling] = useState(false);
 
-  const modalData = {
-    title: t("user.profile.cancelPlanTitle"),
-    subtitle: t("user.profile.cancelPlanSubtitle"),
-    img: CancelImg,
-    buttonName: t("user.profile.cancelPlan"),
-    buttonColor: "#F34F4F",
-  };
+  const fetchActiveSubscription = useCallback(async () => {
+    try {
+      setIsLoadingActiveSubscription(true);
+      setActiveSubError(null);
 
-  useEffect(() => {
-    let mounted = true;
-
-    const fetchActiveSubscription = async () => {
-      try {
-        setIsLoadingActiveSubscription(true);
-        setActiveSubError(null);
-
-        const data = await billingService.getMyActiveSubscription();
-
-        if (!mounted) return;
-        setActiveSubscription(data ?? null);
-      } catch (error: any) {
-        if (!mounted) return;
-        setActiveSubscription(null);
-        setActiveSubError(error?.message || "Failed to load active subscription");
-      } finally {
-        if (mounted) setIsLoadingActiveSubscription(false);
-      }
-    };
-
-    fetchActiveSubscription();
-
-    return () => {
-      mounted = false;
-    };
+      const data = await billingService.getMyActiveSubscription();
+      setActiveSubscription(data ?? null);
+    } catch (error: any) {
+      setActiveSubscription(null);
+      setActiveSubError(error?.message || "Failed to load active subscription");
+    } finally {
+      setIsLoadingActiveSubscription(false);
+    }
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchActiveSubscription();
+    }, [fetchActiveSubscription])
+  );
+
+  const providerLabel = activeSubscription?.provider
+    ? `${activeSubscription.provider.charAt(0).toUpperCase()}${activeSubscription.provider.slice(1)}`
+    : "Unavailable";
+
+  const handleCancelSubscription = async () => {
+    if (!activeSubscription?.id || isCancelling) return;
+
+    try {
+      setIsCancelling(true);
+      setActiveSubError(null);
+
+      const cancelled = await billingService.cancelSubscription(activeSubscription.id);
+
+      setActiveSubscription((prev) =>
+        prev
+          ? {
+            ...prev,
+            status: cancelled.status || prev.status,
+            cancelAtPeriodEnd: cancelled.cancelAtPeriodEnd,
+            currentPeriodEnd: cancelled.currentPeriodEnd || cancelled.endDate || prev.currentPeriodEnd,
+            billingCycle: (cancelled.billingCycle as "monthly" | "yearly") || prev.billingCycle,
+            provider: cancelled.provider || prev.provider,
+          }
+          : prev
+      );
+
+      setShowModal(false);
+      await fetchActiveSubscription();
+    } catch (error: any) {
+      setActiveSubError(error?.message || "Failed to cancel subscription");
+    } finally {
+      setIsCancelling(false);
+    }
+  };
 
   return (
     <SafeAreaView
@@ -100,72 +122,75 @@ const Subscription = () => {
 
       <ScrollView
         contentContainerStyle={{
-          paddingBottom: 80
+          paddingBottom: 80,
         }}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         <View className="m-5">
-          {
-            activeSubscription && (
-              <View className="border border-[#EEEEEE] rounded-2xl">
-                <View className="px-2.5 py-5 flex-row gap-3">
-                  <View className="h-[50px] w-[50px] bg-[#11293A1A] rounded-xl flex-row justify-center items-center">
-                    <MaterialCommunityIcons
-                      name="receipt-text-outline"
-                      size={22}
-                      color="black"
-                    />
-                  </View>
+          {isLoadingActiveSubscription && !activeSubscription && (
+            <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mb-3">
+              Loading subscription...
+            </Text>
+          )}
 
-                  <View>
-                    <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary">
-                      {t("user.profile.userPlanBilling")}
-                    </Text>
-                    <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3">
-                      {user?.email || "-"}
-                    </Text>
-                    {/* <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                  {t("user.profile.passwordMasked")}
-                </Text> */}
-                    <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                      {user?.phoneNumber || t("user.profile.phoneMasked")}
-                    </Text>
-                    <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
-                      {t("user.profile.activeDateRange")}: {formatDate(activeSubscription?.currentPeriodEnd)}
-                    </Text>
-                  </View>
+          {activeSubscription && (
+            <View className="border border-[#EEEEEE] rounded-2xl">
+              <View className="px-2.5 py-5 flex-row gap-3">
+                <View className="h-[50px] w-[50px] bg-[#11293A1A] rounded-xl flex-row justify-center items-center">
+                  <MaterialCommunityIcons
+                    name="receipt-text-outline"
+                    size={22}
+                    color="black"
+                  />
                 </View>
 
-                <View className="border-b border-[#EEEEEE]" />
-
-                <View className="px-2.5 py-5">
-                  <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center capitalize">
-                    {activeSubscription?.provider
-                      ? `Billed through ${activeSubscription.provider}`
-                      : "Billing provider unavailable"}
+                <View>
+                  <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary">
+                    {t("user.profile.userPlanBilling")}
                   </Text>
-
-                  <Text className="capitalize font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-14 text-center">
-                    {activeSubscription
-                      ? `Status: ${activeSubscription.status} • ${activeSubscription.billingCycle}`
-                      : "No active subscription"}
+                  <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3">
+                    {user?.email || "-"}
+                  </Text>
+                  <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
+                    {user?.phoneNumber || t("user.profile.phoneMasked")}
+                  </Text>
+                  <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-pritext-primary mt-3">
+                    {t("user.profile.activeDateRange")}: {formatDate(activeSubscription.currentPeriodEnd)}
                   </Text>
                 </View>
-
-
-                <View className="border-b border-[#EEEEEE]" />
-
-                <TouchableOpacity
-                  onPress={() => setShowModal(true)}
-                  className="my-5"
-                >
-                  <Text className="font-proximanova-bold text-[#F34F4F] text-center">
-                    {t("user.profile.cancelPlan")}
-                  </Text>
-                </TouchableOpacity>
               </View>
-            )
-          }
 
+              <View className="border-b border-[#EEEEEE]" />
+
+              <View className="px-2.5 py-5">
+                <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center capitalize">
+                  {`Billed through ${providerLabel}`}
+                </Text>
+
+                <Text className="capitalize font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-14 text-center">
+                  {`Status: ${activeSubscription.status} • ${activeSubscription.billingCycle}${activeSubscription.cancelAtPeriodEnd ? ` • ${t("user.profile.cancelAtPeriodEnd")}` : ""
+                    }`}
+                </Text>
+                {!!activeSubError && (
+                  <Text className="font-proximanova-semibold text-sm text-[#F34F4F] mt-3 text-center">
+                    {activeSubError}
+                  </Text>
+                )}
+              </View>
+
+              <View className="border-b border-[#EEEEEE]" />
+
+              <TouchableOpacity
+                disabled={isCancelling}
+                onPress={() => setShowModal(true)}
+                className="my-5"
+              >
+                <Text className="font-proximanova-bold text-[#F34F4F] text-center">
+                  {isCancelling ? t("user.profile.cancelling") : t("user.profile.cancelPlan")}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
 
           {/* business plan */}
           <View className="border border-[#EEEEEE] rounded-2xl mt-4">
@@ -200,10 +225,10 @@ const Subscription = () => {
 
             <View className="px-2.5 py-5">
               <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center">
-                {t("user.profile.billedThroughGooglePay")}
+                Billed through Stripe
               </Text>
               <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-14">
-                {t("user.profile.googlePayBillingNote")}
+                Manage your billing and renewal from your Stripe-backed subscription.
               </Text>
             </View>
 
@@ -268,10 +293,16 @@ const Subscription = () => {
         </Text>
       </ScrollView>
 
-      <LogoutDeleteModal
+      <ConfirmActionModal
         visible={showModal}
         onClose={() => setShowModal(false)}
-        data={modalData}
+        onConfirm={handleCancelSubscription}
+        title={t("user.profile.cancelPlanTitle")}
+        subtitle={t("user.profile.cancelPlanSubtitle")}
+        icon={CancelImg}
+        confirmLabel={isCancelling ? t("user.profile.cancelling") : t("user.profile.cancelPlan")}
+        confirmColor="#F34F4F"
+        loading={isCancelling}
       />
     </SafeAreaView>
   );
