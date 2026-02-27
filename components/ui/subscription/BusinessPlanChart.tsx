@@ -174,6 +174,14 @@ const BusinessPlanChart = ({
     Number(selectedPlanData?.monthlyPrice || 0) > 0 &&
     String(selectedPlanData?.name || "").toLowerCase() !== "free";
 
+  useEffect(() => {
+    if (!selectedPlanData || !onSelectionChange) return;
+    onSelectionChange({
+      planId: selectedPlanData.id,
+      billingCycle: selectedPlanTime,
+    });
+  }, [onSelectionChange, selectedPlanData, selectedPlanTime]);
+
   const formatDollarFromCents = (amountInCents: number) => {
     const dollars = amountInCents / 100;
     return Number.isInteger(dollars) ? `${dollars}` : dollars.toFixed(2);
@@ -373,10 +381,3 @@ const BusinessPlanChart = ({
 };
 
 export default BusinessPlanChart;
-  useEffect(() => {
-    if (!selectedPlanData || !onSelectionChange) return;
-    onSelectionChange({
-      planId: selectedPlanData.id,
-      billingCycle: selectedPlanTime,
-    });
-  }, [onSelectionChange, selectedPlanData, selectedPlanTime]);

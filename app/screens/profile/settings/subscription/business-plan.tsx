@@ -183,14 +183,16 @@ const BusinessPlan = () => {
         businessId: selectedBusinessId,
       });
 
+      console.log("business plan", intentData.setupIntentClientSecret, planForCheckout.id, billingCycle, selectedBusinessId)
+
       toast.success("Business subscription activated");
       await Promise.all([getBusinessPlans(), loadActiveSubscriptions()]);
       router.back();
     } catch (error: any) {
       toast.error(
         error?.response?.data?.message ||
-          error?.message ||
-          "Business subscription failed"
+        error?.message ||
+        "Business subscription failed"
       );
     } finally {
       setIsSubscribing(false);

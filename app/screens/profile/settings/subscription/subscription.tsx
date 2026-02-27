@@ -167,9 +167,8 @@ const Subscription = () => {
                 </Text>
 
                 <Text className="capitalize font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-14 text-center">
-                  {`Status: ${userSubscription.status} • ${userSubscription.billingCycle}${
-                    userSubscription.cancelAtPeriodEnd ? ` • ${t("user.profile.cancelAtPeriodEnd")}` : ""
-                  }`}
+                  {`Status: ${userSubscription.status} • ${userSubscription.billingCycle}${userSubscription.cancelAtPeriodEnd ? ` • ${t("user.profile.cancelAtPeriodEnd")}` : ""
+                    }`}
                 </Text>
                 {!!activeSubError && (
                   <Text className="font-proximanova-semibold text-sm text-[#F34F4F] mt-3 text-center">
@@ -224,7 +223,7 @@ const Subscription = () => {
               <View className="border-b border-[#EEEEEE]" />
 
               <View className="px-2.5 py-5">
-                <Text className="font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center">
+                <Text className="capitalize font-proximanova-bold text-xl text-primary dark:text-dark-primary text-center">
                   Billed through {item.provider || "Stripe"}
                 </Text>
                 <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mt-3 px-8 text-center capitalize">
