@@ -9,12 +9,13 @@ import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
 
 const UserPlan = () => {
   const { colorScheme } = useColorScheme();
+  const insets = useSafeAreaInsets()
   const isDark = colorScheme === "dark";
   const { userPlans, isLoadingUserPlans, getUserPlans } = useSubscriptionStore();
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "annual">(
@@ -181,15 +182,15 @@ const UserPlan = () => {
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
       edges={["left", "right", "bottom"]}
     >
-      <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-10 px-5">
-        <ScreenHeader
-          className="my-4"
-          onPressBack={() => router.back()}
-          title="User Plan"
-          titleClass="text-primary dark:text-dark-primary"
-          iconColor={isDark ? "#fff" : "#111"}
-        />
-      </View>
+      <ScreenHeader
+        className="capitalize bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+        style={{ paddingTop: insets.top + 10, paddingBottom: 20 }}
+        onPressBack={() => router.back()}
+        title="User Plan"
+        titleClass="text-primary dark:text-dark-primary"
+        iconColor={isDark ? "#fff" : "#111"}
+      />
+
 
       <ScrollView className="flex-1 mx-5 mt-8">
         <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
