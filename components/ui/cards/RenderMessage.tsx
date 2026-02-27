@@ -42,14 +42,19 @@ interface MessageProps {
       subtitle?: string;
       duration?: string;
     } | null;
+    uploadState?: "uploading" | "failed";
   };
+  onRetryMediaUpload?: (messageId: string | number) => void;
 }
 
-const RenderMessage: React.FC<MessageProps> = ({ msg }) => {
+const RenderMessage: React.FC<MessageProps> = ({ msg, onRetryMediaUpload }) => {
   const statusMeta = getStatusMeta(msg.status || "");
   const media = Array.isArray(msg.media) ? msg.media : [];
   const call = msg.call || null;
   const shouldShowTextBubble = !!msg.text && !call;
+  const showMediaUploadState = msg.isSent && media.length > 0;
+  const isUploadingMedia = showMediaUploadState && msg.uploadState === "uploading";
+  const isFailedMedia = showMediaUploadState && msg.uploadState === "failed";
 
   const avatarSource = typeof msg.avatar === "string" ? { uri: msg.avatar } : msg.avatar;
 
@@ -147,6 +152,28 @@ const RenderMessage: React.FC<MessageProps> = ({ msg }) => {
                 </Text>
               </View>
             )}
+
+            {isUploadingMedia ? (
+              <Text className="font-proximanova-regular text-xs text-secondary">
+                Uploading media...
+              </Text>
+            ) : null}
+
+            {isFailedMedia ? (
+              <View className="flex-row items-center gap-2">
+                <Text className="font-proximanova-regular text-xs text-[#EF4444]">
+                  Failed to upload media
+                </Text>
+                <TouchableOpacity
+                  onPress={() => onRetryMediaUpload?.(msg.id)}
+                  activeOpacity={0.8}
+                >
+                  <Text className="font-proximanova-semibold text-xs text-[#3D9FDF]">
+                    Retry
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
           </View>
 
           {msg.isSent && (

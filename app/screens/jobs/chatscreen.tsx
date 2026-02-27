@@ -52,6 +52,7 @@ const ChatScreen = () => {
   const messagesListRef = useRef<FlatList<any> | null>(null);
   const previousMessageCountRef = useRef(0);
   const didInitialScrollRef = useRef(false);
+  const initialAutoScrollTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const { user } = useAuthStore();
   const router = useRouter();
   const params = useLocalSearchParams<{ roomId?: string; userId?: string }>();
@@ -139,6 +140,7 @@ const ChatScreen = () => {
     isTyping,
     typingUser,
     sendMessage,
+    retryFailedMessage,
     startTyping,
     stopTyping,
     refreshMessages,
@@ -399,6 +401,7 @@ const ChatScreen = () => {
         avatar: msg.sender?.avatar || require("@/assets/images/placeholder.png"),
         media: mapMessageMedia(msg),
         call: mapCallMessage(msg, currentUserId),
+        uploadState: msg.uploadState,
         // Oldest-first data: attach separator to first message of each day bucket.
         showDateSeparator: shouldShowDateSeparator,
         dateLabel: currentDateLabel,
@@ -479,6 +482,10 @@ const ChatScreen = () => {
       setSelectedMedia((prev) => (prev.length ? prev : selectedMedia));
     }
   }, [message, selectedMedia, sending, sendMessage]);
+
+  const handleRetryMediaUpload = useCallback((messageId: string | number) => {
+    void retryFailedMessage(String(messageId));
+  }, [retryFailedMessage]);
 
   const handleTyping = useCallback(() => {
     startTyping();
@@ -695,6 +702,10 @@ const ChatScreen = () => {
     if (!mappedMessages.length) {
       previousMessageCountRef.current = 0;
       didInitialScrollRef.current = false;
+      if (initialAutoScrollTimerRef.current) {
+        clearInterval(initialAutoScrollTimerRef.current);
+        initialAutoScrollTimerRef.current = null;
+      }
       return;
     }
 
@@ -708,13 +719,40 @@ const ChatScreen = () => {
 
   useEffect(() => {
     if (loading || !mappedMessages.length || didInitialScrollRef.current) return;
-    scrollToBottom(false);
-    didInitialScrollRef.current = true;
-  }, [loading, mappedMessages.length, scrollToBottom]);
+
+    let attempts = 0;
+    if (initialAutoScrollTimerRef.current) {
+      clearInterval(initialAutoScrollTimerRef.current);
+      initialAutoScrollTimerRef.current = null;
+    }
+
+    initialAutoScrollTimerRef.current = setInterval(() => {
+      scrollToBottom(false);
+      attempts += 1;
+      if (attempts >= 12) {
+        if (initialAutoScrollTimerRef.current) {
+          clearInterval(initialAutoScrollTimerRef.current);
+          initialAutoScrollTimerRef.current = null;
+        }
+        didInitialScrollRef.current = true;
+      }
+    }, 120);
+
+    return () => {
+      if (initialAutoScrollTimerRef.current) {
+        clearInterval(initialAutoScrollTimerRef.current);
+        initialAutoScrollTimerRef.current = null;
+      }
+    };
+  }, [actualRoomId, loading, mappedMessages.length, scrollToBottom]);
 
   useEffect(() => {
     didInitialScrollRef.current = false;
     previousMessageCountRef.current = 0;
+    if (initialAutoScrollTimerRef.current) {
+      clearInterval(initialAutoScrollTimerRef.current);
+      initialAutoScrollTimerRef.current = null;
+    }
   }, [actualRoomId]);
 
   useEffect(() => {
@@ -786,20 +824,19 @@ const ChatScreen = () => {
           {/* Messages */}
           <FlatList
             ref={messagesListRef}
+            style={{ flex: 1 }}
             data={mappedMessages}
             keyExtractor={(item) => item.id.toString()}
-            contentContainerStyle={{ paddingHorizontal: 16 }}
+            contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 12 }}
             showsVerticalScrollIndicator={false}
             inverted={false}
             onContentSizeChange={() => {
               if (!mappedMessages.length || didInitialScrollRef.current) return;
               scrollToBottom(false);
-              didInitialScrollRef.current = true;
             }}
             onLayout={() => {
               if (!mappedMessages.length || didInitialScrollRef.current) return;
               scrollToBottom(false);
-              didInitialScrollRef.current = true;
             }}
             renderItem={({ item: msg }) => (
               <>
@@ -812,7 +849,10 @@ const ChatScreen = () => {
                     <View className="h-[1px] flex-1 bg-[#D1D5DB]" />
                   </View>
                 ) : null}
-                <RenderMessage msg={msg} />
+                <RenderMessage
+                  msg={msg}
+                  onRetryMediaUpload={handleRetryMediaUpload}
+                />
               </>
             )}
             ListEmptyComponent={

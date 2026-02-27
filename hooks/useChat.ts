@@ -1,5 +1,5 @@
-import { chatService } from '@/services/chatService';
 import type { ChatUploadMedia } from '@/services/chatService';
+import { chatService } from '@/services/chatService';
 import { socketService } from '@/services/socketService';
 import { useAuthStore } from '@/stores/authStore';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -11,11 +11,21 @@ interface Message {
     chatRoomId: string;
     status: 'sent' | 'delivered' | 'read' | 'failed';
     createdAt: string;
+    type?: string;
+    attachments?: Array<{
+        url?: string;
+        uri?: string;
+        type?: string;
+        fileName?: string;
+        mimeType?: string;
+    }>;
     sender?: {
         id: string;
         name: string;
         avatar?: string;
     };
+    uploadState?: 'uploading' | 'failed';
+    retryPayload?: SendMessageInput;
 }
 
 interface UseChatOptions {
@@ -37,6 +47,7 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
     const [connected, setConnected] = useState(false);
     const { user } = useAuthStore();
     const isMounted = useRef(true);
+    const messagesRef = useRef<Message[]>([]);
     const typingResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const extractCallBody = useCallback((payload: any) => {
@@ -53,11 +64,11 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
             const result = await chatService.getRoomMessages(roomId);
             const data = result?.data?.data || [];
 
-            console.log('[CHAT_DEBUG] load-messages:body', data);
+            // console.log('[CHAT_DEBUG] load-messages:body', data);
             const callBodies = Array.isArray(data)
                 ? data
-                      .map((message: any) => extractCallBody(message))
-                      .filter(Boolean)
+                    .map((message: any) => extractCallBody(message))
+                    .filter(Boolean)
                 : [];
             if (callBodies.length) {
                 console.log('[CHAT_DEBUG] load-messages:call-body', callBodies);
@@ -96,6 +107,72 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
         }, 2000);
     }, [clearTypingState]);
 
+    useEffect(() => {
+        messagesRef.current = messages;
+    }, [messages]);
+
+    const replaceTempMessage = useCallback((tempId: string, serverMessage?: any) => {
+        setMessages((prev) => {
+            const withoutTemp = prev.filter((msg) => msg.id !== tempId);
+            if (!serverMessage?.id) {
+                return withoutTemp;
+            }
+            if (withoutTemp.some((msg) => msg.id === serverMessage.id)) {
+                return withoutTemp;
+            }
+            return [serverMessage, ...withoutTemp];
+        });
+    }, []);
+
+    const markTempMessageFailed = useCallback((tempId: string) => {
+        setMessages((prev) =>
+            prev.map((msg) =>
+                msg.id === tempId
+                    ? { ...msg, status: 'failed', uploadState: 'failed' }
+                    : msg
+            )
+        );
+    }, []);
+
+    const buildTempMediaMessage = useCallback(
+        (tempId: string, input: SendMessageInput): Message => {
+            const media = Array.isArray(input.media) ? input.media : [];
+            const attachments = media.map((file) => {
+                const mime = String(file?.type || '').toLowerCase();
+                const type = mime.startsWith('video') ? 'video' : 'image';
+                return {
+                    url: file?.uri,
+                    uri: file?.uri,
+                    type,
+                    fileName: file?.name,
+                    mimeType: file?.type,
+                };
+            });
+
+            return {
+                id: tempId,
+                content: input.content?.trim() || '',
+                senderId: user?.id || '',
+                chatRoomId: roomId,
+                status: 'sent',
+                type: media.length > 0 ? 'media' : 'text',
+                attachments,
+                createdAt: new Date().toISOString(),
+                sender: {
+                    id: user?.id || '',
+                    name: user?.name || 'You',
+                    avatar: user?.avatar,
+                },
+                uploadState: 'uploading',
+                retryPayload: {
+                    content: input.content?.trim() || '',
+                    media,
+                },
+            };
+        },
+        [roomId, user?.avatar, user?.id, user?.name]
+    );
+
     // Send message
     const sendMessage = useCallback(
         async (input: SendMessageInput): Promise<boolean> => {
@@ -108,10 +185,37 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
                 return false;
             }
 
+            if (hasMedia) {
+                const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+                const tempMessage = buildTempMediaMessage(tempId, input);
+                setMessages((prev) => [tempMessage, ...prev]);
+
+                void (async () => {
+                    try {
+                        console.log('[CHAT_DEBUG] send-media-message:body', { roomId, content, media });
+                        const result = await chatService.sendMessage(roomId, {
+                            content,
+                            media,
+                        });
+                        replaceTempMessage(tempId, result?.data);
+                    } catch (error) {
+                        console.error('Failed to upload media message:', error);
+                        markTempMessageFailed(tempId);
+                        if (onError) {
+                            onError(error as Error);
+                        }
+                    } finally {
+                        clearTypingState();
+                    }
+                })();
+
+                return true;
+            }
+
             try {
                 setSending(true);
                 console.log('[CHAT_DEBUG] send-message:body', { roomId, content, media });
-                if (!hasMedia && socketService.isConnected()) {
+                if (socketService.isConnected()) {
                     socketService.sendMessage({
                         chatRoomId: roomId,
                         content,
@@ -129,14 +233,56 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
                 if (onError) {
                     onError(error as Error);
                 }
-                setMessages((prev) => prev.filter((msg) => !msg.id.startsWith('temp-')));
                 return false;
             } finally {
                 setSending(false);
                 clearTypingState();
             }
         },
-        [roomId, sending, onError, clearTypingState]
+        [
+            roomId,
+            sending,
+            onError,
+            clearTypingState,
+            buildTempMediaMessage,
+            markTempMessageFailed,
+            replaceTempMessage,
+        ]
+    );
+
+    const retryFailedMessage = useCallback(
+        async (messageId: string): Promise<boolean> => {
+            if (!roomId) return false;
+
+            const target = messagesRef.current.find((msg) => msg.id === messageId);
+            const payload = target?.retryPayload;
+
+            if (!target || !payload || !Array.isArray(payload.media) || payload.media.length === 0) {
+                return false;
+            }
+
+            setMessages((prev) =>
+                prev.map((msg) =>
+                    msg.id === messageId
+                        ? { ...msg, status: 'sent', uploadState: 'uploading' }
+                        : msg
+                )
+            );
+
+            try {
+                const result = await chatService.sendMessage(roomId, payload);
+                replaceTempMessage(messageId, result?.data);
+                return true;
+            } catch (error) {
+                console.error('Retry media upload failed:', error);
+                markTempMessageFailed(messageId);
+                if (onError) {
+                    onError(error as Error);
+                }
+                return false;
+            }
+        },
+        [roomId, onError, markTempMessageFailed, replaceTempMessage]
     );
 
     // Typing indicators
@@ -185,13 +331,11 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
                     if (data.message && data.message.chatRoomId === roomId) {
                         clearTypingState();
                         setMessages((prev) => {
-                            // Remove temp message if exists
-                            const filtered = prev.filter((msg) => !msg.id.startsWith('temp-'));
                             // Add new message if not already present
-                            if (!filtered.some((msg) => msg.id === data.message.id)) {
-                                return [data.message, ...filtered];
+                            if (!prev.some((msg) => msg.id === data.message.id)) {
+                                return [data.message, ...prev];
                             }
-                            return filtered;
+                            return prev;
                         });
                     }
                 };
@@ -316,6 +460,7 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
         isTyping,
         typingUser,
         sendMessage,
+        retryFailedMessage,
         startTyping,
         stopTyping,
         refreshMessages: loadMessages,
