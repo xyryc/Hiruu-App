@@ -74,16 +74,21 @@ const BusinessPlanChart = ({
   businessPlans = [],
   initialTier,
   initialBillingCycle,
+  onSelectionChange,
 }: {
   businessPlans?: BusinessPlanItem[];
   initialTier?: string | null;
   initialBillingCycle?: "monthly" | "yearly" | null;
+  onSelectionChange?: (selection: {
+    planId: string;
+    billingCycle: "monthly" | "yearly";
+  }) => void;
 }) => {
   const [selectedPlan, setSelectedPlan] = useState("free");
   const mounted = useRef(true);
   const [selectedPlanTime, setSelectedPlanTime] = useState<
-    "monthly" | "annual"
-  >("annual");
+    "monthly" | "yearly"
+  >("yearly");
 
   useEffect(() => {
     mounted.current = true;
@@ -160,7 +165,7 @@ const BusinessPlanChart = ({
 
   useEffect(() => {
     if (!initialBillingCycle || !mounted.current) return;
-    setSelectedPlanTime(initialBillingCycle === "yearly" ? "annual" : "monthly");
+    setSelectedPlanTime(initialBillingCycle);
   }, [initialBillingCycle]);
 
   const selectedPlanData =
@@ -319,11 +324,11 @@ const BusinessPlanChart = ({
 
             {/* Annual Plan */}
             <TouchableOpacity
-              onPress={() => setSelectedPlanTime("annual")}
-              className={`${selectedPlanTime === "annual" && "border-[#4E57FF] bg-[#4fb1f333]"} flex-row justify-between items-center border p-4 mt-7 rounded-2xl`}
+              onPress={() => setSelectedPlanTime("yearly")}
+              className={`${selectedPlanTime === "yearly" && "border-[#4E57FF] bg-[#4fb1f333]"} flex-row justify-between items-center border p-4 mt-7 rounded-2xl`}
             >
               <View className="flex-row items-center gap-3">
-                {selectedPlanTime === "annual" ? (
+                {selectedPlanTime === "yearly" ? (
                   <Ionicons name="checkmark-circle" size={24} color="#4E57FF" />
                 ) : (
                   <Ionicons name="radio-button-off" size={24} color="black" />
@@ -368,3 +373,10 @@ const BusinessPlanChart = ({
 };
 
 export default BusinessPlanChart;
+  useEffect(() => {
+    if (!selectedPlanData || !onSelectionChange) return;
+    onSelectionChange({
+      planId: selectedPlanData.id,
+      billingCycle: selectedPlanTime,
+    });
+  }, [onSelectionChange, selectedPlanData, selectedPlanTime]);

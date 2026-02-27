@@ -22,6 +22,8 @@ import { toast } from "sonner-native";
 const BusinessPlan = () => {
   const [showModal, setShowModal] = useState(false);
   const [isSubscribing, setIsSubscribing] = useState(false);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [selectedBillingCycle, setSelectedBillingCycle] = useState<"monthly" | "yearly">("yearly");
   const {
     myBusinesses,
     selectedBusinesses,
@@ -109,6 +111,11 @@ const BusinessPlan = () => {
     return !!selectedBusinessActiveSubscription;
   }, [selectedBusinessActiveSubscription]);
 
+  const selectedPlanForCheckout = useMemo(() => {
+    if (!selectedPlanId) return null;
+    return businessPlans.find((plan) => plan.id === selectedPlanId) || null;
+  }, [businessPlans, selectedPlanId]);
+
   // Get display content for header button
   const getDisplayContent = () => {
     if (!selectedBusiness) {
@@ -127,7 +134,9 @@ const BusinessPlan = () => {
       return;
     }
 
-    if (!paidPlan) {
+    const planForCheckout = selectedPlanForCheckout || paidPlan;
+
+    if (!planForCheckout) {
       toast.error("No paid business plan available");
       return;
     }
@@ -141,10 +150,10 @@ const BusinessPlan = () => {
 
     try {
       setIsSubscribing(true);
-      const billingCycle = "monthly";
+      const billingCycle = selectedBillingCycle;
 
       const intentData = await billingService.createSubscriptionIntent({
-        planId: paidPlan.id,
+        planId: planForCheckout.id,
         billingCycle,
         businessId: selectedBusinessId,
       });
@@ -169,7 +178,7 @@ const BusinessPlan = () => {
 
       await billingService.confirmSubscription({
         setupIntentId: intentData.setupIntentClientSecret,
-        planId: paidPlan.id,
+        planId: planForCheckout.id,
         billingCycle,
         businessId: selectedBusinessId,
       });
@@ -236,6 +245,10 @@ const BusinessPlan = () => {
             businessPlans={businessPlans}
             initialTier={selectedBusinessActiveSubscription?.plan?.tier ?? null}
             initialBillingCycle={selectedBusinessActiveSubscription?.billingCycle ?? null}
+            onSelectionChange={({ planId, billingCycle }) => {
+              setSelectedPlanId(planId);
+              setSelectedBillingCycle(billingCycle);
+            }}
           />
         )}
       </ScrollView>
@@ -259,7 +272,7 @@ const BusinessPlan = () => {
             loadingActiveSub ||
             isAlreadySubscribed ||
             !selectedBusinessId ||
-            !paidPlan ||
+            !(selectedPlanForCheckout || paidPlan) ||
             isSubscribing
           }
           onPress={handleSubscribe}
