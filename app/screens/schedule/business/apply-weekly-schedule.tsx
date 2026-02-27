@@ -3,7 +3,8 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { useBusinessStore } from "@/stores/businessStore";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -53,14 +54,29 @@ const addDays = (date: Date, days: number) => {
 const WeeklyScheduleApply = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const { selectedBusinesses, weeklyShiftSelections, weeklyRoleAssignments } =
-    useBusinessStore();
+  const {
+    selectedBusinesses,
+    weeklyShiftSelections,
+    weeklyRoleAssignments,
+    createWeeklyScheduleBlock,
+    getWeeklyScheduleBlocks,
+  } = useBusinessStore();
+  const [isApplying, setIsApplying] = useState(false);
+  const [existingBlocks, setExistingBlocks] = useState<
+    Array<{ id: string; startDate: string; endDate: string }>
+  >([]);
 
   const [selectedStartDate, setSelectedStartDate] = useState("");
   const [selectedEndDate, setSelectedEndDate] = useState("");
 
   const businessId = selectedBusinesses[0];
+
+  const isoToYmd = (value?: string) => {
+    if (!value) return "";
+    return value.slice(0, 10);
+  };
 
   const selectedTemplateCount = useMemo(
     () =>
@@ -74,14 +90,14 @@ const WeeklyScheduleApply = () => {
   );
 
   const buildPayload = () => {
-    const items = daysData.flatMap((day) => {
+    const slots = daysData.flatMap((day) => {
       const selectedTemplates = Array.isArray(weeklyShiftSelections[day.label])
         ? weeklyShiftSelections[day.label]
         : [];
 
       return selectedTemplates
         .filter((template: any) => Boolean(template?.id))
-        .map((template: any, index: number) => {
+        .map((template: any) => {
           const assignmentKey = `${day.label}::${template?.id}`;
           const selectedByRole = weeklyRoleAssignments[assignmentKey] || {};
           const employmentIds = Array.from(
@@ -101,29 +117,46 @@ const WeeklyScheduleApply = () => {
           return {
             shiftTemplateId: template?.id,
             dayOfWeek: day.label.toLowerCase(),
-            sequence: index,
             requiredEmployees: requiredEmployees > 0 ? requiredEmployees : 1,
-            notes: "",
             employmentIds,
           };
         });
     });
 
     return {
-      businessId,
-      isDefault: false,
-      weekStartsOn: 0,
       startDate: selectedStartDate,
-      endDate: selectedEndDate,
-      items,
+      name: `Week ${selectedStartDate} ${Math.random().toString(36).slice(2, 7)}`,
+      slots,
     };
   };
 
   const markedDates = useMemo(() => {
-    if (!selectedStartDate) return {} as MarkedDates;
+    const marks: MarkedDates = {};
+
+    existingBlocks.forEach((block) => {
+      const start = toDate(isoToYmd(block.startDate));
+      const end = toDate(isoToYmd(block.endDate));
+      const totalDays = Math.max(
+        0,
+        Math.floor((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000))
+      );
+
+      for (let index = 0; index <= totalDays; index += 1) {
+        const dateKey = formatDate(addDays(start, index));
+        marks[dateKey] = {
+          color: "#D1D5DB",
+          textColor: "#111111",
+          startingDay: index === 0,
+          endingDay: index === totalDays,
+        };
+      }
+    });
+
+    if (!selectedStartDate) return marks as MarkedDates;
 
     if (!selectedEndDate || selectedStartDate === selectedEndDate) {
       return {
+        ...marks,
         [selectedStartDate]: {
           selected: true,
           selectedColor: "#4FB2F3",
@@ -138,8 +171,6 @@ const WeeklyScheduleApply = () => {
       0,
       Math.floor((end.getTime() - start.getTime()) / (24 * 60 * 60 * 1000))
     );
-    const marks: MarkedDates = {};
-
     for (let index = 0; index <= totalDays; index += 1) {
       const dateKey = formatDate(addDays(start, index));
       marks[dateKey] = {
@@ -151,7 +182,7 @@ const WeeklyScheduleApply = () => {
     }
 
     return marks;
-  }, [selectedEndDate, selectedStartDate]);
+  }, [existingBlocks, selectedEndDate, selectedStartDate]);
 
   const selectedRangeLabel = useMemo(() => {
     if (!selectedStartDate) return "No date selected";
@@ -159,14 +190,58 @@ const WeeklyScheduleApply = () => {
     return `${selectedStartDate} to ${selectedEndDate}`;
   }, [selectedEndDate, selectedStartDate]);
 
+  const doesRangeOverlapExistingBlocks = useCallback(
+    (startYmd: string, endYmd: string) => {
+      const start = toDate(startYmd).getTime();
+      const end = toDate(endYmd).getTime();
+      return existingBlocks.some((block) => {
+        const blockStart = toDate(isoToYmd(block.startDate)).getTime();
+        const blockEnd = toDate(isoToYmd(block.endDate)).getTime();
+        return start <= blockEnd && end >= blockStart;
+      });
+    },
+    [existingBlocks]
+  );
+
+  useEffect(() => {
+    const loadExistingBlocks = async () => {
+      if (!businessId) {
+        setExistingBlocks([]);
+        return;
+      }
+      try {
+        const blocks = await getWeeklyScheduleBlocks(businessId);
+        setExistingBlocks(
+          blocks.map((item: any) => ({
+            id: item.id,
+            startDate: item.startDate,
+            endDate: item.endDate,
+          }))
+        );
+      } catch {
+        setExistingBlocks([]);
+      }
+    };
+
+    loadExistingBlocks();
+  }, [businessId, getWeeklyScheduleBlocks]);
+
   const handleDayPress = (day: DateData) => {
     const startDate = toDate(day.dateString);
     const endDate = addDays(startDate, 6);
-    setSelectedStartDate(formatDate(startDate));
-    setSelectedEndDate(formatDate(endDate));
+    const nextStart = formatDate(startDate);
+    const nextEnd = formatDate(endDate);
+
+    if (doesRangeOverlapExistingBlocks(nextStart, nextEnd)) {
+      toast.error("A weekly schedule already exists in this date range.");
+      return;
+    }
+
+    setSelectedStartDate(nextStart);
+    setSelectedEndDate(nextEnd);
   };
 
-  const handleApply = () => {
+  const handleApply = async () => {
     if (!businessId) {
       toast.error("Please select a business first.");
       return;
@@ -190,13 +265,29 @@ const WeeklyScheduleApply = () => {
     }
 
     const payload = buildPayload();
-    if (!Array.isArray(payload.items) || payload.items.length === 0) {
+    if (!Array.isArray(payload.slots) || payload.slots.length === 0) {
       toast.error("No schedule items found.");
       return;
     }
+    if (doesRangeOverlapExistingBlocks(selectedStartDate, selectedEndDate)) {
+      toast.error("A weekly schedule already exists in this date range.");
+      return;
+    }
 
-    toast.success("Weekly schedule range saved. API integration pending.");
-    router.back();
+    try {
+      setIsApplying(true);
+      await createWeeklyScheduleBlock(businessId, payload);
+      toast.success(t("api.weekly_block_created_successfully"));
+      router.back();
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to apply weekly schedule."
+      );
+    } finally {
+      setIsApplying(false);
+    }
   };
 
   return (
@@ -283,10 +374,11 @@ const WeeklyScheduleApply = () => {
         </TouchableOpacity>
 
         <PrimaryButton
-          title="Apply Schedule"
+          title={isApplying ? "Applying..." : "Apply Schedule"}
           className="mt-6 mb-5"
           onPress={handleApply}
-          disabled={!selectedStartDate || !selectedEndDate}
+          loading={isApplying}
+          disabled={!selectedStartDate || !selectedEndDate || isApplying}
         />
       </ScrollView>
     </SafeAreaView>

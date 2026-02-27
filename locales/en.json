@@ -75,6 +75,7 @@
     "profile_updated_successfully": "Profile updated successfully.",
     "active_subscription_retrieved_successfully": "Active subscription retrieved successfully.",
     "subscription_cancelled_successfully": "Subscription cancelled successfully.",
+    "weekly_block_created_successfully": "Weekly block created successfully.",
     "experiences.0.startDate must be a valid ISO 8601 date string": "Experience start date must be a valid ISO 8601 date string.",
     "UNKNOWN_ERROR": "An unexpected error occurred"
   },
