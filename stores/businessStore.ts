@@ -55,6 +55,7 @@ interface BusinessState {
     payload: any
   ) => Promise<any>;
   getWeeklyScheduleBlocks: (businessId: string) => Promise<any[]>;
+  getWeeklyScheduleBlockById: (businessId: string, blockId: string) => Promise<any>;
   getShiftTemplateById: (businessId: string, templateId: string) => Promise<any>;
   deleteShiftTemplate: (businessId: string, templateId: string) => Promise<any>;
   getBusinessProfile: (businessId: string) => Promise<any>;
@@ -68,6 +69,7 @@ interface BusinessState {
     key: string,
     assignments: Record<string, string[]>
   ) => void;
+  clearWeeklyRoleAssignments: () => void;
   createCompanyManual: (companyData: any) => Promise<any>;
   createBusinessProfile: (payload: any) => Promise<any>;
   generateBusinessCode: (businessId: string) => Promise<any>;
@@ -103,6 +105,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
         [key]: assignments,
       },
     })),
+  clearWeeklyRoleAssignments: () => set({ weeklyRoleAssignments: {} }),
 
   fetchBusinesses: async (search = "") => {
     try {
@@ -444,6 +447,28 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       return Array.isArray(result.data) ? result.data : [];
     } catch (error) {
       console.error("Fetch weekly schedule blocks error:", error);
+      throw error;
+    }
+  },
+
+  getWeeklyScheduleBlockById: async (businessId, blockId) => {
+    try {
+      const response = await axiosInstance.get(
+        `/weekly-schedule/${businessId}/blocks/${blockId}`
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to fetch weekly block";
+        throw new Error(errorMsg);
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error("Fetch weekly schedule block by id error:", error);
       throw error;
     }
   },
