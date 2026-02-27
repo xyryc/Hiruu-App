@@ -1,6 +1,7 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import WeeklyBlockActionsModal from "@/components/ui/modals/WeeklyBlockActionsModal";
 import { useBusinessStore } from "@/stores/businessStore";
+import { formatDate as formatDisplayDate } from "@/utils/date";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -22,7 +23,7 @@ type MarkedDates = Record<
   }
 >;
 
-const formatDate = (date: Date) => {
+const formatYmdDate = (date: Date) => {
   const year = date.getFullYear();
   const month = `${date.getMonth() + 1}`.padStart(2, "0");
   const day = `${date.getDate()}`.padStart(2, "0");
@@ -105,7 +106,7 @@ const ManageWeeklySchedules = () => {
       );
 
       for (let index = 0; index <= totalDays; index += 1) {
-        const dateKey = formatDate(addDays(start, index));
+        const dateKey = formatYmdDate(addDays(start, index));
         marks[dateKey] = {
           color: "#D1D5DB",
           textColor: "#111111",
@@ -173,7 +174,9 @@ const ManageWeeklySchedules = () => {
       <ScrollView className="mx-5 pt-4" showsVerticalScrollIndicator={false}>
         <View className="border border-[#EEEEEE] dark:border-dark-border rounded-2xl p-4">
           <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
-            {`Business Name: ${selectedBusiness?.name}` || "No business selected"}
+            {selectedBusiness?.name
+              ? `Business Name: ${selectedBusiness.name}`
+              : "No business selected"}
           </Text>
           <Text className="mt-3 font-proximanova-regular text-secondary dark:text-dark-secondary text-xs">
             Tap an occupied date range to update or delete its weekly block.
@@ -212,7 +215,11 @@ const ManageWeeklySchedules = () => {
           toast.info("Delete API integration pending.");
         }}
         title="Weekly Block Actions"
-        subtitle={selectedBlock?.name || "Selected block"}
+        subtitle={
+          selectedBlock
+            ? `${formatDisplayDate(selectedBlock.startDate)} - ${formatDisplayDate(selectedBlock.endDate)}`
+            : "Selected block"
+        }
       />
     </SafeAreaView>
   );
