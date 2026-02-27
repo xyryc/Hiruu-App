@@ -5,6 +5,7 @@ import { formatDate as formatDisplayDate } from "@/utils/date";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, Text, View } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
@@ -44,14 +45,17 @@ const addDays = (date: Date, days: number) => {
 const ManageWeeklySchedules = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const {
     myBusinesses,
     selectedBusinesses,
     getWeeklyScheduleBlocks,
+    deleteWeeklyScheduleBlock,
   } = useBusinessStore();
 
   const [showBlockActions, setShowBlockActions] = useState(false);
+  const [isDeletingBlock, setIsDeletingBlock] = useState(false);
   const [existingBlocks, setExistingBlocks] = useState<
     Array<{ id: string; startDate: string; endDate: string; name?: string }>
   >([]);
@@ -141,7 +145,7 @@ const ManageWeeklySchedules = () => {
   };
 
   const handleUpdate = () => {
-    if (!selectedBlock) return;
+    if (!selectedBlock || isDeletingBlock) return;
     setShowBlockActions(false);
     router.push({
       pathname: "/screens/schedule/business/weekly-schedule",
@@ -153,6 +157,33 @@ const ManageWeeklySchedules = () => {
         name: selectedBlock.name || "",
       },
     });
+  };
+
+  const handleDelete = async () => {
+    if (!businessId || !selectedBlock || isDeletingBlock) return;
+
+    try {
+      setIsDeletingBlock(true);
+      await deleteWeeklyScheduleBlock(businessId, selectedBlock.id);
+      setExistingBlocks((prev) => prev.filter((block) => block.id !== selectedBlock.id));
+      setShowBlockActions(false);
+      setSelectedBlock(null);
+      toast.success(
+        t("api.weekly_block_deleted_successfully", {
+          defaultValue: "Weekly schedule deleted successfully.",
+        })
+      );
+    } catch (error: any) {
+      const apiMessageKey =
+        error?.response?.data?.message || error?.message || "UNKNOWN_ERROR";
+      toast.error(
+        t(`api.${apiMessageKey}`, {
+          defaultValue: apiMessageKey || "Failed to delete weekly schedule.",
+        })
+      );
+    } finally {
+      setIsDeletingBlock(false);
+    }
   };
 
   const selectedBusiness = myBusinesses.find((b) => b.id === selectedBusinesses[0]);
@@ -208,12 +239,12 @@ const ManageWeeklySchedules = () => {
 
       <WeeklyBlockActionsModal
         visible={showBlockActions}
-        onClose={() => setShowBlockActions(false)}
-        onUpdate={handleUpdate}
-        onDelete={() => {
+        onClose={() => {
+          if (isDeletingBlock) return;
           setShowBlockActions(false);
-          toast.info("Delete API integration pending.");
         }}
+        onUpdate={handleUpdate}
+        onDelete={handleDelete}
         title="Weekly Block Actions"
         subtitle={
           selectedBlock

@@ -78,6 +78,8 @@
     "subscription_cancelled_successfully": "Η συνδρομή ακυρώθηκε με επιτυχία.",
     "weekly_block_created_successfully": "Το εβδομαδιαίο μπλοκ δημιουργήθηκε με επιτυχία.",
     "weekly_block_updated_successfully": "Το εβδομαδιαίο μπλοκ ενημερώθηκε με επιτυχία.",
+    "weekly_block_deleted_successfully": "Το εβδομαδιαίο μπλοκ διαγράφηκε με επιτυχία.",
+    "weekly_block_delete_only_latest": "Μπορεί να διαγραφεί μόνο το πιο πρόσφατο εβδομαδιαίο μπλοκ.",
     "weekly_block_start_must_follow_previous": "Η έναρξη του εβδομαδιαίου μπλοκ πρέπει να ακολουθεί το προηγούμενο μπλοκ.",
     "weekly_block_duplicate_slot": "Το εβδομαδιαίο μπλοκ περιέχει διπλότυπες βάρδιες.",
     "weekly_block_manage_from_manage_screen": "Αυτή η εβδομάδα έχει ήδη προγραμματιστεί. Χρησιμοποίησε το Manage Weekly Schedules για επεξεργασία ή διαγραφή.",
