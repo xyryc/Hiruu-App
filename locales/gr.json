@@ -77,6 +77,7 @@
     "active_subscription_retrieved_successfully": "Η ενεργή συνδρομή ανακτήθηκε με επιτυχία.",
     "subscription_cancelled_successfully": "Η συνδρομή ακυρώθηκε με επιτυχία.",
     "weekly_block_created_successfully": "Το εβδομαδιαίο μπλοκ δημιουργήθηκε με επιτυχία.",
+    "weekly_block_start_must_follow_previous": "Η έναρξη του εβδομαδιαίου μπλοκ πρέπει να ακολουθεί το προηγούμενο μπλοκ.",
     "experiences.0.startDate must be a valid ISO 8601 date string": "Η ημερομηνία έναρξης εμπειρίας πρέπει να είναι έγκυρη μορφή ISO 8601."
   },
   "validation": {

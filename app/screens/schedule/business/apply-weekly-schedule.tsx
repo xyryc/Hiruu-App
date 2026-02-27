@@ -1,11 +1,11 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { useBusinessStore } from "@/stores/businessStore";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -64,9 +64,24 @@ const WeeklyScheduleApply = () => {
     getWeeklyScheduleBlocks,
   } = useBusinessStore();
   const [isApplying, setIsApplying] = useState(false);
+  const params = useLocalSearchParams<{
+    mode?: string;
+    blockId?: string;
+    startDate?: string;
+    endDate?: string;
+    name?: string;
+  }>();
+  const isEditMode = params.mode === "edit";
   const [existingBlocks, setExistingBlocks] = useState<
-    Array<{ id: string; startDate: string; endDate: string }>
+    Array<{ id: string; startDate: string; endDate: string; name?: string }>
   >([]);
+  const [showBlockActions, setShowBlockActions] = useState(false);
+  const [selectedBlockForAction, setSelectedBlockForAction] = useState<{
+    id: string;
+    startDate: string;
+    endDate: string;
+    name?: string;
+  } | null>(null);
 
   const [selectedStartDate, setSelectedStartDate] = useState("");
   const [selectedEndDate, setSelectedEndDate] = useState("");
@@ -77,6 +92,16 @@ const WeeklyScheduleApply = () => {
     if (!value) return "";
     return value.slice(0, 10);
   };
+
+  useEffect(() => {
+    if (!isEditMode) return;
+    if (typeof params.startDate === "string") {
+      setSelectedStartDate(params.startDate);
+    }
+    if (typeof params.endDate === "string") {
+      setSelectedEndDate(params.endDate);
+    }
+  }, [isEditMode, params.endDate, params.startDate]);
 
   const selectedTemplateCount = useMemo(
     () =>
@@ -191,10 +216,11 @@ const WeeklyScheduleApply = () => {
   }, [selectedEndDate, selectedStartDate]);
 
   const doesRangeOverlapExistingBlocks = useCallback(
-    (startYmd: string, endYmd: string) => {
+    (startYmd: string, endYmd: string, skipBlockId?: string) => {
       const start = toDate(startYmd).getTime();
       const end = toDate(endYmd).getTime();
       return existingBlocks.some((block) => {
+        if (skipBlockId && block.id === skipBlockId) return false;
         const blockStart = toDate(isoToYmd(block.startDate)).getTime();
         const blockEnd = toDate(isoToYmd(block.endDate)).getTime();
         return start <= blockEnd && end >= blockStart;
@@ -216,6 +242,7 @@ const WeeklyScheduleApply = () => {
             id: item.id,
             startDate: item.startDate,
             endDate: item.endDate,
+            name: item.name,
           }))
         );
       } catch {
@@ -227,6 +254,11 @@ const WeeklyScheduleApply = () => {
   }, [businessId, getWeeklyScheduleBlocks]);
 
   const handleDayPress = (day: DateData) => {
+    if (isEditMode) {
+      toast.info("Date range is locked in edit mode.");
+      return;
+    }
+
     const startDate = toDate(day.dateString);
     const endDate = addDays(startDate, 6);
     const nextStart = formatDate(startDate);
@@ -239,6 +271,42 @@ const WeeklyScheduleApply = () => {
 
     setSelectedStartDate(nextStart);
     setSelectedEndDate(nextEnd);
+  };
+
+  const findBlockByDate = useCallback(
+    (dateString: string) => {
+      const target = toDate(dateString).getTime();
+      return (
+        existingBlocks.find((block) => {
+          const blockStart = toDate(isoToYmd(block.startDate)).getTime();
+          const blockEnd = toDate(isoToYmd(block.endDate)).getTime();
+          return target >= blockStart && target <= blockEnd;
+        }) || null
+      );
+    },
+    [existingBlocks]
+  );
+
+  const handleDayLongPress = (day: DateData) => {
+    const block = findBlockByDate(day.dateString);
+    if (!block) return;
+    setSelectedBlockForAction(block);
+    setShowBlockActions(true);
+  };
+
+  const handleUpdateBlock = () => {
+    if (!selectedBlockForAction) return;
+    setShowBlockActions(false);
+    router.push({
+      pathname: "/screens/schedule/business/weekly-schedule",
+      params: {
+        mode: "edit",
+        blockId: selectedBlockForAction.id,
+        startDate: isoToYmd(selectedBlockForAction.startDate),
+        endDate: isoToYmd(selectedBlockForAction.endDate),
+        name: selectedBlockForAction.name || "",
+      },
+    });
   };
 
   const handleApply = async () => {
@@ -269,7 +337,13 @@ const WeeklyScheduleApply = () => {
       toast.error("No schedule items found.");
       return;
     }
-    if (doesRangeOverlapExistingBlocks(selectedStartDate, selectedEndDate)) {
+    if (
+      doesRangeOverlapExistingBlocks(
+        selectedStartDate,
+        selectedEndDate,
+        isEditMode && typeof params.blockId === "string" ? params.blockId : undefined
+      )
+    ) {
       toast.error("A weekly schedule already exists in this date range.");
       return;
     }
@@ -299,7 +373,7 @@ const WeeklyScheduleApply = () => {
         className="capitalize bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
         style={{ paddingTop: insets.top + 10, paddingBottom: 20 }}
         onPressBack={() => router.back()}
-        title="Apply Weekly Schedule"
+        title={isEditMode ? "Update Weekly Schedule" : "Apply Weekly Schedule"}
         titleClass="text-primary dark:text-dark-primary"
         iconColor={isDark ? "#fff" : "#111"}
       />
@@ -322,6 +396,7 @@ const WeeklyScheduleApply = () => {
             markingType="period"
             markedDates={markedDates}
             onDayPress={handleDayPress}
+            onDayLongPress={handleDayLongPress}
             enableSwipeMonths={true}
             theme={{
               backgroundColor: "transparent",
@@ -374,13 +449,53 @@ const WeeklyScheduleApply = () => {
         </TouchableOpacity>
 
         <PrimaryButton
-          title={isApplying ? "Applying..." : "Apply Schedule"}
+          title={isApplying ? "Applying..." : isEditMode ? "Update Schedule" : "Apply Schedule"}
           className="mt-6 mb-5"
           onPress={handleApply}
           loading={isApplying}
           disabled={!selectedStartDate || !selectedEndDate || isApplying}
         />
       </ScrollView>
+
+      <Modal
+        visible={showBlockActions}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowBlockActions(false)}
+      >
+        <View className="flex-1 bg-black/40 justify-end">
+          <View className="bg-white rounded-t-3xl p-5">
+            <Text className="font-proximanova-semibold text-lg text-primary">
+              Weekly Block Actions
+            </Text>
+            <Text className="font-proximanova-regular text-sm text-secondary mt-1 mb-4">
+              {selectedBlockForAction?.name || "Selected block"}
+            </Text>
+
+            <TouchableOpacity
+              className="py-3 border-b border-[#EEEEEE]"
+              onPress={handleUpdateBlock}
+            >
+              <Text className="font-proximanova-semibold text-primary">Update</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="py-3 border-b border-[#EEEEEE]"
+              onPress={() => {
+                setShowBlockActions(false);
+                toast.info("Delete API integration pending.");
+              }}
+            >
+              <Text className="font-proximanova-semibold text-[#F34F4F]">Delete</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="py-3"
+              onPress={() => setShowBlockActions(false)}
+            >
+              <Text className="font-proximanova-semibold text-secondary">Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

@@ -4,7 +4,7 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ShiftTemplateCard from "@/components/ui/cards/ShiftTemplateCard";
 import { useBusinessStore } from "@/stores/businessStore";
 import { FontAwesome6, SimpleLineIcons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useMemo } from "react";
 import {
@@ -29,6 +29,14 @@ const daysData = [
 ];
 
 const SavedShiftTemplate = () => {
+  const params = useLocalSearchParams<{
+    mode?: string;
+    blockId?: string;
+    startDate?: string;
+    endDate?: string;
+    name?: string;
+  }>();
+  const isEditMode = params.mode === "edit";
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
@@ -81,6 +89,20 @@ const SavedShiftTemplate = () => {
       return;
     }
 
+    if (isEditMode) {
+      router.push({
+        pathname: "/screens/schedule/business/apply-weekly-schedule",
+        params: {
+          mode: "edit",
+          blockId: String(params.blockId || ""),
+          startDate: String(params.startDate || ""),
+          endDate: String(params.endDate || ""),
+          name: String(params.name || ""),
+        },
+      });
+      return;
+    }
+
     router.push("/screens/schedule/business/apply-weekly-schedule");
   };
 
@@ -97,7 +119,7 @@ const SavedShiftTemplate = () => {
           className="capitalize bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
           style={{ paddingTop: insets.top + 10, paddingBottom: 20 }}
           onPressBack={() => router.back()}
-          title="Weekly Schedule"
+          title={isEditMode ? "Edit Weekly Schedule" : "Weekly Schedule"}
           titleClass="text-primary dark:text-dark-primary"
           iconColor={isDark ? "#fff" : "#111"}
         />
@@ -171,7 +193,7 @@ const SavedShiftTemplate = () => {
             icon={<FontAwesome6 name="crown" size={20} color="white" />}
           />
           <PrimaryButton
-            title="Next"
+            title={isEditMode ? "Update" : "Next"}
             className="my-4"
             onPress={handleNext}
             disabled={!hasAtLeastOneTemplate}
