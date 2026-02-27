@@ -76,7 +76,9 @@
     "active_subscription_retrieved_successfully": "Active subscription retrieved successfully.",
     "subscription_cancelled_successfully": "Subscription cancelled successfully.",
     "weekly_block_created_successfully": "Weekly block created successfully.",
+    "weekly_block_updated_successfully": "Weekly block updated successfully.",
     "weekly_block_start_must_follow_previous": "Weekly block start must follow the previous block.",
+    "weekly_block_duplicate_slot": "Weekly block contains duplicate slots.",
     "experiences.0.startDate must be a valid ISO 8601 date string": "Experience start date must be a valid ISO 8601 date string.",
     "UNKNOWN_ERROR": "An unexpected error occurred"
   },

@@ -163,20 +163,28 @@ const BusinessScheduleScreen = () => {
     },
     {
       id: 3,
+      title: "Saved Shift Template",
+      icon: "document-attach-outline",
+      onPress: () => {
+        checkAndNavigate("/screens/schedule/business/saved-shift-template" as RelativePathString)
+        // router.push("/screens/schedule/business/saved-shift-template");
+      },
+    },
+    {
+      id: 4,
       title: "Weekly Schedule",
-      icon: "calendar-outline",
+      icon: "calendar-clear-outline",
       onPress: () => {
         checkAndNavigate("/screens/schedule/business/weekly-schedule" as RelativePathString)
         // router.push("/screens/schedule/business/weekly-schedule");
       },
     },
     {
-      id: 4,
-      title: "Saved Shift Template",
-      icon: "document-attach-outline",
+      id: 5,
+      title: "Manage Weekly Schedules",
+      icon: "calendar-outline",
       onPress: () => {
-        checkAndNavigate("/screens/schedule/business/saved-shift-template" as RelativePathString)
-        // router.push("/screens/schedule/business/saved-shift-template");
+        checkAndNavigate("/screens/schedule/business/manage-weekly-schedules" as RelativePathString);
       },
     },
   ];

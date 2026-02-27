@@ -62,6 +62,7 @@ const WeeklyScheduleApply = () => {
     weeklyShiftSelections,
     weeklyRoleAssignments,
     createWeeklyScheduleBlock,
+    updateWeeklyScheduleBlock,
     getWeeklyScheduleBlocks,
   } = useBusinessStore();
   const [isApplying, setIsApplying] = useState(false);
@@ -351,8 +352,16 @@ const WeeklyScheduleApply = () => {
 
     try {
       setIsApplying(true);
-      await createWeeklyScheduleBlock(businessId, payload);
-      toast.success(t("api.weekly_block_created_successfully"));
+      if (isEditMode && typeof params.blockId === "string" && params.blockId) {
+        await updateWeeklyScheduleBlock(businessId, params.blockId, {
+          name: payload.name,
+          slots: payload.slots,
+        });
+        toast.success(t("api.weekly_block_updated_successfully"));
+      } else {
+        await createWeeklyScheduleBlock(businessId, payload);
+        toast.success(t("api.weekly_block_created_successfully"));
+      }
       router.back();
     } catch (error: any) {
       toast.error(

@@ -49,6 +49,11 @@ interface BusinessState {
     payload: any
   ) => Promise<any>;
   createWeeklyScheduleBlock: (businessId: string, payload: any) => Promise<any>;
+  updateWeeklyScheduleBlock: (
+    businessId: string,
+    blockId: string,
+    payload: any
+  ) => Promise<any>;
   getWeeklyScheduleBlocks: (businessId: string) => Promise<any[]>;
   getShiftTemplateById: (businessId: string, templateId: string) => Promise<any>;
   deleteShiftTemplate: (businessId: string, templateId: string) => Promise<any>;
@@ -396,6 +401,29 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       return result.data;
     } catch (error) {
       console.error("Create weekly schedule block error:", error);
+      throw error;
+    }
+  },
+
+  updateWeeklyScheduleBlock: async (businessId, blockId, payload) => {
+    try {
+      const response = await axiosInstance.patch(
+        `/weekly-schedule/${businessId}/blocks/${blockId}`,
+        payload
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to update weekly block";
+        throw new Error(errorMsg);
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error("Update weekly schedule block error:", error);
       throw error;
     }
   },
