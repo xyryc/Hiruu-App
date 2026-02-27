@@ -22,12 +22,11 @@ const ChatList = () => {
 
   useEffect(() => {
     let isMounted = true;
-
     const loadRooms = async () => {
       try {
         setLoading(true);
         const result = await chatService.getChatRooms();
-        const data = result?.data?.data || [];
+        const data = result?.data || [];
         if (isMounted) {
           setRooms(Array.isArray(data) ? data : []);
         }

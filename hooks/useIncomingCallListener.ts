@@ -128,8 +128,8 @@ export const useIncomingCallListener = (enabled: boolean) => {
       pollingActiveCallsRef.current = true;
       try {
         const roomsResponse = await chatService.getChatRooms();
-        const rooms = Array.isArray(roomsResponse?.data?.data)
-          ? roomsResponse.data.data
+        const rooms = Array.isArray(roomsResponse?.data)
+          ? roomsResponse.data
           : [];
 
         for (const room of rooms) {
