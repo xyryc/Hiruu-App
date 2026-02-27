@@ -1,11 +1,12 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import WeeklyBlockActionsModal from "@/components/ui/modals/WeeklyBlockActionsModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { Calendar, DateData } from "react-native-calendars";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
@@ -254,6 +255,13 @@ const WeeklyScheduleApply = () => {
   }, [businessId, getWeeklyScheduleBlocks]);
 
   const handleDayPress = (day: DateData) => {
+    const block = findBlockByDate(day.dateString);
+    if (block) {
+      setSelectedBlockForAction(block);
+      setShowBlockActions(true);
+      return;
+    }
+
     if (isEditMode) {
       toast.info("Date range is locked in edit mode.");
       return;
@@ -286,13 +294,6 @@ const WeeklyScheduleApply = () => {
     },
     [existingBlocks]
   );
-
-  const handleDayLongPress = (day: DateData) => {
-    const block = findBlockByDate(day.dateString);
-    if (!block) return;
-    setSelectedBlockForAction(block);
-    setShowBlockActions(true);
-  };
 
   const handleUpdateBlock = () => {
     if (!selectedBlockForAction) return;
@@ -396,7 +397,6 @@ const WeeklyScheduleApply = () => {
             markingType="period"
             markedDates={markedDates}
             onDayPress={handleDayPress}
-            onDayLongPress={handleDayLongPress}
             enableSwipeMonths={true}
             theme={{
               backgroundColor: "transparent",
@@ -457,45 +457,17 @@ const WeeklyScheduleApply = () => {
         />
       </ScrollView>
 
-      <Modal
+      <WeeklyBlockActionsModal
         visible={showBlockActions}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setShowBlockActions(false)}
-      >
-        <View className="flex-1 bg-black/40 justify-end">
-          <View className="bg-white rounded-t-3xl p-5">
-            <Text className="font-proximanova-semibold text-lg text-primary">
-              Weekly Block Actions
-            </Text>
-            <Text className="font-proximanova-regular text-sm text-secondary mt-1 mb-4">
-              {selectedBlockForAction?.name || "Selected block"}
-            </Text>
-
-            <TouchableOpacity
-              className="py-3 border-b border-[#EEEEEE]"
-              onPress={handleUpdateBlock}
-            >
-              <Text className="font-proximanova-semibold text-primary">Update</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="py-3 border-b border-[#EEEEEE]"
-              onPress={() => {
-                setShowBlockActions(false);
-                toast.info("Delete API integration pending.");
-              }}
-            >
-              <Text className="font-proximanova-semibold text-[#F34F4F]">Delete</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              className="py-3"
-              onPress={() => setShowBlockActions(false)}
-            >
-              <Text className="font-proximanova-semibold text-secondary">Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setShowBlockActions(false)}
+        onUpdate={handleUpdateBlock}
+        onDelete={() => {
+          setShowBlockActions(false);
+          toast.info("Delete API integration pending.");
+        }}
+        title="Weekly Block Actions"
+        subtitle={selectedBlockForAction?.name || "Selected block"}
+      />
     </SafeAreaView>
   );
 };
