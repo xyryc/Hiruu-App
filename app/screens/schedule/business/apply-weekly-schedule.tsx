@@ -1,6 +1,5 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import WeeklyBlockActionsModal from "@/components/ui/modals/WeeklyBlockActionsModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -77,13 +76,6 @@ const WeeklyScheduleApply = () => {
   const [existingBlocks, setExistingBlocks] = useState<
     Array<{ id: string; startDate: string; endDate: string; name?: string }>
   >([]);
-  const [showBlockActions, setShowBlockActions] = useState(false);
-  const [selectedBlockForAction, setSelectedBlockForAction] = useState<{
-    id: string;
-    startDate: string;
-    endDate: string;
-    name?: string;
-  } | null>(null);
 
   const [selectedStartDate, setSelectedStartDate] = useState("");
   const [selectedEndDate, setSelectedEndDate] = useState("");
@@ -258,8 +250,7 @@ const WeeklyScheduleApply = () => {
   const handleDayPress = (day: DateData) => {
     const block = findBlockByDate(day.dateString);
     if (block) {
-      setSelectedBlockForAction(block);
-      setShowBlockActions(true);
+      toast.info(t("api.weekly_block_manage_from_manage_screen"));
       return;
     }
 
@@ -295,21 +286,6 @@ const WeeklyScheduleApply = () => {
     },
     [existingBlocks]
   );
-
-  const handleUpdateBlock = () => {
-    if (!selectedBlockForAction) return;
-    setShowBlockActions(false);
-    router.push({
-      pathname: "/screens/schedule/business/weekly-schedule",
-      params: {
-        mode: "edit",
-        blockId: selectedBlockForAction.id,
-        startDate: isoToYmd(selectedBlockForAction.startDate),
-        endDate: isoToYmd(selectedBlockForAction.endDate),
-        name: selectedBlockForAction.name || "",
-      },
-    });
-  };
 
   const handleApply = async () => {
     if (!businessId) {
@@ -364,10 +340,12 @@ const WeeklyScheduleApply = () => {
       }
       router.back();
     } catch (error: any) {
+      const apiMessageKey =
+        error?.response?.data?.message || error?.message || "UNKNOWN_ERROR";
       toast.error(
-        error?.response?.data?.message ||
-          error?.message ||
-          "Failed to apply weekly schedule."
+        t(`api.${apiMessageKey}`, {
+          defaultValue: apiMessageKey || "Failed to apply weekly schedule.",
+        })
       );
     } finally {
       setIsApplying(false);
@@ -466,17 +444,6 @@ const WeeklyScheduleApply = () => {
         />
       </ScrollView>
 
-      <WeeklyBlockActionsModal
-        visible={showBlockActions}
-        onClose={() => setShowBlockActions(false)}
-        onUpdate={handleUpdateBlock}
-        onDelete={() => {
-          setShowBlockActions(false);
-          toast.info("Delete API integration pending.");
-        }}
-        title="Weekly Block Actions"
-        subtitle={selectedBlockForAction?.name || "Selected block"}
-      />
     </SafeAreaView>
   );
 };

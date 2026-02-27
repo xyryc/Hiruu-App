@@ -79,6 +79,7 @@
     "weekly_block_updated_successfully": "Weekly block updated successfully.",
     "weekly_block_start_must_follow_previous": "Weekly block start must follow the previous block.",
     "weekly_block_duplicate_slot": "Weekly block contains duplicate slots.",
+    "weekly_block_manage_from_manage_screen": "This week is already scheduled. Use Manage Weekly Schedules to edit or delete it.",
     "experiences.0.startDate must be a valid ISO 8601 date string": "Experience start date must be a valid ISO 8601 date string.",
     "UNKNOWN_ERROR": "An unexpected error occurred"
   },

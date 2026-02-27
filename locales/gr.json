@@ -80,6 +80,7 @@
     "weekly_block_updated_successfully": "Το εβδομαδιαίο μπλοκ ενημερώθηκε με επιτυχία.",
     "weekly_block_start_must_follow_previous": "Η έναρξη του εβδομαδιαίου μπλοκ πρέπει να ακολουθεί το προηγούμενο μπλοκ.",
     "weekly_block_duplicate_slot": "Το εβδομαδιαίο μπλοκ περιέχει διπλότυπες βάρδιες.",
+    "weekly_block_manage_from_manage_screen": "Αυτή η εβδομάδα έχει ήδη προγραμματιστεί. Χρησιμοποίησε το Manage Weekly Schedules για επεξεργασία ή διαγραφή.",
     "experiences.0.startDate must be a valid ISO 8601 date string": "Η ημερομηνία έναρξης εμπειρίας πρέπει να είναι έγκυρη μορφή ISO 8601."
   },
   "validation": {

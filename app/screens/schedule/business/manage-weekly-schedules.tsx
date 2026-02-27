@@ -1,6 +1,4 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
-import BusinessSelectionTrigger from "@/components/ui/dropdown/BusinessSelectionTrigger";
-import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import WeeklyBlockActionsModal from "@/components/ui/modals/WeeklyBlockActionsModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { router } from "expo-router";
@@ -49,12 +47,9 @@ const ManageWeeklySchedules = () => {
   const {
     myBusinesses,
     selectedBusinesses,
-    setSelectedBusinesses,
-    getMyBusinesses,
     getWeeklyScheduleBlocks,
   } = useBusinessStore();
 
-  const [showBusinessModal, setShowBusinessModal] = useState(false);
   const [showBlockActions, setShowBlockActions] = useState(false);
   const [existingBlocks, setExistingBlocks] = useState<
     Array<{ id: string; startDate: string; endDate: string; name?: string }>
@@ -72,10 +67,6 @@ const ManageWeeklySchedules = () => {
     if (!value) return "";
     return value.slice(0, 10);
   };
-
-  useEffect(() => {
-    getMyBusinesses().catch(() => {});
-  }, [getMyBusinesses]);
 
   useEffect(() => {
     const loadBlocks = async () => {
@@ -163,19 +154,7 @@ const ManageWeeklySchedules = () => {
     });
   };
 
-  const getDisplayContent = () => {
-    if (selectedBusinesses.length === 0) {
-      return { type: "all", content: "All" };
-    } else if (selectedBusinesses.length === 1) {
-      const selectedBusiness = myBusinesses.find(
-        (b) => b.id === selectedBusinesses[0]
-      );
-      return { type: "single", content: selectedBusiness };
-    }
-    return { type: "multi", content: `${selectedBusinesses.length} Selected` };
-  };
-
-  const displayContent = getDisplayContent();
+  const selectedBusiness = myBusinesses.find((b) => b.id === selectedBusinesses[0]);
 
   return (
     <SafeAreaView
@@ -194,14 +173,8 @@ const ManageWeeklySchedules = () => {
       <ScrollView className="mx-5 pt-4" showsVerticalScrollIndicator={false}>
         <View className="border border-[#EEEEEE] dark:border-dark-border rounded-2xl p-4">
           <Text className="font-proximanova-semibold text-primary dark:text-dark-primary">
-            Business
+            {`Business Name: ${selectedBusiness?.name}` || "No business selected"}
           </Text>
-          <View className="mt-3 self-start">
-            <BusinessSelectionTrigger
-              displayContent={displayContent as any}
-              onPress={() => setShowBusinessModal(true)}
-            />
-          </View>
           <Text className="mt-3 font-proximanova-regular text-secondary dark:text-dark-secondary text-xs">
             Tap an occupied date range to update or delete its weekly block.
           </Text>
@@ -229,20 +202,6 @@ const ManageWeeklySchedules = () => {
           />
         </View>
       </ScrollView>
-
-      <BusinessSelectionModal
-        visible={showBusinessModal}
-        onClose={() => setShowBusinessModal(false)}
-        businesses={myBusinesses.map((b) => ({
-          id: b.id,
-          name: b.name,
-          address: b.address,
-          imageUrl: b.logo,
-          logo: b.logo,
-        }))}
-        selectedBusinesses={selectedBusinesses}
-        onSelectionChange={setSelectedBusinesses}
-      />
 
       <WeeklyBlockActionsModal
         visible={showBlockActions}
