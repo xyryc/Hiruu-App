@@ -1,4 +1,5 @@
 import { chatService } from '@/services/chatService';
+import type { ChatUploadMedia } from '@/services/chatService';
 import { socketService } from '@/services/socketService';
 import { useAuthStore } from '@/stores/authStore';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -22,6 +23,11 @@ interface UseChatOptions {
     onError?: (error: Error) => void;
 }
 
+interface SendMessageInput {
+    content?: string;
+    media?: ChatUploadMedia[];
+}
+
 export const useChat = ({ roomId, onError }: UseChatOptions) => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(false);
@@ -33,6 +39,11 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
     const isMounted = useRef(true);
     const typingResetTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+    const extractCallBody = useCallback((payload: any) => {
+        if (!payload) return null;
+        return payload.call || payload.callData || payload.callMeta || payload.metadata?.call || null;
+    }, []);
+
     // Load initial messages
     const loadMessages = useCallback(async () => {
         if (!roomId) return;
@@ -41,6 +52,16 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
             setLoading(true);
             const result = await chatService.getRoomMessages(roomId);
             const data = result?.data?.data || [];
+
+            console.log('[CHAT_DEBUG] load-messages:body', data);
+            const callBodies = Array.isArray(data)
+                ? data
+                      .map((message: any) => extractCallBody(message))
+                      .filter(Boolean)
+                : [];
+            if (callBodies.length) {
+                console.log('[CHAT_DEBUG] load-messages:call-body', callBodies);
+            }
 
             if (isMounted.current) {
                 setMessages(Array.isArray(data) ? data.reverse() : []);
@@ -77,50 +98,45 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
 
     // Send message
     const sendMessage = useCallback(
-        async (content: string) => {
-            if (!content.trim() || !roomId || sending) return;
+        async (input: SendMessageInput): Promise<boolean> => {
+            const content = input.content?.trim() || '';
+            const media = Array.isArray(input.media) ? input.media : [];
+            const hasContent = Boolean(content);
+            const hasMedia = media.length > 0;
+
+            if ((!hasContent && !hasMedia) || !roomId || sending) {
+                return false;
+            }
 
             try {
                 setSending(true);
-
-                const tempMessage: Message = {
-                    id: `temp-${Date.now()}`,
-                    content: content.trim(),
-                    senderId: user?.id || '',
-                    chatRoomId: roomId,
-                    status: 'sent',
-                    createdAt: new Date().toISOString(),
-                    sender: {
-                        id: user?.id || '',
-                        name: (user as any)?.name || user?.firstName || user?.email || '',
-                        avatar: user?.avatar,
-                    },
-                };
-
-                setMessages((prev) => [tempMessage, ...prev]);
-
-                if (socketService.isConnected()) {
+                console.log('[CHAT_DEBUG] send-message:body', { roomId, content, media });
+                if (!hasMedia && socketService.isConnected()) {
                     socketService.sendMessage({
                         chatRoomId: roomId,
-                        content: content.trim(),
+                        content,
                     });
                 } else {
                     await chatService.sendMessage(roomId, {
-                        content: content.trim(),
+                        content,
+                        media,
                     });
                 }
+
+                return true;
             } catch (error) {
                 console.error('Failed to send message:', error);
                 if (onError) {
                     onError(error as Error);
                 }
                 setMessages((prev) => prev.filter((msg) => !msg.id.startsWith('temp-')));
+                return false;
             } finally {
                 setSending(false);
                 clearTypingState();
             }
         },
-        [roomId, user, sending, onError, clearTypingState]
+        [roomId, sending, onError, clearTypingState]
     );
 
     // Typing indicators
@@ -160,6 +176,12 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
 
                 // Listen for new messages
                 const handleNewMessage = (data: any) => {
+                    console.log('[CHAT_DEBUG] socket:new-message:body', data?.message || data);
+                    const callBody = extractCallBody(data?.message || data);
+                    if (callBody) {
+                        console.log('[CHAT_DEBUG] socket:new-message:call-body', callBody);
+                    }
+
                     if (data.message && data.message.chatRoomId === roomId) {
                         clearTypingState();
                         setMessages((prev) => {
@@ -275,7 +297,7 @@ export const useChat = ({ roomId, onError }: UseChatOptions) => {
             }
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [roomId, user?.id, clearTypingState, scheduleTypingReset]);
+    }, [roomId, user?.id, clearTypingState, scheduleTypingReset, extractCallBody]);
 
     useEffect(() => {
         return () => {

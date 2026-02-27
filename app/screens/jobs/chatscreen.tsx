@@ -6,8 +6,10 @@ import ChatInput from "@/components/ui/inputs/ChatInput";
 import TypingIndicator from "@/components/ui/inputs/TypingIndicator";
 import { useChat } from "@/hooks/useChat";
 import { callService } from "@/services/callService";
+import type { ChatUploadMedia } from "@/services/chatService";
 import { chatService } from "@/services/chatService";
 import { useAuthStore } from "@/stores/authStore";
+import * as ImagePicker from "expo-image-picker";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -23,8 +25,21 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
+type SelectedMedia = ChatUploadMedia & {
+  previewType: "image" | "video";
+};
+
+type ChatMediaPreview = {
+  id: string;
+  uri: string;
+  previewType: "image" | "video";
+  name?: string;
+  thumbnailUrl?: string;
+};
+
 const ChatScreen = () => {
   const [message, setMessage] = useState("");
+  const [selectedMedia, setSelectedMedia] = useState<SelectedMedia[]>([]);
   const [actualRoomId, setActualRoomId] = useState<string | null>(null);
   const [loadingRoom, setLoadingRoom] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -35,6 +50,8 @@ const ChatScreen = () => {
   const [chatAvatar, setChatAvatar] = useState<string | null>(null);
   const [chatIsOnline, setChatIsOnline] = useState<boolean | undefined>(undefined);
   const messagesListRef = useRef<FlatList<any> | null>(null);
+  const previousMessageCountRef = useRef(0);
+  const didInitialScrollRef = useRef(false);
   const { user } = useAuthStore();
   const router = useRouter();
   const params = useLocalSearchParams<{ roomId?: string; userId?: string }>();
@@ -171,40 +188,297 @@ const ChatScreen = () => {
     return date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
   }, []);
 
+  const detectPreviewType = useCallback((input: any): "image" | "video" | null => {
+    if (!input) return null;
+
+    const mediaType = String(
+      input.previewType ||
+      input.mediaType ||
+      input.mimeType ||
+      input.mimetype ||
+      input.type ||
+      ""
+    ).toLowerCase();
+
+    if (mediaType.includes("video")) return "video";
+    if (mediaType.includes("image")) return "image";
+
+    const url = String(input.uri || input.url || input.fileUrl || input.path || "").toLowerCase();
+    if (!url) return null;
+
+    if (/\.(mp4|mov|m4v|webm|avi|mkv)(\?|$)/.test(url)) return "video";
+    if (/\.(jpg|jpeg|png|gif|webp|heic|heif)(\?|$)/.test(url)) return "image";
+
+    return null;
+  }, []);
+
+  const mapMessageMedia = useCallback((msg: any): ChatMediaPreview[] => {
+    const candidates = [
+      ...(Array.isArray(msg?.media) ? msg.media : []),
+      ...(Array.isArray(msg?.attachments) ? msg.attachments : []),
+      ...(Array.isArray(msg?.files) ? msg.files : []),
+    ];
+
+    return candidates
+      .map((item: any, index: number) => {
+        const uri = item?.url || item?.uri || item?.fileUrl || item?.path || "";
+        const previewType = detectPreviewType(item);
+
+        if (!uri || !previewType) return null;
+
+        return {
+          id: item?.id || `${msg?.id}-media-${index}`,
+          uri,
+          previewType,
+          name: item?.name || item?.fileName,
+          thumbnailUrl: item?.thumbnailUrl || item?.thumbnail || item?.poster || undefined,
+        };
+      })
+      .filter(Boolean) as ChatMediaPreview[];
+  }, [detectPreviewType]);
+
+  const getMessageDateValue = useCallback((msg: any) => {
+    return (
+      msg?.createdAt ||
+      msg?.sentAt ||
+      msg?.timestamp ||
+      msg?.created_at ||
+      msg?.updatedAt ||
+      null
+    );
+  }, []);
+
+  const mapCallMessage = useCallback((msg: any, currentUserId?: string) => {
+    const typeCandidate = String(
+      msg?.messageType ||
+      msg?.type ||
+      msg?.eventType ||
+      msg?.message?.type ||
+      ""
+    ).toLowerCase();
+
+    const hasCallObject = Boolean(msg?.call || msg?.callData || msg?.callMeta);
+    const isCallType = typeCandidate.includes("call");
+    const isCallLogType = typeCandidate === "call_log";
+
+    if (!hasCallObject && !isCallType) return null;
+
+    const callPayload = msg?.call || msg?.callData || msg?.callMeta || {};
+    const rawCallType = String(
+      callPayload?.type || msg?.callType || msg?.metadata?.callType || ""
+    ).toLowerCase();
+    const rawStatus = String(
+      callPayload?.status || msg?.callStatus || msg?.metadata?.callStatus || "ended"
+    ).toLowerCase();
+
+    const callType: "audio" | "video" = rawCallType === "video" ? "video" : "audio";
+    const direction: "incoming" | "outgoing" =
+      msg?.senderId && currentUserId && msg.senderId === currentUserId ? "outgoing" : "incoming";
+
+    const formatSecondsToDuration = (value: number) => {
+      if (!Number.isFinite(value) || value <= 0) return undefined;
+      const totalSeconds = Math.floor(value);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      if (hours > 0) {
+        return `${hours}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+      }
+      return `${minutes}:${String(seconds).padStart(2, "0")}`;
+    };
+
+    const parseDurationFromString = (value: unknown) => {
+      if (typeof value !== "string") return undefined;
+      const text = value.trim();
+      if (!text) return undefined;
+
+      const timeMatch = text.match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+      if (timeMatch) {
+        if (typeof timeMatch[3] === "string") {
+          return `${Number(timeMatch[1])}:${timeMatch[2]}:${timeMatch[3]}`;
+        }
+        return `${Number(timeMatch[1])}:${timeMatch[2]}`;
+      }
+
+      const secondsMatch = text.match(/(\d+)\s*(s|sec|secs|second|seconds)\b/i);
+      if (secondsMatch) {
+        return formatSecondsToDuration(Number(secondsMatch[1]));
+      }
+
+      const numericOnly = text.match(/^\d+$/);
+      if (numericOnly) {
+        return formatSecondsToDuration(Number(text));
+      }
+
+      return undefined;
+    };
+
+    const attachments = Array.isArray(msg?.attachments) ? msg.attachments : [];
+    const attachmentDurationCandidates = attachments.flatMap((item: any) => [
+      item?.content,
+      item?.durationLabel,
+      item?.durationText,
+      item?.duration,
+      item?.durationSeconds,
+      item?.metadata?.duration,
+      item?.metadata?.durationSeconds,
+    ]);
+
+    const durationFromContent = parseDurationFromString(msg?.content);
+    const durationFromAttachments = attachmentDurationCandidates
+      .map((candidate: any) =>
+        typeof candidate === "number"
+          ? formatSecondsToDuration(candidate)
+          : parseDurationFromString(candidate)
+      )
+      .find(Boolean);
+
+    const durationFromPayload = formatSecondsToDuration(
+      Number(
+        callPayload?.durationSeconds ??
+        callPayload?.duration ??
+        msg?.metadata?.durationSeconds ??
+        msg?.metadata?.duration
+      )
+    );
+
+    const formattedDuration = isCallLogType
+      ? (durationFromContent || durationFromAttachments || durationFromPayload)
+      : (durationFromPayload || durationFromContent || durationFromAttachments);
+
+    const directionLabel = direction === "incoming" ? "Incoming" : "Outgoing";
+    const typeLabel = callType === "video" ? "video call" : "audio call";
+
+    let label = `${directionLabel} ${typeLabel}`;
+    if (rawStatus === "missed") {
+      label = `Missed ${typeLabel}`;
+    } else if (rawStatus === "declined") {
+      label = `${directionLabel} ${typeLabel} declined`;
+    }
+
+    const subtitle = rawStatus === "missed"
+      ? "No answer"
+      : rawStatus === "declined"
+        ? "Declined"
+        : formattedDuration
+          ? `Call ended - ${formattedDuration}`
+          : "Call ended";
+
+    return {
+      type: callType,
+      status: rawStatus,
+      label,
+      subtitle,
+      duration: formattedDuration,
+    };
+  }, []);
+
   const mappedMessages = useMemo(() => {
     const currentUserId = user?.id;
     const sortedMessages = [...messages].sort((a, b) => {
-      const aTime = new Date(a.createdAt || 0).getTime();
-      const bTime = new Date(b.createdAt || 0).getTime();
+      const aTime = new Date(getMessageDateValue(a) || 0).getTime();
+      const bTime = new Date(getMessageDateValue(b) || 0).getTime();
       return aTime - bTime;
     });
 
     return sortedMessages.map((msg, index) => {
       const prev = sortedMessages[index - 1];
-      const currentDateLabel = formatDateLabel(msg.createdAt);
-      const prevDateLabel = prev ? formatDateLabel(prev.createdAt) : "";
+      const messageDateValue = getMessageDateValue(msg);
+      const prevDateValue = prev ? getMessageDateValue(prev) : null;
+      const currentDateLabel = formatDateLabel(messageDateValue);
+      const prevDateLabel = prev ? formatDateLabel(prevDateValue) : "";
+      const shouldShowDateSeparator =
+        Boolean(currentDateLabel) && (index === 0 || currentDateLabel !== prevDateLabel);
 
       return {
         id: msg.id,
         text: msg.content || "",
-        time: formatTime(msg.createdAt),
+        time: formatTime(messageDateValue),
         isSent: msg.senderId === currentUserId,
         status: msg.status,
         avatar: msg.sender?.avatar || require("@/assets/images/placeholder.png"),
-        showDateSeparator: index === 0 || currentDateLabel !== prevDateLabel,
+        media: mapMessageMedia(msg),
+        call: mapCallMessage(msg, currentUserId),
+        // Oldest-first data: attach separator to first message of each day bucket.
+        showDateSeparator: shouldShowDateSeparator,
         dateLabel: currentDateLabel,
       };
     });
-  }, [messages, user?.id, formatDateLabel, formatTime]);
+  }, [messages, user?.id, formatDateLabel, formatTime, mapMessageMedia, mapCallMessage, getMessageDateValue]);
+
+  const handlePickMedia = useCallback(async () => {
+    if (sending) return;
+
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (permission.status !== "granted") {
+      toast.error("Permission to access media library is required.");
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsMultipleSelection: true,
+      quality: 1,
+      selectionLimit: 10,
+    });
+
+    if (result.canceled) return;
+
+    const pickedMedia: SelectedMedia[] = result.assets
+      .map((asset, index) => {
+        const previewType = asset.type === "video" ? "video" : asset.type === "image" ? "image" : null;
+
+        if (!previewType) return null;
+
+        const extension = previewType === "video" ? "mp4" : "jpg";
+        const fallbackName = `upload-${Date.now()}-${index}.${extension}`;
+
+        return {
+          uri: asset.uri,
+          type: asset.mimeType || (previewType === "video" ? "video/mp4" : "image/jpeg"),
+          name: asset.fileName || fallbackName,
+          previewType,
+        };
+      })
+      .filter((item): item is SelectedMedia => Boolean(item));
+
+    if (!pickedMedia.length) {
+      toast.error("Only images and videos are supported right now.");
+      return;
+    }
+
+    setSelectedMedia((prev) => {
+      const existingUris = new Set(prev.map((item) => item.uri));
+      const uniqueNew = pickedMedia.filter((item) => !existingUris.has(item.uri));
+      return [...prev, ...uniqueNew];
+    });
+  }, [sending]);
+
+  const handleRemoveSelectedMedia = useCallback((uri: string) => {
+    setSelectedMedia((prev) => prev.filter((item) => item.uri !== uri));
+  }, []);
 
   const handleSend = useCallback(async () => {
-    if (!message.trim() || sending) return;
+    if (sending) return;
 
-    const messageToSend = message.trim();
-    setMessage(""); // Clear input immediately
+    const content = message.trim();
+    const media = selectedMedia.map(({ previewType, ...file }) => file);
 
-    await sendMessage(messageToSend);
-  }, [message, sending, sendMessage]);
+    if (!content && media.length === 0) return;
+
+    setMessage("");
+    setSelectedMedia([]);
+
+    const success = await sendMessage({
+      content: content || undefined,
+      media,
+    });
+
+    if (!success) {
+      setMessage(content);
+      setSelectedMedia((prev) => (prev.length ? prev : selectedMedia));
+    }
+  }, [message, selectedMedia, sending, sendMessage]);
 
   const handleTyping = useCallback(() => {
     startTyping();
@@ -400,12 +674,48 @@ const ChatScreen = () => {
     void handleStartCall("video");
   }, [handleStartCall]);
 
+  const scrollToBottom = useCallback((animated: boolean) => {
+    const list = messagesListRef.current;
+    if (!list) return;
+
+    const run = () => {
+      try {
+        list.scrollToEnd({ animated });
+      } catch {
+        // Ignore transient layout timing errors.
+      }
+    };
+
+    requestAnimationFrame(run);
+    setTimeout(run, 80);
+    setTimeout(run, 250);
+  }, []);
+
   useEffect(() => {
-    if (!mappedMessages.length) return;
-    requestAnimationFrame(() => {
-      messagesListRef.current?.scrollToEnd({ animated: true });
-    });
-  }, [mappedMessages.length]);
+    if (!mappedMessages.length) {
+      previousMessageCountRef.current = 0;
+      didInitialScrollRef.current = false;
+      return;
+    }
+
+    const hasNewMessage = mappedMessages.length > previousMessageCountRef.current;
+    if (hasNewMessage) {
+      scrollToBottom(previousMessageCountRef.current > 0);
+    }
+
+    previousMessageCountRef.current = mappedMessages.length;
+  }, [mappedMessages.length, scrollToBottom]);
+
+  useEffect(() => {
+    if (loading || !mappedMessages.length || didInitialScrollRef.current) return;
+    scrollToBottom(false);
+    didInitialScrollRef.current = true;
+  }, [loading, mappedMessages.length, scrollToBottom]);
+
+  useEffect(() => {
+    didInitialScrollRef.current = false;
+    previousMessageCountRef.current = 0;
+  }, [actualRoomId]);
 
   useEffect(() => {
     if (Platform.OS !== "android") return;
@@ -481,6 +791,16 @@ const ChatScreen = () => {
             contentContainerStyle={{ paddingHorizontal: 16 }}
             showsVerticalScrollIndicator={false}
             inverted={false}
+            onContentSizeChange={() => {
+              if (!mappedMessages.length || didInitialScrollRef.current) return;
+              scrollToBottom(false);
+              didInitialScrollRef.current = true;
+            }}
+            onLayout={() => {
+              if (!mappedMessages.length || didInitialScrollRef.current) return;
+              scrollToBottom(false);
+              didInitialScrollRef.current = true;
+            }}
             renderItem={({ item: msg }) => (
               <>
                 {msg.showDateSeparator ? (
@@ -523,6 +843,9 @@ const ChatScreen = () => {
             message={message}
             setMessage={setMessage}
             onSend={handleSend}
+            attachments={selectedMedia}
+            onPickMedia={handlePickMedia}
+            onRemoveMedia={handleRemoveSelectedMedia}
             onTyping={handleTyping}
             onStopTyping={handleStopTyping}
             isSending={sending}
