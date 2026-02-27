@@ -116,7 +116,7 @@ const WeeklyScheduleApply = () => {
 
       return selectedTemplates
         .filter((template: any) => Boolean(template?.id))
-        .map((template: any) => {
+        .map((template: any, sequence: number) => {
           const assignmentKey = `${day.label}::${template?.id}`;
           const selectedByRole = weeklyRoleAssignments[assignmentKey] || {};
           const employmentIds = Array.from(
@@ -134,6 +134,7 @@ const WeeklyScheduleApply = () => {
             : employmentIds.length;
 
           return {
+            sequence,
             shiftTemplateId: template?.id,
             dayOfWeek: day.label.toLowerCase(),
             requiredEmployees: requiredEmployees > 0 ? requiredEmployees : 1,

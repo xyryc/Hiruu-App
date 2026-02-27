@@ -84,10 +84,15 @@ const SavedShiftTemplate = () => {
 
         daysData.forEach((day) => {
           const dayKey = day.label;
-          const slots = (Array.isArray(block?.plan?.slots) ? block.plan.slots : []).filter(
-            (slot: any) =>
-              String(slot?.dayOfWeek || "").toLowerCase() === dayKey.toLowerCase()
-          );
+          const slots = (Array.isArray(block?.plan?.slots) ? block.plan.slots : [])
+            .filter(
+              (slot: any) =>
+                String(slot?.dayOfWeek || "").toLowerCase() === dayKey.toLowerCase()
+            )
+            .sort(
+              (a: any, b: any) =>
+                Number(a?.sequence ?? 0) - Number(b?.sequence ?? 0)
+            );
 
           const selectedTemplates = slots
             .map((slot: any) => templateMap.get(String(slot?.shiftTemplateId)))
@@ -155,7 +160,7 @@ const SavedShiftTemplate = () => {
 
       return selectedTemplates
         .filter((template: any) => Boolean(template?.id))
-        .map((template: any) => {
+        .map((template: any, sequence: number) => {
           const assignmentKey = `${day.label}::${template?.id}`;
           const selectedByRole = weeklyRoleAssignments[assignmentKey] || {};
           const employmentIds = Array.from(
@@ -173,6 +178,7 @@ const SavedShiftTemplate = () => {
             : employmentIds.length;
 
           return {
+            sequence,
             shiftTemplateId: template?.id,
             dayOfWeek: day.label.toLowerCase(),
             requiredEmployees: requiredEmployees > 0 ? requiredEmployees : 1,
