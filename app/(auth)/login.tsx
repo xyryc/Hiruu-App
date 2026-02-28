@@ -9,7 +9,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { t } from "i18next";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Alert,
   ScrollView,
@@ -18,7 +18,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import PhoneInput from "react-native-phone-input";
+import PhoneInput, {
+  getCountryByCca2,
+  ICountry,
+  isValidPhoneNumber,
+} from "react-native-international-phone-number";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
@@ -30,11 +34,12 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [countryCode, setCountryCode] = useState("+1");
   const [isValidPhone, setIsValidPhone] = useState(true);
+  const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
   const router = useRouter();
   const { login, isLoading, clearError } = useAuthStore();
-
-  let phoneRef: any = null;
+  const fallbackCountry = useMemo(() => getCountryByCca2("US"), []);
 
   useEffect(() => {
     const loadLastEmail = async () => {
@@ -51,18 +56,38 @@ const Login = () => {
     loadLastEmail();
   }, []);
 
-  const handlePhoneChange = () => {
-    try {
-      const number = phoneRef.getValue();
-      const isValid = phoneRef.isValidNumber();
-
-      setPhoneNumber(number);
-      setIsValidPhone(isValid);
-    } catch (error) {
-      // Ignore validation errors while typing
-      setIsValidPhone(false);
-    }
+  const getDialCode = (country?: ICountry | null) => {
+    if (!country?.idd?.root) return "";
+    const suffix = country.idd.suffixes?.[0] || "";
+    return `${country.idd.root}${suffix}`;
   };
+
+  const validatePhone = (value: string, country?: ICountry | null) => {
+    const countryToUse = country ?? selectedCountry ?? fallbackCountry;
+    if (!countryToUse) return false;
+    return isValidPhoneNumber(value, countryToUse);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setPhoneNumber(value);
+    if (!value) {
+      setIsValidPhone(true);
+      return;
+    }
+    setIsValidPhone(validatePhone(value));
+  };
+
+  const handleSelectedCountry = (country: ICountry) => {
+    setSelectedCountry(country);
+    const dialCode = getDialCode(country);
+    if (dialCode) setCountryCode(dialCode);
+    if (phoneNumber) setIsValidPhone(validatePhone(phoneNumber, country));
+  };
+
+  useEffect(() => {
+    const dialCode = getDialCode(fallbackCountry);
+    if (dialCode) setCountryCode(dialCode);
+  }, [fallbackCountry]);
 
   const handleLogin = async () => {
     clearError();
@@ -74,7 +99,12 @@ const Login = () => {
       }
 
       try {
-        const result = await login({ email, password });
+        const result = await login({
+          email,
+          password,
+          rememberMe,
+          fcmToken: undefined,
+        });
 
         if (result?.success) {
           if (email) {
@@ -88,11 +118,38 @@ const Login = () => {
         toast.error(translateApiMessage(messageKey));
       }
     } else {
-      // Temporarily disabled until phone login endpoint is clarified
-      Alert.alert(
-        t("common.error"),
-        "Phone login is temporarily unavailable. Please use email login."
-      );
+      const normalizedPhone = phoneNumber.replace(/\D/g, "");
+      const effectiveCountryCode =
+        getDialCode(selectedCountry ?? fallbackCountry) || countryCode;
+      const isPhoneValid = validatePhone(phoneNumber);
+
+      if (!normalizedPhone || !isPhoneValid) {
+        Alert.alert(t("common.error"), t("validation.invalidPhone"));
+        return;
+      }
+
+      try {
+        const result = await login({
+          countryCode: effectiveCountryCode,
+          phoneNumber: normalizedPhone,
+          rememberMe,
+          fcmToken: undefined,
+        });
+
+        if (result?.success) {
+          toast.success(translateApiMessage(result?.message || "auth_phone_otp_sent"));
+          router.push({
+            pathname: "/(auth)/verify",
+            params: {
+              phoneNumber: normalizedPhone,
+              countryCode: effectiveCountryCode,
+            },
+          });
+        }
+      } catch (error: any) {
+        const messageKey = error?.message || "UNKNOWN_ERROR";
+        toast.error(translateApiMessage(messageKey));
+      }
     }
   };
 
@@ -221,33 +278,28 @@ const Login = () => {
                 </Text>
 
                 <PhoneInput
-                  ref={(ref) => {
-                    phoneRef = ref;
-                  }}
+                  value={phoneNumber}
                   onChangePhoneNumber={handlePhoneChange}
-                  initialCountry={"us"}
-                  style={{
-                    borderWidth: 1,
-                    borderColor: "#EEEEEE",
-                    borderRadius: 10,
-                    paddingHorizontal: 15,
-                    paddingVertical: 12,
-                    backgroundColor: "#fff",
+                  selectedCountry={selectedCountry}
+                  onChangeSelectedCountry={handleSelectedCountry}
+                  defaultCountry="US"
+                  placeholder="Enter phone number"
+                  phoneInputStyles={{
+                    container: {
+                      borderWidth: 1,
+                      borderColor: "#EEEEEE",
+                      borderRadius: 10,
+                      backgroundColor: "#fff",
+                    },
+                    input: {
+                      fontSize: 14,
+                      color: "#7A7A7A",
+                    },
+                    divider: {
+                      backgroundColor: "#E5E7EB",
+                    },
                   }}
-                  textStyle={{
-                    fontSize: 14,
-                    color: "#7A7A7A",
-                  }}
-                  flagStyle={{
-                    width: 25,
-                    height: 18,
-                  }}
-                  autoFormat={true}
-                  allowZeroAfterCountryCode={false}
-                  textProps={{
-                    placeholder: "Enter phone number",
-                    placeholderTextColor: "#9CA3AF",
-                  }}
+                  phoneInputPlaceholderTextColor="#9CA3AF"
                 />
 
                 {!isValidPhone && phoneNumber && (

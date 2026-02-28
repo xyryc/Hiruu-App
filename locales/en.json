@@ -57,6 +57,7 @@
   "api": {
     "auth_phone_registration_success": "Phone registration successful.",
     "auth_phone_already_taken": "Phone number is already taken.",
+    "auth_phone_otp_sent": "OTP sent to your phone number.",
     "auth_email_already_taken": "Email is already taken.",
     "auth_invalid_credentials": "Invalid email or password.",
     "unauthorized": "You are not authorized. Please log in again.",

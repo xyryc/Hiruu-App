@@ -14,6 +14,8 @@ export interface LoginData {
   password?: string;
   countryCode?: string;
   phoneNumber?: string;
+  rememberMe?: boolean;
+  fcmToken?: string;
 }
 
 export interface OAuthData {
