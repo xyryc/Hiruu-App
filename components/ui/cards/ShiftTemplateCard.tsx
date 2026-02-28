@@ -157,7 +157,7 @@ const ShiftTemplateCard = ({
           </View>
 
           {/* Incomplete: Bartender 1 needed */}
-          {weekly && (
+          {/* {weekly && (
             <View className="flex-row items-center gap-2.5 mt-2.5">
               <Feather name="alert-triangle" size={16} color="#F34F4F" />
               <Text
@@ -167,7 +167,7 @@ const ShiftTemplateCard = ({
                 Incomplete: Bartender 1 needed
               </Text>
             </View>
-          )}
+          )} */}
 
           {/* line  */}
           <Image

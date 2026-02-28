@@ -137,7 +137,13 @@ const UserPlan = () => {
   const loadActiveSubscription = useCallback(async () => {
     try {
       setLoadingActiveSub(true);
-      const data = await billingService.getMyActiveSubscription("active");
+      const [activeSubs, trialingSubs] = await Promise.all([
+        billingService.getMyActiveSubscription("active"),
+        billingService.getMyActiveSubscription("trialing"),
+      ]);
+      const data = [...activeSubs, ...trialingSubs].filter(
+        (item, index, arr) => arr.findIndex((candidate) => candidate.id === item.id) === index
+      );
       const userActive = data.find((item) => item?.plan?.type === "user" || !!item?.userId) || null;
       setActiveSubscription(userActive);
     } catch {

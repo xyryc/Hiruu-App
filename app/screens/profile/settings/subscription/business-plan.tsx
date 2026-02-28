@@ -65,7 +65,13 @@ const BusinessPlan = () => {
   const loadActiveSubscriptions = useCallback(async () => {
     try {
       setLoadingActiveSub(true);
-      const data = await billingService.getMyActiveSubscription("active");
+      const [activeSubs, trialingSubs] = await Promise.all([
+        billingService.getMyActiveSubscription("active"),
+        billingService.getMyActiveSubscription("trialing"),
+      ]);
+      const data = [...activeSubs, ...trialingSubs].filter(
+        (item, index, arr) => arr.findIndex((candidate) => candidate.id === item.id) === index
+      );
       setActiveSubscriptions(data || []);
     } catch {
       setActiveSubscriptions([]);

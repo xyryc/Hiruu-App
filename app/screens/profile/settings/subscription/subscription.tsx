@@ -40,10 +40,15 @@ const Subscription = () => {
       setIsLoadingActiveSubscription(true);
       setActiveSubError(null);
 
-      const [subs] = await Promise.all([
+      const [activeSubs, trialingSubs] = await Promise.all([
         billingService.getMyActiveSubscription("active"),
+        billingService.getMyActiveSubscription("trialing"),
         getMyBusinesses(),
       ]);
+
+      const subs = [...activeSubs, ...trialingSubs].filter(
+        (item, index, arr) => arr.findIndex((candidate) => candidate.id === item.id) === index
+      );
 
       setActiveSubscriptions(subs ?? []);
     } catch (error: any) {
