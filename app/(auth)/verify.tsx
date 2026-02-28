@@ -1,6 +1,7 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { useAuthStore } from "@/stores/authStore";
+import { translateApiMessage } from "@/utils/apiMessages";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -85,10 +86,14 @@ const Verify = () => {
           countryCode: (params.countryCode as string) || "+1",
         };
 
-    const result = await resendOTP(payload);
-
-    if (result?.success) {
-      toast.success("OTP sent successfully!");
+    try {
+      const result = await resendOTP(payload);
+      if (result?.success) {
+        toast.success(translateApiMessage(result?.message || "otp_sent_email"));
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : t("common.error");
+      toast.error(message);
     }
   };
 
