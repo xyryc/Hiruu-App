@@ -10,7 +10,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { t } from "i18next";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -20,7 +20,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import PhoneInput from "react-native-phone-input";
+import PhoneInput, {
+  getCountryByCca2,
+  ICountry,
+  isValidPhoneNumber,
+} from "react-native-international-phone-number";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -177,18 +181,36 @@ const BusinessSetup = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("");
   const [isValidPhone, setIsValidPhone] = useState(true);
+  const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
+  const fallbackCountry = useMemo(() => getCountryByCca2("US"), []);
 
-  let phoneRef: any = null;
-
-  const handlePhoneChange = () => {
-    const number = phoneRef.getValue();
-    const isValid = phoneRef.isValidNumber();
-    const cc = phoneRef.getCountryCode();
-
-    setPhoneNumber(number);
-    setCountryCode(cc ? `+${cc}` : "");
-    setIsValidPhone(isValid);
+  const getDialCode = (country?: ICountry | null) => {
+    if (!country?.idd?.root) return "";
+    const suffix = country.idd.suffixes?.[0] || "";
+    return `${country.idd.root}${suffix}`;
   };
+
+  const validatePhone = (value: string, country?: ICountry | null) => {
+    const countryToUse = country ?? selectedCountry ?? fallbackCountry;
+    if (!countryToUse || !value) return true;
+    return isValidPhoneNumber(value, countryToUse);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setPhoneNumber(value);
+    setCountryCode(getDialCode(selectedCountry ?? fallbackCountry) || "");
+    setIsValidPhone(validatePhone(value));
+  };
+
+  const handleSelectedCountry = (country: ICountry) => {
+    setSelectedCountry(country);
+    setCountryCode(getDialCode(country));
+    setIsValidPhone(validatePhone(phoneNumber, country));
+  };
+
+  useEffect(() => {
+    setCountryCode(getDialCode(fallbackCountry) || "");
+  }, [fallbackCountry]);
 
   // location
   const [value, setValue] = useState<string | null>(null);
@@ -475,33 +497,28 @@ const BusinessSetup = () => {
             </Text>
 
             <PhoneInput
-              ref={(ref) => {
-                phoneRef = ref;
-              }}
+              value={phoneNumber}
               onChangePhoneNumber={handlePhoneChange}
-              initialCountry={"us"}
-              style={{
-                borderWidth: 1,
-                borderColor: "#EEEEEE",
-                borderRadius: 10,
-                paddingHorizontal: 15,
-                paddingVertical: 12,
-                backgroundColor: "#fff",
+              selectedCountry={selectedCountry}
+              onChangeSelectedCountry={handleSelectedCountry}
+              defaultCountry="US"
+              placeholder="Enter phone number"
+              phoneInputStyles={{
+                container: {
+                  borderWidth: 1,
+                  borderColor: "#EEEEEE",
+                  borderRadius: 10,
+                  backgroundColor: "#fff",
+                },
+                input: {
+                  fontSize: 14,
+                  color: "#7A7A7A",
+                },
+                divider: {
+                  backgroundColor: "#E5E7EB",
+                },
               }}
-              textStyle={{
-                fontSize: 14,
-                color: "#7A7A7A",
-              }}
-              flagStyle={{
-                width: 25,
-                height: 18,
-              }}
-              autoFormat={true}
-              allowZeroAfterCountryCode={false}
-              textProps={{
-                placeholder: "Enter phone number",
-                placeholderTextColor: "#9CA3AF",
-              }}
+              phoneInputPlaceholderTextColor="#9CA3AF"
             />
 
             {!isValidPhone && phoneNumber && (

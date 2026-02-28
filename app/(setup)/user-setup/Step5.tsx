@@ -1,13 +1,17 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import OTPInput from "@/components/ui/inputs/OTPInput";
-import PhoneNumberInput from "@/components/ui/inputs/PhoneNumberInput";
 import { useAuthStore } from "@/stores/authStore";
 import { useProfileStore } from "@/stores/profileStore";
 import { useRouter } from "expo-router";
 import { t } from "i18next";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ScrollView, Text, View } from "react-native";
+import PhoneInput, {
+  getCountryByCca2,
+  ICountry,
+  isValidPhoneNumber,
+} from "react-native-international-phone-number";
 import * as Progress from "react-native-progress";
 import Animated, { FadeIn, FadeOut, Layout } from "react-native-reanimated";
 import { toast } from "sonner-native";
@@ -26,11 +30,14 @@ export default function Step5({
   const { updateProfile, isLoading } = useProfileStore();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("");
+  const [isValidPhone, setIsValidPhone] = useState(true);
+  const [selectedCountry, setSelectedCountry] = useState<ICountry | null>(null);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [otpSent, setOtpSent] = useState(false);
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
   const [isOtpVerified, setIsOtpVerified] = useState(false);
   const [onboardingSent, setOnboardingSent] = useState(false);
+  const fallbackCountry = useMemo(() => getCountryByCca2("US"), []);
 
 
   useEffect(() => {
@@ -40,6 +47,34 @@ export default function Step5({
       setOnboardingSent(true);
     }
   }, [onboardingSent, updateProfile, user?.isNumberVerified]);
+
+  const getDialCode = (country?: ICountry | null) => {
+    if (!country?.idd?.root) return "";
+    const suffix = country.idd.suffixes?.[0] || "";
+    return `${country.idd.root}${suffix}`;
+  };
+
+  const validatePhone = (value: string, country?: ICountry | null) => {
+    const countryToUse = country ?? selectedCountry ?? fallbackCountry;
+    if (!countryToUse || !value) return true;
+    return isValidPhoneNumber(value, countryToUse);
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setPhoneNumber(value);
+    setCountryCode(getDialCode(selectedCountry ?? fallbackCountry) || "");
+    setIsValidPhone(validatePhone(value));
+  };
+
+  const handleSelectedCountry = (country: ICountry) => {
+    setSelectedCountry(country);
+    setCountryCode(getDialCode(country));
+    setIsValidPhone(validatePhone(phoneNumber, country));
+  };
+
+  useEffect(() => {
+    setCountryCode(getDialCode(fallbackCountry) || "");
+  }, [fallbackCountry]);
 
   const getPhonePayload = () => {
     const trimmed = phoneNumber.trim();
@@ -160,11 +195,35 @@ export default function Step5({
       >
         <View>
           <Text className="text-sm mb-2 text-[#7A7A7A]">Phone number</Text>
-          <PhoneNumberInput
-            phoneNumber={phoneNumber}
-            setPhoneNumber={setPhoneNumber}
-            setCountryCode={setCountryCode}
+          <PhoneInput
+            value={phoneNumber}
+            onChangePhoneNumber={handlePhoneChange}
+            selectedCountry={selectedCountry}
+            onChangeSelectedCountry={handleSelectedCountry}
+            defaultCountry="US"
+            placeholder="Enter phone number"
+            phoneInputStyles={{
+              container: {
+                borderWidth: 1,
+                borderColor: "#EEEEEE",
+                borderRadius: 10,
+                backgroundColor: "#fff",
+              },
+              input: {
+                fontSize: 14,
+                color: "#7A7A7A",
+              },
+              divider: {
+                backgroundColor: "#E5E7EB",
+              },
+            }}
+            phoneInputPlaceholderTextColor="#9CA3AF"
           />
+          {!isValidPhone && phoneNumber && (
+            <Text className="text-red-500 text-xs mt-1 ml-1">
+              {t("validation.invalidPhone")}
+            </Text>
+          )}
         </View>
 
         <View className="mt-4">
