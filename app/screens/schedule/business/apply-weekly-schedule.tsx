@@ -63,6 +63,8 @@ const WeeklyScheduleApply = () => {
     createWeeklyScheduleBlock,
     updateWeeklyScheduleBlock,
     getWeeklyScheduleBlocks,
+    clearWeeklyShiftSelections,
+    clearWeeklyRoleAssignments,
   } = useBusinessStore();
   const [isApplying, setIsApplying] = useState(false);
   const params = useLocalSearchParams<{
@@ -339,7 +341,9 @@ const WeeklyScheduleApply = () => {
         await createWeeklyScheduleBlock(businessId, payload);
         toast.success(t("api.weekly_block_created_successfully"));
       }
-      router.back();
+      clearWeeklyShiftSelections();
+      clearWeeklyRoleAssignments();
+      router.replace("/(tabs)/business-schedule");
     } catch (error: any) {
       const apiMessageKey =
         error?.response?.data?.message || error?.message || "UNKNOWN_ERROR";
