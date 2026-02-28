@@ -347,31 +347,73 @@ const SavedShiftTemplate = () => {
                   </TouchableOpacity>
 
                   {selectedTemplates.map((template: any) => (
-                    <ShiftTemplateCard
-                      weekly={true}
-                      key={`${day.label}-${template?.id}`}
-                      className="mt-3"
-                      title={template?.name || `${day.label} Shift`}
-                      timeRange={`${to12Hour(template?.startTime)} - ${to12Hour(template?.endTime)}`}
-                      breakTimeRange={
-                        Array.isArray(template?.breakDuration) &&
-                          template.breakDuration.length > 0
-                          ? template.breakDuration
-                            .map(
-                              (item: any) =>
-                                `${to12Hour(item?.startTime)} - ${to12Hour(item?.endTime)}`
-                            )
-                            .join(", ")
-                          : "No break"
-                      }
-                      location={template?.business?.name || "Location not defined"}
-                      roles={template?.roleRequirements || []}
-                      businessName={template?.business?.name}
-                      businessLogo={template?.business?.logo}
-                      templateId={template?.id}
-                      businessId={template?.businessId}
-                      assignParams={{ day: day.label, templateId: template?.id }}
-                    />
+                    (() => {
+                      const requiredRoles = Array.isArray(template?.roleRequirements)
+                        ? template.roleRequirements
+                        : [];
+                      const assignmentKey = `${day.label}::${template?.id}`;
+                      const selectedByRole = weeklyRoleAssignments[assignmentKey] || {};
+                      const missingRoles = requiredRoles
+                        .map((role: any) => {
+                          const roleId = String(role?.roleId || "");
+                          const roleName =
+                            role?.businessRoleName ||
+                            role?.roleName ||
+                            role?.name ||
+                            "Role";
+                          const requiredCount = Number(role?.count || 0);
+                          const selectedCount = Array.isArray(selectedByRole[roleId])
+                            ? selectedByRole[roleId].length
+                            : 0;
+                          const remaining = Math.max(requiredCount - selectedCount, 0);
+
+                          return {
+                            roleName,
+                            remaining,
+                          };
+                        })
+                        .filter((item: any) => item.remaining > 0);
+
+                      const isAssignmentComplete = missingRoles.length === 0;
+                      const assignmentStatusText =
+                        requiredRoles.length === 0
+                          ? "No role requirements"
+                          : isAssignmentComplete
+                            ? "Complete"
+                            : `Incomplete: ${missingRoles
+                                .map((item: any) => `${item.roleName} ${item.remaining} needed`)
+                                .join(", ")}`;
+
+                      return (
+                        <ShiftTemplateCard
+                          weekly={true}
+                          key={`${day.label}-${template?.id}`}
+                          className="mt-3"
+                          title={template?.name || `${day.label} Shift`}
+                          timeRange={`${to12Hour(template?.startTime)} - ${to12Hour(template?.endTime)}`}
+                          breakTimeRange={
+                            Array.isArray(template?.breakDuration) &&
+                            template.breakDuration.length > 0
+                              ? template.breakDuration
+                                  .map(
+                                    (item: any) =>
+                                      `${to12Hour(item?.startTime)} - ${to12Hour(item?.endTime)}`
+                                  )
+                                  .join(", ")
+                              : "No break"
+                          }
+                          location={template?.business?.name || "Location not defined"}
+                          roles={template?.roleRequirements || []}
+                          businessName={template?.business?.name}
+                          businessLogo={template?.business?.logo}
+                          templateId={template?.id}
+                          businessId={template?.businessId}
+                          assignParams={{ day: day.label, templateId: template?.id }}
+                          assignmentStatusText={assignmentStatusText}
+                          isAssignmentComplete={isAssignmentComplete}
+                        />
+                      );
+                    })()
                   ))}
                 </View>
               );

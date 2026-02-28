@@ -2,7 +2,7 @@ import { ShiftHeaderProps } from "@/types";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import BusinessSelectionTrigger from "../ui/dropdown/BusinessSelectionTrigger";
 import UserCalendarScheduleModal from "../ui/modals/UserCalendarScheduleModal";
@@ -12,6 +12,32 @@ const ShiftHeader = ({
   displayContent,
 }: ShiftHeaderProps | any) => {
   const [isCalenderModal, setCalenderModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const value = new Date();
+    const year = value.getFullYear();
+    const month = `${value.getMonth() + 1}`.padStart(2, "0");
+    const day = `${value.getDate()}`.padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  });
+
+  const displayDate = useMemo(() => {
+    const value = new Date(`${selectedDate}T00:00:00`);
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(value);
+  }, [selectedDate]);
+
+  const displayWeekdayDate = useMemo(() => {
+    const value = new Date(`${selectedDate}T00:00:00`);
+    return new Intl.DateTimeFormat("en-GB", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(value);
+  }, [selectedDate]);
 
   return (
     <View className="px-5 pb-4 pt-2.5">
@@ -22,7 +48,7 @@ const ShiftHeader = ({
           </Text>
           <View className="flex-row items-center">
             <Text className="text-xl font-proximanova-bold text-primary dark:text-dark-primary">
-              12 June, 2025
+              {displayDate}
             </Text>
             <Ionicons
               name="chevron-down"
@@ -63,7 +89,7 @@ const ShiftHeader = ({
 
       <View className="flex-row justify-between items-center mt-7">
         <Text className="text-lg font-proximanova-semibold text-primary dark:text-dark-primary">
-          Friday, 16 June, 2025
+          {displayWeekdayDate}
         </Text>
 
         <BusinessSelectionTrigger
@@ -71,9 +97,12 @@ const ShiftHeader = ({
           onPress={() => setShowModal(true)}
           compact
         />
+
         <UserCalendarScheduleModal
           visible={isCalenderModal}
           onClose={() => setCalenderModal(false)}
+          selectedDate={selectedDate}
+          onSelectDate={setSelectedDate}
         />
       </View>
     </View>

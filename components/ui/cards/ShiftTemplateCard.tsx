@@ -20,6 +20,8 @@ const ShiftTemplateCard = ({
   businessId,
   onDelete,
   assignParams,
+  assignmentStatusText,
+  isAssignmentComplete,
 }: any) => {
   const scrollX = new Animated.Value(0);
   const roleChips =
@@ -156,24 +158,28 @@ const ShiftTemplateCard = ({
             </View>
           </View>
 
-          {/* Incomplete: Bartender 1 needed */}
-          {/* {weekly && (
-            <View className="flex-row items-center gap-2.5 mt-2.5">
-              <Feather name="alert-triangle" size={16} color="#F34F4F" />
+          {weekly && assignmentStatusText ? (
+            <View className="flex-row items-center mt-2.5">
+              <Feather
+                name={isAssignmentComplete ? "check-circle" : "alert-triangle"}
+                size={16}
+                color={isAssignmentComplete ? "#22C55E" : "#F34F4F"}
+              />
               <Text
-                numberOfLines={1}
-                className="ml-1.5 text-sm font-proximanova-regular text-[#F34F4F]"
+                numberOfLines={2}
+                className={`ml-1.5 text-sm font-proximanova-regular ${isAssignmentComplete ? "text-[#22C55E]" : "text-[#F34F4F]"
+                  }`}
               >
-                Incomplete: Bartender 1 needed
+                {assignmentStatusText}
               </Text>
             </View>
-          )} */}
+          ) : null}
 
           {/* line  */}
           <Image
             source={require("@/assets/images/dotted-line.svg")}
             contentFit="contain"
-            style={{ width: 295, height: 2, marginTop: 15 }}
+            style={{ width: "100%", height: 2, marginTop: 15 }}
           />
 
           {/* business logo and name */}
