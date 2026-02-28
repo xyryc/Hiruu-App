@@ -4,6 +4,7 @@ import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import ShiftTemplateCard from "@/components/ui/cards/ShiftTemplateCard";
 import { useBusinessStore } from "@/stores/businessStore";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useMemo } from "react";
@@ -130,6 +131,43 @@ const SavedShiftTemplate = () => {
     setWeeklyRoleAssignment,
     setWeeklyShiftSelection,
   ]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const refreshSelectedTemplates = async () => {
+        if (!businessId) return;
+
+        try {
+          const templates = await getShiftTemplates(businessId);
+          const currentSelections = useBusinessStore.getState().weeklyShiftSelections;
+          const templateMap = new Map(
+            (Array.isArray(templates) ? templates : []).map((template: any) => [
+              String(template?.id),
+              template,
+            ])
+          );
+
+          daysData.forEach((day) => {
+            const existingSelection = Array.isArray(currentSelections[day.label])
+              ? currentSelections[day.label]
+              : [];
+
+            if (existingSelection.length === 0) return;
+
+            const refreshedSelection = existingSelection
+              .map((template: any) => templateMap.get(String(template?.id)))
+              .filter(Boolean);
+
+            setWeeklyShiftSelection(day.label, refreshedSelection);
+          });
+        } catch {
+          // Keep existing selection if refresh fails.
+        }
+      };
+
+      refreshSelectedTemplates();
+    }, [businessId, getShiftTemplates, setWeeklyShiftSelection])
+  );
 
   const hasAtLeastOneTemplate = useMemo(
     () =>
