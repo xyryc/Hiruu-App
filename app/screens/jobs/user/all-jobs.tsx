@@ -6,10 +6,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
-  ScrollView,
+  FlatList,
   Text,
   TouchableOpacity,
   View,
@@ -24,36 +24,87 @@ const AllJobs = () => {
   const [jobs, setJobs] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 10;
 
-  const loadJobs = useCallback(async () => {
+  const loadJobs = useCallback(async (targetPage = 1, append = false) => {
     try {
-      setIsLoading(true);
-      const data = await getPublicRecruitments();
-      setJobs(Array.isArray(data) ? data : []);
+      if (append) {
+        setIsLoadingMore(true);
+      } else {
+        setIsLoading(true);
+      }
+
+      const result = await getPublicRecruitments({
+        page: targetPage,
+        limit,
+        isFeatured: true,
+        search: search.trim() || undefined,
+      });
+      const fetched = (Array.isArray(result?.data) ? result.data : []).filter(
+        (item: any) => item?.isActive === true
+      );
+      const nextPage = Number(result?.pagination?.page || targetPage);
+      const nextTotalPages = Number(result?.pagination?.totalPages || 1);
+
+      setJobs((prev) => {
+        if (!append) return fetched;
+        const merged = [...prev, ...fetched];
+        return Array.from(new Map(merged.map((item: any) => [item?.id, item])).values());
+      });
+      setPage(nextPage);
+      setTotalPages(nextTotalPages);
     } catch (error: any) {
       setJobs([]);
-      toast.error(error?.message || "Failed to fetch jobs");
+      toast.error(error?.message || "Failed to fetch exclusive jobs");
     } finally {
       setIsLoading(false);
+      setIsLoadingMore(false);
     }
-  }, [getPublicRecruitments]);
+  }, [getPublicRecruitments, search]);
 
   useFocusEffect(
     useCallback(() => {
-      loadJobs();
+      loadJobs(1, false);
     }, [loadJobs])
   );
 
-  const filteredJobs = useMemo(() => {
-    if (!search.trim()) return jobs;
-    const query = search.trim().toLowerCase();
-    return jobs.filter(
-      (item) =>
-        item?.name?.toLowerCase()?.includes(query) ||
-        item?.business?.name?.toLowerCase()?.includes(query) ||
-        item?.business?.address?.toLowerCase()?.includes(query)
-    );
-  }, [jobs, search]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadJobs(1, false);
+    }, 350);
+    return () => clearTimeout(timer);
+  }, [loadJobs, search]);
+
+  const canLoadMore = page < totalPages;
+
+  const handleLoadMore = async () => {
+    if (!canLoadMore || isLoadingMore || isLoading) return;
+    await loadJobs(page + 1, true);
+  };
+
+  const renderHeader = () => (
+    <>
+      <View className="flex-row items-center gap-1.5 mr-12 mt-3.5 px-5">
+        <SearchBar onSearch={setSearch} />
+        <TouchableOpacity onPress={() => router.push("/screens/jobs/user/filter")}>
+          <Ionicons
+            name="filter-circle"
+            size={44}
+            color={isDark ? "#fff" : "black"}
+          />
+        </TouchableOpacity>
+      </View>
+
+      <View className="mt-7 px-5">
+        <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary mb-4">
+          Exclusive Jobs
+        </Text>
+      </View>
+    </>
+  );
 
   return (
     <SafeAreaView
@@ -68,44 +119,43 @@ const AllJobs = () => {
         iconColor={isDark ? "#fff" : "#111"}
       />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="flex-row items-center gap-1.5 mr-12 mt-3.5 px-5">
-          <SearchBar onSearch={setSearch} />
-          <TouchableOpacity
-            onPress={() => router.push("/screens/jobs/user/filter")}
-          >
-            <Ionicons
-              name="filter-circle"
-              size={44}
-              color={isDark ? "#fff" : "black"}
-            />
-          </TouchableOpacity>
+      {isLoading ? (
+        <View className="py-10 items-center">
+          <ActivityIndicator size="large" color={isDark ? "#fff" : "#111"} />
         </View>
-
-        <View className="mt-7 px-5 pb-5">
-          <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary mb-4">
-            Jobs
-          </Text>
-
-          {isLoading ? (
-            <View className="py-10 items-center">
-              <ActivityIndicator size="large" color={isDark ? "#fff" : "#111"} />
-            </View>
-          ) : filteredJobs.length === 0 ? (
-            <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
-              No jobs found.
-            </Text>
-          ) : (
-            filteredJobs.map((item) => (
+      ) : (
+        <FlatList
+          data={jobs}
+          keyExtractor={(item) => String(item?.id)}
+          renderItem={({ item }) => (
+            <View className="px-5">
               <JobCard
-                key={item?.id}
                 job={item}
                 className="bg-white border border-[#EEEEEE] mb-4"
               />
-            ))
+            </View>
           )}
-        </View>
-      </ScrollView>
+          ListHeaderComponent={renderHeader}
+          ListEmptyComponent={
+            <View className="px-5 pb-5">
+              <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
+                No exclusive jobs found.
+              </Text>
+            </View>
+          }
+          ListFooterComponent={
+            isLoadingMore ? (
+              <View className="py-4 items-center">
+                <ActivityIndicator size="small" color={isDark ? "#fff" : "#111"} />
+              </View>
+            ) : null
+          }
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.35}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 20 }}
+        />
+      )}
     </SafeAreaView>
   );
 };

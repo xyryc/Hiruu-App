@@ -2,18 +2,14 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import JobApplyModal from "@/components/ui/modals/JobApplyModal";
-import {
-  Feather,
-  Fontisto,
-  Ionicons,
-  MaterialCommunityIcons,
-  Octicons,
-  SimpleLineIcons,
-} from "@expo/vector-icons";
+import { useJobStore } from "@/stores/jobStore";
+import { MaterialCommunityIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import React, { useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useCallback, useMemo, useState } from "react";
 import {
-  Alert,
+  ActivityIndicator,
   ScrollView,
   Share,
   StatusBar,
@@ -22,300 +18,249 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const JobProfile = () => {
+  const { businessId, recruitmentId } = useLocalSearchParams<{
+    businessId?: string;
+    recruitmentId?: string;
+  }>();
+  const getRecruitmentById = useJobStore((s) => s.getRecruitmentById);
+
+  const [job, setJob] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  const loadJobDetails = useCallback(async () => {
+    if (!businessId || !recruitmentId) {
+      setJob(null);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const data = await getRecruitmentById(String(businessId), String(recruitmentId));
+      setJob(data || null);
+    } catch (error: any) {
+      setJob(null);
+      toast.error(error?.message || "Failed to load job details");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [businessId, getRecruitmentById, recruitmentId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadJobDetails();
+    }, [loadJobDetails])
+  );
+
+  const salaryLabel = useMemo(() => {
+    if (
+      typeof job?.salaryMin === "number" &&
+      typeof job?.salaryMax === "number" &&
+      job?.salaryType
+    ) {
+      const suffix = job.salaryType === "monthly" ? "/mo" : "/hr";
+      return `${job.salaryMin}-${job.salaryMax}$${suffix}`;
+    }
+    return "-";
+  }, [job?.salaryMax, job?.salaryMin, job?.salaryType]);
+  const socialLinks = useMemo(() => {
+    const social = job?.business?.social || {};
+    return Object.entries(social)
+      .filter(([, value]) => typeof value === "string" && value.trim().length > 0)
+      .map(([key, value]) => ({
+        key,
+        label: key.charAt(0).toUpperCase() + key.slice(1),
+        value: String(value),
+      }));
+  }, [job?.business?.social]);
 
   const handleShare = async () => {
     try {
       await Share.share({
-        message:
-          "Check out Md Talath Un Nabi Anik's profile on Hiruu!\nhttps://hiruu.com/profile/mohammad-anik",
-        title: "Md Talath Un Nabi Anik's Profile",
+        message: `Check this job on Hiruu: ${job?.role?.role?.name || "Job"}\nID: ${
+          job?.id || "-"
+        }`,
+        title: "Job Posting",
       });
-    } catch (error) {
-      Alert.alert("Error", "Could not share profile");
+    } catch {
+      toast.error("Could not share job");
     }
   };
 
+  if (isLoading) {
+    return (
+      <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
+        <StatusBar barStyle="dark-content" backgroundColor="white" />
+        <ScreenHeader
+          className="px-5 pt-2.5"
+          title="Job Details"
+          onPressBack={() => router.back()}
+        />
+        <View className="flex-1 items-center justify-center">
+          <ActivityIndicator size="large" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!job) {
+    return (
+      <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
+        <StatusBar barStyle="dark-content" backgroundColor="white" />
+        <ScreenHeader
+          className="px-5 pt-2.5"
+          title="Job Details"
+          onPressBack={() => router.back()}
+        />
+        <View className="flex-1 px-5 pt-8">
+          <Text className="text-sm text-secondary">Job details not found.</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <SafeAreaView
-      className="bg-[#E5F4FD] dark:bg-dark-background"
-      edges={["top", "left", "right"]}
-    >
+    <SafeAreaView className="flex-1 bg-white" edges={["top", "left", "right"]}>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       <ScreenHeader
-        className="mx-5 pb-20"
-        title=""
+        className="px-5 pt-2.5"
+        title="Job Details"
+        onPressBack={() => router.back()}
         components={
-          <Ionicons
-            onPress={() => handleShare()}
-            className="p-2 bg-white rounded-full"
-            name="share-outline"
-            size={20}
-            color="black"
-          />
+          <TouchableOpacity onPress={handleShare} className="p-2 bg-[#F5F5F5] rounded-full">
+            <MaterialCommunityIcons name="share-variant" size={20} color="#111" />
+          </TouchableOpacity>
         }
       />
 
-      {/* content */}
-      <View className="bg-white">
-        {/* profile */}
-        <View className="absolute -top-16 inset-x-0">
-          {/* profile image */}
-          <View className="border-2 border-[#11293A] rounded-full mx-auto p-1">
-            <Image
-              source="https://images-platform.99static.com//gkoGE5-VZ1k4SXxg0mrUj7O0V38=/250x0:1750x1500/fit-in/500x500/99designs-contests-attachments/102/102585/attachment_102585463"
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: 999,
-              }}
-              contentFit="cover"
-            />
-          </View>
-
-          {/* name */}
-          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary text-center mt-4">
-            Farout Beach Club{" "}
-            <MaterialCommunityIcons name="crown" size={14} color="#4FB2F3" />
-          </Text>
-
-          <View className="flex-row items-center justify-center mt-2.5 gap-7">
-            <View className="flex-row items-center gap-2.5 border-r-hairline border-[#7A7A7A] pr-7">
-              <SimpleLineIcons name="location-pin" size={14} color="#7A7A7A" />
-              <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                New York, North Bergen
-              </Text>
-            </View>
-
-            <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-              4.8/5 <Fontisto name="star" size={14} color="#F1C400" />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 120 }}
+      >
+        <View className="flex-row items-center gap-3 mt-4">
+          <Image
+            source={job?.business?.logo || require("@/assets/images/placeholder.png")}
+            style={{ width: 52, height: 52, borderRadius: 999 }}
+            contentFit="cover"
+          />
+          <View className="flex-1">
+            <Text className="font-proximanova-semibold text-primary text-base">
+              {job?.role?.role?.name || "-"}{" "}
+              {job?.isFeatured ? (
+                <MaterialCommunityIcons name="crown" size={14} color="#4FB2F3" />
+              ) : null}
             </Text>
+            <Text className="text-sm text-secondary">{job?.business?.name || "-"}</Text>
           </View>
         </View>
 
-        <ScrollView
-          className="mt-40 mx-5"
-          contentContainerStyle={{
-            paddingBottom: 300,
-          }}
-          showsVerticalScrollIndicator={false}
-        >
-          <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
-            Job Description
+        <View className="flex-row items-center mt-3">
+          <SimpleLineIcons name="location-pin" size={12} color="#7A7A7A" />
+          <Text className="text-sm text-secondary ml-1">
+            {job?.business?.address || "-"}
           </Text>
-
-          {/* about the role */}
-          <View className="mt-7">
-            <View className="flex-row items-center gap-2">
-              <MaterialCommunityIcons
-                className="p-2 bg-[#E5F4FD] rounded-full"
-                name="file-document-check-outline"
-                size={18}
-                color="black"
-              />
-              <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
-                About the Role
-              </Text>
-            </View>
-
-            <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary mt-2.5">
-              Join the core team at Space Hotel, a unique dining experience
-              known for its space-themed interiors and premium service.....Read
-              More
+          {typeof job?.distanceKm === "number" ? (
+            <Text className="text-xs font-proximanova-semibold text-[#4FB2F3] ml-2">
+              {job.distanceKm.toFixed(2)} km
             </Text>
-          </View>
+          ) : null}
+        </View>
 
-          {/* key info */}
-          <View className="mt-7">
-            <View className="flex-row items-center gap-2">
-              <Octicons
-                className="p-2 bg-[#E5F4FD] rounded-full"
-                name="repo-forked"
-                size={18}
-                color="black"
-              />
-              <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
-                Key Info
-              </Text>
-            </View>
+        <Text className="font-proximanova-semibold text-xl text-primary mt-6">
+          Job Description
+        </Text>
+        <Text className="text-sm text-secondary mt-2">
+          {job?.description || "-"}
+        </Text>
 
-            <View className="flex-row flex-wrap gap-2.5 mt-2.5">
-              <SimpleStatusBadge title="Hiring: Bartender" bgColor="#F5F5F5" />
-              <SimpleStatusBadge title="Gender: Male" bgColor="#F5F5F5" />
-              <SimpleStatusBadge title="Experience: 1 Year" bgColor="#F5F5F5" />
-              <SimpleStatusBadge
-                title="Location: 845, junior street, plaisis"
-                bgColor="#F5F5F5"
-              />
-              <SimpleStatusBadge title="Age: 18-25" bgColor="#F5F5F5" />
-              <SimpleStatusBadge
-                title="Shift: 10:00 AM – 11:00 PM"
-                bgColor="#F5F5F5"
-              />
-              <SimpleStatusBadge title="Salary: 5-10$/hr" bgColor="#F5F5F5" />
-            </View>
-          </View>
+        <Text className="font-proximanova-semibold text-xl text-primary mt-6">
+          Required Skills
+        </Text>
+        <View className="flex-row flex-wrap gap-2.5 mt-3">
+          {(Array.isArray(job?.requiredSkills) ? job.requiredSkills : []).length === 0 ? (
+            <SimpleStatusBadge title="No specific skills listed" bgColor="#F5F5F5" />
+          ) : (
+            (job.requiredSkills as string[]).map((skill, index) => (
+              <SimpleStatusBadge key={`${skill}-${index}`} title={skill} bgColor="#F5F5F5" />
+            ))
+          )}
+        </View>
 
-          {/* hiring manager */}
-          <View className="mt-7">
-            <View className="flex-row items-center gap-2">
-              <Feather
-                className="p-2 bg-[#E5F4FD] rounded-full"
-                name="user"
-                size={18}
-                color="black"
-              />
-              <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
-                Hiring Manager
-              </Text>
-            </View>
-
-            {/* profile */}
-            <View className="bg-[#4FB2F3] p-2.5 rounded-xl flex-row justify-between items-center mt-4">
-              <View className="flex-row items-center gap-2.5">
-                <Image
-                  source="https://i0.wp.com/ridethewave.co/wp-content/uploads/2023/11/RTW0041-Edit_websize.jpg?resize=739%2C924&ssl=1"
-                  style={{
-                    width: 40,
-                    height: 40,
-                    borderRadius: 999,
-                  }}
-                  contentFit="cover"
-                />
-                <Text className="font-proximanova-bold text-white">
-                  Meclizine Johnsen
-                </Text>
-              </View>
-
-              <View className="bg-white rounded-full p-2">
-                <Image
-                  source={require("@/assets/images/messages-fill.svg")}
-                  style={{
-                    width: 22,
-                    height: 22,
-                  }}
-                  contentFit="contain"
-                />
-              </View>
-            </View>
-          </View>
-
-          {/* Contact Us On */}
-          <View className="mt-7">
-            <View className="flex-row items-center gap-2">
-              <Ionicons
-                className="p-2 bg-[#E5F4FD] rounded-full"
-                name="call-outline"
-                size={18}
-                color="black"
-              />
-              <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
-                Contact Us On
-              </Text>
-            </View>
-
-            {/* socials */}
-            <View className="mt-4 border-hairline border-[#EEEEEE] rounded-xl">
-              {/* facebook */}
-              <View className="flex-row justify-between items-center p-3 border-b-hairline border-[#EEEEEE]">
-                <TouchableOpacity className="flex-row items-center gap-1.5">
-                  <Image
-                    style={{
-                      height: 36,
-                      width: 36,
-                    }}
-                    source={require("@/assets/images/facebook2.svg")}
-                    contentFit="contain"
-                  />
-
-                  <Text className="text-sm font-proximanova-semibold text-primary dark:text-dark-primary">
-                    Facebook
-                  </Text>
-                </TouchableOpacity>
-
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                  @alvarez_f
-                </Text>
-              </View>
-
-              {/* linkedin */}
-              <View className="flex-row justify-between items-center p-3 border-b-hairline border-[#EEEEEE]">
-                <TouchableOpacity className="flex-row items-center gap-1.5">
-                  <Image
-                    style={{
-                      height: 36,
-                      width: 36,
-                    }}
-                    source={require("@/assets/images/linkedin.svg")}
-                    contentFit="contain"
-                  />
-
-                  <Text className="text-sm font-proximanova-semibold">
-                    Facebook
-                  </Text>
-                </TouchableOpacity>
-
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                  in/albert-flore-12562f25
-                </Text>
-              </View>
-
-              {/* whatsapp */}
-              <View className="flex-row justify-between items-center p-3 border-b-hairline border-[#EEEEEE]">
-                <TouchableOpacity className="flex-row items-center gap-1.5">
-                  <Image
-                    style={{
-                      height: 36,
-                      width: 36,
-                    }}
-                    source={require("@/assets/images/whatsapp.svg")}
-                    contentFit="contain"
-                  />
-
-                  <Text className="text-sm font-proximanova-semibold">
-                    Facebook
-                  </Text>
-                </TouchableOpacity>
-
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                  +1(125) 256 25612
-                </Text>
-              </View>
-
-              {/* twitter */}
-              <View className="flex-row justify-between items-center p-3 border-b-hairline border-[#EEEEEE]">
-                <TouchableOpacity className="flex-row items-center gap-1.5">
-                  <Image
-                    style={{
-                      height: 36,
-                      width: 36,
-                    }}
-                    source={require("@/assets/images/twitter.svg")}
-                    contentFit="contain"
-                  />
-
-                  <Text className="text-sm font-proximanova-semibold">
-                    Facebook
-                  </Text>
-                </TouchableOpacity>
-
-                <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                  @alber256
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          <PrimaryButton
-            className="mt-7"
-            title="Apply This Job"
-            onPress={() => setShowModal(true)}
+        <Text className="font-proximanova-semibold text-xl text-primary mt-6">Key Info</Text>
+        <View className="flex-row flex-wrap gap-2.5 mt-3">
+          <SimpleStatusBadge title={`Role: ${job?.role?.role?.name || "-"}`} bgColor="#F5F5F5" />
+          <SimpleStatusBadge title={`Gender: ${job?.gender || "-"}`} bgColor="#F5F5F5" />
+          <SimpleStatusBadge
+            title={`Experience: ${job?.experience || "-"} Year(s)`}
+            bgColor="#F5F5F5"
           />
-        </ScrollView>
-      </View>
+          <SimpleStatusBadge
+            title={`Age: ${job?.ageMin ?? "-"}-${job?.ageMax ?? "-"}`}
+            bgColor="#F5F5F5"
+          />
+          <SimpleStatusBadge
+            title={`Shift: ${job?.shiftStartTime || "-"} - ${job?.shiftEndTime || "-"}`}
+            bgColor="#F5F5F5"
+          />
+          <SimpleStatusBadge title={`Salary: ${salaryLabel}`} bgColor="#F5F5F5" />
+          <SimpleStatusBadge
+            title={`Distance: ${
+              typeof job?.distanceKm === "number" ? `${job.distanceKm.toFixed(2)} km` : "-"
+            }`}
+            bgColor="#F5F5F5"
+          />
+          <SimpleStatusBadge
+            title={`Applications: ${job?._count?.recruitmentApplications ?? 0}`}
+            bgColor="#F5F5F5"
+          />
+        </View>
+
+        <Text className="font-proximanova-semibold text-xl text-primary mt-6">
+          Hiring Manager
+        </Text>
+        <View className="mt-3 border border-[#EEEEEE] rounded-xl p-3 flex-row items-center gap-3">
+          <Image
+            source={job?.postedBy?.avatar || require("@/assets/images/placeholder.png")}
+            style={{ width: 44, height: 44, borderRadius: 999 }}
+            contentFit="cover"
+          />
+          <View className="flex-1">
+            <Text className="font-proximanova-semibold text-primary">
+              {job?.postedBy?.name || "-"}
+            </Text>
+            <Text className="text-sm text-secondary mt-1">{job?.postedBy?.email || "-"}</Text>
+          </View>
+        </View>
+
+        <Text className="font-proximanova-semibold text-xl text-primary mt-6">
+          Contact Us On
+        </Text>
+        <View className="mt-3 border border-[#EEEEEE] rounded-xl p-3">
+          {socialLinks.length === 0 ? (
+            <Text className="text-sm text-secondary">No social links available.</Text>
+          ) : (
+            socialLinks.map((item) => (
+              <View
+                key={item.key}
+                className="flex-row items-center justify-between py-2 border-b border-[#F2F2F2]"
+              >
+                <Text className="font-proximanova-semibold text-primary">{item.label}</Text>
+                <Text className="text-sm text-secondary flex-1 text-right">{item.value}</Text>
+              </View>
+            ))
+          )}
+        </View>
+
+        <PrimaryButton
+          className="mt-8"
+          title="Apply This Job"
+          onPress={() => setShowModal(true)}
+        />
+      </ScrollView>
 
       <JobApplyModal visible={showModal} onClose={() => setShowModal(false)} />
     </SafeAreaView>
