@@ -1,7 +1,7 @@
 import ShiftHeader from "@/components/header/ShiftHeader";
 import ShiftItem from "@/components/layout/ShiftItem";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
-import axiosInstance from "@/utils/axios";
+import { useShiftStore } from "@/stores/shiftStore";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, StatusBar, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -42,9 +42,15 @@ type UiShift = {
 const ShiftSchedule = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedBusinesses, setSelectedBusinesses] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const value = new Date();
+    const year = value.getFullYear();
+    const month = `${value.getMonth() + 1}`.padStart(2, "0");
+    const day = `${value.getDate()}`.padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  });
   const [refreshing, setRefreshing] = useState(false);
-  const [apiShifts, setApiShifts] = useState<ApiShift[]>([]);
+  const { myShifts, myShiftsLoading, fetchMyShifts } = useShiftStore();
 
   const to12Hour = useCallback((value?: string) => {
     if (!value) return "--:--";
@@ -134,26 +140,14 @@ const ShiftSchedule = () => {
 
   const loadShifts = useCallback(async () => {
     try {
-      const response = await axiosInstance.get("/shift-assignment/my-shifts");
-      const result = response?.data;
-      if (!result?.success) {
-        throw new Error(result?.message || "Failed to load shifts");
-      }
-      const list = Array.isArray(result?.data) ? result.data : [];
-      setApiShifts(list);
+      await fetchMyShifts(selectedDate);
     } catch (error: any) {
       toast.error(error?.message || "Failed to load shifts");
-      setApiShifts([]);
     }
-  }, []);
+  }, [fetchMyShifts, selectedDate]);
 
   useEffect(() => {
-    const init = async () => {
-      setLoading(true);
-      await loadShifts();
-      setLoading(false);
-    };
-    init();
+    loadShifts();
   }, [loadShifts]);
 
   const onRefresh = useCallback(async () => {
@@ -162,7 +156,10 @@ const ShiftSchedule = () => {
     setRefreshing(false);
   }, [loadShifts]);
 
-  const uiShifts = useMemo(() => apiShifts.map(toUiShift), [apiShifts, toUiShift]);
+  const uiShifts = useMemo(
+    () => (Array.isArray(myShifts) ? myShifts : []).map(toUiShift),
+    [myShifts, toUiShift]
+  );
 
   const filteredShifts = useMemo(() => {
     if (selectedBusinesses.length === 0) return uiShifts;
@@ -171,7 +168,7 @@ const ShiftSchedule = () => {
 
   const modalBusinesses = useMemo(() => {
     const map = new Map<string, { id: string; name: string; logo?: string }>();
-    apiShifts.forEach((shift) => {
+    (Array.isArray(myShifts) ? myShifts : []).forEach((shift) => {
       const business = shift?.employment?.business;
       if (!business?.id) return;
       if (map.has(business.id)) return;
@@ -182,7 +179,7 @@ const ShiftSchedule = () => {
       });
     });
     return Array.from(map.values());
-  }, [apiShifts]);
+  }, [myShifts]);
 
   // Get display content for header button
   const getDisplayContent = () => {
@@ -209,6 +206,8 @@ const ShiftSchedule = () => {
       <ShiftHeader
         setShowModal={setShowModal}
         displayContent={displayContent}
+        selectedDate={selectedDate}
+        onSelectDate={setSelectedDate}
       />
 
       <ScrollView
@@ -219,7 +218,7 @@ const ShiftSchedule = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4FB2F3" />
         }
       >
-        {loading ? (
+        {myShiftsLoading ? (
           <View className="py-8 items-center">
             <ActivityIndicator size="small" color="#4FB2F3" />
           </View>

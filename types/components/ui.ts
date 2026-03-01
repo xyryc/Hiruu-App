@@ -224,6 +224,8 @@ export interface NoTaskCardProps {
 export interface ShiftHeaderProps {
   setShowModal: Dispatch<SetStateAction<boolean>>;
   displayContent?: any;
+  selectedDate?: string;
+  onSelectDate?: (date: string) => void;
 }
 
 export interface WorkShiftCardProps {

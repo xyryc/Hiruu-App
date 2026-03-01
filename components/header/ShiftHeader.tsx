@@ -10,34 +10,36 @@ import UserCalendarScheduleModal from "../ui/modals/UserCalendarScheduleModal";
 const ShiftHeader = ({
   setShowModal,
   displayContent,
-}: ShiftHeaderProps | any) => {
+  selectedDate,
+  onSelectDate,
+}: ShiftHeaderProps) => {
   const [isCalenderModal, setCalenderModal] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(() => {
+  const effectiveSelectedDate = selectedDate || (() => {
     const value = new Date();
     const year = value.getFullYear();
     const month = `${value.getMonth() + 1}`.padStart(2, "0");
     const day = `${value.getDate()}`.padStart(2, "0");
     return `${year}-${month}-${day}`;
-  });
+  })();
 
   const displayDate = useMemo(() => {
-    const value = new Date(`${selectedDate}T00:00:00`);
+    const value = new Date(`${effectiveSelectedDate}T00:00:00`);
     return new Intl.DateTimeFormat("en-GB", {
       day: "numeric",
       month: "long",
       year: "numeric",
     }).format(value);
-  }, [selectedDate]);
+  }, [effectiveSelectedDate]);
 
   const displayWeekdayDate = useMemo(() => {
-    const value = new Date(`${selectedDate}T00:00:00`);
+    const value = new Date(`${effectiveSelectedDate}T00:00:00`);
     return new Intl.DateTimeFormat("en-GB", {
       weekday: "long",
       day: "numeric",
       month: "long",
       year: "numeric",
     }).format(value);
-  }, [selectedDate]);
+  }, [effectiveSelectedDate]);
 
   return (
     <View className="px-5 pb-4 pt-2.5">
@@ -101,8 +103,8 @@ const ShiftHeader = ({
         <UserCalendarScheduleModal
           visible={isCalenderModal}
           onClose={() => setCalenderModal(false)}
-          selectedDate={selectedDate}
-          onSelectDate={setSelectedDate}
+          selectedDate={effectiveSelectedDate}
+          onSelectDate={onSelectDate}
         />
       </View>
     </View>
