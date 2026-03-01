@@ -131,22 +131,19 @@ const PostJob = () => {
   );
   const shiftTypeOptions = useMemo(
     () => [
-      { label: "Day", value: "day" },
-      { label: "Night", value: "night" },
-      { label: "Weekend", value: "weekend" },
+      { label: "Onsite", value: "onsite" },
+      { label: "Remote", value: "remote" },
+      { label: "Hybrid", value: "hybrid" },
     ],
     []
   );
   const jobTypeOptions = useMemo(
     () => [
-      { label: "Full-time", value: "fulltime" },
-      { label: "Part-time", value: "parttime" },
+      { label: "Full-time", value: "full_time" },
+      { label: "Part-time", value: "part_time" },
       { label: "Hourly", value: "hourly" },
       { label: "Contract", value: "contract" },
       { label: "Internship", value: "internship" },
-      { label: "Onsite", value: "onsite" },
-      { label: "Remote", value: "remote" },
-      { label: "Hybrid", value: "hybrid" },
     ],
     []
   );
@@ -176,6 +173,14 @@ const PostJob = () => {
 
     if (!gender) {
       toast.error("Gender is required.");
+      return;
+    }
+    if (!shiftType) {
+      toast.error("Shift type is required.");
+      return;
+    }
+    if (!jobType) {
+      toast.error("Job type is required.");
       return;
     }
 
@@ -209,6 +214,8 @@ const PostJob = () => {
       description: jobDescription.trim(),
       gender,
       experience: experience.trim(),
+      shiftType,
+      jobType,
       ageMin: parsedAgeMin,
       ageMax: parsedAgeMax,
       shiftStartTime: formatTime24(shiftStartTime),

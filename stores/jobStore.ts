@@ -8,6 +8,8 @@ type CreateRecruitmentPayload = {
   description: string;
   gender: string;
   experience: string;
+  shiftType: string;
+  jobType: string;
   ageMin: number;
   ageMax: number;
   shiftStartTime: string;
@@ -49,6 +51,7 @@ interface JobState {
     query?: PublicRecruitmentQuery
   ) => Promise<RecruitmentListResponse>;
   getRecruitmentById: (businessId: string, id: string) => Promise<any>;
+  shareRecruitment: (businessId: string, id: string) => Promise<any>;
   getFeaturedRecruitments: (
     businessId: string,
     query?: FeaturedRecruitmentQuery
@@ -126,6 +129,29 @@ export const useJobStore = create<JobState>((set) => ({
         translateApiMessage(axiosError.response?.data?.message) ||
         axiosError.message ||
         "Failed to fetch recruitment details";
+      throw new Error(message);
+    }
+  },
+
+  shareRecruitment: async (businessId, id) => {
+    try {
+      const response = await axiosInstance.post(`/recruitment/${businessId}/${id}/share`, {});
+      const result = response.data;
+
+      const hasError =
+        result?.success === false ||
+        (typeof result?.statusCode === "number" && result.statusCode >= 400);
+      if (hasError) {
+        throw new Error(translateApiMessage(result?.message || "UNKNOWN_ERROR"));
+      }
+
+      return result?.data || result;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const message =
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to share recruitment";
       throw new Error(message);
     }
   },

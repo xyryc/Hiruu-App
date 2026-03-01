@@ -23,6 +23,8 @@ const UserJobs = () => {
   const getPublicRecruitments = useJobStore((s) => s.getPublicRecruitments);
   const [featuredJobs, setFeaturedJobs] = useState<any[]>([]);
   const [isLoadingFeatured, setIsLoadingFeatured] = useState(false);
+  const [suggestedJobs, setSuggestedJobs] = useState<any[]>([]);
+  const [isLoadingSuggested, setIsLoadingSuggested] = useState(false);
 
   const loadFeaturedJobs = useCallback(async () => {
     try {
@@ -44,10 +46,31 @@ const UserJobs = () => {
     }
   }, [getPublicRecruitments]);
 
+  const loadSuggestedJobs = useCallback(async () => {
+    try {
+      setIsLoadingSuggested(true);
+      const result = await getPublicRecruitments({
+        page: 1,
+        limit: 10,
+        isFeatured: false,
+      });
+      const jobs = (Array.isArray(result?.data) ? result.data : []).filter(
+        (item: any) => item?.isActive === true
+      );
+      setSuggestedJobs(jobs);
+    } catch (error: any) {
+      setSuggestedJobs([]);
+      toast.error(error?.message || "Failed to load suggested jobs");
+    } finally {
+      setIsLoadingSuggested(false);
+    }
+  }, [getPublicRecruitments]);
+
   useFocusEffect(
     useCallback(() => {
       loadFeaturedJobs();
-    }, [loadFeaturedJobs])
+      loadSuggestedJobs();
+    }, [loadFeaturedJobs, loadSuggestedJobs])
   );
 
   return (
@@ -171,9 +194,23 @@ const UserJobs = () => {
             </TouchableOpacity>
           </View>
 
-          <Text className="text-sm font-proximanova-regular text-secondary">
-            No suggested jobs found.
-          </Text>
+          {isLoadingSuggested ? (
+            <View className="py-6 items-center">
+              <ActivityIndicator />
+            </View>
+          ) : suggestedJobs.length === 0 ? (
+            <Text className="text-sm font-proximanova-regular text-secondary">
+              No suggested jobs found.
+            </Text>
+          ) : (
+            suggestedJobs.slice(0, 4).map((item: any) => (
+              <JobCard
+                key={`suggested-${item?.id}`}
+                job={item}
+                className="bg-white border border-[#EEEEEE] mb-4"
+              />
+            ))
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

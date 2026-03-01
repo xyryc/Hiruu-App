@@ -286,6 +286,9 @@ export interface JobCardProps {
     description?: string;
     isFeatured?: boolean;
     isActive?: boolean;
+    shareCount?: number;
+    shiftType?: string;
+    jobType?: string;
     salaryMin: number;
     salaryMax: number;
     salaryType: string;

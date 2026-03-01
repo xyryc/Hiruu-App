@@ -89,13 +89,23 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
     [job?.salaryType]
   );
   const roleName = job?.role?.role?.name || job?.name || "-";
-  const formattedDistance =
-    typeof job?.distanceKm === "number" ? `${job.distanceKm.toFixed(2)} km` : null;
   const hasSalary =
     typeof job?.salaryMin === "number" && typeof job?.salaryMax === "number";
   const isFeatured = Boolean(job?.isFeatured);
   const isPremiumBusiness = Boolean(job?.business?.isPremium);
   const metaBadgeLabel = isFeatured ? "Featured" : "Standard";
+  const shareCount =
+    typeof job?.shareCount === "number" ? job.shareCount : 0;
+  const distanceLabel =
+    typeof job?.distanceKm === "number" ? `${job.distanceKm.toFixed(2)} km Away` : null;
+  const formatLabel = (value?: string) =>
+    (value || "-")
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+  const typeLabel =
+    job?.jobType || job?.shiftType
+      ? `${formatLabel(job?.jobType)}${job?.shiftType ? ` • ${formatLabel(job?.shiftType)}` : ""}`
+      : formatLabel(job?.salaryType);
   const compactFormatter = useMemo(
     () =>
       new Intl.NumberFormat("en", {
@@ -178,7 +188,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
         </View>
       </View>
 
-      <View className="flex-row gap-1.5 mt-2.5">
+      <View className="flex-row flex-wrap gap-1.5 mt-2.5">
         <View
           className="flex-row gap-1.5 items-center px-2.5 py-1 rounded-full"
           style={{
@@ -210,10 +220,25 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
               compact || isPlainSurface ? "#F5F5F5" : "#FFFFFF",
           }}
         >
-          <Text className="text-xs font-proximanova-regular capitalize">
-            {job?.salaryType || "-"}
+          <Text className="text-xs font-proximanova-regular">
+            {typeLabel}
           </Text>
         </View>
+
+        {distanceLabel ? (
+          <View
+            className="flex-row gap-1.5 items-center px-2.5 py-1 rounded-full"
+            style={{
+              backgroundColor:
+                compact || isPlainSurface ? "#F5F5F5" : "#FFFFFF",
+            }}
+          >
+            <SimpleLineIcons name="location-pin" size={12} color="#4FB2F3" />
+            <Text className="text-xs font-proximanova-regular text-primary">
+              {distanceLabel}
+            </Text>
+          </View>
+        ) : null}
       </View>
 
       {!compact && (
@@ -244,7 +269,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
             <View className="flex-row gap-1 items-center">
               <SimpleLineIcons name="share-alt" size={14} color="#7A7A7A" />
               <Text className="text-sm font-proximanova-regular text-secondary">
-                {formattedDistance || "N/A"}
+                {shareCount}
               </Text>
             </View>
 
