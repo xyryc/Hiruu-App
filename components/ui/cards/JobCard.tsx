@@ -7,10 +7,76 @@ import {
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-import React, { useMemo, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Animated, Easing, Text, TouchableOpacity, View } from "react-native";
 import SmallButton from "../buttons/SmallButton";
 import JobApplyModal from "../modals/JobApplyModal";
+
+const MarqueeText = ({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) => {
+  const translateX = useRef(new Animated.Value(0)).current;
+  const [containerWidth, setContainerWidth] = useState(0);
+  const [textWidth, setTextWidth] = useState(0);
+  const shouldAnimate = textWidth > containerWidth && containerWidth > 0;
+
+  useEffect(() => {
+    if (!shouldAnimate) {
+      translateX.setValue(0);
+      return;
+    }
+
+    const travel = textWidth - containerWidth + 16;
+    const duration = Math.max(2200, travel * 35);
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.delay(500),
+        Animated.timing(translateX, {
+          toValue: -travel,
+          duration,
+          easing: Easing.linear,
+          useNativeDriver: true,
+        }),
+        Animated.delay(350),
+        Animated.timing(translateX, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+
+    loop.start();
+    return () => loop.stop();
+  }, [containerWidth, shouldAnimate, textWidth, translateX]);
+
+  return (
+    <View
+      className="overflow-hidden"
+      onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}
+    >
+      {/* Measure natural text width so autoplay starts reliably when overflowing */}
+      <Text
+        className={className}
+        onLayout={(e) => setTextWidth(e.nativeEvent.layout.width)}
+        style={{ position: "absolute", opacity: 0 }}
+      >
+        {text}
+      </Text>
+      <Animated.Text
+        numberOfLines={1}
+        style={{ transform: [{ translateX }] }}
+        className={className}
+      >
+        {text}
+      </Animated.Text>
+    </View>
+  );
+};
 
 const JobCard = ({ className, compact = false, job }: JobCardProps) => {
   const router = useRouter();
@@ -22,51 +88,93 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
     () => (job?.salaryType === "monthly" ? "/mo" : "/hr"),
     [job?.salaryType]
   );
+  const roleName = job?.role?.role?.name || job?.name || "-";
+  const formattedDistance =
+    typeof job?.distanceKm === "number" ? `${job.distanceKm.toFixed(2)} km` : null;
+  const hasSalary =
+    typeof job?.salaryMin === "number" && typeof job?.salaryMax === "number";
+  const isFeatured = Boolean(job?.isFeatured);
+  const isPremiumBusiness = Boolean(job?.business?.isPremium);
+  const metaBadgeLabel = isFeatured ? "Featured" : "Standard";
+  const compactFormatter = useMemo(
+    () =>
+      new Intl.NumberFormat("en", {
+        notation: "compact",
+        compactDisplay: "short",
+        maximumFractionDigits: 2,
+      }),
+    []
+  );
+  const formatCompactNumber = (value: number) => compactFormatter.format(value);
+  const salaryLabel = hasSalary
+    ? `${formatCompactNumber(job?.salaryMin as number)}-${formatCompactNumber(
+        job?.salaryMax as number
+      )}$${salarySuffix}`
+    : "-";
 
   return (
     <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>
       <TouchableOpacity
-        onPress={() => router.push("/screens/jobs/user/profile")}
+        onPress={() => {
+          const businessId = job?.businessId || job?.business?.id;
+          const recruitmentId = job?.id;
+
+          if (businessId && recruitmentId) {
+            router.push({
+              pathname: "/screens/jobs/user/profile",
+              params: { businessId, recruitmentId },
+            });
+            return;
+          }
+
+          router.push("/screens/jobs/user/profile");
+        }}
         className="flex-row gap-2.5"
       >
         <Image
           source={
             job?.business?.logo ||
-            "https://img.freepik.com/free-vector/elegant-luxury-hotel-logo_23-2147534418.jpg?semt=ais_hybrid&w=740&q=80"
+            require("@/assets/images/placeholder.png")
           }
           style={{ width: 40, height: 40, borderRadius: 999 }}
           contentFit="cover"
         />
 
         <View>
-          <Text className="font-proximanova-semibold text-primary dark:text-dark-primary mb-1">
-            {job?.name || "Maintanence Staff"}{" "}
-            <MaterialCommunityIcons name="crown" size={14} color="#4FB2F3" />
+          <Text
+            numberOfLines={1}
+            className="font-proximanova-semibold text-primary dark:text-dark-primary mb-1"
+          >
+            {roleName}{" "}
+            {isFeatured ? (
+              <MaterialCommunityIcons name="crown" size={14} color="#4FB2F3" />
+            ) : null}
           </Text>
-          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-            {job?.business?.name || "Picko labs"}
+          <Text
+            numberOfLines={1}
+            className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary"
+          >
+            {job?.business?.name || "-"}
           </Text>
         </View>
       </TouchableOpacity>
 
-      <View className="flex-row items-center justify-between gap-20">
-        <View className="flex-row items-center gap-1.5">
+      <View className="flex-row items-center justify-between">
+        <View className="flex-1 flex-row items-center gap-1.5 pr-2">
           <SimpleLineIcons name="location-pin" size={12} color="black" />
-          <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
-            {job?.business?.address || "New York, North Bergen"}
+          <Text
+            numberOfLines={1}
+            className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary"
+          >
+            {job?.business?.address || "-"}
           </Text>
         </View>
 
-        <View className="flex-row">
-          <Text className="text-xl font-proximanova-semibold text-primary">
-            {typeof job?.salaryMin === "number" && typeof job?.salaryMax === "number"
-              ? `${job.salaryMin}-${job.salaryMax}`
-              : "5-10"}
-            $
-          </Text>
-          <Text className="text-lg font-proximanova-regular text-secondary">
-            {salarySuffix}
-          </Text>
+        <View style={{ width: 132 }}>
+          <MarqueeText
+            text={salaryLabel}
+            className="text-xl font-proximanova-semibold text-primary text-right"
+          />
         </View>
       </View>
 
@@ -79,7 +187,9 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
           }}
         >
           <MaterialIcons name="verified" size={16} color="#3090FF" />
-          <Text className="text-xs font-proximanova-regular text-primary">Verified</Text>
+          <Text className="text-xs font-proximanova-regular text-primary">
+            {isPremiumBusiness ? "Premium" : "Business"}
+          </Text>
         </View>
 
         <View
@@ -90,7 +200,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
           }}
         >
           <FontAwesome name="star" size={16} color="#F1C400" />
-          <Text className="text-xs font-proximanova-regular">4</Text>
+          <Text className="text-xs font-proximanova-regular">{metaBadgeLabel}</Text>
         </View>
 
         <View
@@ -100,7 +210,9 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
               compact || isPlainSurface ? "#F5F5F5" : "#FFFFFF",
           }}
         >
-          <Text className="text-xs font-proximanova-regular">Full Time</Text>
+          <Text className="text-xs font-proximanova-regular capitalize">
+            {job?.salaryType || "-"}
+          </Text>
         </View>
       </View>
 
@@ -120,7 +232,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
                 color="#7A7A7A"
               />
               <Text className="text-sm font-proximanova-regular text-secondary">
-                {job?._count?.recruitmentApplications ?? 305}
+                {job?._count?.recruitmentApplications ?? 0}
               </Text>
             </View>
 
@@ -132,7 +244,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
             <View className="flex-row gap-1 items-center">
               <SimpleLineIcons name="share-alt" size={14} color="#7A7A7A" />
               <Text className="text-sm font-proximanova-regular text-secondary">
-                209
+                {formattedDistance || "N/A"}
               </Text>
             </View>
 

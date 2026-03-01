@@ -280,17 +280,31 @@ export interface JobCardProps {
   compact?: boolean;
   job?: {
     id: string;
+    businessId?: string;
+    roleId?: string;
     name: string;
+    description?: string;
+    isFeatured?: boolean;
+    isActive?: boolean;
     salaryMin: number;
     salaryMax: number;
     salaryType: string;
+    distanceKm?: number;
     shiftStartTime?: string;
     shiftEndTime?: string;
+    role?: {
+      id?: string;
+      role?: {
+        id?: string;
+        name?: string;
+      };
+    };
     business?: {
       id: string;
       name: string;
       logo?: string;
       address?: string;
+      isPremium?: boolean;
     } | null;
     _count?: {
       recruitmentApplications?: number;

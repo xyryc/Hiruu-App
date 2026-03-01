@@ -12,9 +12,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Switch,
   Text,
-  View,
   TextInput,
+  View,
 } from "react-native";
 import {
   SafeAreaView,
@@ -27,7 +28,9 @@ const PostJob = () => {
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
   const selectedBusinesses = useBusinessStore((s) => s.selectedBusinesses);
-  const getRoles = useBusinessStore((s) => s.getRoles);
+  const myBusinesses = useBusinessStore((s) => s.myBusinesses);
+  const getMyBusinesses = useBusinessStore((s) => s.getMyBusinesses);
+  const getMyBusinessRoles = useBusinessStore((s) => s.getMyBusinessRoles);
   const createRecruitment = useJobStore((s) => s.createRecruitment);
   const isSubmitting = useJobStore((s) => s.isLoading);
 
@@ -48,19 +51,41 @@ const PostJob = () => {
   const [salaryMin, setSalaryMin] = useState("");
   const [salaryMax, setSalaryMax] = useState("");
   const [openings, setOpenings] = useState("");
+  const [isFeatured, setIsFeatured] = useState(false);
+  const selectedBusinessId = selectedBusinesses[0] || "";
 
   useEffect(() => {
     let isMounted = true;
 
     const loadRoles = async () => {
+      if (!selectedBusinessId) {
+        if (isMounted) {
+          setRoleOptions([]);
+          setSelectedRole(null);
+          setRolesLoading(false);
+        }
+        return;
+      }
+
       try {
         setRolesLoading(true);
-        const data = await getRoles();
+        const data = await getMyBusinessRoles(selectedBusinessId);
         if (isMounted) {
           const normalized = (Array.isArray(data) ? data : [])
-            .filter((item: any) => item?.id && item?.name)
-            .map((item: any) => ({ id: item.id, name: item.name }));
+            .map((item: any) => ({
+              id: item?.id || item?.roleId || "",
+              name: item?.role?.name || item?.name || "",
+            }))
+            .filter((item: any) => item?.id && item?.name);
           setRoleOptions(normalized);
+          setSelectedRole((prev) =>
+            prev && normalized.some((item: any) => item.id === prev.id) ? prev : null
+          );
+        }
+      } catch {
+        if (isMounted) {
+          setRoleOptions([]);
+          setSelectedRole(null);
         }
       } finally {
         if (isMounted) {
@@ -73,7 +98,27 @@ const PostJob = () => {
     return () => {
       isMounted = false;
     };
-  }, [getRoles]);
+  }, [getMyBusinessRoles, selectedBusinessId]);
+
+  useEffect(() => {
+    if (!myBusinesses.length) {
+      getMyBusinesses().catch(() => undefined);
+    }
+  }, [getMyBusinesses, myBusinesses.length]);
+
+  const selectedBusiness = useMemo(() => {
+    const businessId = selectedBusinesses[0];
+    if (!businessId) return null;
+    return (myBusinesses || []).find((business: any) => business?.id === businessId) || null;
+  }, [myBusinesses, selectedBusinesses]);
+
+  const isPremiumBusiness = Boolean(selectedBusiness?.isPremium);
+
+  useEffect(() => {
+    if (!isPremiumBusiness && isFeatured) {
+      setIsFeatured(false);
+    }
+  }, [isFeatured, isPremiumBusiness]);
 
   const genderOptions = useMemo(
     () => [
@@ -160,7 +205,7 @@ const PostJob = () => {
     }
 
     const payload = {
-      name: selectedRole.name.trim(),
+      roleId: selectedRole.id,
       description: jobDescription.trim(),
       gender,
       experience: experience.trim(),
@@ -173,6 +218,7 @@ const PostJob = () => {
       requiredSkills: [],
       salaryType: "hourly" as const,
       numberOfOpenings: parsedOpenings,
+      isFeatured: isPremiumBusiness ? isFeatured : false,
     };
 
     try {
@@ -372,6 +418,15 @@ const PostJob = () => {
             placeholder="1"
             placeholderTextColor="#7D7D7D"
           />
+
+          {isPremiumBusiness && (
+            <View className="mt-7 flex-row items-center justify-between border border-[#EEEEEE] rounded-[10px] px-4 py-3">
+              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
+                Exclusive
+              </Text>
+              <Switch value={isFeatured} onValueChange={setIsFeatured} />
+            </View>
+          )}
 
           <View className="mt-8 mb-5">
             <PrimaryButton

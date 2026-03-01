@@ -1,11 +1,14 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import JobCard from "@/components/ui/cards/JobCard";
 import SearchBar from "@/components/ui/inputs/SearchBar";
+import { useJobStore } from "@/stores/jobStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useFocusEffect } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import React from "react";
+import React, { useCallback, useState } from "react";
 import {
+  ActivityIndicator,
   ScrollView,
   StatusBar,
   Text,
@@ -13,9 +16,39 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const UserJobs = () => {
   const router = useRouter();
+  const getPublicRecruitments = useJobStore((s) => s.getPublicRecruitments);
+  const [featuredJobs, setFeaturedJobs] = useState<any[]>([]);
+  const [isLoadingFeatured, setIsLoadingFeatured] = useState(false);
+
+  const loadFeaturedJobs = useCallback(async () => {
+    try {
+      setIsLoadingFeatured(true);
+      const result = await getPublicRecruitments({
+        page: 1,
+        limit: 10,
+        isFeatured: true,
+      });
+      const jobs = (Array.isArray(result?.data) ? result.data : []).filter(
+        (item: any) => item?.isActive === true
+      );
+      setFeaturedJobs(jobs);
+    } catch (error: any) {
+      setFeaturedJobs([]);
+      toast.error(error?.message || "Failed to load featured jobs");
+    } finally {
+      setIsLoadingFeatured(false);
+    }
+  }, [getPublicRecruitments]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadFeaturedJobs();
+    }, [loadFeaturedJobs])
+  );
 
   return (
     <SafeAreaView
@@ -89,16 +122,38 @@ const UserJobs = () => {
             </TouchableOpacity>
           </View>
 
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            className="pl-5"
-          >
-            <JobCard className="mr-2.5" />
-            <JobCard className="mr-2.5" />
-            <JobCard className="mr-2.5" />
-            <JobCard className="mr-2.5" />
-          </ScrollView>
+          {isLoadingFeatured ? (
+            <View className="py-10 px-5 items-center justify-center">
+              <ActivityIndicator />
+            </View>
+          ) : featuredJobs.length === 0 ? (
+            <View className="px-5">
+              <Text className="text-sm font-proximanova-regular text-secondary pr-5">
+                No featured jobs found.
+              </Text>
+            </View>
+          ) : featuredJobs.length === 1 ? (
+            <View className="px-5">
+              <JobCard
+                job={featuredJobs[0]}
+                className="bg-white border border-[#EEEEEE] mb-4"
+              />
+            </View>
+          ) : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              className="pl-5"
+            >
+              {featuredJobs.slice(0, 10).map((item: any) => (
+                <JobCard
+                  key={item?.id}
+                  job={item}
+                  className="mr-2.5 w-[320px]"
+                />
+              ))}
+            </ScrollView>
+          )}
         </View>
 
         <View className="mt-7 px-5">
@@ -116,10 +171,9 @@ const UserJobs = () => {
             </TouchableOpacity>
           </View>
 
-          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
-          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
-          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
-          <JobCard className="bg-white border border-[#EEEEEE] mb-4" />
+          <Text className="text-sm font-proximanova-regular text-secondary">
+            No suggested jobs found.
+          </Text>
         </View>
       </ScrollView>
     </SafeAreaView>
