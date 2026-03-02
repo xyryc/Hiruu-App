@@ -1,7 +1,5 @@
-import CountryDropdown from "@/components/ui/modals/CountryDropdown";
 import { AntDesign, Entypo } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
-import React from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import PrimaryButton from "../buttons/PrimaryButton";
@@ -36,7 +34,7 @@ const ImportHolidayModal = ({ visible, onClose }: any) => {
               Import National Holidays
             </Text>
             <View className="mt-8" />
-            <CountryDropdown />
+
 
             <View className="flex-row gap-3 mt-3 items-center">
               <AntDesign name="warning" className="" size={20} color="red" />
