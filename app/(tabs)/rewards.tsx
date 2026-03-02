@@ -1,5 +1,5 @@
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import { profileService } from "@/services/profileService";
+import { walletService } from "@/services/walletService";
 import {
   FontAwesome,
   FontAwesome6,
@@ -27,10 +27,10 @@ const UserRewards = () => {
   const screenWidth = Dimensions.get("window").width;
   const [totalTokens, setTotalTokens] = useState(0);
 
-  const loadProfile = useCallback(async () => {
+  const loadWallet = useCallback(async () => {
     try {
-      const result = await profileService.getProfile();
-      const nextTokens = Number(result?.data?.wallet?.coins);
+      const result = await walletService.getWallet();
+      const nextTokens = Number(result?.data?.coins ?? result?.data?.wallet?.coins);
       setTotalTokens(Number.isFinite(nextTokens) ? nextTokens : 0);
     } catch {
       setTotalTokens(0);
@@ -39,8 +39,8 @@ const UserRewards = () => {
 
   useFocusEffect(
     useCallback(() => {
-      loadProfile();
-    }, [loadProfile])
+      loadWallet();
+    }, [loadWallet])
   );
 
   const totalTokensLabel = useMemo(
