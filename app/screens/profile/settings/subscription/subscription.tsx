@@ -16,9 +16,23 @@ import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useCallback, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
+
+const SubscriptionLoadingState = () => {
+  return (
+    <View className="border border-[#EEEEEE] rounded-2xl px-4 py-6 mb-3 items-center">
+      <ActivityIndicator size="small" color="#4FB2F3" />
+      <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-3">
+        Loading subscription
+      </Text>
+      <Text className="font-proximanova-regular text-xs text-secondary dark:text-dark-secondary mt-1">
+        Please wait a moment...
+      </Text>
+    </View>
+  );
+};
 
 const Subscription = () => {
   const CancelImg = require("@/assets/images/cancel.svg");
@@ -132,9 +146,7 @@ const Subscription = () => {
       >
         <View className="m-5">
           {isLoadingActiveSubscription && activeSubscriptions.length === 0 && (
-            <Text className="font-proximanova-semibold text-sm text-secondary dark:text-dark-secondary mb-3">
-              Loading subscription...
-            </Text>
+            <SubscriptionLoadingState />
           )}
 
           {userSubscription && (
