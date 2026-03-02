@@ -253,7 +253,7 @@ const Subscription = () => {
             </View>
           ))}
 
-          <View className="border px-3 rounded-2xl border-[#EEEEEE] mt-5">
+          <View className="border px-3 rounded-2xl border-[#EEEEEE] mt-1">
             <SettingsCard
               click={() =>
                 router.push("/screens/profile/settings/subscription/user-plan")
