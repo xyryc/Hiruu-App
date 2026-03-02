@@ -8,12 +8,22 @@ export interface ChatUploadMedia {
 }
 
 class ChatService {
+  private isApiSuccess(result: any): boolean {
+    if (typeof result?.success === "boolean") {
+      return result.success;
+    }
+    if (typeof result?.statusCode === "number") {
+      return result.statusCode >= 200 && result.statusCode < 300;
+    }
+    return true;
+  }
+
   async getChatRooms(): Promise<any> {
     try {
       const response = await axiosInstance.get("/chat/rooms");
       const result = response.data;
 
-      if (!result?.success) {
+      if (!this.isApiSuccess(result)) {
         throw new Error(result?.message || "Failed to load chats");
       }
 
@@ -30,7 +40,7 @@ class ChatService {
       });
       const result = response.data;
 
-      if (!result?.success) {
+      if (!this.isApiSuccess(result)) {
         throw new Error(result?.message || "Failed to load messages");
       }
 
@@ -45,7 +55,7 @@ class ChatService {
       const response = await axiosInstance.get(`/chat/rooms/${roomId}`);
       const result = response.data;
 
-      if (!result?.success) {
+      if (!this.isApiSuccess(result)) {
         throw new Error(result?.message || "Failed to load chat room");
       }
 
@@ -72,7 +82,7 @@ class ChatService {
         });
         const result = response.data;
 
-        if (!result?.success) {
+        if (!this.isApiSuccess(result)) {
           throw new Error(result?.message || "Failed to send message");
         }
 
@@ -120,7 +130,7 @@ class ChatService {
         result = { success: false, message: responseText || "Failed to send message" };
       }
 
-      if (!uploadResponse.ok || !result?.success) {
+      if (!uploadResponse.ok || !this.isApiSuccess(result)) {
         throw new Error(result?.message || "Failed to send message");
       }
 
@@ -138,7 +148,7 @@ class ChatService {
       const response = await axiosInstance.patch(`/chat/messages/${messageId}/read`);
       const result = response.data;
 
-      if (!result?.success) {
+      if (!this.isApiSuccess(result)) {
         throw new Error(result?.message || "Failed to mark as read");
       }
 
@@ -153,7 +163,7 @@ class ChatService {
       const response = await axiosInstance.patch(`/chat/rooms/${roomId}/read`);
       const result = response.data;
 
-      if (!result?.success) {
+      if (!this.isApiSuccess(result)) {
         throw new Error(result?.message || "Failed to mark room as read");
       }
 
@@ -163,15 +173,24 @@ class ChatService {
     }
   }
 
-  async createDirectChat(participantId: string): Promise<any> {
+  async createDirectChat(
+    participantId: string,
+    options?: { referenceRecruitmentId?: string; businessId?: string | null }
+  ): Promise<any> {
     try {
       const response = await axiosInstance.post("/chat/rooms", {
         type: "direct",
-        participantIds: [participantId]
+        participantIds: [participantId],
+        ...(options?.referenceRecruitmentId
+          ? { referenceRecruitmentId: options.referenceRecruitmentId }
+          : {}),
+        ...(typeof options?.businessId !== "undefined"
+          ? { businessId: options.businessId }
+          : {}),
       });
       const result = response.data;
 
-      if (!result?.success) {
+      if (!this.isApiSuccess(result)) {
         throw new Error(result?.message || "Failed to create chat");
       }
 

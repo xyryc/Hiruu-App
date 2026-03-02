@@ -37,6 +37,14 @@ type ChatMediaPreview = {
   thumbnailUrl?: string;
 };
 
+const resolveMediaUrl = (value?: string | null) => {
+  if (!value || typeof value !== "string") return undefined;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  const base = (process.env.EXPO_PUBLIC_API_URL || "").replace(/\/$/, "");
+  if (!base) return value;
+  return `${base}${value.startsWith("/") ? value : `/${value}`}`;
+};
+
 const ChatScreen = () => {
   const [message, setMessage] = useState("");
   const [selectedMedia, setSelectedMedia] = useState<SelectedMedia[]>([]);
@@ -49,6 +57,7 @@ const ChatScreen = () => {
   const [chatTitle, setChatTitle] = useState("Chat");
   const [chatAvatar, setChatAvatar] = useState<string | null>(null);
   const [chatIsOnline, setChatIsOnline] = useState<boolean | undefined>(undefined);
+  const [roomDetails, setRoomDetails] = useState<any>(null);
   const messagesListRef = useRef<FlatList<any> | null>(null);
   const previousMessageCountRef = useRef(0);
   const didInitialScrollRef = useRef(false);
@@ -89,6 +98,7 @@ const ChatScreen = () => {
         const room = result?.data;
 
         if (!room || !isMounted) return;
+        setRoomDetails(room);
 
         if (room.type !== "direct") {
           setChatTitle(room.name || "Group Chat");
@@ -119,6 +129,7 @@ const ChatScreen = () => {
           setChatTitle("Chat");
           setChatAvatar(null);
           setChatIsOnline(undefined);
+          setRoomDetails(null);
         }
       }
     };
@@ -129,6 +140,53 @@ const ChatScreen = () => {
       isMounted = false;
     };
   }, [actualRoomId, user?.id]);
+
+  const linkedRecruitment = useMemo(() => {
+    const recruitment = roomDetails?.referenceRecruitment;
+    if (!recruitment?.id) return undefined;
+
+    const roleName =
+      recruitment?.role?.role?.name ||
+      recruitment?.role?.name ||
+      recruitment?.name ||
+      "Job";
+    const business = recruitment?.business || roomDetails?.business || null;
+    const businessId = recruitment?.businessId || business?.id;
+
+    return {
+      id: recruitment.id,
+      businessId,
+      roleId: recruitment?.roleId,
+      name: recruitment?.name || roleName,
+      description: recruitment?.description,
+      isFeatured: Boolean(recruitment?.isFeatured),
+      isActive: recruitment?.isActive ?? true,
+      shareCount:
+        typeof recruitment?.shareCount === "number" ? recruitment.shareCount : 0,
+      shiftType: recruitment?.shiftType || "",
+      jobType: recruitment?.jobType || "",
+      salaryMin:
+        typeof recruitment?.salaryMin === "number" ? recruitment.salaryMin : 0,
+      salaryMax:
+        typeof recruitment?.salaryMax === "number" ? recruitment.salaryMax : 0,
+      salaryType: recruitment?.salaryType || "hourly",
+      distanceKm:
+        typeof recruitment?.distanceKm === "number" ? recruitment.distanceKm : undefined,
+      shiftStartTime: recruitment?.shiftStartTime,
+      shiftEndTime: recruitment?.shiftEndTime,
+      role: recruitment?.role,
+      business: businessId
+        ? {
+          id: businessId,
+          name: business?.name || "-",
+          logo: resolveMediaUrl(business?.logo),
+          address: business?.address,
+          isPremium: Boolean(business?.isPremium),
+        }
+        : null,
+      _count: recruitment?._count,
+    };
+  }, [roomDetails]);
 
   // IMPORTANT: Always call useChat hook unconditionally
   // Pass empty string if roomId not ready yet
@@ -819,6 +877,7 @@ const ChatScreen = () => {
           <JobCard
             compact
             className="mx-5 bg-white border border-[#EEEEEE] mt-4"
+            job={linkedRecruitment}
           />
 
           {/* Messages */}

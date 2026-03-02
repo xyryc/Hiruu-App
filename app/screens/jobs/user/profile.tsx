@@ -2,6 +2,7 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import JobApplyModal from "@/components/ui/modals/JobApplyModal";
+import { chatService } from "@/services/chatService";
 import { useJobStore } from "@/stores/jobStore";
 import {
   Feather,
@@ -11,8 +12,8 @@ import {
   Octicons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { useFocusEffect } from "@react-navigation/native";
+import { Image } from "expo-image";
 import { router, useLocalSearchParams } from "expo-router";
 import React, { useCallback, useMemo, useState } from "react";
 import {
@@ -26,22 +27,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
-
-const getAddressLabel = (value: unknown, fallback: string): string => {
-  if (typeof value === "string" && value.trim().length > 0) return value;
-  if (!value || typeof value !== "object") return fallback;
-
-  const addr = value as {
-    address?: unknown;
-    state?: unknown;
-    country?: unknown;
-  };
-  const parts = [addr.address, addr.state, addr.country]
-    .filter((item): item is string => typeof item === "string" && item.trim().length > 0)
-    .map((item) => item.trim());
-
-  return parts.length > 0 ? parts.join(", ") : fallback;
-};
 
 const resolveMediaUrl = (value?: string | null) => {
   if (!value || typeof value !== "string") return null;
@@ -61,6 +46,7 @@ const JobProfile = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [job, setJob] = useState<any>(null);
+  const [isCreatingChat, setIsCreatingChat] = useState(false);
 
   const loadJobDetails = useCallback(async () => {
     if (!businessId || !recruitmentId) return;
@@ -83,10 +69,10 @@ const JobProfile = () => {
   const companyLogo =
     resolveMediaUrl(job?.business?.logo) ||
     "https://images-platform.99static.com//gkoGE5-VZ1k4SXxg0mrUj7O0V38=/250x0:1750x1500/fit-in/500x500/99designs-contests-attachments/102/102585/attachment_102585463";
-  const locationLabel = getAddressLabel(
-    job?.business?.address,
-    "New York, North Bergen"
-  );
+  const locationLabel =
+    job?.business?.address?.address || "Unknown Location";
+
+
   const roleName = job?.role?.role?.name || "Bartender";
   const aboutRole =
     job?.description ||
@@ -103,8 +89,8 @@ const JobProfile = () => {
       : "10:00 AM - 11:00 PM";
   const salaryLabel =
     typeof job?.salaryMin === "number" &&
-    typeof job?.salaryMax === "number" &&
-    typeof job?.salaryType === "string"
+      typeof job?.salaryMax === "number" &&
+      typeof job?.salaryType === "string"
       ? `${job.salaryMin}-${job.salaryMax}$/${job.salaryType === "monthly" ? "mo" : "hr"}`
       : "5-10$/hr";
   const managerName = job?.postedBy?.name || "Meclizine Johnsen";
@@ -132,10 +118,10 @@ const JobProfile = () => {
         setJob((prev: any) =>
           prev
             ? {
-                ...prev,
-                shareCount:
-                  typeof prev?.shareCount === "number" ? prev.shareCount + 1 : 1,
-              }
+              ...prev,
+              shareCount:
+                typeof prev?.shareCount === "number" ? prev.shareCount + 1 : 1,
+            }
             : prev
         );
       }
@@ -145,6 +131,45 @@ const JobProfile = () => {
       });
     } catch {
       Alert.alert("Error", "Could not share profile");
+    }
+  };
+
+  const handleMessageManager = async () => {
+    if (isCreatingChat) return;
+
+    const participantId = job?.postedBy?.id;
+    const referenceRecruitmentId =
+      typeof recruitmentId === "string" ? recruitmentId : job?.id;
+
+    if (!participantId) {
+      toast.error("Hiring manager is unavailable for chat");
+      return;
+    }
+
+    if (!referenceRecruitmentId) {
+      toast.error("Recruitment reference is missing");
+      return;
+    }
+
+    try {
+      setIsCreatingChat(true);
+      const result = await chatService.createDirectChat(participantId, {
+        referenceRecruitmentId,
+      });
+      const roomId = result?.data?.id;
+
+      if (!roomId) {
+        throw new Error("Chat room id is missing");
+      }
+
+      router.push({
+        pathname: "/screens/jobs/chatscreen",
+        params: { roomId },
+      });
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to start chat");
+    } finally {
+      setIsCreatingChat(false);
     }
   };
 
@@ -306,7 +331,11 @@ const JobProfile = () => {
                 </Text>
               </View>
 
-              <View className="bg-white rounded-full p-2">
+              <TouchableOpacity
+                className={`bg-white rounded-full p-2 ${isCreatingChat ? "opacity-60" : ""}`}
+                onPress={handleMessageManager}
+                disabled={isCreatingChat}
+              >
                 <Image
                   source={require("@/assets/images/messages-fill.svg")}
                   style={{
@@ -315,7 +344,7 @@ const JobProfile = () => {
                   }}
                   contentFit="contain"
                 />
-              </View>
+              </TouchableOpacity>
             </View>
           </View>
 
