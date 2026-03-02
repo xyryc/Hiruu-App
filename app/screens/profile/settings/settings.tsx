@@ -2,6 +2,7 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
 import SettingsCard from "@/components/ui/cards/SettingsCard";
 import LogoutDeleteModal from "@/components/ui/modals/LogoutDeleteModal";
+import { profileService } from "@/services/profileService";
 import {
   Entypo,
   FontAwesome,
@@ -9,10 +10,11 @@ import {
   MaterialCommunityIcons,
   SimpleLineIcons,
 } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,6 +23,7 @@ const Settings = () => {
   const delImg = require("@/assets/images/trash.svg");
   const logOutImg = require("@/assets/images/Logout.svg");
   const [isModal, setIsModal] = useState(false);
+  const [profileData, setProfileData] = useState<any>(null);
   const [data, setData] = useState<{
     img: any;
     title: string;
@@ -56,7 +59,25 @@ const Settings = () => {
     buttonColor: "#11293A",
   };
 
-  // console.log(data);
+  const loadProfile = useCallback(async () => {
+    try {
+      const result = await profileService.getProfile();
+      setProfileData(result?.data || null);
+    } catch {
+      setProfileData(null);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadProfile();
+    }, [loadProfile])
+  );
+
+  const addressValue =
+    typeof profileData?.address === "string"
+      ? profileData.address
+      : profileData?.address?.address || "Location unavailable";
 
   const handleClick = (e: string) => {
     if (e === "delete") {
@@ -91,7 +112,7 @@ const Settings = () => {
         }}
       >
         {/* Create Business Profile */}
-        <View className="bg-[#FCF7E4] px-3 py-4 mt-8 rounded-xl flex-row justify-between border border-[#EEEEEE]">
+        <View className="bg-[#FCF7E4] px-3 py-4 mt-5 rounded-xl flex-row justify-between border border-[#EEEEEE]">
           <View>
             <Text className="text-lg font-proximanova-semibold text-[#11293A]">
               {t("user.profile.growBusinessLine1")}
@@ -102,7 +123,7 @@ const Settings = () => {
 
             <TouchableOpacity
               onPress={() => router.push("/business-setup")}
-              className="bg-[#11293A] rounded-full py-1.5 px-4 mt-5">
+              className="bg-[#11293A] rounded-full py-1.5 px-4 mt-7">
               <Text className="text-sm font-proximanova-semibold text-[#ffffff] text-center">
                 {t("user.profile.createBusinessProfile")}
               </Text>
@@ -118,8 +139,15 @@ const Settings = () => {
         </View>
 
         {/* Name plate */}
-        <View className="mt-8">
-          <NamePlateCard variant="variant3" />
+        <View className="mt-5">
+          <NamePlateCard
+            variant="variant3"
+            name={profileData?.name || profileData?.email || "User"}
+            address={addressValue}
+            profileImage={
+              profileData?.avatar || require("@/assets/images/placeholder.png")
+            }
+          />
         </View>
 
         {/* settings card */}

@@ -2,7 +2,52 @@ import { ProfileResponse, UpdateProfileData } from '@/types';
 import axiosInstance from '@/utils/axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const STORAGE_KEYS = {
+    ACCESS_TOKEN: 'auth_access_token',
+    PROFILE_CACHE: 'cache_user_profile_v1',
+};
+
+const PROFILE_CACHE_TTL_MS = 5 * 60 * 1000;
+
+type CachedProfilePayload = {
+    token: string | null;
+    fetchedAt: number;
+    data: any;
+};
+
 class ProfileService {
+    private async readProfileCache(): Promise<CachedProfilePayload | null> {
+        try {
+            const raw = await AsyncStorage.getItem(STORAGE_KEYS.PROFILE_CACHE);
+            if (!raw) return null;
+            return JSON.parse(raw) as CachedProfilePayload;
+        } catch {
+            return null;
+        }
+    }
+
+    private async writeProfileCache(data: any): Promise<void> {
+        try {
+            const token = await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+            const payload: CachedProfilePayload = {
+                token,
+                fetchedAt: Date.now(),
+                data,
+            };
+            await AsyncStorage.setItem(STORAGE_KEYS.PROFILE_CACHE, JSON.stringify(payload));
+        } catch {
+            // Ignore cache write errors and keep API flow resilient.
+        }
+    }
+
+    async clearProfileCache(): Promise<void> {
+        try {
+            await AsyncStorage.removeItem(STORAGE_KEYS.PROFILE_CACHE);
+        } catch {
+            // Ignore cache clear errors.
+        }
+    }
+
     private toIsoString(value: any): string | undefined {
         if (!value) return undefined;
         if (value instanceof Date) {
@@ -134,6 +179,7 @@ class ProfileService {
                     throw new Error(result?.message || 'Profile update failed');
                 }
 
+                await this.writeProfileCache(result.data);
                 return result;
             }
 
@@ -145,6 +191,7 @@ class ProfileService {
                 throw new Error(result.message || 'Profile update failed');
             }
 
+            await this.writeProfileCache(result.data);
             return result;
         } catch (error: any) {
             throw this.handleError(error);
@@ -152,8 +199,26 @@ class ProfileService {
     }
 
     // Get user profile
-    async getProfile(): Promise<ProfileResponse> {
+    async getProfile(options?: { forceRefresh?: boolean }): Promise<ProfileResponse> {
         try {
+            const forceRefresh = Boolean(options?.forceRefresh);
+            const accessToken = await AsyncStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+
+            if (!forceRefresh) {
+                const cached = await this.readProfileCache();
+                const isCacheValid =
+                    cached &&
+                    cached.token === accessToken &&
+                    Date.now() - cached.fetchedAt < PROFILE_CACHE_TTL_MS;
+
+                if (isCacheValid) {
+                    return {
+                        success: true,
+                        data: cached.data,
+                    } as ProfileResponse;
+                }
+            }
+
             const response = await axiosInstance.get('/users/profile');
             const result = response.data;
 
@@ -162,6 +227,7 @@ class ProfileService {
                 throw new Error(result.message || 'Failed to get profile');
             }
 
+            await this.writeProfileCache(result.data);
             return result;
         } catch (error: any) {
             throw this.handleError(error);
