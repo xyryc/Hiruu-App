@@ -83,7 +83,9 @@ const profile = () => {
     }
   };
 
-  const bioText = profileData?.bio || "No bio yet.";
+  const bioText =
+    typeof profileData?.bio === "string" ? profileData.bio.trim() : "";
+  const hasBio = bioText.length > 0;
   const shortBio =
     bioText.length > 140 ? `${bioText.slice(0, 140)}...` : bioText;
   const interests: string[] = Array.isArray(profileData?.interest)
@@ -226,7 +228,7 @@ const profile = () => {
         <BadgeCard className="mx-5 mt-3.5" />
 
         {/* short intro */}
-        <View className="mx-5 mt-8 flex-row items-center gap-2.5">
+        <View className="mx-5 mt-7 flex-row items-center gap-2.5">
           <DynamicBackground
             className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row items-center justify-center overflow-hidden"
             pickerType={pickerType}
@@ -245,22 +247,33 @@ const profile = () => {
           </Text>
         </View>
 
-        <View className="mx-5 mt-4">
-          <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-            {showText ? bioText : shortBio}
-            {bioText.length > 140 && (
-              <Text
-                onPress={() => setShowText(!showText)}
-                className="font-proximanova-semibold text-sm text-[#11293A]"
-              >
-                {showText ? "See less" : "Read More"}
-              </Text>
-            )}
-          </Text>
-        </View>
+        {hasBio ? (
+          <View className="mx-5 mt-4 border border-[#0000000D] rounded-xl p-3">
+            <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
+              {showText ? bioText : shortBio}
+              {bioText.length > 140 && (
+                <Text
+                  onPress={() => setShowText(!showText)}
+                  className="font-proximanova-semibold text-sm text-[#11293A]"
+                >
+                  {showText ? "See less" : "Read More"}
+                </Text>
+              )}
+            </Text>
+          </View>
+        ) : (
+          <TouchableOpacity
+            onPress={() => router.push("/screens/profile/user/edit")}
+            className="mx-5 mt-4 border border-[#0000000D] rounded-xl p-3"
+          >
+            <Text className="font-proximanova-regular text-sm text-[#7A7A7A] dark:text-dark-secondary">
+              Add a bio
+            </Text>
+          </TouchableOpacity>
+        )}
 
         {/* Experience */}
-        <View className="mx-5 mt-8 flex-row gap-2.5">
+        <View className="mx-5 mt-7 flex-row gap-2.5">
           <DynamicBackground
             className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row items-center justify-center overflow-hidden"
             pickerType={pickerType}
@@ -282,7 +295,7 @@ const profile = () => {
           <ExperienceCard
             key={experience?.id || `${experience?.companyId}-${index}`}
             isCurrent={Boolean(experience?.isCurrent)}
-            className={index === 0 ? "mt-8 mx-5" : "mt-2.5 mx-5"}
+            className={index === 0 ? "mt-2.5 mx-5" : "mt-2.5 mx-5"}
             companyName={experience?.company?.name}
             position={experience?.position}
             companyLogo={experience?.company?.logo}
@@ -292,7 +305,7 @@ const profile = () => {
         )}
 
         {/* Achievement */}
-        <View className=" mx-5 mt-8">
+        <View className=" mx-5 mt-7">
           <View className="flex-row gap-2.5 items-center">
             <DynamicBackground
               className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row items-center justify-center overflow-hidden"
@@ -342,7 +355,7 @@ const profile = () => {
         </View>
 
         {/* Interests */}
-        <View className="mx-5 mt-8 flex-row gap-2.5">
+        <View className="mx-5 mt-2 flex-row gap-2.5">
           <DynamicBackground
             className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row items-center justify-center overflow-hidden"
             pickerType={pickerType}
@@ -360,7 +373,7 @@ const profile = () => {
           </Text>
         </View>
 
-        <View className="mx-5 mt-4">
+        <View className="mx-5 mt-5">
           <InterestSelection
             selectedInterests={interests}
             onInterestsChange={() => { }}
@@ -369,7 +382,7 @@ const profile = () => {
           />
         </View>
 
-        <View className="mx-5 mt-8 flex-row justify-between items-center">
+        <View className="mx-5 mt-6 flex-row justify-between items-center">
           <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
             Options for export
           </Text>
@@ -387,7 +400,7 @@ const profile = () => {
         </View>
 
         {/* Contact Us On */}
-        <View className="flex-row items-center gap-2.5 mt-8 mx-5">
+        <View className="flex-row items-center gap-2.5 mt-6 mx-5">
           <DynamicBackground
             className="h-8 w-8 rounded-full bg-[#E5F4FD] flex-row items-center justify-center overflow-hidden"
             pickerType={pickerType}
