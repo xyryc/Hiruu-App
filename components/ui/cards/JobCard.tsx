@@ -12,6 +12,22 @@ import { Animated, Easing, Text, TouchableOpacity, View } from "react-native";
 import SmallButton from "../buttons/SmallButton";
 import JobApplyModal from "../modals/JobApplyModal";
 
+const getAddressLabel = (value: unknown): string => {
+  if (typeof value === "string") return value;
+  if (!value || typeof value !== "object") return "-";
+
+  const addr = value as {
+    address?: unknown;
+    state?: unknown;
+    country?: unknown;
+  };
+  const parts = [addr.address, addr.state, addr.country]
+    .filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+    .map((item) => item.trim());
+
+  return parts.length > 0 ? parts.join(", ") : "-";
+};
+
 const MarqueeText = ({
   text,
   className,
@@ -96,8 +112,10 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
   const metaBadgeLabel = isFeatured ? "Featured" : "Standard";
   const shareCount =
     typeof job?.shareCount === "number" ? job.shareCount : 0;
-  const distanceLabel =
-    typeof job?.distanceKm === "number" ? `${job.distanceKm.toFixed(2)} km Away` : null;
+  const distanceValue = job?.distanceKm || null;
+  const distanceLabel = Number.isFinite(distanceValue)
+    ? `${distanceValue} Km Away`
+    : null;
   const formatLabel = (value?: string) =>
     (value || "-")
       .replace(/_/g, " ")
@@ -118,9 +136,10 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
   const formatCompactNumber = (value: number) => compactFormatter.format(value);
   const salaryLabel = hasSalary
     ? `${formatCompactNumber(job?.salaryMin as number)}-${formatCompactNumber(
-        job?.salaryMax as number
-      )}$${salarySuffix}`
+      job?.salaryMax as number
+    )}$${salarySuffix}`
     : "-";
+  const addressLabel = getAddressLabel(job?.business?.address);
 
   return (
     <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>
@@ -176,7 +195,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
             numberOfLines={1}
             className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary"
           >
-            {job?.business?.address || "-"}
+            {addressLabel}
           </Text>
         </View>
 
@@ -233,7 +252,6 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
                 compact || isPlainSurface ? "#F5F5F5" : "#FFFFFF",
             }}
           >
-            <SimpleLineIcons name="location-pin" size={12} color="#4FB2F3" />
             <Text className="text-xs font-proximanova-regular text-primary">
               {distanceLabel}
             </Text>

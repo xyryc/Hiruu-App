@@ -27,6 +27,22 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
+const getAddressLabel = (value: unknown, fallback: string): string => {
+  if (typeof value === "string" && value.trim().length > 0) return value;
+  if (!value || typeof value !== "object") return fallback;
+
+  const addr = value as {
+    address?: unknown;
+    state?: unknown;
+    country?: unknown;
+  };
+  const parts = [addr.address, addr.state, addr.country]
+    .filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+    .map((item) => item.trim());
+
+  return parts.length > 0 ? parts.join(", ") : fallback;
+};
+
 const resolveMediaUrl = (value?: string | null) => {
   if (!value || typeof value !== "string") return null;
   if (value.startsWith("http://") || value.startsWith("https://")) return value;
@@ -67,7 +83,10 @@ const JobProfile = () => {
   const companyLogo =
     resolveMediaUrl(job?.business?.logo) ||
     "https://images-platform.99static.com//gkoGE5-VZ1k4SXxg0mrUj7O0V38=/250x0:1750x1500/fit-in/500x500/99designs-contests-attachments/102/102585/attachment_102585463";
-  const locationLabel = job?.business?.address || "New York, North Bergen";
+  const locationLabel = getAddressLabel(
+    job?.business?.address,
+    "New York, North Bergen"
+  );
   const roleName = job?.role?.role?.name || "Bartender";
   const aboutRole =
     job?.description ||
@@ -91,6 +110,10 @@ const JobProfile = () => {
   const managerName = job?.postedBy?.name || "Meclizine Johnsen";
   const managerAvatar =
     resolveMediaUrl(job?.postedBy?.avatar) || require("@/assets/images/placeholder.png");
+  const distanceValue = typeof job?.distanceKm === "number" ? job.distanceKm : NaN;
+  const distanceLabel = Number.isFinite(distanceValue)
+    ? `${distanceValue.toFixed(2)} Km Away`
+    : null;
 
   const socials = useMemo(() => {
     const social = job?.business?.social || {};
@@ -242,11 +265,8 @@ const JobProfile = () => {
                 bgColor="#F5F5F5"
               />
               <SimpleStatusBadge title={`Salary: ${salaryLabel}`} bgColor="#F5F5F5" />
-              {typeof job?.distanceKm === "number" ? (
-                <SimpleStatusBadge
-                  title={`${job.distanceKm.toFixed(2)} km Away`}
-                  bgColor="#F5F5F5"
-                />
+              {distanceLabel ? (
+                <SimpleStatusBadge title={distanceLabel} bgColor="#F5F5F5" />
               ) : null}
               <SimpleStatusBadge
                 title={`Shares: ${job?.shareCount ?? 0}`}
