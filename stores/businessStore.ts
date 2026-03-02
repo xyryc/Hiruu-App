@@ -74,7 +74,7 @@ interface BusinessState {
   createCompanyManual: (companyData: any) => Promise<any>;
   createBusinessProfile: (payload: any) => Promise<any>;
   generateBusinessCode: (businessId: string) => Promise<any>;
-  joinBusiness: (businessId: string, invitationCode: string) => Promise<any>;
+  joinBusiness: (businessId: string | undefined, invitationCode: string) => Promise<any>;
   resetBusinessSession: () => void;
   clearError: () => void;
 }
@@ -921,10 +921,11 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
   joinBusiness: async (businessId, invitationCode) => {
     try {
       set({ loading: true, error: null });
-      const response = await axiosInstance.post("/employment/join", {
-        businessId,
-        invitationCode,
-      });
+      const payload: Record<string, string> = { invitationCode };
+      if (businessId && businessId.trim().length > 0) {
+        payload.businessId = businessId;
+      }
+      const response = await axiosInstance.post("/employment/join", payload);
 
       const result = response.data;
 

@@ -28,7 +28,10 @@ const JoinColleague = ({ className }: JoinColleagueProps) => {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity className="flex-row flex-1 max-w-56 justify-between items-center border border-[#EEEEEE] rounded-xl p-4">
+        <TouchableOpacity
+          onPress={() => router.push("/screens/home/qr/enter-code")}
+          className="flex-row flex-1 max-w-56 justify-between items-center border border-[#EEEEEE] rounded-xl p-4"
+        >
           <Text className="text-sm font-proximanova-semibold">Enter Code</Text>
 
           <Image

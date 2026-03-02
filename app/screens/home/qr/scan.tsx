@@ -127,11 +127,11 @@ const QrScanner = () => {
       const businessId = url.searchParams.get("businessid");
       const invitationCode = url.searchParams.get("inviteCode");
 
-      if (!businessId || !invitationCode) {
+      if (!invitationCode) {
         throw new Error("Invalid QR code");
       }
 
-      return { businessId, invitationCode };
+      return { businessId: businessId || undefined, invitationCode };
     } catch {
       return null;
     }

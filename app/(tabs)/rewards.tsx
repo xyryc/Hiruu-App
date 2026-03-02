@@ -1,4 +1,5 @@
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import { profileService } from "@/services/profileService";
 import {
   FontAwesome,
   FontAwesome6,
@@ -9,9 +10,10 @@ import {
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
+import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
   Dimensions,
   ScrollView,
@@ -23,6 +25,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const UserRewards = () => {
   const screenWidth = Dimensions.get("window").width;
+  const [totalTokens, setTotalTokens] = useState(0);
+
+  const loadProfile = useCallback(async () => {
+    try {
+      const result = await profileService.getProfile();
+      const nextTokens = Number(result?.data?.wallet?.coins);
+      setTotalTokens(Number.isFinite(nextTokens) ? nextTokens : 0);
+    } catch {
+      setTotalTokens(0);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadProfile();
+    }, [loadProfile])
+  );
+
+  const totalTokensLabel = useMemo(
+    () => new Intl.NumberFormat("en-US").format(totalTokens),
+    [totalTokens]
+  );
 
   const cardData = [
     {
@@ -74,9 +98,7 @@ const UserRewards = () => {
           }}
         >
           <View className="mx-5">
-            <Text className="font-proximanova-regular text-base text-secondary dark:text-dark-secondary text-center mt-2.5">
-              Total Tokens
-            </Text>
+
 
             <TouchableOpacity
               onPress={() => router.push("/screens/rewards/token-activity")}
@@ -85,17 +107,25 @@ const UserRewards = () => {
               <Octicons name="history" size={18} color="black" />
             </TouchableOpacity>
 
-            <View className="flex-row items-center justify-center mt-1 gap-2.5">
-              <View>
-                <Image
-                  source={require("@/assets/images/hiruu-coin.svg")}
-                  contentFit="contain"
-                  style={{ height: 44, width: 40 }}
-                />
-              </View>
-              <Text className="font-proximanova-bold text-[40px] text-[#4FB2F3]">
-                5,405
+            <View className="flex-col mt-8 justify-between items-center">
+              <Text className="font-proximanova-regular text-base text-secondary dark:text-dark-secondary text-center mt-2.5">
+                Total Tokens
               </Text>
+
+              <View className="flex-row items-center justify-center mt-1 gap-2.5">
+
+                <View>
+                  <Image
+                    source={require("@/assets/images/hiruu-coin.svg")}
+                    contentFit="contain"
+                    style={{ height: 44, width: 40 }}
+                  />
+                </View>
+                <Text className="font-proximanova-bold text-[40px] text-[#4FB2F3]">
+                  {totalTokensLabel}
+                </Text>
+              </View>
+
             </View>
 
             <PrimaryButton
