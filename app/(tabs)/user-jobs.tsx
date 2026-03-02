@@ -3,8 +3,8 @@ import JobCard from "@/components/ui/cards/JobCard";
 import SearchBar from "@/components/ui/inputs/SearchBar";
 import { useJobStore } from "@/stores/jobStore";
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { useFocusEffect } from "@react-navigation/native";
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useCallback, useState } from "react";
 import {
@@ -172,7 +172,7 @@ const UserJobs = () => {
                 <JobCard
                   key={item?.id}
                   job={item}
-                  className="mr-2.5 w-[320px]"
+                  className="mr-2.5 w-[360px]"
                 />
               ))}
             </ScrollView>

@@ -252,7 +252,11 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
                 compact || isPlainSurface ? "#F5F5F5" : "#FFFFFF",
             }}
           >
-            <Text className="text-xs font-proximanova-regular text-primary">
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className="text-xs font-proximanova-regular text-primary"
+            >
               {distanceLabel}
             </Text>
           </View>
