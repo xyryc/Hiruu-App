@@ -139,7 +139,7 @@ const SavedShiftTemplate = () => {
                       )}`
                       : "No break"
                   }
-                  location={template?.business?.address || "Business address"}
+                  location={template?.business?.address?.address || "Business address"}
                   businessName={template?.business?.name || "Business"}
                   businessLogo={template?.business?.logo}
                   roles={template?.roleRequirements || []}

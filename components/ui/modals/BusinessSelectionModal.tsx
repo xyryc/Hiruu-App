@@ -169,7 +169,9 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
                   No businesses found.
                 </Text>
               )}
-              {displayedBusinesses.map((business) => (
+              {displayedBusinesses.map((business) => {
+                const addressLabel = business?.address?.address || "";
+                return (
                 <TouchableOpacity
                   key={business.id}
                   onPress={() => toggleBusiness(business.id)}
@@ -210,7 +212,7 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
                     >
                       {business.name}
                     </Text>
-                    {!!business.address && (
+                    {!!addressLabel && (
                       <Text
                         className={`text-xs ${isSelected(business.id)
                           ? "text-white/80"
@@ -218,7 +220,7 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
                           }`}
                         numberOfLines={1}
                       >
-                        {business.address}
+                        {addressLabel}
                       </Text>
                     )}
                   </View>
@@ -235,7 +237,8 @@ const BusinessSelectionModal: React.FC<BusinessSelectionModalProps> = ({
                     )}
                   </View>
                 </TouchableOpacity>
-              ))}
+                );
+              })}
             </ScrollView>
           </SafeAreaView>
         </View>

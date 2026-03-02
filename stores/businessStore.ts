@@ -79,6 +79,55 @@ interface BusinessState {
   clearError: () => void;
 }
 
+const appendAddressToFormData = (formData: FormData, address: any) => {
+  if (!address || typeof address !== "object") {
+    return;
+  }
+
+  if (typeof address.address === "string" && address.address.trim()) {
+    formData.append("address[address]", address.address.trim());
+  }
+  if (typeof address.latitude === "number") {
+    formData.append("address[latitude]", String(address.latitude));
+  }
+  if (typeof address.longitude === "number") {
+    formData.append("address[longitude]", String(address.longitude));
+  }
+  if (typeof address.placeId === "string" && address.placeId) {
+    formData.append("address[placeId]", address.placeId);
+  }
+  if (typeof address.city === "string" && address.city) {
+    formData.append("address[city]", address.city);
+  }
+  if (typeof address.state === "string" && address.state) {
+    formData.append("address[state]", address.state);
+  }
+  if (typeof address.country === "string" && address.country) {
+    formData.append("address[country]", address.country);
+  }
+};
+
+const normalizeAddressPayload = (address: any) => {
+  if (!address || typeof address !== "object") return undefined;
+  if (typeof address.address !== "string" || !address.address.trim()) {
+    return undefined;
+  }
+  const latitude =
+    typeof address.latitude === "number" ? address.latitude : undefined;
+  const longitude =
+    typeof address.longitude === "number" ? address.longitude : undefined;
+
+  return {
+    address: address.address.trim(),
+    latitude,
+    longitude,
+    placeId: address.placeId,
+    city: address.city,
+    state: address.state,
+    country: address.country,
+  };
+};
+
 export const useBusinessStore = create<BusinessState>((set, get) => ({
   isLoading: false,
   loading: false,
@@ -613,7 +662,14 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       let result: any = null;
 
       if (!hasFile) {
-        const response = await axiosInstance.patch(`/business/${businessId}`, payload);
+        const normalizedPayload = {
+          ...payload,
+          address: normalizeAddressPayload(payload.address),
+        };
+        const response = await axiosInstance.patch(
+          `/business/${businessId}`,
+          normalizedPayload
+        );
         result = response.data;
 
         if (!result?.success) {
@@ -635,6 +691,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
 
         if (payload.name) formData.append("name", payload.name);
         if (payload.description) formData.append("description", payload.description);
+        appendAddressToFormData(formData, payload.address);
         if (typeof payload.isRecruiting === "boolean") {
           formData.append("isRecruiting", String(payload.isRecruiting));
         }
@@ -762,7 +819,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       const formData = new FormData();
       if (payload.name) formData.append("name", payload.name);
       if (payload.description) formData.append("description", payload.description);
-      if (payload.address) formData.append("address", payload.address);
+      appendAddressToFormData(formData, payload.address);
       if (payload.phoneNumber) formData.append("phoneNumber", payload.phoneNumber);
       if (payload.countryCode) formData.append("countryCode", payload.countryCode);
       if (payload.email) formData.append("email", payload.email);

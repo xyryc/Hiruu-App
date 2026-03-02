@@ -121,33 +121,36 @@ const ProfileSwitchModal: React.FC<ProfileSwitchModalProps> = ({
                 </Text>
               )}
 
-              {myBusinesses.map((business) => (
-                <TouchableOpacity
-                  key={business.id}
-                  onPress={() => onSelectBusinessProfile(business.id)}
-                  className="mt-3 border border-[#EEEEEE] rounded-xl px-4 py-3 flex-row items-center"
-                >
-                  <Image
-                    source={business.logo || require("@/assets/images/placeholder.png")}
-                    style={{ width: 34, height: 34, borderRadius: 999 }}
-                    contentFit="cover"
-                  />
-                  <View className="flex-1 ml-3">
-                    <Text className="font-proximanova-semibold text-primary">
-                      {business.name}
-                    </Text>
-                    {!!business.address && (
-                      <Text className="text-xs text-secondary" numberOfLines={1}>
-                        {business.address}
+              {myBusinesses.map((business) => {
+                const addressLabel = business?.address?.address || "";
+                return (
+                  <TouchableOpacity
+                    key={business.id}
+                    onPress={() => onSelectBusinessProfile(business.id)}
+                    className="mt-3 border border-[#EEEEEE] rounded-xl px-4 py-3 flex-row items-center"
+                  >
+                    <Image
+                      source={business.logo || require("@/assets/images/placeholder.png")}
+                      style={{ width: 34, height: 34, borderRadius: 999 }}
+                      contentFit="cover"
+                    />
+                    <View className="flex-1 ml-3">
+                      <Text className="font-proximanova-semibold text-primary">
+                        {business.name}
                       </Text>
-                    )}
-                  </View>
+                      {!!addressLabel && (
+                        <Text className="text-xs text-secondary" numberOfLines={1}>
+                          {addressLabel}
+                        </Text>
+                      )}
+                    </View>
 
-                  {selectedBusinessId === business.id && (
-                    <Ionicons name="checkmark-circle" size={24} color="#4FB2F3" />
-                  )}
-                </TouchableOpacity>
-              ))}
+                    {selectedBusinessId === business.id && (
+                      <Ionicons name="checkmark-circle" size={24} color="#4FB2F3" />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
             </ScrollView>
           </SafeAreaView>
 

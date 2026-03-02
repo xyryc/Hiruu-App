@@ -32,6 +32,7 @@ import {
 import { toast } from "sonner-native";
 
 const GEOAPIFY_API_KEY = process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY;
+const ADDRESS_MAX_LENGTH = 200;
 
 type LocationOption = {
   label: string;
@@ -42,6 +43,17 @@ type LocationOption = {
   city?: string;
   state?: string;
   country?: string;
+};
+
+const toOptionalString = (value: unknown) => {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : undefined;
+};
+
+const toOptionalNumber = (value: unknown) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
 };
 
 const BusinessSetup = () => {
@@ -359,10 +371,27 @@ const BusinessSetup = () => {
       return;
     }
 
+    const resolvedAddress = (value || locationSearch || "")
+      .trim()
+      .slice(0, ADDRESS_MAX_LENGTH);
+    if (!resolvedAddress) {
+      toast.error("Location is required.");
+      return;
+    }
+    const latitude = toOptionalNumber(selectedLocationOption?.latitude);
+    const longitude = toOptionalNumber(selectedLocationOption?.longitude);
     const payload = {
       name: businessName.trim(),
       description: about.trim(),
-      address: value || locationSearch || "Central Park, New York, NY",
+      address: {
+        address: resolvedAddress,
+        latitude,
+        longitude,
+        placeId: toOptionalString(selectedLocationOption?.placeId),
+        city: toOptionalString(selectedLocationOption?.city),
+        state: toOptionalString(selectedLocationOption?.state),
+        country: toOptionalString(selectedLocationOption?.country),
+      },
       phoneNumber: phonePayload.phoneNumber,
       countryCode: phonePayload.countryCode,
       email: email.trim(),
@@ -582,16 +611,18 @@ const BusinessSetup = () => {
               onBlur={() => {
                 setTimeout(() => setIsLocationFocused(false), 250);
               }}
-              onChangeText={(text) => {
-                setLocationSearch(text);
-                setValue(text);
-                if (selectedLocationOption && text !== selectedLocationOption.label) {
+            onChangeText={(text) => {
+                const nextText = text.slice(0, ADDRESS_MAX_LENGTH);
+                setLocationSearch(nextText);
+                setValue(nextText);
+                if (selectedLocationOption && nextText !== selectedLocationOption.label) {
                   setSelectedLocationOption(null);
                 }
               }}
               placeholder="Search location"
               className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm"
               autoCapitalize="none"
+              maxLength={ADDRESS_MAX_LENGTH}
             />
 
             {isLocationFocused &&
@@ -602,8 +633,9 @@ const BusinessSetup = () => {
                   <TouchableOpacity
                     key={`${item.value}-${index}`}
                     onPress={() => {
-                      setValue(item.value);
-                      setLocationSearch(item.label);
+                      const trimmedLabel = item.label.slice(0, ADDRESS_MAX_LENGTH);
+                      setValue(trimmedLabel);
+                      setLocationSearch(trimmedLabel);
                       setSelectedLocationOption(item);
                       setLocationOptions([item]);
                       setIsLocationFocused(false);

@@ -2,13 +2,13 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { useBusinessStore } from "@/stores/businessStore";
 import { translateApiMessage } from "@/utils/apiMessages";
-import { Feather, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { Feather, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -26,6 +26,41 @@ import {
 } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
+const GEOAPIFY_API_KEY = process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY;
+const ADDRESS_MAX_LENGTH = 200;
+
+type LocationOption = {
+  label: string;
+  value: string;
+  latitude?: number;
+  longitude?: number;
+  placeId?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+};
+
+type AddressPayload = {
+  address: string;
+  latitude?: number;
+  longitude?: number;
+  placeId?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+};
+
+const toOptionalString = (value: unknown) => {
+  if (typeof value !== "string") return undefined;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : undefined;
+};
+
+const toOptionalNumber = (value: unknown) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+};
+
 const EditBusinessProfile = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -40,6 +75,114 @@ const EditBusinessProfile = () => {
   const [businessName, setBusinessName] = useState("");
   const [about, setAbout] = useState("");
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [value, setValue] = useState<string | null>(null);
+  const [locationSearch, setLocationSearch] = useState("");
+  const [locationOptions, setLocationOptions] = useState<LocationOption[]>([]);
+  const [selectedLocationOption, setSelectedLocationOption] =
+    useState<LocationOption | null>(null);
+  const [isSearchingLocation, setIsSearchingLocation] = useState(false);
+  const [isLocationFocused, setIsLocationFocused] = useState(false);
+  const hasShownGeoapifyMissingKey = useRef(false);
+  const [addressDetails, setAddressDetails] = useState<AddressPayload | null>(null);
+
+  useEffect(() => {
+    if (!locationSearch || locationSearch.trim().length < 3) {
+      setLocationOptions(selectedLocationOption ? [selectedLocationOption] : []);
+      setIsSearchingLocation(false);
+      return;
+    }
+
+    if (!GEOAPIFY_API_KEY) {
+      setLocationOptions(selectedLocationOption ? [selectedLocationOption] : []);
+      setIsSearchingLocation(false);
+      if (!hasShownGeoapifyMissingKey.current) {
+        hasShownGeoapifyMissingKey.current = true;
+        toast.error("Geoapify API key missing. Set EXPO_PUBLIC_GEOAPIFY_API_KEY.");
+      }
+      return;
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(async () => {
+      try {
+        setIsSearchingLocation(true);
+        const query = encodeURIComponent(locationSearch.trim());
+        const response = await fetch(
+          `https://api.geoapify.com/v1/geocode/autocomplete?text=${query}&limit=8&apiKey=${GEOAPIFY_API_KEY}`,
+          { signal: controller.signal }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Geoapify request failed: ${response.status}`);
+        }
+
+        const result = await response.json();
+        const features = Array.isArray(result?.features) ? result.features : [];
+        const nextOptions: LocationOption[] = features
+          .map((item: any) => {
+            const props = item?.properties || {};
+            const coordinates = Array.isArray(item?.geometry?.coordinates)
+              ? item.geometry.coordinates
+              : [];
+            const longitude = Number(coordinates[0]);
+            const latitude = Number(coordinates[1]);
+            const label =
+              props.formatted ||
+              [props.address_line1, props.address_line2].filter(Boolean).join(", ");
+
+            if (!label || Number.isNaN(latitude) || Number.isNaN(longitude)) {
+              return null;
+            }
+
+            return {
+              label,
+              value: label,
+              latitude,
+              longitude,
+              placeId:
+                props.place_id ||
+                props.datasource?.raw?.place_id ||
+                props.datasource?.raw?.osm_id?.toString?.(),
+              city: props.city || props.county || props.suburb,
+              state: props.state || props.state_code,
+              country: props.country,
+            };
+          })
+          .filter(Boolean) as LocationOption[];
+
+        const uniqueByLabel = Array.from(
+          new Map(nextOptions.map((item) => [item.label, item])).values()
+        );
+
+        if (selectedLocationOption) {
+          setLocationOptions(
+            Array.from(
+              new Map(
+                [selectedLocationOption, ...uniqueByLabel].map((item) => [
+                  item.label,
+                  item,
+                ])
+              ).values()
+            )
+          );
+        } else {
+          setLocationOptions(uniqueByLabel);
+        }
+      } catch (error: any) {
+        if (error?.name !== "AbortError") {
+          setLocationOptions(selectedLocationOption ? [selectedLocationOption] : []);
+          toast.error("Failed to fetch location suggestions.");
+        }
+      } finally {
+        setIsSearchingLocation(false);
+      }
+    }, 350);
+
+    return () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    };
+  }, [locationSearch, selectedLocationOption]);
 
   useEffect(() => {
     let isMounted = true;
@@ -54,6 +197,42 @@ const EditBusinessProfile = () => {
         setAbout(data?.description || "");
         setProfileImage(data?.logo || null);
         setCoverImage(data?.coverPhoto || null);
+        const rawAddress = data?.address;
+        const resolvedAddress =
+          typeof rawAddress === "string"
+            ? rawAddress
+            : rawAddress?.address || "";
+        setValue(resolvedAddress);
+        setLocationSearch(resolvedAddress);
+
+        if (rawAddress && typeof rawAddress === "object") {
+          const nextDetails: AddressPayload = {
+            address: resolvedAddress,
+            latitude: toOptionalNumber(rawAddress?.latitude),
+            longitude: toOptionalNumber(rawAddress?.longitude),
+            placeId: toOptionalString(rawAddress?.placeId),
+            city: toOptionalString(rawAddress?.city),
+            state: toOptionalString(rawAddress?.state),
+            country: toOptionalString(rawAddress?.country),
+          };
+          setAddressDetails(nextDetails);
+          if (resolvedAddress) {
+            const seededOption = {
+              label: resolvedAddress,
+              value: resolvedAddress,
+              latitude: nextDetails.latitude,
+              longitude: nextDetails.longitude,
+              placeId: nextDetails.placeId,
+              city: nextDetails.city,
+              state: nextDetails.state,
+              country: nextDetails.country,
+            };
+            setSelectedLocationOption(seededOption);
+            setLocationOptions([seededOption]);
+          }
+        } else if (resolvedAddress) {
+          setAddressDetails({ address: resolvedAddress });
+        }
       } catch (error: any) {
         toast.error(error?.message || "Failed to load business profile");
       } finally {
@@ -197,9 +376,37 @@ const EditBusinessProfile = () => {
       return;
     }
 
+    const resolvedAddress = (value || locationSearch || "")
+      .trim()
+      .slice(0, ADDRESS_MAX_LENGTH);
+    if (!resolvedAddress) {
+      toast.error("Location is required.");
+      return;
+    }
+    const latitude = toOptionalNumber(
+      selectedLocationOption?.latitude ?? addressDetails?.latitude
+    );
+    const longitude = toOptionalNumber(
+      selectedLocationOption?.longitude ?? addressDetails?.longitude
+    );
     const payload = {
       name: businessName.trim(),
       description: about.trim(),
+      address: {
+        address: resolvedAddress,
+        latitude,
+        longitude,
+        placeId: toOptionalString(
+          selectedLocationOption?.placeId ?? addressDetails?.placeId
+        ),
+        city: toOptionalString(selectedLocationOption?.city ?? addressDetails?.city),
+        state: toOptionalString(
+          selectedLocationOption?.state ?? addressDetails?.state
+        ),
+        country: toOptionalString(
+          selectedLocationOption?.country ?? addressDetails?.country
+        ),
+      },
       logo: profileImage,
       coverPhoto: coverImage,
     };
@@ -240,6 +447,7 @@ const EditBusinessProfile = () => {
           <ScrollView
             className="mx-5 pt-8"
             showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
               paddingBottom: 600,
             }}
@@ -350,33 +558,82 @@ const EditBusinessProfile = () => {
               />
             </View>
 
-            {/* select location  */}
+            {/* location */}
             <View className="mt-8">
               <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
                 Location
               </Text>
 
-              <View className="flex-row mt-2.5 gap-2.5">
-                {/* City Dropdown */}
-                <TouchableOpacity className="flex-1 flex-row justify-between items-center w-32 border border-gray-300 rounded-xl px-4 py-3 bg-white">
-                  <Text className="text-gray-500">City</Text>
-                  <MaterialIcons
-                    name="keyboard-arrow-down"
-                    size={20}
-                    color="gray"
-                  />
-                </TouchableOpacity>
+              <TextInput
+                value={locationSearch}
+                onFocus={() => setIsLocationFocused(true)}
+                onBlur={() => {
+                  setTimeout(() => setIsLocationFocused(false), 250);
+                }}
+                onChangeText={(text) => {
+                  const nextText = text.slice(0, ADDRESS_MAX_LENGTH);
+                  setLocationSearch(nextText);
+                  setValue(nextText);
+                  const isSameAsSelected =
+                    selectedLocationOption && nextText === selectedLocationOption.label;
+                  if (!isSameAsSelected) {
+                    setAddressDetails({ address: nextText });
+                  }
+                  if (selectedLocationOption && nextText !== selectedLocationOption.label) {
+                    setSelectedLocationOption(null);
+                  }
+                }}
+                placeholder="Search location"
+                className="w-full px-4 py-3 bg-white border border-[#EEEEEE] rounded-[10px] text-placeholder text-sm mt-2.5"
+                autoCapitalize="none"
+                maxLength={ADDRESS_MAX_LENGTH}
+              />
 
-                {/* Area Dropdown */}
-                <TouchableOpacity className="flex-1 flex-row justify-between items-center w-32 border border-gray-300 rounded-xl px-4 py-3 bg-white">
-                  <Text className="text-gray-500">Area</Text>
-                  <MaterialIcons
-                    name="keyboard-arrow-down"
-                    size={20}
-                    color="gray"
-                  />
-                </TouchableOpacity>
-              </View>
+              {isLocationFocused &&
+              locationSearch.trim().length >= 3 &&
+              locationOptions.length > 0 ? (
+                <View className="mt-2 border border-[#EEEEEE] bg-white rounded-[10px] overflow-hidden">
+                  {locationOptions.map((item, index) => (
+                    <TouchableOpacity
+                      key={`${item.value}-${index}`}
+                      onPress={() => {
+                        const trimmedLabel = item.label.slice(0, ADDRESS_MAX_LENGTH);
+                        setValue(trimmedLabel);
+                        setLocationSearch(trimmedLabel);
+                        setAddressDetails({
+                          address: trimmedLabel,
+                          latitude: item.latitude,
+                          longitude: item.longitude,
+                          placeId: item.placeId,
+                          city: item.city,
+                          state: item.state,
+                          country: item.country,
+                        });
+                        setSelectedLocationOption(item);
+                        setLocationOptions([item]);
+                        setIsLocationFocused(false);
+                      }}
+                      className="px-4 py-3 border-b border-[#F5F5F5]"
+                    >
+                      <Text className="text-sm text-[#111111]">{item.label}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              ) : null}
+
+              {isSearchingLocation ? (
+                <Text className="mt-2 text-xs font-proximanova-regular text-secondary">
+                  Searching locations...
+                </Text>
+              ) : null}
+              {isLocationFocused &&
+              locationSearch.trim().length >= 3 &&
+              !isSearchingLocation &&
+              locationOptions.length === 0 ? (
+                <Text className="mt-2 text-xs font-proximanova-regular text-secondary">
+                  No locations found.
+                </Text>
+              ) : null}
             </View>
 
             {/* Add a About Business */}

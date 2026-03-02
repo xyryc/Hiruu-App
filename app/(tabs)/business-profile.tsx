@@ -209,7 +209,7 @@ const BusinessProfile = () => {
             <EvilIcons name="location" size={18} color="black" />
 
             <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-              {businessData?.address || "Location unavailable"}
+              {businessData?.address?.address || "Location unavailable"}
             </Text>
           </View>
         </View>
