@@ -3,6 +3,7 @@ import axiosInstance from "@/utils/axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AxiosError } from "axios";
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 const STORAGE_KEYS = {
   ACCESS_TOKEN: "auth_access_token",
@@ -128,16 +129,18 @@ const normalizeAddressPayload = (address: any) => {
   };
 };
 
-export const useBusinessStore = create<BusinessState>((set, get) => ({
-  isLoading: false,
-  loading: false,
-  error: null,
-  userBusiness: null,
-  myBusinesses: [],
-  myBusinessesLoading: false,
-  selectedBusinesses: [],
-  weeklyShiftSelections: {},
-  weeklyRoleAssignments: {},
+export const useBusinessStore = create<BusinessState>()(
+  persist(
+    (set, get) => ({
+      isLoading: false,
+      loading: false,
+      error: null,
+      userBusiness: null,
+      myBusinesses: [],
+      myBusinessesLoading: false,
+      selectedBusinesses: [],
+      weeklyShiftSelections: {},
+      weeklyRoleAssignments: {},
 
   setSelectedBusinesses: (ids) => set({ selectedBusinesses: ids }),
   setWeeklyShiftSelection: (day, templates) =>
@@ -1004,5 +1007,14 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       weeklyRoleAssignments: {},
     }),
 
-  clearError: () => set({ error: null }),
-}));
+      clearError: () => set({ error: null }),
+    }),
+    {
+      name: "business-store",
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        selectedBusinesses: state.selectedBusinesses,
+      }),
+    }
+  )
+);
