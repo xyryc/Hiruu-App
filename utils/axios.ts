@@ -1,9 +1,34 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import { useServerStatusStore } from '@/stores/serverStatusStore';
 
 const STORAGE_KEYS = {
   ACCESS_TOKEN: 'auth_access_token',
   REFRESH_TOKEN: 'auth_refresh_token',
+};
+
+const HEALTH_CHECK_PATH = '/api/v1';
+
+const isHealthCheckRequest = (url?: string) => {
+  if (!url) return false;
+  return url.includes(HEALTH_CHECK_PATH);
+};
+
+let healthCheckInFlight: Promise<boolean> | null = null;
+
+const runHealthCheckOnce = async () => {
+  if (healthCheckInFlight) {
+    return healthCheckInFlight;
+  }
+
+  healthCheckInFlight = useServerStatusStore
+    .getState()
+    .checkHealthNow()
+    .finally(() => {
+      healthCheckInFlight = null;
+    });
+
+  return healthCheckInFlight;
 };
 
 // Create axios instance
@@ -19,6 +44,13 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     try {
+      const { isServerDown } = useServerStatusStore.getState();
+      if (isServerDown && !isHealthCheckRequest(config.url)) {
+        return Promise.reject(
+          new Error('SERVER_UNAVAILABLE: blocked while health polling /api/v1')
+        );
+      }
+
       // Don't add auth token for auth endpoints
       const isAuthEndpoint = config.url?.includes('/auth/');
 
@@ -55,6 +87,9 @@ axiosInstance.interceptors.request.use(
 // Response interceptor - Handle errors globally
 axiosInstance.interceptors.response.use(
   (response) => {
+    if (isHealthCheckRequest(response.config?.url) && response.data?.success === true) {
+      useServerStatusStore.getState().clearServerDown();
+    }
     // Return the response data directly if it exists
     return response;
   },
@@ -114,6 +149,27 @@ axiosInstance.interceptors.response.use(
         status: error.response?.status,
         data: error.response?.data,
       });
+    }
+
+    const statusCode = error.response?.status;
+    const isNetworkOrTimeout =
+      !error.response ||
+      error.code === 'ECONNABORTED' ||
+      error.code === 'ERR_NETWORK';
+    const isServerFailure = typeof statusCode === 'number' && statusCode >= 500;
+
+    const failedOnHealthCheck = isHealthCheckRequest(error.config?.url);
+    if ((isNetworkOrTimeout || isServerFailure) && !failedOnHealthCheck) {
+      const isHealthy = await runHealthCheckOnce();
+      if (isHealthy) {
+        return Promise.reject(error);
+      }
+
+      useServerStatusStore.getState().setServerDown(
+        isNetworkOrTimeout
+          ? 'Could not reach the server. Please check your connection and try again.'
+          : 'Server is currently facing issues. Please try again shortly.'
+      );
     }
 
     return Promise.reject(error);

@@ -1,7 +1,12 @@
+import OfflineScreen from "@/components/ui/states/OfflineScreen";
+import ServerStatusScreen from "@/components/ui/states/ServerStatusScreen";
 import { useIncomingCallListener } from "@/hooks/useIncomingCallListener";
 import { useSocketLifecycle } from "@/hooks/useSocketLifecycle";
 import { registerForFcmToken } from "@/services/notificationService";
 import { useAuthStore } from "@/stores/authStore";
+import { useProfileStore } from "@/stores/profileStore";
+import { useServerStatusStore } from "@/stores/serverStatusStore";
+import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as Notifications from "expo-notifications";
@@ -32,12 +37,24 @@ const AppBootstrap = () => {
 
   const [appIsReady, setAppIsReady] = useState(false);
   const { initializeAuth, user } = useAuthStore();
+  const netInfo = useNetInfo();
+  const { isServerDown, message, checkHealthNow } = useServerStatusStore();
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | null = null;
 
     const init = async () => {
       await initializeAuth();
+      const { user: authUser, accessToken } = useAuthStore.getState();
+
+      if (authUser && accessToken) {
+        void useProfileStore
+          .getState()
+          .getProfile()
+          .catch((error) => {
+            console.error("Failed to refresh profile on app launch:", error);
+          });
+      }
 
       if (fontsLoaded) {
         timer = setTimeout(() => {
@@ -120,6 +137,30 @@ const AppBootstrap = () => {
 
   if (!appIsReady) {
     return <SplashScreen />;
+  }
+
+  const isOffline =
+    netInfo.isConnected === false || netInfo.isInternetReachable === false;
+
+  if (isOffline) {
+    return (
+      <OfflineScreen
+        onReload={() => {
+          void NetInfo.refresh();
+        }}
+      />
+    );
+  }
+
+  if (isServerDown) {
+    return (
+      <ServerStatusScreen
+        message={message}
+        onReload={() => {
+          void checkHealthNow();
+        }}
+      />
+    );
   }
 
   return (
