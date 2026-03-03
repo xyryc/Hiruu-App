@@ -1,12 +1,44 @@
+import auth from "@react-native-firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { Image } from "expo-image";
-import React from "react";
+import React, { useEffect } from "react";
 import { TouchableOpacity, View } from "react-native";
 
+
+
 const SocialAuth = () => {
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
+    })
+  }, [])
+
+  const handleGoogleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const result = await GoogleSignin.signIn();
+      const idToken = result.data?.idToken;
+
+      if (!idToken) {
+        console.log("No idToken returned");
+        return;
+      }
+
+      const credential = auth.GoogleAuthProvider.credential(idToken);
+      const userCredential = await auth().signInWithCredential(credential);
+
+      console.log("FIREBASE_USER:", userCredential.user);
+    } catch (e) {
+      console.log("GOOGLE_SIGNIN_ERROR:", e);
+    }
+  };
+
   return (
     <View className="flex-row justify-center">
       {/* Google */}
-      <TouchableOpacity className="w-12 h-12 bg-white rounded-full justify-center items-center shadow-sm border border-gray-100">
+      <TouchableOpacity
+        onPress={() => handleGoogleSignIn()}
+        className="w-12 h-12 bg-white rounded-full justify-center items-center shadow-sm border border-gray-100">
         <Image
           source={require("@/assets/images/google.svg")}
           style={{

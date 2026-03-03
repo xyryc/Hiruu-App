@@ -56,3 +56,6 @@ android/app/release.keystore
 
 # env files
 .env
+
+# firebase configs
+google-services.json
