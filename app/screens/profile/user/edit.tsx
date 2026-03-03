@@ -13,8 +13,7 @@ import { translateApiMessage } from "@/utils/apiMessages";
 import {
   FontAwesome6,
   Ionicons,
-  MaterialCommunityIcons,
-  SimpleLineIcons,
+  MaterialCommunityIcons
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { router } from "expo-router";
@@ -150,20 +149,14 @@ const Edit = () => {
         style={{
           paddingTop: insets.top + 10,
         }}
-        className="bg-[#E5F4FD] rounded-b-2xl px-4 pb-6"
+        className="bg-[#E5F4FD] rounded-b-2xl px-4 pb-6 mb-6"
         onPressBack={() => router.back()}
         title="Edit Profile"
         titleClass="text-primary dark:text-dark-primary"
         iconColor={isDark ? "#fff" : "#111"}
       />
 
-      <ScrollView
-        className="bg-white"
-        contentContainerStyle={{
-          paddingTop: 14,
-          paddingBottom: 120,
-        }}
-      >
+      <ScrollView>
         <View className="mx-5">
           <View className="flex-row justify-between items-center mb-2.5">
             <Text className="font-proximanova-semibold text-xl text-primary dark:text-dark-primary">
@@ -473,15 +466,14 @@ const Edit = () => {
             <SmallButton title="Link" />
           </View>
         </View>
-      </ScrollView>
 
-      <View className="absolute bottom-10 left-0 right-0 mx-5">
         <PrimaryButton
           title="Save Changes"
           onPress={handleSaveProfile}
           loading={isSaving}
+          className='mx-5 my-10'
         />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
