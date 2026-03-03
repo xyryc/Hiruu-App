@@ -9,11 +9,22 @@ import { useServerStatusStore } from "@/stores/serverStatusStore";
 import NetInfo, { useNetInfo } from "@react-native-community/netinfo";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
+import * as Notifications from "expo-notifications";
+import { getApp } from "@react-native-firebase/app";
+import {
+  getInitialNotification,
+  getMessaging,
+  onMessage,
+  onNotificationOpenedApp,
+} from "@react-native-firebase/messaging";
+import { Platform } from "react-native";
 import { useEffect, useState } from "react";
 import SplashScreen from "./splash";
 
 
 const AppBootstrap = () => {
+  const messaging = getMessaging(getApp());
+
   const [fontsLoaded] = useFonts({
     "ProximaNova-Thin": require("../assets/fonts/ProximaNova-Thin.ttf"),
     "ProximaNova-Light": require("../assets/fonts/ProximaNova-Light.ttf"),
@@ -63,6 +74,17 @@ const AppBootstrap = () => {
   useIncomingCallListener(Boolean(user && appIsReady));
 
   useEffect(() => {
+    if (Platform.OS !== "android") return;
+
+    Notifications.setNotificationChannelAsync("default", {
+      name: "Default",
+      importance: Notifications.AndroidImportance.MAX,
+      sound: "default",
+      vibrationPattern: [0, 250, 250, 250],
+    }).catch(() => undefined);
+  }, []);
+
+  useEffect(() => {
     const setupFcm = async () => {
       if (!user) return;
       try {
@@ -75,6 +97,41 @@ const AppBootstrap = () => {
 
     setupFcm();
   }, [user]);
+
+  useEffect(() => {
+    const unsubscribeOnMessage = onMessage(messaging, async (remoteMessage) => {
+      console.log("FCM foreground =>", remoteMessage);
+
+      // Show a visible banner while app is foregrounded.
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: remoteMessage.notification?.title || "Notification",
+          body: remoteMessage.notification?.body || "You have a new message",
+          sound: "default",
+          data: remoteMessage.data,
+          channelId: "default",
+        },
+        trigger: null,
+      });
+    });
+
+    const unsubscribeOnOpen = onNotificationOpenedApp(messaging, (remoteMessage) => {
+      console.log("FCM opened from background =>", remoteMessage);
+    });
+
+    getInitialNotification(messaging)
+      .then((remoteMessage) => {
+        if (remoteMessage) {
+          console.log("FCM opened from quit =>", remoteMessage);
+        }
+      })
+      .catch(() => undefined);
+
+    return () => {
+      unsubscribeOnMessage();
+      unsubscribeOnOpen();
+    };
+  }, [messaging]);
 
 
 
