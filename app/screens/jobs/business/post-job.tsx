@@ -264,7 +264,7 @@ const PostJob = () => {
             Role
           </Text>
           <RoleSelector
-            className="mt-2.5"
+            className=""
             roles={roleOptions}
             loading={rolesLoading}
             selectedRole={selectedRole}
