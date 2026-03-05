@@ -1,14 +1,16 @@
 import { MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import React, { useEffect, useMemo, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { getCountdownLabel } from "@/utils/date";
 import HolidayCard from "../ui/cards/HolidayCard";
 import LeaveCard from "../ui/cards/LeaveCard";
 import RegularShiftCard from "../ui/cards/RegularShiftCard";
 
 // Countdown Component
-const Countdown = ({ shift }) =>
-  shift.countdown && (
+const Countdown = ({ shift, countdown }) =>
+  countdown && (
     <View className="px-4">
       <Text className="text-sm font-proximanova-regular text-primary">
         {shift.type === "ongoing" ? "Shift ends in: " : "Shift starts in: "}
@@ -17,7 +19,7 @@ const Countdown = ({ shift }) =>
             shift.type === "ongoing" ? "text-orange-600" : "text-blue-600"
           }`}
         >
-          {shift.countdown}
+          {countdown}
         </Text>
       </Text>
     </View>
@@ -25,6 +27,23 @@ const Countdown = ({ shift }) =>
 
 const ShiftItem = ({ shift, index, shiftsLength }) => {
   const router = useRouter();
+  const [nowTimestamp, setNowTimestamp] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (!shift?.countdownTargetAt) return;
+    if (shift.type !== "ongoing" && shift.type !== "upcoming") return;
+
+    const interval = setInterval(() => {
+      setNowTimestamp(Date.now());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [shift?.countdownTargetAt, shift?.type]);
+
+  const liveCountdown = useMemo(() => {
+    if (!shift?.countdownTargetAt) return shift?.countdown;
+    return getCountdownLabel(shift.countdownTargetAt, nowTimestamp) || shift?.countdown;
+  }, [nowTimestamp, shift?.countdown, shift?.countdownTargetAt]);
 
   return (
     <TouchableOpacity
@@ -104,13 +123,13 @@ const ShiftItem = ({ shift, index, shiftsLength }) => {
 
           {shift.type === "ongoing" && (
             <View className="py-2">
-              <Countdown shift={shift} />
+              <Countdown shift={shift} countdown={liveCountdown} />
             </View>
           )}
 
           {shift.type === "upcoming" && (
             <View className="py-2">
-              <Countdown shift={shift} />
+              <Countdown shift={shift} countdown={liveCountdown} />
             </View>
           )}
         </View>
