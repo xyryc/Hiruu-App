@@ -1,5 +1,6 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import SocialAuth from "@/components/layout/SocialAuth";
+import { registerForFcmToken } from "@/services/notificationService";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import { useAuthStore } from "@/stores/authStore";
 import { translateApiMessage } from "@/utils/apiMessages";
@@ -91,6 +92,7 @@ const Login = () => {
 
   const handleLogin = async () => {
     clearError();
+    const fcmToken = await registerForFcmToken().catch(() => undefined);
 
     if (selectedTab === "Email") {
       if (!email || !password) {
@@ -103,7 +105,7 @@ const Login = () => {
           email,
           password,
           rememberMe,
-          fcmToken: undefined,
+          fcmToken,
         });
 
         if (result?.success) {
@@ -133,7 +135,7 @@ const Login = () => {
           countryCode: effectiveCountryCode,
           phoneNumber: normalizedPhone,
           rememberMe,
-          fcmToken: undefined,
+          fcmToken,
         });
 
         if (result?.success) {
