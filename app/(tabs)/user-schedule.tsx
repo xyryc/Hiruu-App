@@ -8,6 +8,14 @@ import { ActivityIndicator, RefreshControl, ScrollView, StatusBar, Text, View } 
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
+const resolveMediaUrl = (value?: string | null) => {
+  if (!value || typeof value !== "string") return undefined;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  const base = (process.env.EXPO_PUBLIC_API_URL || "").replace(/\/$/, "");
+  if (!base) return value;
+  return `${base}${value.startsWith("/") ? value : `/${value}`}`;
+};
+
 type ApiShift = {
   id: string;
   date: string;
@@ -35,6 +43,7 @@ type UiShift = {
   workTime: string;
   breakTime?: string;
   company: string;
+  companyLogo?: string;
   status: "ongoing" | "upcoming" | "completed";
   countdown?: string;
   countdownTargetAt?: number;
@@ -124,6 +133,7 @@ const ShiftSchedule = () => {
         workTime: `${to12Hour(start)} - ${to12Hour(end)}`,
         breakTime,
         company: shift?.employment?.business?.name || "Business",
+        companyLogo: resolveMediaUrl(shift?.employment?.business?.logo),
         status: type,
         countdown,
         countdownTargetAt,

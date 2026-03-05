@@ -58,12 +58,17 @@ const RegularShiftCard = ({ shift }) => {
       <View className="flex-row items-center justify-between">
         <View className="flex-row items-center gap-2">
           <Image
-            source="https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp"
+            source={
+              shift.companyLogo
+                ? { uri: shift.companyLogo }
+                : require("@/assets/images/placeholder.png")
+            }
             style={{
               width: 30,
               height: 30,
               borderRadius: 999,
             }}
+            contentFit="cover"
           />
 
           <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
