@@ -29,7 +29,6 @@ const SignUp = () => {
   const [selectedTab, setSelectedTab] = useState("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+1");
@@ -241,23 +240,7 @@ const SignUp = () => {
                   </TouchableOpacity>
                 </View>
 
-                {/* Remember Me & Forgot Password */}
-                <View className="flex-row justify-between items-center">
-                  <TouchableOpacity
-                    onPress={() => setRememberMe(!rememberMe)}
-                    className="flex-row items-center gap-1.5"
-                  >
-                    <View
-                      className={`w-4 h-4 border-2 rounded ${rememberMe ? "bg-[#11293A]" : "border-[#7A7A7A]"
-                        }`}
-                    >
-                      {rememberMe && (
-                        <Ionicons name="checkmark" size={10} color="white" />
-                      )}
-                    </View>
-                    <Text className="text-xs text-[#7A7A7A]">Remember Me</Text>
-                  </TouchableOpacity>
-
+                <View className="flex-row justify-end items-center">
                   <TouchableOpacity>
                     <Text className="text-xs font-proximanova-semibold text-[#4FB2F3]">
                       Forgot Password
