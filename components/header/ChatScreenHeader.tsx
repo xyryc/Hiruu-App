@@ -40,7 +40,7 @@ const ChatScreenHeader = ({
           className="w-10 h-10 rounded-full"
         />
         <View className="ml-3">
-          <Text className="text-lg font-proximanova-semibold text-primary">
+          <Text className="text-lg font-proximanova-semibold text-primary" numberOfLines={1}>
             {title || "Chat"}
           </Text>
           {typeof isOnline === "boolean" ? (

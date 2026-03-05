@@ -188,6 +188,12 @@ const ChatScreen = () => {
     };
   }, [roomDetails]);
 
+  const shouldShowJobCard = useMemo(() => {
+    const roomType = String(roomDetails?.type || "").toLowerCase();
+    if (roomType === "business_group") return false;
+    return Boolean(linkedRecruitment);
+  }, [linkedRecruitment, roomDetails?.type]);
+
   // IMPORTANT: Always call useChat hook unconditionally
   // Pass empty string if roomId not ready yet
   const {
@@ -874,11 +880,13 @@ const ChatScreen = () => {
           )}
 
           {/* Job Card */}
-          <JobCard
-            compact
-            className="mx-5 bg-white border border-[#EEEEEE] mt-4"
-            job={linkedRecruitment}
-          />
+          {shouldShowJobCard ? (
+            <JobCard
+              compact
+              className="mx-5 bg-white border border-[#EEEEEE] mt-4"
+              job={linkedRecruitment}
+            />
+          ) : null}
 
           {/* Messages */}
           <FlatList
