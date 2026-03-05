@@ -2,6 +2,7 @@ import ShiftHeader from "@/components/header/ShiftHeader";
 import ShiftItem from "@/components/layout/ShiftItem";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import { useShiftStore } from "@/stores/shiftStore";
+import { formatCountdownFromSeconds } from "@/utils/date";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, RefreshControl, ScrollView, StatusBar, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -36,6 +37,7 @@ type UiShift = {
   company: string;
   status: "ongoing" | "upcoming" | "completed";
   countdown?: string;
+  countdownTargetAt?: number;
   message?: string;
 };
 
@@ -69,17 +71,6 @@ const ShiftSchedule = () => {
     return Number(h) * 60 + Number(m);
   }, []);
 
-  const formatCountdown = useCallback((seconds: number) => {
-    const safe = Math.max(0, Math.floor(seconds));
-    const hours = Math.floor(safe / 3600);
-    const minutes = Math.floor((safe % 3600) / 60);
-    const secs = safe % 60;
-    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(
-      2,
-      "0"
-    )}:${String(secs).padStart(2, "0")}`;
-  }, []);
-
   const toUiShift = useCallback(
     (shift: ApiShift): UiShift => {
       const start = shift?.shiftTemplate?.startTime || "00:00";
@@ -98,14 +89,17 @@ const ShiftSchedule = () => {
 
       let type: UiShift["type"] = "upcoming";
       let countdown: string | undefined;
+      let countdownTargetAt: number | undefined;
       let message: string | undefined;
 
       if (now >= shiftStart && now <= shiftEnd) {
         type = "ongoing";
-        countdown = formatCountdown((shiftEnd.getTime() - now.getTime()) / 1000);
+        countdownTargetAt = shiftEnd.getTime();
+        countdown = formatCountdownFromSeconds((countdownTargetAt - now.getTime()) / 1000);
       } else if (now < shiftStart) {
         type = "upcoming";
-        countdown = formatCountdown((shiftStart.getTime() - now.getTime()) / 1000);
+        countdownTargetAt = shiftStart.getTime();
+        countdown = formatCountdownFromSeconds((countdownTargetAt - now.getTime()) / 1000);
       } else {
         type = "completed";
         message = `You finished your ${to12Hour(start)} shift.`;
@@ -132,10 +126,11 @@ const ShiftSchedule = () => {
         company: shift?.employment?.business?.name || "Business",
         status: type,
         countdown,
+        countdownTargetAt,
         message,
       };
     },
-    [formatCountdown, timeToMinutes, to12Hour]
+    [timeToMinutes, to12Hour]
   );
 
   const loadShifts = useCallback(async () => {

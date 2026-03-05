@@ -178,7 +178,7 @@ const ShiftDetails = () => {
               icon={<Feather name="repeat" size={24} color="#4FB2F3" />}
               title="Swap Shift"
               onPress={() => router.push("/screens/schedule/shift/swap")}
-              // onPress={() => router.push("/(user)/schedule/shift/swap")}
+            // onPress={() => router.push("/(user)/schedule/shift/swap")}
             />
 
             <ActionIconCard
@@ -281,14 +281,16 @@ const ShiftDetails = () => {
             </Text>
           </View>
         </View>
-      </ScrollView>
 
-      <View className="absolute bottom-0 items-center left-0 right-0 mx-5 py-5 bg-white dark:bg-dark-background">
         <PrimaryButton
+          className='my-10'
           title="Submit Shift Summary"
           onPress={() => router.push("./summary")}
         />
-      </View>
+      </ScrollView>
+
+
+
     </SafeAreaView>
   );
 };
