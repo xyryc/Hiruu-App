@@ -241,7 +241,7 @@ const SignUp = () => {
                 </View>
 
                 <View className="flex-row justify-end items-center">
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => router.push("/(auth)/forgot-password")}>
                     <Text className="text-xs font-proximanova-semibold text-[#4FB2F3]">
                       Forgot Password
                     </Text>
