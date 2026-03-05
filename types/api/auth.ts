@@ -4,7 +4,8 @@ export interface RegisterData {
   countryCode?: string;
   phoneNumber?: string;
   fcmToken?: string;
-  role: "user" | "provider";
+  rememberMe?: boolean;
+  role?: "user" | "provider";
   firstName?: string;
   lastName?: string;
 }

@@ -1,6 +1,7 @@
 import TitleHeader from "@/components/header/TitleHeader";
 import SocialAuth from "@/components/layout/SocialAuth";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import { registerForFcmToken } from "@/services/notificationService";
 import { useAuthStore } from "@/stores/authStore";
 import { translateApiMessage } from "@/utils/apiMessages";
 import { Ionicons } from "@expo/vector-icons";
@@ -29,6 +30,7 @@ const SignUp = () => {
   const [selectedTab, setSelectedTab] = useState("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+1");
@@ -75,6 +77,8 @@ const SignUp = () => {
 
   const handleSignup = async () => {
     clearError();
+    const fcmToken = await registerForFcmToken().catch(() => undefined);
+    console.log("fcm register", fcmToken)
 
     if (selectedTab === "email") {
       // Validate email and password
@@ -97,7 +101,8 @@ const SignUp = () => {
         const result = await register({
           email,
           password,
-          role: "user" as const,
+          rememberMe,
+          fcmToken,
         });
 
         if (result?.success) {
@@ -125,8 +130,8 @@ const SignUp = () => {
         const result = await register({
           phoneNumber: normalizedPhone,
           countryCode: effectiveCountryCode,
-          role: "user" as const,
-          fcmToken: undefined,
+          rememberMe,
+          fcmToken,
         });
 
         if (result?.success) {
@@ -240,7 +245,22 @@ const SignUp = () => {
                   </TouchableOpacity>
                 </View>
 
-                <View className="flex-row justify-end items-center">
+                <View className="flex-row justify-between items-center">
+                  <TouchableOpacity
+                    onPress={() => setRememberMe(!rememberMe)}
+                    className="flex-row items-center gap-1.5"
+                  >
+                    <View
+                      className={`w-4 h-4 border-2 rounded ${rememberMe ? "bg-[#11293A]" : "border-[#7A7A7A]"
+                        }`}
+                    >
+                      {rememberMe && (
+                        <Ionicons name="checkmark" size={10} color="white" />
+                      )}
+                    </View>
+                    <Text className="text-xs text-[#7A7A7A]">Remember Me</Text>
+                  </TouchableOpacity>
+
                   <TouchableOpacity onPress={() => router.push("/(auth)/forgot-password")}>
                     <Text className="text-xs font-proximanova-semibold text-[#4FB2F3]">
                       Forgot Password
