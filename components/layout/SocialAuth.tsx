@@ -1,4 +1,9 @@
-import auth from "@react-native-firebase/auth";
+import { getApp } from "@react-native-firebase/app";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithCredential,
+} from "@react-native-firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { Image } from "expo-image";
 import React, { useEffect } from "react";
@@ -7,6 +12,8 @@ import { TouchableOpacity, View } from "react-native";
 
 
 const SocialAuth = () => {
+  const auth = getAuth(getApp());
+
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
@@ -24,8 +31,8 @@ const SocialAuth = () => {
         return;
       }
 
-      const credential = auth.GoogleAuthProvider.credential(idToken);
-      const userCredential = await auth().signInWithCredential(credential);
+      const credential = GoogleAuthProvider.credential(idToken);
+      const userCredential = await signInWithCredential(auth, credential);
 
       console.log("FIREBASE_USER:", userCredential.user);
     } catch (e) {
