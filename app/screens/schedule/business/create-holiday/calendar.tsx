@@ -4,7 +4,6 @@ import ImportHolidayModal from "@/components/ui/modals/ImportHolidayModal";
 import LogoutDeleteModal from "@/components/ui/modals/LogoutDeleteModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { translateApiMessage } from "@/utils/apiMessages";
-import axiosInstance from "@/utils/axios";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
@@ -34,7 +33,7 @@ const Calendar = () => {
   const delImg = require("@/assets/images/holiday-modal.svg");
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-  const { selectedBusinesses } = useBusinessStore();
+  const { selectedBusinesses, getBusinessHolidays, deleteHoliday } = useBusinessStore();
   const selectedBusinessId = selectedBusinesses?.[0];
 
   const [currentViewDate, setCurrentViewDate] = useState(new Date()); // Currently viewing month/year
@@ -184,21 +183,16 @@ const Calendar = () => {
 
     try {
       setHolidaysLoading(true);
-      const response = await axiosInstance.get(
-        `/holidays/business/${selectedBusinessId}`
-      );
-      const result = response?.data;
-      if (!result?.success) {
-        throw new Error(result?.message || "Failed to load holidays");
-      }
-      setHolidays(Array.isArray(result?.data) ? result.data : []);
+      const data = await getBusinessHolidays(selectedBusinessId);
+      setHolidays(Array.isArray(data) ? data : []);
     } catch (error: any) {
-      toast.error(error?.message || "Failed to load holidays");
+      const message = error?.response?.data?.message || error?.message;
+      toast.error(translateApiMessage(message || "Failed to load holidays"));
       setHolidays([]);
     } finally {
       setHolidaysLoading(false);
     }
-  }, [selectedBusinessId]);
+  }, [getBusinessHolidays, selectedBusinessId]);
 
   useFocusEffect(
     useCallback(() => {
@@ -217,13 +211,7 @@ const Calendar = () => {
     }
 
     try {
-      const response = await axiosInstance.delete(
-        `/holidays/${deletingHolidayId}/business/${selectedBusinessId}`
-      );
-      const result = response?.data;
-      if (!result?.success) {
-        throw new Error(result?.message || "Failed to delete holiday");
-      }
+      const result = await deleteHoliday(selectedBusinessId, deletingHolidayId);
 
       setHolidays((prev) => prev.filter((item) => item.id !== deletingHolidayId));
       setIsModal(false);
@@ -234,7 +222,7 @@ const Calendar = () => {
         error?.response?.data?.message || error?.message || "Failed to delete holiday";
       toast.error(translateApiMessage(message));
     }
-  }, [deletingHolidayId, selectedBusinessId]);
+  }, [deleteHoliday, deletingHolidayId, selectedBusinessId]);
 
   const renderHolidaysCard = (item: HolidayItem) => {
     const holidayDate = new Date(item.date);

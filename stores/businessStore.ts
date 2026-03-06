@@ -49,6 +49,9 @@ interface BusinessState {
     businessId: string,
     payload: any
   ) => Promise<any>;
+  createHoliday: (businessId: string, payload: any) => Promise<any>;
+  getBusinessHolidays: (businessId: string) => Promise<any[]>;
+  deleteHoliday: (businessId: string, holidayId: string) => Promise<any>;
   createWeeklyScheduleBlock: (businessId: string, payload: any) => Promise<any>;
   updateWeeklyScheduleBlock: (
     businessId: string,
@@ -465,6 +468,71 @@ export const useBusinessStore = create<BusinessState>()(
       return result.data;
     } catch (error) {
       console.error("Create weekly schedule from templates error:", error);
+      throw error;
+    }
+  },
+
+  createHoliday: async (businessId, payload) => {
+    try {
+      const response = await axiosInstance.post(
+        `/holidays/business/${businessId}`,
+        payload
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to create holiday";
+        throw new Error(errorMsg);
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Create holiday error:", error);
+      throw error;
+    }
+  },
+
+  getBusinessHolidays: async (businessId) => {
+    try {
+      const response = await axiosInstance.get(`/holidays/business/${businessId}`);
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to fetch holidays";
+        throw new Error(errorMsg);
+      }
+
+      return Array.isArray(result.data) ? result.data : [];
+    } catch (error) {
+      console.error("Fetch holidays error:", error);
+      throw error;
+    }
+  },
+
+  deleteHoliday: async (businessId, holidayId) => {
+    try {
+      const response = await axiosInstance.delete(
+        `/holidays/${holidayId}/business/${businessId}`
+      );
+      const result = response.data;
+
+      if (!result.success) {
+        const errorMsg =
+          result.error?.message ||
+          result.message?.code ||
+          "Failed to delete holiday";
+        throw new Error(errorMsg);
+      }
+
+      return result;
+    } catch (error) {
+      console.error("Delete holiday error:", error);
       throw error;
     }
   },

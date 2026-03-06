@@ -81,6 +81,7 @@
     "profile_updated_successfully": "Profile updated successfully.",
     "active_subscription_retrieved_successfully": "Active subscription retrieved successfully.",
     "subscription_cancelled_successfully": "Subscription cancelled successfully.",
+    "holiday_created_successfully": "Holiday created successfully.",
     "holiday_deleted_successfully": "Holiday deleted successfully.",
     "weekly_block_created_successfully": "Weekly block created successfully.",
     "weekly_block_updated_successfully": "Weekly block updated successfully.",

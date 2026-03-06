@@ -2,7 +2,7 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import DatePicker from "@/components/ui/inputs/DatePicker";
 import { useBusinessStore } from "@/stores/businessStore";
-import axiosInstance from "@/utils/axios";
+import { translateApiMessage } from "@/utils/apiMessages";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -32,7 +32,7 @@ const CreateHoliday = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
-  const { selectedBusinesses } = useBusinessStore();
+  const { selectedBusinesses, createHoliday } = useBusinessStore();
   const businessId = selectedBusinesses?.[0];
   const [title, setTitle] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -65,23 +65,19 @@ const CreateHoliday = () => {
 
     try {
       setIsSubmitting(true);
-      const response = await axiosInstance.post(
-        `/holidays/business/${businessId}`,
-        {
-          title: title.trim(),
-          date: formatApiDate(selectedDate),
-          type: apiType,
-        }
+      const result = await createHoliday(businessId, {
+        title: title.trim(),
+        date: formatApiDate(selectedDate),
+        type: apiType,
+      });
+
+      toast.success(
+        translateApiMessage(result?.message || "holiday_created_successfully")
       );
-
-      if (!response?.data?.success) {
-        throw new Error(response?.data?.message || "Failed to create holiday");
-      }
-
-      toast.success("Holiday created successfully.");
       router.back();
     } catch (error: any) {
-      toast.error(error?.message || "Failed to create holiday");
+      const apiMessage = error?.response?.data?.message || error?.message;
+      toast.error(translateApiMessage(apiMessage || "Failed to create holiday"));
     } finally {
       setIsSubmitting(false);
     }
