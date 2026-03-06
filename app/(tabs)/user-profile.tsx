@@ -409,6 +409,7 @@ const profile = () => {
           >
             <Ionicons name="call-outline" size={16} color="black" />
           </DynamicBackground>
+
           <Text className="font-proximanova-semibold text-lg text-primary dark:text-dark-primary">
             Contact Us On
           </Text>
