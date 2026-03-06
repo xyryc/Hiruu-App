@@ -1,8 +1,8 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
-import SmallButton from "@/components/ui/buttons/SmallButton";
 import BadgeCard from "@/components/ui/cards/BadgeCard";
 import NamePlateCard from "@/components/ui/cards/NamePlateCard";
+import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import InterestSelection from "@/components/ui/inputs/InterestSelection";
 import MultiSelectCompanyDropdown from "@/components/ui/inputs/MultiSelectCompanyDropdown";
 import EditBadgeModal from "@/components/ui/modals/EditBadgeModal";
@@ -15,7 +15,6 @@ import {
   Ionicons,
   MaterialCommunityIcons
 } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
@@ -47,6 +46,7 @@ const Edit = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [selectedCompanies, setSelectedCompanies] = useState<Company[]>([]);
   const [workExperiences, setWorkExperiences] = useState<Companies[]>([]);
+  const [socialLinks, setSocialLinks] = useState<any>({});
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const insets = useSafeAreaInsets();
@@ -90,6 +90,9 @@ const Edit = () => {
             setWorkExperiences(mappedExperiences);
             setSelectedCompanies(Array.from(companyMap.values()));
           }
+          if (result.data?.social && typeof result.data.social === "object") {
+            setSocialLinks(result.data.social);
+          }
         }
       } catch {
         // Silent fail to keep edit screen stable.
@@ -117,6 +120,7 @@ const Edit = () => {
       const payload = {
         bio: shortIntro,
         interest: selectedInterests,
+        social: socialLinks,
       };
 
       const result = await profileService.updateProfile(payload);
@@ -334,138 +338,11 @@ const Edit = () => {
           </Text>
         </View>
 
-        <View className="border border-[#EEEEEE] rounded-xl mx-5 my-4">
-          <View className="flex-row justify-between items-center  p-2.5 border border-[#EEEEEE] rounded-t-xl ">
-            <View className="flex-row items-center gap-2.5">
-              <View>
-                <Image
-                  source={require("@/assets/images/facebook2.svg")}
-                  contentFit="contain"
-                  style={{ height: 40, width: 40 }}
-                />
-              </View>
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                Facebook
-              </Text>
-            </View>
-            <View className="flex-row items-center">
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                @alvber_f{" "}
-              </Text>
-              <TouchableOpacity>
-                <MaterialCommunityIcons name="close" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View className="flex-row justify-between items-center  p-2.5  border border-[#EEEEEE]">
-            <View className="flex-row items-center gap-2.5">
-              <View>
-                <Image
-                  source={require("@/assets/images/linkedin.svg")}
-                  contentFit="contain"
-                  style={{ height: 40, width: 40 }}
-                />
-              </View>
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                Linkdin
-              </Text>
-            </View>
-            <View className="flex-row items-center">
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                {" "}
-                in/albert-flore-12562f25{" "}
-              </Text>
-              <TouchableOpacity>
-                <MaterialCommunityIcons name="close" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View className="flex-row justify-between items-center  p-2.5 border border-[#EEEEEE] ">
-            <View className="flex-row items-center gap-2.5">
-              <View>
-                <Image
-                  source={require("@/assets/images/whatsapp.svg")}
-                  contentFit="contain"
-                  style={{ height: 40, width: 40 }}
-                />
-              </View>
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                Whats App
-              </Text>
-            </View>
-            <View className="flex-row items-center">
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                {" "}
-                +1(125) 256 25612{" "}
-              </Text>
-              <TouchableOpacity>
-                <MaterialCommunityIcons name="close" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View className="flex-row justify-between items-center p-2.5  border border-[#EEEEEE] ">
-            <View className="flex-row items-center gap-2.5">
-              <View>
-                <Image
-                  source={require("@/assets/images/twitter.svg")}
-                  contentFit="contain"
-                  style={{ height: 40, width: 40 }}
-                />
-              </View>
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                Twitter
-              </Text>
-            </View>
-            <View className="flex-row items-center">
-              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary">
-                {" "}
-                @alber256{" "}
-              </Text>
-              <TouchableOpacity>
-                <MaterialCommunityIcons name="close" size={24} color="black" />
-              </TouchableOpacity>
-            </View>
-          </View>
-          {/* instagram */}
-          <View className="flex-row justify-between items-center bg-white p-3  border border-[#EEEEEE]">
-            <TouchableOpacity className="flex-row items-center gap-1.5">
-              <Image
-                style={{
-                  height: 36,
-                  width: 36,
-                }}
-                source={require("@/assets/images/instagram.svg")}
-                contentFit="contain"
-              />
-
-              <Text className="text-sm font-proximanova-semibold">
-                Instagram
-              </Text>
-            </TouchableOpacity>
-
-            <SmallButton title="Link" />
-          </View>
-
-          {/* telegram */}
-          <View className="flex-row justify-between items-center bg-white p-3 rounded-b-[10px] border border-[#EEEEEE]">
-            <TouchableOpacity className="flex-row items-center gap-1.5">
-              <Image
-                style={{
-                  height: 36,
-                  width: 36,
-                }}
-                source={require("@/assets/images/telegram.svg")}
-                contentFit="contain"
-              />
-
-              <Text className="text-sm font-proximanova-semibold">
-                Facebook
-              </Text>
-            </TouchableOpacity>
-
-            <SmallButton title="Link" />
-          </View>
-        </View>
+        <ConnectSocials
+          className="mx-5 my-4"
+          value={socialLinks}
+          onChange={(next) => setSocialLinks((prev: any) => ({ ...prev, ...next }))}
+        />
 
         <PrimaryButton
           title="Save Changes"
