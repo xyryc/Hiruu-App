@@ -232,6 +232,8 @@ export interface WorkShiftCardProps {
   shiftTitle: string;
   startTime: string;
   endTime: string;
+  startDateTime?: string;
+  endDateTime?: string;
   shiftImage: any;
   teamMembers: string[];
   totalMembers: number;
@@ -243,6 +245,7 @@ export interface WorkShiftCardProps {
   | "ongoing"
   | "upcoming"
   | "completed"
+  | "missed"
   | "pending"
   | "approved"
   | "rejected"
@@ -275,6 +278,8 @@ export interface TimeLeft {
   total: number;
 }
 
+export type RecruitmentShiftType = "remote" | "hybrid" | "onsite";
+
 export interface JobCardProps {
   className?: string;
   compact?: boolean;
@@ -287,7 +292,7 @@ export interface JobCardProps {
     isFeatured?: boolean;
     isActive?: boolean;
     shareCount?: number;
-    shiftType?: string;
+    shiftType?: RecruitmentShiftType;
     jobType?: string;
     salaryMin: number;
     salaryMax: number;

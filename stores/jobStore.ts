@@ -1,5 +1,6 @@
 import { translateApiMessage } from "@/utils/apiMessages";
 import axiosInstance from "@/utils/axios";
+import type { RecruitmentShiftType } from "@/types";
 import { AxiosError } from "axios";
 import { create } from "zustand";
 
@@ -8,7 +9,7 @@ type CreateRecruitmentPayload = {
   description: string;
   gender: string;
   experience: string;
-  shiftType: string;
+  shiftType: RecruitmentShiftType;
   jobType: string;
   ageMin: number;
   ageMax: number;

@@ -21,7 +21,7 @@ const FindJobFilters = () => {
   const [verifiedOnly, setVerifiedOnly] = useState(true);
   const [postCode, setPostCode] = useState("885522");
   const [distance, setDistance] = useState(25);
-  const [shiftType, setShiftType] = useState("day");
+  const [shiftType, setShiftType] = useState("onsite");
   const [salaryRange, setSalaryRange] = useState(5000);
   const [experiences, setExperiences] = useState({
     cashier: 5,
@@ -46,7 +46,7 @@ const FindJobFilters = () => {
   };
 
   // shift type
-  const shiftOptions = ["Day Shift", "Night Shift", "Weekend"];
+  const shiftOptions = ["Onsite", "Remote", "Hybrid"];
   const [selectedShiftOption, setSelectedShiftOption] = useState<string | null>(
     null
   );
