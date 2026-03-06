@@ -4,7 +4,7 @@ import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import DateOfBirthInput from "@/components/ui/inputs/DateOfBirthInput";
 import GenderSelection from "@/components/ui/inputs/GenderSelection";
 import { useProfileStore } from "@/stores/profileStore";
-import { GenderOption } from "@/types";
+import { GenderOption, SocialData } from "@/types";
 import { t } from "i18next";
 import { useEffect, useRef, useState } from "react";
 import { Alert, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
@@ -53,6 +53,14 @@ export default function Step1({
   const [selectedGender, setSelectedGender] = useState<GenderOption | null>(
     "male",
   );
+  const [socialLinks, setSocialLinks] = useState<SocialData>({
+    facebook: "",
+    linkedin: "",
+    whatsapp: "",
+    twitter: "",
+    telegram: "",
+    instagram: "",
+  });
 
   useEffect(() => {
     if (!locationSearch || locationSearch.trim().length < 3) {
@@ -208,6 +216,7 @@ export default function Step1({
         },
         dateOfBirth: dateOfBirth?.toISOString(),
         gender: selectedGender,
+        social: socialLinks,
         onboarding: 1,
       };
 
@@ -385,7 +394,10 @@ export default function Step1({
             Connect Your Socials
           </Text>
 
-          <ConnectSocials />
+          <ConnectSocials
+            value={socialLinks}
+            onChange={(next) => setSocialLinks((prev) => ({ ...prev, ...next }))}
+          />
         </View>
       </ScrollView>
 
