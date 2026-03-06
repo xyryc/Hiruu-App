@@ -13,19 +13,80 @@ const SOCIAL_ITEMS = [
   { id: "instagram", label: "Instagram", icon: require("@/assets/images/instagram.svg") },
 ] as const;
 
-const ConnectSocials = ({ className }: any) => {
-  const [linkedValues, setLinkedValues] = useState<Record<string, string>>({});
+type SocialKey = (typeof SOCIAL_ITEMS)[number]["id"];
+type SocialLinks = Partial<Record<SocialKey, string>>;
+
+const SOCIAL_BASE_URL: Record<SocialKey, string> = {
+  facebook: "https://facebook.com/",
+  linkedin: "https://linkedin.com/in/",
+  whatsapp: "https://wa.me/",
+  twitter: "https://x.com/",
+  telegram: "https://t.me/",
+  instagram: "https://instagram.com/",
+};
+
+const sanitizeHandle = (value: string) =>
+  value.trim().replace(/^@+/, "").replace(/^\/+/, "");
+
+const normalizeSocialLink = (key: SocialKey, rawValue: string) => {
+  const value = rawValue.trim();
+  if (!value) return "";
+
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value;
+  }
+
+  if (key === "whatsapp") {
+    const digits = value.replace(/[^\d]/g, "");
+    return digits ? `${SOCIAL_BASE_URL.whatsapp}${digits}` : "";
+  }
+
+  return `${SOCIAL_BASE_URL[key]}${sanitizeHandle(value)}`;
+};
+
+const toDisplayValue = (key: SocialKey, value?: string) => {
+  if (!value) return "";
+
+  if (key === "whatsapp") {
+    const digits = value.replace(/[^\d+]/g, "");
+    return digits || value;
+  }
+
+  try {
+    const parsed = new URL(value);
+    const pathPart = parsed.pathname.split("/").filter(Boolean).pop();
+    if (pathPart) return `@${sanitizeHandle(pathPart)}`;
+  } catch {
+    // Fall through to plain string handling.
+  }
+
+  const cleaned = sanitizeHandle(value);
+  return cleaned ? `@${cleaned}` : value;
+};
+
+const ConnectSocials = ({
+  className,
+  value,
+  onChange,
+}: {
+  className?: string;
+  value?: SocialLinks;
+  onChange?: (next: SocialLinks) => void;
+}) => {
   const [editingValues, setEditingValues] = useState<Record<string, string>>({});
 
   const startLink = (id: string) => {
-    setEditingValues((prev) => ({ ...prev, [id]: linkedValues[id] || "" }));
+    const key = id as SocialKey;
+    const currentValue = value?.[key] || "";
+    setEditingValues((prev) => ({ ...prev, [id]: currentValue }));
   };
 
   const confirmLink = (id: string) => {
-    const value = (editingValues[id] || "").trim();
-    if (!value) return;
+    const key = id as SocialKey;
+    const normalized = normalizeSocialLink(key, editingValues[id] || "");
+    if (!normalized) return;
 
-    setLinkedValues((prev) => ({ ...prev, [id]: value }));
+    onChange?.({ ...(value || {}), [key]: normalized });
     setEditingValues((prev) => {
       const next = { ...prev };
       delete next[id];
@@ -34,11 +95,8 @@ const ConnectSocials = ({ className }: any) => {
   };
 
   const removeLink = (id: string) => {
-    setLinkedValues((prev) => {
-      const next = { ...prev };
-      delete next[id];
-      return next;
-    });
+    const key = id as SocialKey;
+    onChange?.({ ...(value || {}), [key]: "" });
     setEditingValues((prev) => {
       const next = { ...prev };
       delete next[id];
@@ -54,7 +112,7 @@ const ConnectSocials = ({ className }: any) => {
     <View className={`${className} border border-[#EEEEEE] rounded-xl`}>
       {SOCIAL_ITEMS.map((item, index) => {
         const isEditing = Object.prototype.hasOwnProperty.call(editingValues, item.id);
-        const linkedValue = linkedValues[item.id];
+        const linkedValue = value?.[item.id] || "";
         const inputValue = editingValues[item.id] || "";
 
         return (
@@ -91,7 +149,7 @@ const ConnectSocials = ({ className }: any) => {
             ) : linkedValue ? (
               <View className="flex-row items-center gap-2 max-w-[56%]">
                 <Text className="text-sm font-proximanova-semibold text-primary" numberOfLines={1}>
-                  {linkedValue}
+                  {toDisplayValue(item.id, linkedValue)}
                 </Text>
                 <TouchableOpacity onPress={() => removeLink(item.id)}>
                   <Ionicons name="close" size={24} color="#111827" />
