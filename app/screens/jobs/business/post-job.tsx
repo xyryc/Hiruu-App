@@ -5,6 +5,7 @@ import TimePicker from "@/components/ui/inputs/TimePicker";
 import RoleSelector from "@/components/ui/modals/RoleSelector";
 import { useBusinessStore } from "@/stores/businessStore";
 import { useJobStore } from "@/stores/jobStore";
+import type { RecruitmentShiftType } from "@/types";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useEffect, useMemo, useState } from "react";
@@ -41,7 +42,7 @@ const PostJob = () => {
   const [rolesLoading, setRolesLoading] = useState(false);
   const [jobDescription, setJobDescription] = useState("");
   const [gender, setGender] = useState("");
-  const [shiftType, setShiftType] = useState("");
+  const [shiftType, setShiftType] = useState<RecruitmentShiftType | "">("");
   const [jobType, setJobType] = useState("");
   const [experience, setExperience] = useState("");
   const [ageMin, setAgeMin] = useState("");
@@ -307,7 +308,9 @@ const PostJob = () => {
             listMaxHeight={320}
             options={shiftTypeOptions}
             value={shiftType}
-            onSelect={(value: string) => setShiftType(value)}
+            onSelect={(value: string) =>
+              setShiftType(value as RecruitmentShiftType)
+            }
           />
 
           <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mt-7">

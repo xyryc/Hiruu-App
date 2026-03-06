@@ -5,7 +5,7 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import StatusBadge from "../badges/StatusBadge";
 import SmallButton from "../buttons/SmallButton";
@@ -14,6 +14,8 @@ const TaskCard = ({
   shiftTitle,
   startTime,
   endTime,
+  startDateTime,
+  endDateTime,
   shiftImage,
   teamMembers,
   totalMembers,
@@ -23,35 +25,45 @@ const TaskCard = ({
   status = "ongoing",
   requestLog = false,
 }: WorkShiftCardProps) => {
-  const [elapsedTime, setElapsedTime] = useState("00:00:05");
+  const hasLiveTimer = status === "ongoing" || status === "upcoming";
+  const isStaticStatus = status === "completed" || status === "missed";
 
-  // Timer effect for ongoing shifts
+  const formatDuration = useCallback((totalSeconds: number) => {
+    const safe = Math.max(0, Math.floor(totalSeconds));
+    const hours = Math.floor(safe / 3600);
+    const minutes = Math.floor((safe % 3600) / 60);
+    const seconds = safe % 60;
+    return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  }, []);
+
+  const getCountdown = useCallback(() => {
+    if (!hasLiveTimer) {
+      return "00:00:00";
+    }
+
+    const now = Date.now();
+    const targetRaw = status === "upcoming" ? startDateTime : endDateTime;
+    const target = targetRaw ? new Date(targetRaw).getTime() : NaN;
+    if (Number.isNaN(target)) {
+      return "00:00:00";
+    }
+    return formatDuration((target - now) / 1000);
+  }, [endDateTime, formatDuration, hasLiveTimer, startDateTime, status]);
+
+  const [elapsedTime, setElapsedTime] = useState(() => getCountdown());
+
+  // Live countdown for upcoming/ongoing shifts.
   useEffect(() => {
-    if (status === "ongoing") {
+    setElapsedTime(getCountdown());
+
+    if (hasLiveTimer) {
       const interval = setInterval(() => {
-        // Simulate timer increment
-        setElapsedTime((prev) => {
-          const [hours, minutes, seconds] = prev.split(":").map(Number);
-          let newSeconds = seconds + 1;
-          let newMinutes = minutes;
-          let newHours = hours;
-
-          if (newSeconds >= 60) {
-            newSeconds = 0;
-            newMinutes += 1;
-          }
-          if (newMinutes >= 60) {
-            newMinutes = 0;
-            newHours += 1;
-          }
-
-          return `${String(newHours).padStart(2, "0")}:${String(newMinutes).padStart(2, "0")}:${String(newSeconds).padStart(2, "0")}`;
-        });
+        setElapsedTime(getCountdown());
       }, 1000);
 
       return () => clearInterval(interval);
     }
-  }, [status]);
+  }, [getCountdown, hasLiveTimer]);
 
   const getStatusColor = () => {
     switch (status) {
@@ -61,6 +73,8 @@ const TaskCard = ({
         return "#4FB2F3";
       case "completed":
         return "#6B7280";
+      case "missed":
+        return "#EF4444";
       default:
         return "#10B981";
     }
@@ -72,6 +86,8 @@ const TaskCard = ({
         return "Ongoing:";
       case "upcoming":
         return "Shift starts in:";
+      case "missed":
+        return "Missed:";
 
       default:
         return "Ongoing:";
@@ -80,10 +96,10 @@ const TaskCard = ({
 
   return (
     <View
-      className={`flex-1 mr-4 rounded-[14px] px-4 pb-4 bg-[#E5F4FD] border border-[#4fb1f333] ${status === "completed" && "pt-4"}`}
+      className={`flex-1 mr-4 rounded-[14px] px-4 pb-4 bg-[#E5F4FD] border border-[#4fb1f333] ${isStaticStatus && "pt-4"}`}
     >
       {/* Status Timer */}
-      {status !== "completed" && (
+      {hasLiveTimer && (
         <View className="absolute top-0 inset-x-0 items-center">
           <Image
             className="absolute top-0 inset-x-0 items-center"
@@ -120,7 +136,7 @@ const TaskCard = ({
       )}
 
       <View
-        className={`flex-row items-center gap-3 ${status !== "completed" && "mt-[50px]"}`}
+        className={`flex-row items-center gap-3 ${hasLiveTimer && "mt-[50px]"}`}
       >
         {/* Left Side - Image */}
         <View>
@@ -247,6 +263,7 @@ const TaskCard = ({
               <SmallButton title="Login" className="px-8" />
             )}
             {status === "completed" && <StatusBadge status={status} />}
+            {status === "missed" && <StatusBadge status={status} />}
           </>
         )}
       </View>
