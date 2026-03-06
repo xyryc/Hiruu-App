@@ -39,7 +39,7 @@ const Calendar = () => {
   const [currentViewDate, setCurrentViewDate] = useState(new Date()); // Currently viewing month/year
   const [showPicker, setShowPicker] = useState(false);
   const [pickerMode, setPickerMode] = useState<"month" | "year">("month");
-  const [selected, setSelected] = useState<number[]>([2, 16, 27]);
+  const [selected, setSelected] = useState<number[]>([]);
   const [holidays, setHolidays] = useState<HolidayItem[]>([]);
   const [holidaysLoading, setHolidaysLoading] = useState(false);
   const [deletingHolidayId, setDeletingHolidayId] = useState<string | null>(null);
@@ -129,7 +129,16 @@ const Calendar = () => {
   const markedDates = Array.from(holidayDaySet).reduce<Record<string, any>>(
     (acc, day) => {
       const dateKey = `${monthDatePrefix}-${String(day).padStart(2, "0")}`;
-      acc[dateKey] = { ...(acc[dateKey] || {}), textColor: "#F34F4F" };
+      acc[dateKey] = {
+        ...(acc[dateKey] || {}),
+        customStyles: {
+          ...(acc[dateKey]?.customStyles || {}),
+          text: {
+            ...(acc[dateKey]?.customStyles?.text || {}),
+            color: "#F34F4F",
+          },
+        },
+      };
       return acc;
     },
     {}
@@ -137,21 +146,41 @@ const Calendar = () => {
 
   selected.forEach((day) => {
     const dateKey = `${monthDatePrefix}-${String(day).padStart(2, "0")}`;
+    const isHoliday = holidayDaySet.has(day);
     markedDates[dateKey] = {
       ...(markedDates[dateKey] || {}),
-      selected: true,
-      selectedColor: "#E5F4FD",
-      selectedTextColor: "#111111",
+      customStyles: {
+        ...(markedDates[dateKey]?.customStyles || {}),
+        container: {
+          ...(markedDates[dateKey]?.customStyles?.container || {}),
+          backgroundColor: "#E5F4FD",
+          borderRadius: 999,
+        },
+        text: {
+          ...(markedDates[dateKey]?.customStyles?.text || {}),
+          color: isHoliday ? "#F34F4F" : "#111111",
+        },
+      },
     };
   });
 
   if (todayDateKey.startsWith(monthDatePrefix)) {
+    const todayDay = Number(todayDateKey.split("-")[2] || "0");
+    const isHolidayToday = holidayDaySet.has(todayDay);
     markedDates[todayDateKey] = {
       ...(markedDates[todayDateKey] || {}),
-      today: true,
-      selected: true,
-      selectedColor: "#4FB2F3",
-      selectedTextColor: "#FFFFFF",
+      customStyles: {
+        ...(markedDates[todayDateKey]?.customStyles || {}),
+        container: {
+          ...(markedDates[todayDateKey]?.customStyles?.container || {}),
+          backgroundColor: "#4FB2F3",
+          borderRadius: 999,
+        },
+        text: {
+          ...(markedDates[todayDateKey]?.customStyles?.text || {}),
+          color: isHolidayToday ? "#F34F4F" : "#FFFFFF",
+        },
+      },
     };
   }
 
@@ -312,6 +341,7 @@ const Calendar = () => {
           {/* calendar */}
           <View className="my-4 w-full">
             <RNCalendar
+              markingType="custom"
               current={currentDateKey}
               hideArrows={true}
               hideExtraDays={true}
