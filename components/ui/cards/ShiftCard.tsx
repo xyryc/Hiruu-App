@@ -5,6 +5,11 @@ import { Text, TouchableOpacity, View } from "react-native";
 import StatusBadge from "../badges/StatusBadge";
 
 const ShiftCard = ({ shift }) => {
+  const avatarSource =
+    typeof shift?.avatar === "string" && shift.avatar.trim().length > 0
+      ? { uri: shift.avatar }
+      : require("@/assets/images/placeholder.png");
+
   return (
     <View
       key={shift.id}
@@ -16,7 +21,7 @@ const ShiftCard = ({ shift }) => {
         <View className="flex-row gap-2.5">
           <Image
             className="mr-2.5"
-            source={{ uri: shift.avatar }}
+            source={avatarSource}
             style={{ width: 42, height: 42, borderRadius: 999 }}
           />
 

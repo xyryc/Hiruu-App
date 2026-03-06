@@ -19,10 +19,20 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { toast } from "sonner-native";
 
+const resolveMediaUrl = (value?: string | null) => {
+  if (!value || typeof value !== "string") return undefined;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  const base = (process.env.EXPO_PUBLIC_API_URL || "").replace(/\/$/, "");
+  if (!base) return undefined;
+  return `${base}${value.startsWith("/") ? value : `/${value}`}`;
+};
+
 const BusinessScheduleScreen = () => {
-  const [selectedDate, setSelectedDate] = useState(6);
+  const [selectedTimeSlot, setSelectedTimeSlot] = useState<number | null>(null);
   const [selectedShift, setSelectedShift] = useState("all");
   const [selectedFilter, setSelectedFilter] = useState("all");
+  const [roleOptions, setRoleOptions] = useState<{ id: string; label: string }[]>([]);
+  const [shiftTemplateOptions, setShiftTemplateOptions] = useState<string[]>([]);
 
   const [showModal, setShowModal] = useState(false);
   const {
@@ -30,6 +40,8 @@ const BusinessScheduleScreen = () => {
     selectedBusinesses,
     setSelectedBusinesses,
     getMyBusinesses,
+    getMyBusinessRoles,
+    getShiftTemplates,
   } = useBusinessStore();
   const {
     businessAssignments,
@@ -57,6 +69,54 @@ const BusinessScheduleScreen = () => {
       toast.error(error?.response?.data?.message || error?.message || "Failed to load shifts");
     });
   }, [fetchBusinessAssignments, selectedBusinesses]);
+
+  useEffect(() => {
+    const businessId = selectedBusinesses?.[0];
+    if (!businessId) {
+      setRoleOptions([]);
+      setSelectedFilter("all");
+      return;
+    }
+
+    getMyBusinessRoles(businessId)
+      .then((data: any[]) => {
+        const normalized = (Array.isArray(data) ? data : [])
+          .map((item: any) => ({
+            id: item?.id || item?.roleId || "",
+            label: item?.role?.name || item?.name || "",
+          }))
+          .filter((item: any) => item.id && item.label);
+        setRoleOptions(normalized);
+      })
+      .catch(() => {
+        setRoleOptions([]);
+      });
+  }, [getMyBusinessRoles, selectedBusinesses]);
+
+  useEffect(() => {
+    const businessId = selectedBusinesses?.[0];
+    if (!businessId) {
+      setShiftTemplateOptions([]);
+      setSelectedShift("all");
+      return;
+    }
+
+    getShiftTemplates(businessId)
+      .then((data: any[]) => {
+        const names = Array.from(
+          new Set(
+            (Array.isArray(data) ? data : [])
+              .map((item: any) => item?.name || "")
+              .filter((name: string) => Boolean(name))
+          )
+        );
+        setShiftTemplateOptions(names);
+      })
+      .catch(() => {
+        setShiftTemplateOptions([]);
+      });
+  }, [getShiftTemplates, selectedBusinesses]);
+
   // Get display content for header button
   const getDisplayContent = () => {
     if (selectedBusinesses.length === 0) {
@@ -72,40 +132,6 @@ const BusinessScheduleScreen = () => {
 
   const displayContent = getDisplayContent();
 
-  const dates = [
-    { date: 1, day: "AM" },
-    { date: 2, day: "AM" },
-    { date: 3, day: "AM" },
-    { date: 4, day: "AM" },
-    { date: 5, day: "AM" },
-    { date: 6, day: "AM" },
-    { date: 7, day: "AM" },
-    { date: 8, day: "AM" },
-    { date: 9, day: "AM" },
-    { date: 10, day: "AM" },
-    { date: 11, day: "AM" },
-    { date: 12, day: "AM" },
-    { date: 1, day: "PM" },
-    { date: 2, day: "PM" },
-    { date: 3, day: "PM" },
-    { date: 4, day: "PM" },
-    { date: 5, day: "PM" },
-    { date: 6, day: "PM" },
-    { date: 7, day: "PM" },
-    { date: 8, day: "PM" },
-    { date: 9, day: "PM" },
-    { date: 10, day: "PM" },
-    { date: 11, day: "PM" },
-    { date: 12, day: "PM" },
-  ];
-
-  const filters = [
-    { id: "all", label: "All", count: 20 },
-    { id: "cashier", label: "Cashier", count: 5 },
-    { id: "bartender", label: "Bartender", count: 8 },
-    { id: "housekeeping", label: "Housekeeping", count: 7 },
-  ];
-
   const to12Hour = (value?: string) => {
     if (!value) return "--:--";
     const [rawHour = "0", rawMinute = "0"] = value.split(":");
@@ -117,6 +143,12 @@ const BusinessScheduleScreen = () => {
     return `${hour12}:${String(minute).padStart(2, "0")} ${period}`;
   };
 
+  const toHourSlotLabel = (hour: number) => {
+    const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+    const meridiem = hour >= 12 ? "PM" : "AM";
+    return { hour12, meridiem };
+  };
+
   const shifts = useMemo(() => {
     const items = Array.isArray(businessAssignments) ? businessAssignments : [];
     return items
@@ -124,6 +156,17 @@ const BusinessScheduleScreen = () => {
       .map((item: any) => {
         const startTime = item?.shiftTemplate?.startTime;
         const endTime = item?.shiftTemplate?.endTime;
+        const startsAtIso = item?.startsAt;
+        const startsAtDate = startsAtIso ? new Date(startsAtIso) : null;
+        const isValidStartDate =
+          startsAtDate instanceof Date && !Number.isNaN(startsAtDate.getTime());
+        const templateHour = Number((startTime || "0:00").split(":")[0] || "0");
+        const startHour =
+          isValidStartDate
+            ? startsAtDate.getHours()
+            : Number.isNaN(templateHour)
+              ? 0
+              : templateHour;
         const shiftTemplateName = item?.shiftTemplate?.name || "Shift";
         const roleName =
           item?.employment?.roleName ||
@@ -137,11 +180,10 @@ const BusinessScheduleScreen = () => {
         return {
           id: item?.id,
           name: displayName,
+          roleId: item?.employment?.roleId || "",
           role: roleName,
-          avatar:
-            item?.employment?.avatar?.startsWith?.("http")
-              ? item.employment.avatar
-              : "https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp",
+          avatar: resolveMediaUrl(item?.employment?.avatar),
+          startHour,
           shiftTemplateName,
           shiftTime: `${to12Hour(startTime)} - ${to12Hour(endTime)}`,
           location: item?.business?.address?.address || "-",
@@ -150,37 +192,66 @@ const BusinessScheduleScreen = () => {
       });
   }, [businessAssignments]);
 
-  const shiftTemplateNames = useMemo(() => {
-    const unique = new Set<string>();
-    shifts.forEach((item: any) => {
-      if (item?.shiftTemplateName) unique.add(item.shiftTemplateName);
-    });
-    return Array.from(unique);
-  }, [shifts]);
-
   useEffect(() => {
     if (selectedShift === "all") return;
-    if (!shiftTemplateNames.includes(selectedShift)) {
+    if (!shiftTemplateOptions.includes(selectedShift)) {
       setSelectedShift("all");
     }
-  }, [selectedShift, shiftTemplateNames]);
+  }, [selectedShift, shiftTemplateOptions]);
 
-  const filteredShifts = useMemo(() => {
+  const shiftFilteredShifts = useMemo(() => {
     if (selectedShift === "all") return shifts;
     return shifts.filter((item: any) => item.shiftTemplateName === selectedShift);
   }, [selectedShift, shifts]);
 
+  const timeSlotFilters = useMemo(
+    () =>
+      Array.from({ length: 24 }, (_, hour) => ({
+        id: hour,
+        ...toHourSlotLabel(hour),
+      })),
+    []
+  );
+
+  const timeFilteredShifts = useMemo(() => {
+    if (selectedTimeSlot === null) return shiftFilteredShifts;
+    return shiftFilteredShifts.filter((item: any) => item.startHour === selectedTimeSlot);
+  }, [selectedTimeSlot, shiftFilteredShifts]);
+
+  const roleFilters = useMemo(() => {
+    const roles = roleOptions.map((role) => ({
+      id: role.id,
+      label: role.label,
+      count: timeFilteredShifts.filter((item: any) => item?.roleId === role.id).length,
+    }));
+
+    return [
+      { id: "all", label: "All", count: timeFilteredShifts.length },
+      ...roles,
+    ];
+  }, [roleOptions, timeFilteredShifts]);
+
+  useEffect(() => {
+    const hasSelected = roleFilters.some((item) => item.id === selectedFilter);
+    if (!hasSelected) setSelectedFilter("all");
+  }, [roleFilters, selectedFilter]);
+
+  const visibleShifts = useMemo(() => {
+    if (selectedFilter === "all") return timeFilteredShifts;
+    return timeFilteredShifts.filter((item: any) => item?.roleId === selectedFilter);
+  }, [selectedFilter, timeFilteredShifts]);
+
   const headerTitle = useMemo(() => {
     if (selectedShift === "all") {
-      return `All Shifts (${filteredShifts.length})`;
+      return `All Shifts (${visibleShifts.length})`;
     }
-    return `${selectedShift} (${filteredShifts.length})`;
-  }, [filteredShifts.length, selectedShift]);
+    return `${selectedShift} (${visibleShifts.length})`;
+  }, [selectedShift, visibleShifts.length]);
 
   const headerTimeRange = useMemo(() => {
-    if (filteredShifts.length === 0) return "--";
-    return filteredShifts[0]?.shiftTime || "--";
-  }, [filteredShifts]);
+    if (visibleShifts.length === 0) return "--";
+    return visibleShifts[0]?.shiftTime || "--";
+  }, [visibleShifts]);
 
   const checkAndNavigate = (route: RelativePathString) => {
     if (selectedBusinesses.length === 0) {
@@ -316,9 +387,9 @@ const BusinessScheduleScreen = () => {
               </Text>
             </TouchableOpacity>
 
-            {shiftTemplateNames.length > 0 ? <Text className="text-secondary">|</Text> : null}
+            {shiftTemplateOptions.length > 0 ? <Text className="text-secondary">|</Text> : null}
 
-            {shiftTemplateNames.map((name, index) => (
+            {shiftTemplateOptions.map((name, index) => (
               <React.Fragment key={name}>
                 <TouchableOpacity
                   onPress={() => setSelectedShift(name)}
@@ -334,7 +405,7 @@ const BusinessScheduleScreen = () => {
                   </Text>
                 </TouchableOpacity>
 
-                {index !== shiftTemplateNames.length - 1 ? (
+                {index !== shiftTemplateOptions.length - 1 ? (
                   <Text className="text-secondary">|</Text>
                 ) : null}
               </React.Fragment>
@@ -342,44 +413,49 @@ const BusinessScheduleScreen = () => {
           </View>
         </View>
 
-        {/* Date Selector */}
+        {/* time selector */}
         <ScrollView
           horizontal
           className="mb-5 pl-5"
+          contentContainerStyle={{
+            paddingRight: 40
+          }}
           showsHorizontalScrollIndicator={false}
         >
-          {dates.map((item, index) => (
+          {timeSlotFilters.map((item) => (
             <TouchableOpacity
-              key={index}
-              onPress={() => setSelectedDate(item.date)}
-              className={`w-8 h-14 items-center justify-center rounded-2xl mr-3 ${selectedDate === item.date
+              key={item.id}
+              onPress={() =>
+                setSelectedTimeSlot((prev) => (prev === item.id ? null : item.id))
+              }
+              className={`w-8 h-14 items-center justify-center rounded-2xl mr-3 ${selectedTimeSlot === item.id
                 ? "bg-[#4FB2F3]"
                 : "bg-white border border-[#EEEEEE]"
                 }`}
             >
               <Text
-                className={`font-proximanova-bold ${selectedDate === item.date ? "text-white" : "text-primary"
+                className={`font-proximanova-bold ${selectedTimeSlot === item.id ? "text-white" : "text-primary"
                   }`}
               >
-                {item.date}
+                {item.hour12}
               </Text>
               <Text
-                className={`text-xs font-proximanova-regular mt-1 ${selectedDate === item.date ? "text-white" : "text-gray-600"
+                className={`text-xs font-proximanova-regular mt-1 ${selectedTimeSlot === item.id ? "text-white" : "text-gray-600"
                   }`}
               >
-                {item.day}
+                {item.meridiem}
               </Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
-        {/* Filter Tabs */}
+        {/* role filter Tabs */}
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
           className="pl-5"
         >
-          {filters.map((filter) => (
+          {roleFilters.map((filter) => (
             <TouchableOpacity
               key={filter.id}
               onPress={() => setSelectedFilter(filter.id)}
@@ -418,8 +494,8 @@ const BusinessScheduleScreen = () => {
           <View className="py-8 items-center">
             <ActivityIndicator size="small" color="#4FB2F3" />
           </View>
-        ) : filteredShifts.length > 0 ? (
-          filteredShifts.map((shift) => <ShiftCard key={shift.id} shift={shift} />)
+        ) : visibleShifts.length > 0 ? (
+          visibleShifts.map((shift) => <ShiftCard key={shift.id} shift={shift} />)
         ) : (
           <Text className="text-sm font-proximanova-regular text-secondary">
             No shifts found.
