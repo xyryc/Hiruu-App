@@ -11,6 +11,7 @@ import ColorPickerModal from "@/components/ui/modals/ColorPickerModal";
 import ProfileSwitchModal from "@/components/ui/modals/ProfileSwitchModal";
 import { profileService } from "@/services/profileService";
 import { useBusinessStore } from "@/stores/businessStore";
+import { useProfileStore } from "@/stores/profileStore";
 import {
   FontAwesome6,
   Ionicons,
@@ -39,6 +40,7 @@ const profile = () => {
   const [isOn, setIsOn] = useState(false);
   const [isProfileSwitchOpen, setIsProfileSwitchOpen] = useState(false);
   const { setSelectedBusinesses } = useBusinessStore();
+  const { updateProfile } = useProfileStore();
   const { refreshAt } = useLocalSearchParams<{ refreshAt?: string }>();
   const insets = useSafeAreaInsets();
 
@@ -91,9 +93,32 @@ const profile = () => {
   const interests: string[] = Array.isArray(profileData?.interest)
     ? profileData.interest
     : [];
+  const socialLinks = profileData?.social || {};
   const experiences = Array.isArray(profileData?.experiences)
     ? profileData.experiences
     : [];
+
+  const handleSocialLinksChange = async (nextSocial: Record<string, string>) => {
+    const previousSocial = profileData?.social || {};
+    setProfileData((prev: any) => ({
+      ...(prev || {}),
+      social: { ...previousSocial, ...nextSocial },
+    }));
+
+    try {
+      const mergedSocial = { ...previousSocial, ...nextSocial };
+      const response = await updateProfile({ social: mergedSocial });
+      if (response?.data) {
+        setProfileData(response.data);
+      }
+    } catch (error: any) {
+      setProfileData((prev: any) => ({
+        ...(prev || {}),
+        social: previousSocial,
+      }));
+      toast.error(error?.message || "Failed to update socials");
+    }
+  };
   return (
     <DynamicBackground
       style={{
@@ -415,7 +440,11 @@ const profile = () => {
           </Text>
         </View>
 
-        <ConnectSocials className="mx-5 my-4" />
+        <ConnectSocials
+          className="mx-5 my-4"
+          value={socialLinks}
+          onChange={handleSocialLinksChange}
+        />
       </ScrollView>
 
 
