@@ -36,7 +36,7 @@ const CreateHoliday = () => {
   const businessId = selectedBusinesses?.[0];
   const [title, setTitle] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [holidayType, setHolidayType] = useState("Federal Holiday");
+  const [holidayType, setHolidayType] = useState(holidayTypes[0]);
   const [showHolidayDropdown, setShowHolidayDropdown] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 

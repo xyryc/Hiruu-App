@@ -2,11 +2,15 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import BusinessScheduleMonthYearsPickerModal from "@/components/ui/modals/BusinessScheduleMonthYearsPickerModal";
 import ImportHolidayModal from "@/components/ui/modals/ImportHolidayModal";
 import LogoutDeleteModal from "@/components/ui/modals/LogoutDeleteModal";
+import { useBusinessStore } from "@/stores/businessStore";
+import axiosInstance from "@/utils/axios";
 import { Ionicons } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -16,17 +20,28 @@ import {
 } from "react-native";
 import { DateData, Calendar as RNCalendar } from "react-native-calendars";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
+
+type HolidayItem = {
+  id: string;
+  title: string;
+  date: string;
+  type: "public" | "religious" | "company" | string;
+};
 
 const Calendar = () => {
   const delImg = require("@/assets/images/holiday-modal.svg");
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const { selectedBusinesses } = useBusinessStore();
+  const selectedBusinessId = selectedBusinesses?.[0];
 
   const [currentViewDate, setCurrentViewDate] = useState(new Date()); // Currently viewing month/year
   const [showPicker, setShowPicker] = useState(false);
   const [pickerMode, setPickerMode] = useState<"month" | "year">("month");
   const [selected, setSelected] = useState<number[]>([2, 16, 27]);
-  const holiday = [1, 15, 26];
+  const [holidays, setHolidays] = useState<HolidayItem[]>([]);
+  const [holidaysLoading, setHolidaysLoading] = useState(false);
   const [isModal, setIsModal] = useState(false);
   const [isHolidayModal, setIsHolidayModal] = useState(false);
 
@@ -98,11 +113,26 @@ const Calendar = () => {
   const todayDateKey = toDateKey(deviceToday);
   const currentDateKey = `${monthDatePrefix}-01`;
 
-  const markedDates = holiday.reduce<Record<string, any>>((acc, day) => {
-    const dateKey = `${monthDatePrefix}-${String(day).padStart(2, "0")}`;
-    acc[dateKey] = { ...(acc[dateKey] || {}), textColor: "#EF4444" };
-    return acc;
-  }, {});
+  const holidayDaySet = useMemo(() => {
+    const set = new Set<number>();
+    holidays.forEach((item) => {
+      const d = new Date(item.date);
+      if (Number.isNaN(d.getTime())) return;
+      if (d.getFullYear() === currentYear && d.getMonth() === currentMonth) {
+        set.add(d.getDate());
+      }
+    });
+    return set;
+  }, [holidays, currentMonth, currentYear]);
+
+  const markedDates = Array.from(holidayDaySet).reduce<Record<string, any>>(
+    (acc, day) => {
+      const dateKey = `${monthDatePrefix}-${String(day).padStart(2, "0")}`;
+      acc[dateKey] = { ...(acc[dateKey] || {}), textColor: "#F34F4F" };
+      return acc;
+    },
+    {}
+  );
 
   selected.forEach((day) => {
     const dateKey = `${monthDatePrefix}-${String(day).padStart(2, "0")}`;
@@ -139,31 +169,74 @@ const Calendar = () => {
     );
   };
 
-  const renderHolidaysCard = () => {
+  const formatHolidayType = (type?: string) => {
+    if (!type) return "Public";
+    return `${type.charAt(0).toUpperCase()}${type.slice(1)}`;
+  };
+
+  const fetchHolidays = useCallback(async () => {
+    if (!selectedBusinessId) {
+      setHolidays([]);
+      return;
+    }
+
+    try {
+      setHolidaysLoading(true);
+      const response = await axiosInstance.get(
+        `/holidays/business/${selectedBusinessId}`
+      );
+      const result = response?.data;
+      if (!result?.success) {
+        throw new Error(result?.message || "Failed to load holidays");
+      }
+      setHolidays(Array.isArray(result?.data) ? result.data : []);
+    } catch (error: any) {
+      toast.error(error?.message || "Failed to load holidays");
+      setHolidays([]);
+    } finally {
+      setHolidaysLoading(false);
+    }
+  }, [selectedBusinessId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchHolidays();
+    }, [fetchHolidays])
+  );
+
+  const renderHolidaysCard = (item: HolidayItem) => {
+    const holidayDate = new Date(item.date);
+    const year = holidayDate.getFullYear();
+    const day = holidayDate.getDate();
+    const monthLabel = months[new Date(item.date).getMonth()] || "";
+
     return (
-      <View className="mt-4 border border-[#EEEEEE] p-4 rounded-2xl flex-row justify-between items-center">
+      <View
+        key={item.id}
+        className="mt-4 border border-[#EEEEEE] p-4 rounded-2xl flex-row justify-between items-center"
+      >
         <View className="flex-row gap-3">
           {/* calender card */}
           <View className="border border-[#E5F4FD] rounded-[10px] ">
             <Text className="font-proximanova-regular text-xs text-secondary dark:text-dark-secondary text-center py-1 px-3 bg-[#E5F4FD] rounded-t-[10px]">
-              2024
+              {year}
             </Text>
             <Text className="font-proximanova-semibold text-[#4FB2F3] mx-5 text-center">
-              3
+              {day}
             </Text>
             <Text className="font-proximanova-regular text-xs text-secondary dark:text-dark-secondary text-center  mb-1">
-              Mar
+              {monthLabel}
             </Text>
           </View>
           {/* details */}
           <View className="">
             <Text className="font-proximanova-bold text-primary dark:text-dark-primary mt-2">
-              Clean Monday
+              {item.title}
             </Text>
             <Text className="font-proximanova-regular text-xs text-secondary dark:text-dark-secondary mt-3 capitalize">
               Holiday Type :{" "}
               <Text className="text-primary dark:text-dark-primary">
-                national
+                {formatHolidayType(item.type)}
               </Text>
             </Text>
           </View>
@@ -287,11 +360,17 @@ const Calendar = () => {
               All Holidays
             </Text>
 
-            {/* card */}
-            {renderHolidaysCard()}
-            {renderHolidaysCard()}
-            {renderHolidaysCard()}
-            {renderHolidaysCard()}
+            {holidaysLoading ? (
+              <View className="py-6 items-center">
+                <ActivityIndicator size="small" color="#4FB2F3" />
+              </View>
+            ) : holidays.length > 0 ? (
+              holidays.map((item) => renderHolidaysCard(item))
+            ) : (
+              <Text className="mt-4 text-secondary dark:text-dark-secondary">
+                No holidays found.
+              </Text>
+            )}
           </View>
 
           <LogoutDeleteModal
