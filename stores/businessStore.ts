@@ -115,9 +115,28 @@ const appendSocialToFormData = (formData: FormData, social: any) => {
   keys.forEach((key) => {
     const value = social[key];
     if (typeof value === "string") {
-      formData.append(`social[${key}]`, value);
+      const trimmed = value.trim();
+      if (!trimmed) return;
+      formData.append(`social[${key}]`, trimmed);
     }
   });
+};
+
+const normalizeSocialPayload = (social: any) => {
+  if (!social || typeof social !== "object") return undefined;
+
+  const keys = ["facebook", "linkedin", "whatsapp", "twitter", "telegram", "instagram"];
+  const next: Record<string, string> = {};
+
+  keys.forEach((key) => {
+    const value = social[key];
+    if (typeof value !== "string") return;
+    const trimmed = value.trim();
+    if (!trimmed) return;
+    next[key] = trimmed;
+  });
+
+  return Object.keys(next).length ? next : undefined;
 };
 
 const normalizeAddressPayload = (address: any) => {
@@ -680,6 +699,7 @@ export const useBusinessStore = create<BusinessState>()(
         const normalizedPayload = {
           ...payload,
           address: normalizeAddressPayload(payload.address),
+          social: normalizeSocialPayload(payload.social),
         };
         const response = await axiosInstance.patch(
           `/business/${businessId}`,

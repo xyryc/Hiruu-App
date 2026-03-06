@@ -33,8 +33,10 @@ const BusinessProfile = () => {
   const [selectedTab, setSelectedTab] = useState("about");
   const [toggleIsOn, setToggleIsOn] = useState(false);
   const [businessData, setBusinessData] = useState<any>(null);
+  const [socialLinks, setSocialLinks] = useState<any>({});
   const [loading, setLoading] = useState(false);
   const [recruitingUpdateLoading, setRecruitingUpdateLoading] = useState(false);
+  const [socialUpdateLoading, setSocialUpdateLoading] = useState(false);
   const [isProfileSwitchOpen, setIsProfileSwitchOpen] = useState(false);
   const {
     selectedBusinesses,
@@ -54,6 +56,7 @@ const BusinessProfile = () => {
       setLoading(true);
       const data = await getBusinessProfile(businessId);
       setBusinessData(data);
+      setSocialLinks(data?.social || {});
     } catch (error: any) {
       toast.error(error?.message || "Failed to load business");
     } finally {
@@ -105,6 +108,37 @@ const BusinessProfile = () => {
       toast.error(error?.message || "Failed to update recruiting status");
     } finally {
       setRecruitingUpdateLoading(false);
+    }
+  };
+
+  const handleSocialLinksChange = async (nextSocial: Record<string, string>) => {
+    if (!businessId || socialUpdateLoading) return;
+
+    const previousSocial = socialLinks || {};
+    const mergedSocial = { ...previousSocial, ...nextSocial };
+
+    setSocialLinks(mergedSocial);
+    setBusinessData((prev: any) => ({
+      ...(prev || {}),
+      social: mergedSocial,
+    }));
+    setSocialUpdateLoading(true);
+
+    try {
+      const result = await updateMyBusinessProfile(businessId, { social: mergedSocial });
+      if (result?.data) {
+        setBusinessData(result.data);
+        setSocialLinks(result.data?.social || mergedSocial);
+      }
+    } catch (error: any) {
+      setSocialLinks(previousSocial);
+      setBusinessData((prev: any) => ({
+        ...(prev || {}),
+        social: previousSocial,
+      }));
+      toast.error(error?.message || "Failed to update social links");
+    } finally {
+      setSocialUpdateLoading(false);
     }
   };
 
@@ -407,7 +441,11 @@ const BusinessProfile = () => {
               </Text>
             </View>
 
-            <ConnectSocials className="mx-5 my-4" />
+            <ConnectSocials
+              className="mx-5 my-4"
+              value={socialLinks}
+              onChange={handleSocialLinksChange}
+            />
           </View>
         )}
 
