@@ -6,16 +6,23 @@ import { Platform, Text, TouchableOpacity, View } from "react-native";
 const DatePicker = ({
   className,
   title,
+  value,
+  onChange: onDateChange,
 }: {
   className?: any;
   title?: string;
+  value?: Date;
+  onChange?: (date: Date) => void;
 }) => {
-  const [date, setDate] = useState(new Date());
+  const [internalDate, setInternalDate] = useState(new Date());
   const [show, setShow] = useState(false);
+  const date = value || internalDate;
 
-  const onChange = (event: any, selectedDate?: Date) => {
+  const handleChange = (event: any, selectedDate?: Date) => {
     if (Platform.OS === "android") setShow(false);
-    if (selectedDate) setDate(selectedDate);
+    if (!selectedDate) return;
+    setInternalDate(selectedDate);
+    onDateChange?.(selectedDate);
   };
 
   const formattedDate = date.toLocaleDateString("en-GB", {
@@ -42,7 +49,7 @@ const DatePicker = ({
           value={date}
           mode="date"
           display="default"
-          onChange={onChange}
+          onChange={handleChange}
         />
       )}
     </View>
