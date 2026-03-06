@@ -1,4 +1,4 @@
-import { MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
@@ -28,6 +28,7 @@ const Countdown = ({ shift, countdown }) =>
 const ShiftItem = ({ shift, index, shiftsLength }) => {
   const router = useRouter();
   const [nowTimestamp, setNowTimestamp] = useState(() => Date.now());
+  const canOpenDetails = Boolean(shift?.id) && shift?.type !== "empty_day";
 
   useEffect(() => {
     if (!shift?.countdownTargetAt) return;
@@ -47,7 +48,11 @@ const ShiftItem = ({ shift, index, shiftsLength }) => {
 
   return (
     <TouchableOpacity
-      onPress={() => router.push("/screens/schedule/shift/[id]")}
+      onPress={() => {
+        if (!canOpenDetails) return;
+        router.push("/screens/schedule/shift/[id]");
+      }}
+      disabled={!canOpenDetails}
       className="flex-row mb-4 overflow-hidden relative"
     >
       {/* Time Column */}
@@ -89,6 +94,13 @@ const ShiftItem = ({ shift, index, shiftsLength }) => {
             <View className="py-2">
               <Text className="text-sm font-proximanova-regular text-[#F34F4F]">
                 {shift.message}
+              </Text>
+            </View>
+          )}
+          {shift.type === "empty_day" && (
+            <View className="py-2">
+              <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary">
+                {shift.title}
               </Text>
             </View>
           )}
@@ -163,7 +175,7 @@ const ShiftItem = ({ shift, index, shiftsLength }) => {
               }}
             />
           )}
-          {(shift.type === "upcoming" || shift.type === "holiday") && (
+          {(shift.type === "upcoming" || shift.type === "holiday" || shift.type === "empty_day") && (
             <Image
               source={require("@/assets/images/shift-upcoming-bg.svg")}
               style={{ width: 244, height: 34 }}
@@ -204,6 +216,72 @@ const ShiftItem = ({ shift, index, shiftsLength }) => {
         >
           {shift.type === "holiday" ? (
             <HolidayCard shift={shift} />
+          ) : shift.type === "empty_day" ? (
+            <View>
+              <View className="flex-row items-center justify-center gap-5">
+                <Image
+                  source={require("@/assets/images/holiday2.svg")}
+                  style={{
+                    width: 128,
+                    height: 110,
+                  }}
+                  contentFit="contain"
+                />
+
+                <Text className="font-proximanova-semibold text-primary dark:text-dark-primary w-1/2">
+                  {shift.subtitle}
+                </Text>
+              </View>
+
+              <View className="py-3 w-full">
+                <Image
+                  source={require("@/assets/images/dotted-line.svg")}
+                  style={{ width: "100%", height: 1 }}
+                />
+              </View>
+
+              <View className="flex-row items-center gap-2">
+                <Image
+                  source={
+                    shift.companyLogo
+                      ? { uri: shift.companyLogo }
+                      : require("@/assets/images/placeholder.png")
+                  }
+                  style={{ width: 30, height: 30, borderRadius: 999 }}
+                  contentFit="cover"
+                />
+
+                <View className="flex-row items-center gap-1">
+                  <Ionicons
+                    className="bg-white border border-[#4FB2F3] p-1.5 rounded-full z-20"
+                    name="calendar-outline"
+                    size={16}
+                    color="#4FB2F3"
+                  />
+
+                  <View className="flex-row gap-1">
+                    <Text
+                      className="text-xs font-proximanova-semibold text-primary dark:text-dark-primary"
+                      numberOfLines={1}
+                    >
+                      {shift.nextShiftText || "No upcoming shifts"}
+                    </Text>
+                  </View>
+
+                  {shift.nextShiftText?.startsWith("Next shift:") ? (
+                    <View className="absolute top-0.5 left-4 z-0">
+                      <Image
+                        source={require("@/assets/images/gradient-time-bg.svg")}
+                        style={{
+                          width: 212,
+                          height: 25,
+                        }}
+                      />
+                    </View>
+                  ) : null}
+                </View>
+              </View>
+            </View>
           ) : shift.type === "leave" ? (
             <LeaveCard shift={shift} />
           ) : (

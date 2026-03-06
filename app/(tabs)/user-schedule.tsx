@@ -17,19 +17,26 @@ const resolveMediaUrl = (value?: string | null) => {
 };
 
 type ApiShift = {
-  id: string;
+  itemType: "assigned_shift" | "empty_day";
+  id?: string;
   date: string;
+  startsAt?: string;
+  endsAt?: string;
+  status?: string;
+  hasNextShift?: boolean;
+  nextShiftStartDate?: string | null;
   shiftTemplate?: {
     name?: string;
     startTime?: string;
     endTime?: string;
-    breakDuration?: Array<{ startTime?: string; endTime?: string }>;
+    breakDuration?: { startTime?: string; endTime?: string }[];
   };
-  employment?: {
-    business?: {
-      id?: string;
-      name?: string;
-      logo?: string;
+  business?: {
+    id?: string;
+    name?: string;
+    logo?: string;
+    address?: {
+      address?: string;
     };
   };
 };
@@ -37,14 +44,17 @@ type ApiShift = {
 type UiShift = {
   id: string;
   businessId: string;
-  type: "ongoing" | "upcoming" | "completed";
+  type: "ongoing" | "upcoming" | "completed" | "missed" | "empty_day";
   time: string;
   title: string;
+  subtitle?: string;
+  nextShiftText?: string;
   workTime: string;
   breakTime?: string;
+  location?: string;
   company: string;
   companyLogo?: string;
-  status: "ongoing" | "upcoming" | "completed";
+  status: "ongoing" | "upcoming" | "completed" | "missed" | "no_shift";
   countdown?: string;
   countdownTargetAt?: number;
   message?: string;
@@ -82,35 +92,95 @@ const ShiftSchedule = () => {
 
   const toUiShift = useCallback(
     (shift: ApiShift): UiShift => {
+      const business = shift?.business;
+
+      if (shift?.itemType === "empty_day") {
+        const hasNextShift = Boolean(shift?.hasNextShift);
+        const nextShiftDate = shift?.nextShiftStartDate
+          ? new Date(shift.nextShiftStartDate)
+          : null;
+        const nextShiftText =
+          hasNextShift && nextShiftDate && !Number.isNaN(nextShiftDate.getTime())
+            ? `Next shift: ${nextShiftDate.toLocaleDateString(undefined, {
+              weekday: "short",
+              day: "numeric",
+              month: "long",
+            })} - ${nextShiftDate.toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            })}`
+            : "No upcoming shifts";
+
+        return {
+          id: `empty-${business?.id || "unknown"}-${shift?.date || Date.now()}`,
+          businessId: business?.id || "",
+          type: "empty_day",
+          time: "Off",
+          title: "Today is a Holiday",
+          subtitle: "No shifts for today",
+          nextShiftText,
+          workTime: "--",
+          company: business?.name || "Business",
+          companyLogo: resolveMediaUrl(business?.logo),
+          location: business?.address?.address,
+          status: "no_shift",
+        };
+      }
+
+      const startAt = shift?.startsAt ? new Date(shift.startsAt) : null;
+      const endAt = shift?.endsAt ? new Date(shift.endsAt) : null;
       const start = shift?.shiftTemplate?.startTime || "00:00";
       const end = shift?.shiftTemplate?.endTime || "00:00";
       const shiftDate = new Date(shift?.date || Date.now());
       const now = new Date();
 
       const shiftStart = new Date(shiftDate);
-      shiftStart.setHours(Math.floor(timeToMinutes(start) / 60), timeToMinutes(start) % 60, 0, 0);
+      if (startAt && !Number.isNaN(startAt.getTime())) {
+        shiftStart.setTime(startAt.getTime());
+      } else {
+        shiftStart.setHours(
+          Math.floor(timeToMinutes(start) / 60),
+          timeToMinutes(start) % 60,
+          0,
+          0
+        );
+      }
 
       const shiftEnd = new Date(shiftDate);
-      shiftEnd.setHours(Math.floor(timeToMinutes(end) / 60), timeToMinutes(end) % 60, 0, 0);
+      if (endAt && !Number.isNaN(endAt.getTime())) {
+        shiftEnd.setTime(endAt.getTime());
+      } else {
+        shiftEnd.setHours(Math.floor(timeToMinutes(end) / 60), timeToMinutes(end) % 60, 0, 0);
+      }
       if (shiftEnd <= shiftStart) {
         shiftEnd.setDate(shiftEnd.getDate() + 1);
       }
 
       let type: UiShift["type"] = "upcoming";
+      let status: UiShift["status"] = "upcoming";
       let countdown: string | undefined;
       let countdownTargetAt: number | undefined;
       let message: string | undefined;
+      const apiStatus = (shift?.status || "").toLowerCase();
 
-      if (now >= shiftStart && now <= shiftEnd) {
+      if (apiStatus === "missed") {
+        type = "missed";
+        status = "missed";
+        message = "You missed this shift.";
+      } else if (now >= shiftStart && now <= shiftEnd) {
         type = "ongoing";
+        status = "ongoing";
         countdownTargetAt = shiftEnd.getTime();
         countdown = formatCountdownFromSeconds((countdownTargetAt - now.getTime()) / 1000);
       } else if (now < shiftStart) {
         type = "upcoming";
+        status = "upcoming";
         countdownTargetAt = shiftStart.getTime();
         countdown = formatCountdownFromSeconds((countdownTargetAt - now.getTime()) / 1000);
       } else {
         type = "completed";
+        status = "completed";
         message = `You finished your ${to12Hour(start)} shift.`;
       }
 
@@ -125,16 +195,34 @@ const ShiftSchedule = () => {
           : undefined;
 
       return {
-        id: shift.id,
-        businessId: shift?.employment?.business?.id || "",
+        id: shift.id || `${business?.id || "unknown"}-${shift?.date || Date.now()}`,
+        businessId: business?.id || "",
         type,
-        time: to12Hour(start),
+        time: startAt && !Number.isNaN(startAt.getTime())
+          ? startAt.toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })
+          : to12Hour(start),
         title: shift?.shiftTemplate?.name || "Shift",
-        workTime: `${to12Hour(start)} - ${to12Hour(end)}`,
+        workTime:
+          startAt && endAt && !Number.isNaN(startAt.getTime()) && !Number.isNaN(endAt.getTime())
+            ? `${startAt.toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            })} - ${endAt.toLocaleTimeString([], {
+              hour: "numeric",
+              minute: "2-digit",
+              hour12: true,
+            })}`
+            : `${to12Hour(start)} - ${to12Hour(end)}`,
         breakTime,
-        company: shift?.employment?.business?.name || "Business",
-        companyLogo: resolveMediaUrl(shift?.employment?.business?.logo),
-        status: type,
+        company: business?.name || "Business",
+        companyLogo: resolveMediaUrl(business?.logo),
+        location: business?.address?.address,
+        status,
         countdown,
         countdownTargetAt,
         message,
@@ -174,7 +262,7 @@ const ShiftSchedule = () => {
   const modalBusinesses = useMemo(() => {
     const map = new Map<string, { id: string; name: string; logo?: string }>();
     (Array.isArray(myShifts) ? myShifts : []).forEach((shift) => {
-      const business = shift?.employment?.business;
+      const business = shift?.business;
       if (!business?.id) return;
       if (map.has(business.id)) return;
       map.set(business.id, {
