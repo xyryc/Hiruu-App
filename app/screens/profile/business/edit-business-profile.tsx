@@ -1,5 +1,6 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
+import ConnectSocials from "@/components/ui/inputs/ConnectSocials";
 import { useBusinessStore } from "@/stores/businessStore";
 import { translateApiMessage } from "@/utils/apiMessages";
 import { Feather, Ionicons } from "@expo/vector-icons";
@@ -84,6 +85,7 @@ const EditBusinessProfile = () => {
   const [isLocationFocused, setIsLocationFocused] = useState(false);
   const hasShownGeoapifyMissingKey = useRef(false);
   const [addressDetails, setAddressDetails] = useState<AddressPayload | null>(null);
+  const [socialLinks, setSocialLinks] = useState<any>({});
 
   useEffect(() => {
     if (!locationSearch || locationSearch.trim().length < 3) {
@@ -197,6 +199,7 @@ const EditBusinessProfile = () => {
         setAbout(data?.description || "");
         setProfileImage(data?.logo || null);
         setCoverImage(data?.coverPhoto || null);
+        setSocialLinks(data?.social || {});
         const rawAddress = data?.address;
         const resolvedAddress =
           typeof rawAddress === "string"
@@ -409,6 +412,7 @@ const EditBusinessProfile = () => {
       },
       logo: profileImage,
       coverPhoto: coverImage,
+      social: socialLinks,
     };
 
     try {
@@ -449,7 +453,7 @@ const EditBusinessProfile = () => {
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
-              paddingBottom: 600,
+              paddingBottom: 120,
             }}
           >
             {/* Profile Photo */}
@@ -590,8 +594,8 @@ const EditBusinessProfile = () => {
               />
 
               {isLocationFocused &&
-              locationSearch.trim().length >= 3 &&
-              locationOptions.length > 0 ? (
+                locationSearch.trim().length >= 3 &&
+                locationOptions.length > 0 ? (
                 <View className="mt-2 border border-[#EEEEEE] bg-white rounded-[10px] overflow-hidden">
                   {locationOptions.map((item, index) => (
                     <TouchableOpacity
@@ -627,9 +631,9 @@ const EditBusinessProfile = () => {
                 </Text>
               ) : null}
               {isLocationFocused &&
-              locationSearch.trim().length >= 3 &&
-              !isSearchingLocation &&
-              locationOptions.length === 0 ? (
+                locationSearch.trim().length >= 3 &&
+                !isSearchingLocation &&
+                locationOptions.length === 0 ? (
                 <Text className="mt-2 text-xs font-proximanova-regular text-secondary">
                   No locations found.
                 </Text>
@@ -661,14 +665,24 @@ const EditBusinessProfile = () => {
                 onChangeText={setAbout}
               />
             </View>
-          </ScrollView>
 
-          <PrimaryButton
-            className="absolute bottom-10 mt-4 mx-5"
-            title="Save Change"
-            onPress={handleSave}
-            loading={isLoading}
-          />
+            <View className="mt-8">
+              <Text className="font-proximanova-semibold text-sm text-primary dark:text-dark-primary mb-2.5">
+                Contact Us On
+              </Text>
+              <ConnectSocials
+                value={socialLinks}
+                onChange={(next) => setSocialLinks((prev: any) => ({ ...prev, ...next }))}
+              />
+            </View>
+
+            <PrimaryButton
+              className='my-10'
+              title="Save Change"
+              onPress={handleSave}
+              loading={isLoading}
+            />
+          </ScrollView>
         </LinearGradient>
       </SafeAreaView>
     </KeyboardAvoidingView>
