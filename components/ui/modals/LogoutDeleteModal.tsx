@@ -7,11 +7,16 @@ import React from "react";
 import { Modal, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const LogoutDeleteModal = ({ visible, onClose, data }: any) => {
+const LogoutDeleteModal = ({ visible, onClose, data, onConfirm }: any) => {
   const router = useRouter()
   const { logout } = useAuthStore();
 
-  const handleLogout = async () => {
+  const handlePrimaryAction = async () => {
+    if (typeof onConfirm === "function") {
+      await onConfirm();
+      return;
+    }
+
     await logout()
     router.replace("/welcome")
   }
@@ -71,7 +76,7 @@ const LogoutDeleteModal = ({ visible, onClose, data }: any) => {
                 style={{
                   backgroundColor: data?.buttonColor,
                 }}
-                onPress={handleLogout}
+                onPress={handlePrimaryAction}
               >
                 <Text className="font-proximanova-semibold text-white">
                   Yes, {data?.buttonName}
@@ -86,4 +91,3 @@ const LogoutDeleteModal = ({ visible, onClose, data }: any) => {
 };
 
 export default LogoutDeleteModal;
-

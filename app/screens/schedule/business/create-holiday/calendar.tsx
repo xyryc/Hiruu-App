@@ -3,6 +3,7 @@ import BusinessScheduleMonthYearsPickerModal from "@/components/ui/modals/Busine
 import ImportHolidayModal from "@/components/ui/modals/ImportHolidayModal";
 import LogoutDeleteModal from "@/components/ui/modals/LogoutDeleteModal";
 import { useBusinessStore } from "@/stores/businessStore";
+import { translateApiMessage } from "@/utils/apiMessages";
 import axiosInstance from "@/utils/axios";
 import { Ionicons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
@@ -42,6 +43,7 @@ const Calendar = () => {
   const [selected, setSelected] = useState<number[]>([2, 16, 27]);
   const [holidays, setHolidays] = useState<HolidayItem[]>([]);
   const [holidaysLoading, setHolidaysLoading] = useState(false);
+  const [deletingHolidayId, setDeletingHolidayId] = useState<string | null>(null);
   const [isModal, setIsModal] = useState(false);
   const [isHolidayModal, setIsHolidayModal] = useState(false);
 
@@ -204,6 +206,36 @@ const Calendar = () => {
     }, [fetchHolidays])
   );
 
+  const handleDeleteHoliday = useCallback(async () => {
+    if (!selectedBusinessId) {
+      toast.error("Please select a business first.");
+      return;
+    }
+    if (!deletingHolidayId) {
+      toast.error("Holiday not found.");
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.delete(
+        `/holidays/${deletingHolidayId}/business/${selectedBusinessId}`
+      );
+      const result = response?.data;
+      if (!result?.success) {
+        throw new Error(result?.message || "Failed to delete holiday");
+      }
+
+      setHolidays((prev) => prev.filter((item) => item.id !== deletingHolidayId));
+      setIsModal(false);
+      setDeletingHolidayId(null);
+      toast.success(translateApiMessage(result?.message || "holiday_deleted_successfully"));
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message || error?.message || "Failed to delete holiday";
+      toast.error(translateApiMessage(message));
+    }
+  }, [deletingHolidayId, selectedBusinessId]);
+
   const renderHolidaysCard = (item: HolidayItem) => {
     const holidayDate = new Date(item.date);
     const year = holidayDate.getFullYear();
@@ -242,7 +274,12 @@ const Calendar = () => {
           </View>
         </View>
         <View>
-          <TouchableOpacity onPress={() => setIsModal(true)}>
+          <TouchableOpacity
+            onPress={() => {
+              setDeletingHolidayId(item.id);
+              setIsModal(true);
+            }}
+          >
             <Ionicons name="trash-outline" size={25} color="red" />
           </TouchableOpacity>
         </View>
@@ -375,8 +412,12 @@ const Calendar = () => {
 
           <LogoutDeleteModal
             visible={isModal}
-            onClose={() => setIsModal(false)}
+            onClose={() => {
+              setIsModal(false);
+              setDeletingHolidayId(null);
+            }}
             data={data}
+            onConfirm={handleDeleteHoliday}
           />
           <ImportHolidayModal
             visible={isHolidayModal}
