@@ -126,6 +126,14 @@ const Calendar = () => {
     return set;
   }, [holidays, currentMonth, currentYear]);
 
+  const visibleHolidays = useMemo(() => {
+    return holidays.filter((item) => {
+      const d = new Date(item.date);
+      if (Number.isNaN(d.getTime())) return false;
+      return d.getFullYear() === currentYear && d.getMonth() === currentMonth;
+    });
+  }, [holidays, currentMonth, currentYear]);
+
   const markedDates = Array.from(holidayDaySet).reduce<Record<string, any>>(
     (acc, day) => {
       const dateKey = `${monthDatePrefix}-${String(day).padStart(2, "0")}`;
@@ -341,6 +349,7 @@ const Calendar = () => {
           {/* calendar */}
           <View className="my-4 w-full">
             <RNCalendar
+              key={currentDateKey}
               markingType="custom"
               current={currentDateKey}
               hideArrows={true}
@@ -419,8 +428,8 @@ const Calendar = () => {
               <View className="py-6 items-center">
                 <ActivityIndicator size="small" color="#4FB2F3" />
               </View>
-            ) : holidays.length > 0 ? (
-              holidays.map((item) => renderHolidaysCard(item))
+            ) : visibleHolidays.length > 0 ? (
+              visibleHolidays.map((item) => renderHolidaysCard(item))
             ) : (
               <Text className="mt-4 text-secondary dark:text-dark-secondary">
                 No holidays found.
