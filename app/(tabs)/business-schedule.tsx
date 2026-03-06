@@ -3,11 +3,13 @@ import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
 import BusinessSelectionTrigger from "@/components/ui/dropdown/BusinessSelectionTrigger";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import { useBusinessStore } from "@/stores/businessStore";
+import { useShiftStore } from "@/stores/shiftStore";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { RelativePathString, useRouter } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
   ScrollView,
   StatusBar,
   Text,
@@ -15,10 +17,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { toast } from "sonner-native";
 
 const BusinessScheduleScreen = () => {
   const [selectedDate, setSelectedDate] = useState(6);
-  const [selectedShift, setSelectedShift] = useState("morning");
+  const [selectedShift, setSelectedShift] = useState("all");
   const [selectedFilter, setSelectedFilter] = useState("all");
 
   const [showModal, setShowModal] = useState(false);
@@ -28,8 +31,11 @@ const BusinessScheduleScreen = () => {
     setSelectedBusinesses,
     getMyBusinesses,
   } = useBusinessStore();
-
-  console.log("selected business", selectedBusinesses)
+  const {
+    businessAssignments,
+    businessAssignmentsLoading,
+    fetchBusinessAssignments,
+  } = useShiftStore();
 
   useEffect(() => {
     const loadBusinesses = async () => {
@@ -42,6 +48,15 @@ const BusinessScheduleScreen = () => {
 
     loadBusinesses();
   }, [getMyBusinesses]);
+
+  useEffect(() => {
+    const businessId = selectedBusinesses?.[0];
+    if (!businessId) return;
+
+    fetchBusinessAssignments(businessId).catch((error: any) => {
+      toast.error(error?.response?.data?.message || error?.message || "Failed to load shifts");
+    });
+  }, [fetchBusinessAssignments, selectedBusinesses]);
   // Get display content for header button
   const getDisplayContent = () => {
     if (selectedBusinesses.length === 0) {
@@ -91,48 +106,81 @@ const BusinessScheduleScreen = () => {
     { id: "housekeeping", label: "Housekeeping", count: 7 },
   ];
 
-  const shifts = [
-    {
-      id: 1,
-      name: "Amid Hazelwood",
-      role: "Cashier",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
-      shiftTime: "6:00 AM - 2:00 PM",
-      location: "136 Avenue-Maciezine, Ne...",
-      status: "ongoing",
-    },
-    {
-      id: 2,
-      name: "Sarah Johnson",
-      role: "Bartender",
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-      shiftTime: "6:00 AM - 2:00 PM",
-      location: "136 Avenue-Maciezine, Ne...",
-      status: "upcoming",
-    },
-    {
-      id: 3,
-      name: "Sarah Johnson",
-      role: "Bartender",
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-      shiftTime: "6:00 AM - 2:00 PM",
-      location: "136 Avenue-Maciezine, Ne...",
-      status: "upcoming",
-    },
-    {
-      id: 4,
-      name: "Sarah Johnson",
-      role: "Bartender",
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-      shiftTime: "6:00 AM - 2:00 PM",
-      location: "136 Avenue-Maciezine, Ne...",
-      status: "missed",
-    },
-  ];
+  const to12Hour = (value?: string) => {
+    if (!value) return "--:--";
+    const [rawHour = "0", rawMinute = "0"] = value.split(":");
+    const hour = Number(rawHour);
+    const minute = Number(rawMinute);
+    if (Number.isNaN(hour) || Number.isNaN(minute)) return value;
+    const period = hour >= 12 ? "PM" : "AM";
+    const hour12 = hour % 12 === 0 ? 12 : hour % 12;
+    return `${hour12}:${String(minute).padStart(2, "0")} ${period}`;
+  };
+
+  const shifts = useMemo(() => {
+    const items = Array.isArray(businessAssignments) ? businessAssignments : [];
+    return items
+      .filter((item: any) => item?.itemType === "assigned_shift")
+      .map((item: any) => {
+        const startTime = item?.shiftTemplate?.startTime;
+        const endTime = item?.shiftTemplate?.endTime;
+        const shiftTemplateName = item?.shiftTemplate?.name || "Shift";
+        const roleName =
+          item?.employment?.roleName ||
+          item?.employment?.role?.name ||
+          "Team Member";
+        const displayName =
+          item?.employment?.name ||
+          item?.employment?.email ||
+          "Employee";
+
+        return {
+          id: item?.id,
+          name: displayName,
+          role: roleName,
+          avatar:
+            item?.employment?.avatar?.startsWith?.("http")
+              ? item.employment.avatar
+              : "https://cdn.textstudio.com/output/studio/template/preview/stamped/g/4/c/7/z7a7c4g.webp",
+          shiftTemplateName,
+          shiftTime: `${to12Hour(startTime)} - ${to12Hour(endTime)}`,
+          location: item?.business?.address?.address || "-",
+          status: item?.status || "upcoming",
+        };
+      });
+  }, [businessAssignments]);
+
+  const shiftTemplateNames = useMemo(() => {
+    const unique = new Set<string>();
+    shifts.forEach((item: any) => {
+      if (item?.shiftTemplateName) unique.add(item.shiftTemplateName);
+    });
+    return Array.from(unique);
+  }, [shifts]);
+
+  useEffect(() => {
+    if (selectedShift === "all") return;
+    if (!shiftTemplateNames.includes(selectedShift)) {
+      setSelectedShift("all");
+    }
+  }, [selectedShift, shiftTemplateNames]);
+
+  const filteredShifts = useMemo(() => {
+    if (selectedShift === "all") return shifts;
+    return shifts.filter((item: any) => item.shiftTemplateName === selectedShift);
+  }, [selectedShift, shifts]);
+
+  const headerTitle = useMemo(() => {
+    if (selectedShift === "all") {
+      return `All Shifts (${filteredShifts.length})`;
+    }
+    return `${selectedShift} (${filteredShifts.length})`;
+  }, [filteredShifts.length, selectedShift]);
+
+  const headerTimeRange = useMemo(() => {
+    if (filteredShifts.length === 0) return "--";
+    return filteredShifts[0]?.shiftTime || "--";
+  }, [filteredShifts]);
 
   const checkAndNavigate = (route: RelativePathString) => {
     if (selectedBusinesses.length === 0) {
@@ -255,50 +303,42 @@ const BusinessScheduleScreen = () => {
           {/* shift selection */}
           <View className="flex-row items-center gap-1">
             <TouchableOpacity
-              onPress={() => setSelectedShift("morning")}
+              onPress={() => setSelectedShift("all")}
               className="px-2.5 py-1"
             >
               <Text
-                className={`text-sm ${selectedShift === "morning"
+                className={`text-sm ${selectedShift === "all"
                   ? "text-primary font-proximanova-semibold"
                   : "text-secondary"
                   }`}
               >
-                Morning Shift
+                All
               </Text>
             </TouchableOpacity>
 
-            <Text className="text-secondary">|</Text>
+            {shiftTemplateNames.length > 0 ? <Text className="text-secondary">|</Text> : null}
 
-            <TouchableOpacity
-              onPress={() => setSelectedShift("afternoon")}
-              className="px-2.5 py-1"
-            >
-              <Text
-                className={`text-sm ${selectedShift === "afternoon"
-                  ? "text-primary font-proximanova-semibold"
-                  : "text-secondary"
-                  }`}
-              >
-                Afternoon Shift
-              </Text>
-            </TouchableOpacity>
+            {shiftTemplateNames.map((name, index) => (
+              <React.Fragment key={name}>
+                <TouchableOpacity
+                  onPress={() => setSelectedShift(name)}
+                  className="px-2.5 py-1"
+                >
+                  <Text
+                    className={`text-sm ${selectedShift === name
+                      ? "text-primary font-proximanova-semibold"
+                      : "text-secondary"
+                      }`}
+                  >
+                    {name}
+                  </Text>
+                </TouchableOpacity>
 
-            <Text className="text-secondary">|</Text>
-
-            <TouchableOpacity
-              onPress={() => setSelectedShift("evening")}
-              className="px-2.5 py-1"
-            >
-              <Text
-                className={`text-sm ${selectedShift === "evening"
-                  ? "text-primary font-proximanova-semibold"
-                  : "text-secondary"
-                  }`}
-              >
-                Evening Shift
-              </Text>
-            </TouchableOpacity>
+                {index !== shiftTemplateNames.length - 1 ? (
+                  <Text className="text-secondary">|</Text>
+                ) : null}
+              </React.Fragment>
+            ))}
           </View>
         </View>
 
@@ -367,16 +407,24 @@ const BusinessScheduleScreen = () => {
       >
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-lg font-proximanova-semibold text-primary">
-            Morning Shifts (15)
+            {headerTitle}
           </Text>
           <Text className="text-sm font-proximanova-regular text-secondary">
-            10:00AM to 5:00PM
+            {headerTimeRange}
           </Text>
         </View>
 
-        {shifts.map((shift) => (
-          <ShiftCard key={shift.id} shift={shift} />
-        ))}
+        {businessAssignmentsLoading ? (
+          <View className="py-8 items-center">
+            <ActivityIndicator size="small" color="#4FB2F3" />
+          </View>
+        ) : filteredShifts.length > 0 ? (
+          filteredShifts.map((shift) => <ShiftCard key={shift.id} shift={shift} />)
+        ) : (
+          <Text className="text-sm font-proximanova-regular text-secondary">
+            No shifts found.
+          </Text>
+        )}
       </ScrollView>
 
       {/* modal */}

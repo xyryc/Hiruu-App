@@ -8,10 +8,15 @@ type ShiftStoreState = {
   homeShifts: any[];
   homeShiftsLoading: boolean;
   homeShiftsError: string | null;
+  businessAssignments: any[];
+  businessAssignmentsLoading: boolean;
+  businessAssignmentsError: string | null;
   fetchMyShifts: (date?: string) => Promise<any[]>;
   fetchHomeShifts: (businessIds?: string[]) => Promise<any[]>;
+  fetchBusinessAssignments: (businessId: string) => Promise<any[]>;
   clearMyShiftsError: () => void;
   clearHomeShiftsError: () => void;
+  clearBusinessAssignmentsError: () => void;
 };
 
 export const useShiftStore = create<ShiftStoreState>((set) => ({
@@ -21,6 +26,9 @@ export const useShiftStore = create<ShiftStoreState>((set) => ({
   homeShifts: [],
   homeShiftsLoading: false,
   homeShiftsError: null,
+  businessAssignments: [],
+  businessAssignmentsLoading: false,
+  businessAssignmentsError: null,
 
   fetchMyShifts: async (date) => {
     try {
@@ -120,4 +128,49 @@ export const useShiftStore = create<ShiftStoreState>((set) => ({
   },
 
   clearHomeShiftsError: () => set({ homeShiftsError: null }),
+
+  fetchBusinessAssignments: async (businessId) => {
+    try {
+      if (!businessId) {
+        set({
+          businessAssignments: [],
+          businessAssignmentsLoading: false,
+          businessAssignmentsError: null,
+        });
+        return [];
+      }
+
+      set({
+        businessAssignmentsLoading: true,
+        businessAssignmentsError: null,
+      });
+
+      const response = await axiosInstance.get(`/shift-assignment/${businessId}`);
+      const result = response?.data;
+
+      if (!result?.success) {
+        throw new Error(result?.message || "Failed to load assignments");
+      }
+
+      const assignments = Array.isArray(result?.data) ? result.data : [];
+      set({
+        businessAssignments: assignments,
+        businessAssignmentsLoading: false,
+      });
+      return assignments;
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to load assignments";
+      set({
+        businessAssignments: [],
+        businessAssignmentsLoading: false,
+        businessAssignmentsError: message,
+      });
+      throw error;
+    }
+  },
+
+  clearBusinessAssignmentsError: () => set({ businessAssignmentsError: null }),
 }));

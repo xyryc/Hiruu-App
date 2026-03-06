@@ -52,16 +52,16 @@ const ShiftCard = ({ shift }) => {
             Shift Time:
           </Text>
           <Text className="text-sm font-proximanova-regular text-primary">
-            6:00 AM - 2:00 PM
+            {shift.shiftTime}
           </Text>
         </View>
 
         <View className="flex-row justify-between">
           <Text className="text-sm font-proximanova-regular text-secondary">
-            Shift Time:
+            Location:
           </Text>
           <Text className="text-sm font-proximanova-regular text-primary">
-            6:00 AM - 2:00 PM
+            {shift.location}
           </Text>
         </View>
       </View>
