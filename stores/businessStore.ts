@@ -108,6 +108,18 @@ const appendAddressToFormData = (formData: FormData, address: any) => {
   }
 };
 
+const appendSocialToFormData = (formData: FormData, social: any) => {
+  if (!social || typeof social !== "object") return;
+
+  const keys = ["facebook", "linkedin", "whatsapp", "twitter", "telegram", "instagram"];
+  keys.forEach((key) => {
+    const value = social[key];
+    if (typeof value === "string") {
+      formData.append(`social[${key}]`, value);
+    }
+  });
+};
+
 const normalizeAddressPayload = (address: any) => {
   if (!address || typeof address !== "object") return undefined;
   if (typeof address.address !== "string" || !address.address.trim()) {
@@ -695,6 +707,7 @@ export const useBusinessStore = create<BusinessState>()(
         if (payload.name) formData.append("name", payload.name);
         if (payload.description) formData.append("description", payload.description);
         appendAddressToFormData(formData, payload.address);
+        appendSocialToFormData(formData, payload.social);
         if (typeof payload.isRecruiting === "boolean") {
           formData.append("isRecruiting", String(payload.isRecruiting));
         }
