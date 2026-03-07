@@ -29,6 +29,7 @@ type ShiftStoreState = {
       employmentId?: string;
       date?: string;
       shiftTemplateId?: string;
+      append?: boolean;
     }
   ) => Promise<any[]>;
   clearMyShiftsError: () => void;
@@ -181,12 +182,23 @@ export const useShiftStore = create<ShiftStoreState>((set) => ({
 
       const assignments = Array.isArray(result?.data) ? result.data : [];
       const pagination = result?.pagination || null;
+      const shouldAppend =
+        Boolean(params?.append) || (typeof params?.page === "number" && params.page > 1);
+      const previous = shouldAppend ? (Array.isArray(get().businessAssignments) ? get().businessAssignments : []) : [];
+      const merged = shouldAppend
+        ? [
+          ...previous,
+          ...assignments.filter(
+            (item: any) => !previous.some((prev: any) => prev?.id === item?.id)
+          ),
+        ]
+        : assignments;
       set({
-        businessAssignments: assignments,
+        businessAssignments: merged,
         businessAssignmentsLoading: false,
         businessAssignmentsPagination: pagination,
       });
-      return assignments;
+      return merged;
     } catch (error: any) {
       const message =
         error?.response?.data?.message ||

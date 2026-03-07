@@ -12,6 +12,8 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
   StatusBar,
   Text,
   TouchableOpacity,
@@ -42,6 +44,7 @@ const BusinessScheduleScreen = () => {
   const [isCalendarModalVisible, setCalendarModalVisible] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<number | null>(null);
   const [selectedShiftTemplateId, setSelectedShiftTemplateId] = useState("all");
   const [selectedFilter, setSelectedFilter] = useState("all");
@@ -82,17 +85,18 @@ const BusinessScheduleScreen = () => {
     const businessId = selectedBusinesses?.[0];
     if (!businessId) return;
 
+    setCurrentPage(1);
     fetchBusinessAssignments(businessId, {
-      page: currentPage,
+      page: 1,
       limit: pageSize,
       date: selectedCalendarDate,
       shiftTemplateId:
         selectedShiftTemplateId !== "all" ? selectedShiftTemplateId : undefined,
+      append: false,
     }).catch((error: any) => {
       toast.error(error?.response?.data?.message || error?.message || "Failed to load shifts");
     });
   }, [
-    currentPage,
     fetchBusinessAssignments,
     selectedBusinesses,
     selectedCalendarDate,
@@ -229,10 +233,6 @@ const BusinessScheduleScreen = () => {
     if (!exists) setSelectedShiftTemplateId("all");
   }, [selectedShiftTemplateId, shiftTemplateOptions]);
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedBusinesses, selectedCalendarDate, selectedShiftTemplateId]);
-
   const shiftFilteredShifts = useMemo(() => {
     if (selectedShiftTemplateId === "all") return shifts;
     return shifts.filter((item: any) => item.shiftTemplateId === selectedShiftTemplateId);
@@ -299,6 +299,40 @@ const BusinessScheduleScreen = () => {
       year: "numeric",
     });
   }, [selectedCalendarDate]);
+
+  const handleLoadMore = async () => {
+    const businessId = selectedBusinesses?.[0];
+    if (!businessId) return;
+    if (isFetchingMore || businessAssignmentsLoading) return;
+    if (!businessAssignmentsPagination?.hasNext) return;
+
+    const nextPage = (businessAssignmentsPagination?.page || currentPage) + 1;
+
+    try {
+      setIsFetchingMore(true);
+      await fetchBusinessAssignments(businessId, {
+        page: nextPage,
+        limit: pageSize,
+        date: selectedCalendarDate,
+        shiftTemplateId:
+          selectedShiftTemplateId !== "all" ? selectedShiftTemplateId : undefined,
+        append: true,
+      });
+      setCurrentPage(nextPage);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error?.message || "Failed to load more");
+    } finally {
+      setIsFetchingMore(false);
+    }
+  };
+
+  const handleListScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const threshold = 80;
+    if (layoutMeasurement.height + contentOffset.y >= contentSize.height - threshold) {
+      handleLoadMore();
+    }
+  };
 
   const checkAndNavigate = (route: RelativePathString) => {
     if (selectedBusinesses.length === 0) {
@@ -530,6 +564,8 @@ const BusinessScheduleScreen = () => {
         className="flex-1 px-5"
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
+        onScroll={handleListScroll}
+        scrollEventThrottle={100}
       >
         <View className="flex-row items-center justify-between mb-4">
           <Text className="text-lg font-proximanova-semibold text-primary">
@@ -551,45 +587,11 @@ const BusinessScheduleScreen = () => {
             No shifts found.
           </Text>
         )}
-
-        <View className="flex-row items-center justify-between mt-4">
-          <TouchableOpacity
-            onPress={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-            disabled={!businessAssignmentsPagination?.hasPrev}
-            className={`px-4 py-2 rounded-full border ${businessAssignmentsPagination?.hasPrev
-              ? "border-[#4FB2F3]"
-              : "border-[#EEEEEE]"
-              }`}
-          >
-            <Text
-              className={`${businessAssignmentsPagination?.hasPrev ? "text-[#4FB2F3]" : "text-secondary"
-                }`}
-            >
-              Prev
-            </Text>
-          </TouchableOpacity>
-
-          <Text className="text-sm text-secondary">
-            Page {businessAssignmentsPagination?.page || 1} /{" "}
-            {businessAssignmentsPagination?.totalPages || 1}
-          </Text>
-
-          <TouchableOpacity
-            onPress={() => setCurrentPage((prev) => prev + 1)}
-            disabled={!businessAssignmentsPagination?.hasNext}
-            className={`px-4 py-2 rounded-full border ${businessAssignmentsPagination?.hasNext
-              ? "border-[#4FB2F3]"
-              : "border-[#EEEEEE]"
-              }`}
-          >
-            <Text
-              className={`${businessAssignmentsPagination?.hasNext ? "text-[#4FB2F3]" : "text-secondary"
-                }`}
-            >
-              Next
-            </Text>
-          </TouchableOpacity>
-        </View>
+        {isFetchingMore ? (
+          <View className="py-4 items-center">
+            <ActivityIndicator size="small" color="#4FB2F3" />
+          </View>
+        ) : null}
       </ScrollView>
 
       {/* modal */}
