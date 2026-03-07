@@ -2,7 +2,9 @@ import { Ionicons, MaterialCommunityIcons, Octicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
+import { getCountdownLabel } from "@/utils/date";
 import { getCountdownLabel } from "@/utils/date";
 import HolidayCard from "../ui/cards/HolidayCard";
 import LeaveCard from "../ui/cards/LeaveCard";
@@ -11,14 +13,16 @@ import RegularShiftCard from "../ui/cards/RegularShiftCard";
 // Countdown Component
 const Countdown = ({ shift, countdown }) =>
   countdown && (
+const Countdown = ({ shift, countdown }) =>
+  countdown && (
     <View className="px-4">
       <Text className="text-sm font-proximanova-regular text-primary">
         {shift.type === "ongoing" ? "Shift ends in: " : "Shift starts in: "}
         <Text
-          className={`font-proximanova-bold ${
-            shift.type === "ongoing" ? "text-orange-600" : "text-blue-600"
-          }`}
+          className={`font-proximanova-bold ${shift.type === "ongoing" ? "text-orange-600" : "text-blue-600"
+            }`}
         >
+          {countdown}
           {countdown}
         </Text>
       </Text>
@@ -136,11 +140,13 @@ const ShiftItem = ({ shift, index, shiftsLength }) => {
           {shift.type === "ongoing" && (
             <View className="py-2">
               <Countdown shift={shift} countdown={liveCountdown} />
+              <Countdown shift={shift} countdown={liveCountdown} />
             </View>
           )}
 
           {shift.type === "upcoming" && (
             <View className="py-2">
+              <Countdown shift={shift} countdown={liveCountdown} />
               <Countdown shift={shift} countdown={liveCountdown} />
             </View>
           )}
@@ -203,15 +209,14 @@ const ShiftItem = ({ shift, index, shiftsLength }) => {
 
         <View
           className={`px-4 pb-4 pt-12 rounded-2xl dark:bg-dark-surface border
-                ${
-                  (shift.type === "leave" &&
-                    shift.status === "pending" &&
-                    "border-[#F1C400]") ||
-                  (shift.type === "leave" &&
-                    shift.status === "approved" &&
-                    "border-[#3EBF5A]") ||
-                  "border-[#EEEEEE]"
-                }
+                ${(shift.type === "leave" &&
+              shift.status === "pending" &&
+              "border-[#F1C400]") ||
+            (shift.type === "leave" &&
+              shift.status === "approved" &&
+              "border-[#3EBF5A]") ||
+            "border-[#EEEEEE]"
+            }
         `}
         >
           {shift.type === "holiday" ? (

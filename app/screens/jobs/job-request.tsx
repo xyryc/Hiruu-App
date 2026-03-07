@@ -1,11 +1,11 @@
 import {
+  ActivityIndicator,
+  FlatList,
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  TextInput,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { Image } from "expo-image";
 import ScreenHeader from "@/components/header/ScreenHeader";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,13 +13,176 @@ import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import SearchBar from "@/components/ui/inputs/SearchBar";
 import JobRequestCard from "@/components/ui/cards/JobRequestCard";
+import { useFocusEffect } from "@react-navigation/native";
+import { useJobStore } from "@/stores/jobStore";
+import { walletService } from "@/services/walletService";
+import { toast } from "sonner-native";
 
 const JobRequest = () => {
   const router = useRouter();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const getMyApplications = useJobStore((s) => s.getMyApplications);
   const tabs = ["send request", "received"];
   const [isActive, setIsActive] = useState("send request");
+  const [search, setSearch] = useState("");
+  const [items, setItems] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [walletCoins, setWalletCoins] = useState<number>(0);
+  const limit = 10;
+
+  const loadApplications = useCallback(
+    async (targetPage = 1, append = false) => {
+      try {
+        if (append) {
+          setIsLoadingMore(true);
+        } else {
+          setIsLoading(true);
+        }
+
+        const result = await getMyApplications({
+          page: targetPage,
+          limit,
+        });
+
+        const fetched = Array.isArray(result?.data) ? result.data : [];
+        const nextPage = Number(result?.pagination?.page || targetPage);
+        const nextTotalPages = Number(result?.pagination?.totalPages || 1);
+
+        setItems((prev) => {
+          if (!append) return fetched;
+          const merged = [...prev, ...fetched];
+          return Array.from(new Map(merged.map((item: any) => [item?.id, item])).values());
+        });
+        setPage(nextPage);
+        setTotalPages(nextTotalPages);
+      } catch (error: any) {
+        if (!append) setItems([]);
+        toast.error(error?.message || "Failed to fetch job requests");
+      } finally {
+        setIsLoading(false);
+        setIsLoadingMore(false);
+      }
+    },
+    [getMyApplications]
+  );
+
+  const loadWallet = useCallback(async () => {
+    try {
+      const result = await walletService.getWallet();
+      const coins = Number(result?.data?.coins ?? result?.data?.wallet?.coins ?? 0);
+      setWalletCoins(Number.isFinite(coins) ? coins : 0);
+    } catch {
+      // Keep previous value if wallet fetch fails.
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadApplications(1, false);
+      loadWallet();
+    }, [loadApplications, loadWallet])
+  );
+
+  const sourceFiltered = useMemo(() => {
+    return items.filter((item: any) =>
+      isActive === "send request"
+        ? item?.source === "user_applied"
+        : item?.source === "business_invited"
+    );
+  }, [isActive, items]);
+
+  const sentCount = useMemo(
+    () => items.filter((item: any) => item?.source === "user_applied").length,
+    [items]
+  );
+
+  const receivedCount = useMemo(
+    () => items.filter((item: any) => item?.source === "business_invited").length,
+    [items]
+  );
+
+  const visibleItems = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return sourceFiltered;
+
+    return sourceFiltered.filter((item: any) => {
+      const recruitment = item?.recruitment || {};
+      const text = [
+        recruitment?.title,
+        recruitment?.description,
+        recruitment?.business?.name,
+      ]
+        .filter((v) => typeof v === "string")
+        .join(" ")
+        .toLowerCase();
+      return text.includes(q);
+    });
+  }, [search, sourceFiltered]);
+
+  const canLoadMore = page < totalPages;
+
+  const handleLoadMore = async () => {
+    if (!canLoadMore || isLoadingMore || isLoading) return;
+    await loadApplications(page + 1, true);
+  };
+
+  const goToPrevPage = async () => {
+    if (page <= 1 || isLoading || isLoadingMore) return;
+    await loadApplications(page - 1, false);
+  };
+
+  const goToNextPage = async () => {
+    if (page >= totalPages || isLoading || isLoadingMore) return;
+    await loadApplications(page + 1, false);
+  };
+
+  const mapToJobCard = (item: any) => {
+    const recruitment = item?.recruitment || {};
+    const business = recruitment?.business || {};
+    const roleName = recruitment?.role?.role?.name || "Role";
+
+    return {
+      id: recruitment?.id || item?.recruitmentId || item?.id,
+      businessId: business?.id,
+      roleId: recruitment?.roleId,
+      name: roleName,
+      description: recruitment?.description,
+      isFeatured: Boolean(recruitment?.isFeatured),
+      isActive: recruitment?.isActive,
+      shareCount:
+        typeof recruitment?.shareCount === "number" ? recruitment.shareCount : 0,
+      salaryMin:
+        typeof recruitment?.salaryMin === "number" ? recruitment.salaryMin : 0,
+      salaryMax:
+        typeof recruitment?.salaryMax === "number" ? recruitment.salaryMax : 0,
+      salaryType: recruitment?.salaryType || "monthly",
+      shiftType: recruitment?.shiftType || "",
+      jobType: recruitment?.jobType || "",
+      business: {
+        id: business?.id || "",
+        name: business?.name || "-",
+        logo: business?.logo,
+        // Keep address.address contract for shared cards/modals
+        address: {
+          address:
+            business?.address?.address ||
+            business?.address?.city ||
+            business?.address?.area ||
+            "Unknown Location",
+        },
+      },
+      _count: {
+        recruitmentApplications:
+          typeof recruitment?._count?.recruitmentApplications === "number"
+            ? recruitment._count.recruitmentApplications
+            : 0,
+      },
+    };
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#E5F4FD] dark:bg-dark-background">
@@ -41,7 +204,7 @@ const JobRequest = () => {
               contentFit="contain"
             />
             <View className="px-4 py-2 bg-white -ml-3 -z-10 rounded-r-[40px]">
-              <Text className="text-sm font-proximanova-semibold">540</Text>
+              <Text className="text-sm font-proximanova-semibold">{walletCoins}</Text>
             </View>
           </View>
         }
@@ -62,34 +225,106 @@ const JobRequest = () => {
 
             <View className="w-6 h-6 bg-[#4FB2F3] rounded-full items-center justify-center">
               <Text className="font-proximanova-semibold text-sm text-white">
-                3
+                {tab === "send request" ? sentCount : receivedCount}
               </Text>
             </View>
           </TouchableOpacity>
         ))}
       </View>
 
-      <ScrollView
+      <FlatList
+        data={visibleItems}
+        keyExtractor={(item) => String(item?.id)}
+        renderItem={({ item }) => (
+          <View className="px-5">
+            <JobRequestCard
+              className="bg-white border border-[#EEEEEE] mb-4"
+              status={isActive as "send request" | "received"}
+              job={mapToJobCard(item)}
+            />
+          </View>
+        )}
+        ListHeaderComponent={
+          <View className="px-5 pt-5 pb-4 bg-white">
+            <SearchBar className="w-full" value={search} onSearch={setSearch} />
+          </View>
+        }
+        ListEmptyComponent={
+          isLoading ? (
+            <View className="py-10 items-center">
+              <ActivityIndicator size="large" color={isDark ? "#fff" : "#111"} />
+            </View>
+          ) : (
+            <View className="px-5 pb-5 items-center">
+              <Text className="text-sm font-proximanova-regular text-secondary">
+                No job requests found.
+              </Text>
+            </View>
+          )
+        }
+        ListFooterComponent={
+          <View className="pb-5">
+            {isLoadingMore ? (
+              <View className="py-4 items-center">
+                <ActivityIndicator size="small" color={isDark ? "#fff" : "#111"} />
+              </View>
+            ) : null}
+
+            {totalPages > 1 ? (
+              <View className="px-5 pt-2 flex-row items-center justify-between">
+                <TouchableOpacity
+                  onPress={goToPrevPage}
+                  disabled={page <= 1 || isLoading || isLoadingMore}
+                  className={`px-4 py-2 rounded-lg border ${
+                    page <= 1 || isLoading || isLoadingMore
+                      ? "border-[#E5E7EB] bg-[#F9FAFB]"
+                      : "border-[#D1D5DB] bg-white"
+                  }`}
+                >
+                  <Text
+                    className={`text-sm font-proximanova-semibold ${
+                      page <= 1 || isLoading || isLoadingMore
+                        ? "text-[#9CA3AF]"
+                        : "text-primary"
+                    }`}
+                  >
+                    Previous
+                  </Text>
+                </TouchableOpacity>
+
+                <Text className="text-sm font-proximanova-semibold text-secondary">
+                  Page {page} / {totalPages}
+                </Text>
+
+                <TouchableOpacity
+                  onPress={goToNextPage}
+                  disabled={page >= totalPages || isLoading || isLoadingMore}
+                  className={`px-4 py-2 rounded-lg border ${
+                    page >= totalPages || isLoading || isLoadingMore
+                      ? "border-[#E5E7EB] bg-[#F9FAFB]"
+                      : "border-[#D1D5DB] bg-white"
+                  }`}
+                >
+                  <Text
+                    className={`text-sm font-proximanova-semibold ${
+                      page >= totalPages || isLoading || isLoadingMore
+                        ? "text-[#9CA3AF]"
+                        : "text-primary"
+                    }`}
+                  >
+                    Next
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : null}
+          </View>
+        }
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.3}
         showsVerticalScrollIndicator={false}
-        className="bg-white px-5"
-      >
-        <SearchBar className="mt-5 mb-4" />
-
-        <JobRequestCard
-          className="bg-white border border-[#EEEEEE] mb-4"
-          status={isActive}
-        />
-
-        <JobRequestCard
-          className="bg-white border border-[#EEEEEE] mb-4"
-          status={isActive}
-        />
-
-        <JobRequestCard
-          className="bg-white border border-[#EEEEEE] mb-4"
-          status={isActive}
-        />
-      </ScrollView>
+        className="bg-white"
+        keyboardShouldPersistTaps="handled"
+      />
     </SafeAreaView>
   );
 };

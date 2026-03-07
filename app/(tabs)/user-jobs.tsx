@@ -119,8 +119,21 @@ const UserJobs = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* search box */}
-        <View className="flex-row items-center gap-1.5 mr-12 mt-3.5 px-5">
-          <SearchBar />
+        <View className="flex-row items-center gap-1.5 mt-3.5 px-5">
+          <TouchableOpacity
+            className="flex-1"
+            activeOpacity={0.9}
+            onPress={() =>
+              router.push({
+                pathname: "/screens/jobs/user/all-jobs",
+                params: { reset: "1" },
+              })
+            }
+          >
+            <View pointerEvents="none">
+              <SearchBar className="w-full" />
+            </View>
+          </TouchableOpacity>
 
           <TouchableOpacity
             onPress={() => router.push("/screens/jobs/user/filter")}
@@ -130,54 +143,50 @@ const UserJobs = () => {
         </View>
 
         {/* featured job */}
-        <View className="mt-7">
-          <View className="flex-row justify-between items-center mb-4 px-5">
-            <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
-              Featured Job
-            </Text>
-
-            <TouchableOpacity
-              onPress={() => router.push("/screens/jobs/user/all-jobs")}
-            >
-              <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
-                See All
+        {(isLoadingFeatured || featuredJobs.length > 0) && (
+          <View className="mt-7">
+            <View className="flex-row justify-between items-center mb-4 px-5">
+              <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary">
+                Featured Job
               </Text>
-            </TouchableOpacity>
-          </View>
 
-          {isLoadingFeatured ? (
-            <View className="py-10 px-5 items-center justify-center">
-              <ActivityIndicator />
+              <TouchableOpacity
+                onPress={() => router.push("/screens/jobs/user/all-jobs")}
+              >
+                <Text className="text-sm font-proximanova-semibold text-[#4FB2F3]">
+                  See All
+                </Text>
+              </TouchableOpacity>
             </View>
-          ) : featuredJobs.length === 0 ? (
-            <View className="px-5">
-              <Text className="text-sm font-proximanova-regular text-secondary pr-5">
-                No featured jobs found.
-              </Text>
-            </View>
-          ) : featuredJobs.length === 1 ? (
-            <View className="px-5">
-              <JobCard
-                job={featuredJobs[0]}
-                className="bg-white border border-[#EEEEEE] mb-4"
-              />
-            </View>
-          ) : (
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              className="pl-5"
-            >
-              {featuredJobs.slice(0, 10).map((item: any) => (
+
+            {isLoadingFeatured ? (
+              <View className="py-10 px-5 items-center justify-center">
+                <ActivityIndicator />
+              </View>
+            ) : featuredJobs.length === 1 ? (
+              <View className="px-5">
                 <JobCard
-                  key={item?.id}
-                  job={item}
-                  className="mr-2.5 w-[360px]"
+                  job={featuredJobs[0]}
+                  className="bg-white border border-[#EEEEEE] mb-4"
                 />
-              ))}
-            </ScrollView>
-          )}
-        </View>
+              </View>
+            ) : (
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                className="pl-5"
+              >
+                {featuredJobs.slice(0, 10).map((item: any) => (
+                  <JobCard
+                    key={item?.id}
+                    job={item}
+                    className="mr-2.5 w-[360px]"
+                  />
+                ))}
+              </ScrollView>
+            )}
+          </View>
+        )}
 
         <View className="mt-7 px-5">
           <View className="flex-row justify-between items-center mb-4">

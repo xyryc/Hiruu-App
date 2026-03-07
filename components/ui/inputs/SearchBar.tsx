@@ -3,17 +3,22 @@ import { Feather } from "@expo/vector-icons";
 import { useState } from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
 
-export default function SearchBar({ className, onSearch }: SearchBarProps) {
+export default function SearchBar({ className, onSearch, value }: SearchBarProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const inputValue = typeof value === "string" ? value : searchQuery;
 
   const handleSearchChange = (text: string) => {
-    setSearchQuery(text);
+    if (typeof value !== "string") {
+      setSearchQuery(text);
+    }
     onSearch?.(text); // Optional chaining
   };
 
   const handleClear = () => {
-    setSearchQuery("");
+    if (typeof value !== "string") {
+      setSearchQuery("");
+    }
     onSearch?.(""); // Optional chaining
   };
 
@@ -29,7 +34,7 @@ export default function SearchBar({ className, onSearch }: SearchBarProps) {
         className="flex-1 py-3"
         placeholder="Search here..."
         placeholderTextColor="#7A7A7A"
-        value={searchQuery}
+        value={inputValue}
         onChangeText={handleSearchChange}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
@@ -37,7 +42,7 @@ export default function SearchBar({ className, onSearch }: SearchBarProps) {
         keyboardAppearance="dark"
       />
 
-      {searchQuery.length > 0 && (
+      {inputValue.length > 0 && (
         <TouchableOpacity onPress={handleClear}>
           <Feather name="x" size={20} color="#6b7280" />
         </TouchableOpacity>

@@ -19,7 +19,20 @@ const JobRequestCard = ({ className, status, job }: JobRequestCardProps) => {
   return (
     <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>
       <TouchableOpacity
-        onPress={() => router.push("/screens/jobs/user/profile")}
+        onPress={() => {
+          const businessId = job?.businessId || job?.business?.id;
+          const recruitmentId = job?.id;
+
+          if (businessId && recruitmentId) {
+            router.push({
+              pathname: "/screens/jobs/user/profile",
+              params: { businessId, recruitmentId },
+            });
+            return;
+          }
+
+          router.push("/screens/jobs/user/profile");
+        }}
         className="flex-row gap-2.5"
       >
         <Image
@@ -83,12 +96,12 @@ const JobRequestCard = ({ className, status, job }: JobRequestCardProps) => {
             style={{ width: 1, height: 18 }}
           />
 
-          <View className="flex-row gap-1 items-center">
-            <SimpleLineIcons name="share-alt" size={14} color="#7A7A7A" />
-            <Text className="text-sm font-proximanova-regular text-secondary">
-              209
-            </Text>
-          </View>
+            <View className="flex-row gap-1 items-center">
+              <SimpleLineIcons name="share-alt" size={14} color="#7A7A7A" />
+              <Text className="text-sm font-proximanova-regular text-secondary">
+                {job?.shareCount ?? 0}
+              </Text>
+            </View>
 
           <Image
             source={require("@/assets/images/line-small.svg")}

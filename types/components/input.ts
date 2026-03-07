@@ -3,6 +3,7 @@ import { GestureResponderEvent } from "react-native";
 export interface SearchBarProps {
   className?: string;
   onSearch?: (query: string) => void;
+  value?: string;
 }
 
 export interface AttachmentUploadProps {
