@@ -1,70 +1,119 @@
 import ScreenHeader from "@/components/header/ScreenHeader";
+import { useSettingsStore } from "@/stores/settingsStore";
 import { AntDesign, Fontisto } from "@expo/vector-icons";
+import { useFocusEffect } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import React, { useCallback } from "react";
+import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 const HelpSupport = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const insets = useSafeAreaInsets();
+  const getFaq = useSettingsStore((s) => s.getFaq);
+  const faqItems = useSettingsStore((s) => s.faqItems);
+  const isLoadingFaq = useSettingsStore((s) => s.isLoadingFaq);
+
+  useFocusEffect(
+    useCallback(() => {
+      const loadFaq = async () => {
+        try {
+          const data = await getFaq();
+          console.log("support faq data:", data);
+        } catch (error) {
+          console.log("support faq error:", error);
+        }
+      };
+
+      loadFaq();
+    }, [getFaq])
+  );
 
   return (
     <SafeAreaView
       className="flex-1 bg-[#FFFFFF] dark:bg-dark-background"
       edges={["left", "right", "bottom"]}
     >
-      <View className="bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl pt-10 px-5">
-        <ScreenHeader
-          className="my-4"
-          onPressBack={() => router.back()}
-          title="Help and Support"
-          titleClass="text-primary dark:text-dark-primary"
-          iconColor={isDark ? "#fff" : "#111"}
-        />
-      </View>
+      <ScreenHeader
+        className="capitalize bg-[#E5F4FD] dark:bg-dark-border rounded-b-2xl px-5"
+        style={{ paddingTop: insets.top + 10, paddingBottom: 20 }}
+        onPressBack={() => router.back()}
+        title="Help and Support"
+        titleClass="text-primary dark:text-dark-primary"
+        iconColor={isDark ? "#fff" : "#111"}
+      />
 
-      <ScrollView showsVerticalScrollIndicator={false} className="mx-5 flex-1">
-        <Text className=" font-proximanova-regular text-sm  mt-8">
-          Track your shifts, manage your team, and grow your work journey — all
-          in one place with Hiruu. Whether you’re just getting started or
-          already a pro, we’re here to support you every step of the way.
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="mx-5 flex-1"
+        contentContainerStyle={{ paddingBottom: 32 }}
+      >
+        <Text
+          className={`mt-5 font-proximanova-regular text-xs leading-5 ${isDark ? "text-dark-primary" : "text-primary"
+            }`}
+        >
+          Track your shifts, manage your team, and grow your work journey, all in
+          one place with Hiruu. Whether you are getting started or already a pro,
+          help is available here.
         </Text>
-        <Text className=" font-proximanova-regular text-sm  mt-1">
+
+        <Text
+          className={`mt-2 font-proximanova-regular text-xs ${isDark ? "text-dark-primary" : "text-primary"
+            }`}
+        >
           Have a question?
         </Text>
-        <Text className="font-proximanova-semibold text-xl mt-8">FAQs</Text>
-        <Text className="font-proximanova-regular text-sm mt-2.5">
+
+        <Text
+          className={`mt-5 font-proximanova-semibold text-base ${isDark ? "text-dark-primary" : "text-primary"
+            }`}
+        >
+          FAQs
+        </Text>
+
+        <Text
+          className={`mt-2 font-proximanova-regular text-xs ${isDark ? "text-dark-primary" : "text-primary"
+            }`}
+        >
           Quick solutions for common issues.
         </Text>
-        <Text className="font-proximanova-semibold mt-2.5 text-sm">
-          1. Torem ipsum dolor sit amet, consecteture.
-        </Text>
-        <Text className=" font-proximanova-regular text-sm  mt-1.5">
-          Torem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu
-          turpis molestie, dictum est a, mattis tellus.
-        </Text>
 
-        <Text className="font-proximanova-semibold text-sm mt-12">
-          2. Torem ipsum dolor sit amet, consecteture.
-        </Text>
-        <Text className=" font-proximanova-regular text-sm  mt-1.5">
-          Torem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu
-          turpis molestie, dictum est a, amet, consectetur mattis tellus.
-        </Text>
-
-        <Text className="font-proximanova-semibold text-sm mt-12">
-          2. Torem ipsum dolor sit amet, consecteture.
-        </Text>
-        <Text className=" font-proximanova-regular text-sm  mt-1.5">
-          Torem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu
-          turpis molestie, dictum est a, amet, consectetur mattis tellus.
-        </Text>
+        {isLoadingFaq ? (
+          <View className="py-8 items-center">
+            <ActivityIndicator color={isDark ? "#fff" : "#111"} />
+          </View>
+        ) : faqItems.length > 0 ? (
+          <View className="pt-3">
+            {faqItems.map((item, index) => (
+              <View key={item.id} className={index === 0 ? "" : "mt-8"}>
+                <Text
+                  className={`font-proximanova-semibold text-sm ${isDark ? "text-dark-primary" : "text-primary"
+                    }`}
+                >
+                  {item.order}. {item.question}
+                </Text>
+                <Text
+                  className={`mt-1.5 font-proximanova-regular text-xs leading-5 ${isDark ? "text-dark-primary" : "text-primary"
+                    }`}
+                >
+                  {item.answer}
+                </Text>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <Text
+            className={`mt-5 font-proximanova-regular text-xs ${isDark ? "text-dark-primary" : "text-primary"
+              }`}
+          >
+            No FAQ found.
+          </Text>
+        )}
       </ScrollView>
 
-      {/* bottom  buttons */}
-      <View className="flex-row justify-between gap-3 my-10 mx-5">
+      <View className="flex-row justify-between gap-3 my-8 mx-5">
         <TouchableOpacity
           onPress={() => router.push("/screens/profile/settings/help-chat")}
           className="rounded-full border border-[#11111133] py-2.5 px-5 flex-1 flex-row gap-1.5 items-center justify-center"
