@@ -1,6 +1,7 @@
 import { translateApiMessage } from "@/utils/apiMessages";
+import { buildRecruitmentQuery } from "@/utils/recruitmentQuery";
 import axiosInstance from "@/utils/axios";
-import type { RecruitmentShiftType } from "@/types";
+import type { RecruitmentFilterQuery, RecruitmentShiftType } from "@/types";
 import { AxiosError } from "axios";
 import { create } from "zustand";
 
@@ -23,13 +24,6 @@ type CreateRecruitmentPayload = {
   isFeatured?: boolean;
 };
 
-type PublicRecruitmentQuery = {
-  page?: number;
-  limit?: number;
-  isFeatured?: boolean;
-  search?: string;
-};
-
 type FeaturedRecruitmentQuery = {
   page?: number;
   limit?: number;
@@ -45,11 +39,67 @@ type RecruitmentListResponse = {
   };
 };
 
+type RecruitmentApplicationFilterQuery = {
+  page?: number;
+  limit?: number;
+  status?: string;
+  recruitmentId?: string;
+};
+
+type RecruitmentApplicationItem = {
+  id: string;
+  recruitmentId?: string;
+  userId?: string;
+  status?: string;
+  source?: "user_applied" | "business_invited" | string;
+  invitedById?: string | null;
+  respondedAt?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  recruitment?: any;
+};
+
+type RecruitmentApplicationListResponse = {
+  data: RecruitmentApplicationItem[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNext?: boolean;
+    hasPrev?: boolean;
+  };
+};
+
+type AllJobsFilters = Pick<
+  RecruitmentFilterQuery,
+  | "shiftType"
+  | "jobTypes"
+  | "maxSalary"
+  | "location"
+  | "maxDistanceKm"
+  | "sortBy"
+  | "search"
+  | "page"
+  | "limit"
+>;
+
 interface JobState {
   isLoading: boolean;
   error: Error | null;
+  allJobsFilters: AllJobsFilters;
+  setAllJobsFilters: (filters: Partial<AllJobsFilters>) => void;
+  clearAllJobsFilters: () => void;
+  applyToRecruitment: (recruitmentId: string) => Promise<any>;
+  getMyApplications: (
+    query?: RecruitmentApplicationFilterQuery
+  ) => Promise<RecruitmentApplicationListResponse>;
   getPublicRecruitments: (
-    query?: PublicRecruitmentQuery
+    query?: RecruitmentFilterQuery
+  ) => Promise<RecruitmentListResponse>;
+  getBusinessRecruitments: (
+    businessId: string,
+    query?: RecruitmentFilterQuery
   ) => Promise<RecruitmentListResponse>;
   getRecruitmentById: (businessId: string, id: string) => Promise<any>;
   shareRecruitment: (businessId: string, id: string) => Promise<any>;
@@ -67,22 +117,57 @@ interface JobState {
 export const useJobStore = create<JobState>((set) => ({
   isLoading: false,
   error: null,
+  allJobsFilters: {},
+  setAllJobsFilters: (filters) =>
+    set((state) => ({
+      allJobsFilters: {
+        ...state.allJobsFilters,
+        ...filters,
+      },
+    })),
+  clearAllJobsFilters: () => set({ allJobsFilters: { page: 1, limit: 10 } }),
 
-  getPublicRecruitments: async (query = {}) => {
+  applyToRecruitment: async (recruitmentId) => {
+    try {
+      const response = await axiosInstance.post("/recruitment-application", {
+        recruitmentId,
+      });
+      const result = response.data;
+
+      const hasError =
+        result?.success === false ||
+        (typeof result?.statusCode === "number" && result.statusCode >= 400);
+      if (hasError) {
+        throw new Error(translateApiMessage(result?.message || "UNKNOWN_ERROR"));
+      }
+
+      return result?.data || result;
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const message =
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to apply for this job";
+      throw new Error(message);
+    }
+  },
+
+  getMyApplications: async (query = {}) => {
     try {
       const page = query.page ?? 1;
       const limit = query.limit ?? 10;
-      const isFeatured = query.isFeatured ?? true;
-      const search = query.search?.trim() || undefined;
 
-      const response = await axiosInstance.get("/recruitment/public", {
-        params: {
-          page,
-          limit,
-          isFeatured,
-          ...(search ? { search } : {}),
-        },
-      });
+      const response = await axiosInstance.get(
+        "/recruitment-application/my-applications",
+        {
+          params: {
+            page,
+            limit,
+            ...(query.status ? { status: query.status } : {}),
+            ...(query.recruitmentId ? { recruitmentId: query.recruitmentId } : {}),
+          },
+        }
+      );
       const result = response.data;
 
       const hasError =
@@ -99,6 +184,43 @@ export const useJobStore = create<JobState>((set) => ({
           limit: Number(result?.pagination?.limit || limit),
           total: Number(result?.pagination?.total || 0),
           totalPages: Number(result?.pagination?.totalPages || 1),
+          hasNext: Boolean(result?.pagination?.hasNext),
+          hasPrev: Boolean(result?.pagination?.hasPrev),
+        },
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const message =
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to fetch applications";
+      throw new Error(message);
+    }
+  },
+
+  getPublicRecruitments: async (query = {}) => {
+    try {
+      const params = buildRecruitmentQuery(query);
+
+      const response = await axiosInstance.get("/recruitment/public", {
+        params,
+      });
+      const result = response.data;
+
+      const hasError =
+        result?.success === false ||
+        (typeof result?.statusCode === "number" && result.statusCode >= 400);
+      if (hasError) {
+        throw new Error(translateApiMessage(result?.message || "UNKNOWN_ERROR"));
+      }
+
+      return {
+        data: Array.isArray(result?.data) ? result.data : [],
+        pagination: {
+          page: Number(result?.pagination?.page || params.page || 1),
+          limit: Number(result?.pagination?.limit || params.limit || 10),
+          total: Number(result?.pagination?.total || 0),
+          totalPages: Number(result?.pagination?.totalPages || 1),
         },
       };
     } catch (error) {
@@ -107,6 +229,40 @@ export const useJobStore = create<JobState>((set) => ({
         translateApiMessage(axiosError.response?.data?.message) ||
         axiosError.message ||
         "Failed to fetch jobs";
+      throw new Error(message);
+    }
+  },
+
+  getBusinessRecruitments: async (businessId, query = {}) => {
+    try {
+      const params = buildRecruitmentQuery(query);
+      const response = await axiosInstance.get(`/recruitment/${businessId}`, {
+        params,
+      });
+      const result = response.data;
+
+      const hasError =
+        result?.success === false ||
+        (typeof result?.statusCode === "number" && result.statusCode >= 400);
+      if (hasError) {
+        throw new Error(translateApiMessage(result?.message || "UNKNOWN_ERROR"));
+      }
+
+      return {
+        data: Array.isArray(result?.data) ? result.data : [],
+        pagination: {
+          page: Number(result?.pagination?.page || params.page || 1),
+          limit: Number(result?.pagination?.limit || params.limit || 10),
+          total: Number(result?.pagination?.total || 0),
+          totalPages: Number(result?.pagination?.totalPages || 1),
+        },
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<any>;
+      const message =
+        translateApiMessage(axiosError.response?.data?.message) ||
+        axiosError.message ||
+        "Failed to fetch business recruitments";
       throw new Error(message);
     }
   },

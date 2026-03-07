@@ -1,3 +1,6 @@
+import type { JobCardProps } from "@/types";
+import { useAuthStore } from "@/stores/authStore";
+import { useJobStore } from "@/stores/jobStore";
 import { Entypo, Fontisto, SimpleLineIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Image } from "expo-image";
@@ -15,13 +18,87 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import SimpleStatusBadge from "../badges/SimpleStatusBadge";
 import PrimaryButton from "../buttons/PrimaryButton";
 import SmallButton from "../buttons/SmallButton";
+import { translateApiMessage } from "@/utils/apiMessages";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-const JobApplyModal = ({ visible, onClose }: any) => {
+type JobApplyModalProps = {
+  visible: boolean;
+  onClose: () => void;
+  job?: JobCardProps["job"];
+};
+
+const resolveMediaUrl = (value?: string | null) => {
+  if (!value || typeof value !== "string") return null;
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  const base = (process.env.EXPO_PUBLIC_API_URL || "").replace(/\/$/, "");
+  if (!base) return value;
+  return `${base}${value.startsWith("/") ? value : `/${value}`}`;
+};
+
+const JobApplyModal = ({ visible, onClose, job }: JobApplyModalProps) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const [applyError, setApplyError] = useState<string | null>(null);
   const slideAnim = useRef(new Animated.Value(SCREEN_WIDTH)).current;
   const router = useRouter();
+  const applyToRecruitment = useJobStore((s) => s.applyToRecruitment);
+  const user = useAuthStore((s) => s.user as any);
+
+  const recruitmentId = job?.id;
+  const businessId = job?.business?.id || job?.businessId;
+  const companyName = job?.business?.name || "Business";
+  const roleName = job?.role?.role?.name || job?.name || "Role";
+  const locationLabel = job?.business?.address?.address || "Unknown Location";
+  const companyLogo =
+    resolveMediaUrl(job?.business?.logo) || require("@/assets/images/placeholder.png");
+  const hasSalary =
+    typeof job?.salaryMin === "number" && typeof job?.salaryMax === "number";
+  const salarySuffix = job?.salaryType === "monthly" ? "/mo" : "/hr";
+  const salaryLabel = hasSalary
+    ? `${job.salaryMin}-${job.salaryMax}$${salarySuffix}`
+    : "-";
+  const shiftLabel =
+    job?.shiftStartTime && job?.shiftEndTime
+      ? `${job.shiftStartTime} - ${job.shiftEndTime}`
+      : job?.shiftType || "-";
+  const distanceLabel =
+    typeof job?.distanceKm === "number" ? `${job.distanceKm}km away` : null;
+
+  const isAlreadyEmployed = React.useMemo(() => {
+    const employments = Array.isArray(user?.employments) ? user.employments : [];
+    if (employments.length === 0) return false;
+
+    const isActiveEmployment = (employment: any) => {
+      const status = String(employment?.status || "").toLowerCase();
+      return !status || status === "active" || status === "accepted" || status === "approved";
+    };
+
+    if (businessId) {
+      return employments.some(
+        (employment: any) =>
+          isActiveEmployment(employment) &&
+          (employment?.businessId === businessId ||
+            employment?.business?.id === businessId)
+      );
+    }
+
+    return employments.some((employment: any) => isActiveEmployment(employment));
+  }, [businessId, user?.employments]);
+
+  useEffect(() => {
+    if (!visible) {
+      setShowDetails(false);
+      setApplyError(null);
+      return;
+    }
+
+    if (isAlreadyEmployed) {
+      setApplyError(translateApiMessage("already_employed"));
+    } else {
+      setApplyError(null);
+    }
+  }, [isAlreadyEmployed, visible]);
 
   useEffect(() => {
     if (showDetails) {
@@ -34,7 +111,7 @@ const JobApplyModal = ({ visible, onClose }: any) => {
     } else {
       slideAnim.setValue(SCREEN_WIDTH);
     }
-  }, [showDetails]);
+  }, [showDetails, slideAnim]);
 
   const handleDone = () => {
     if (showDetails) {
@@ -46,13 +123,34 @@ const JobApplyModal = ({ visible, onClose }: any) => {
         setShowDetails(false);
         onClose();
       });
-    } else {
-      onClose();
+      return;
     }
+
+    onClose();
   };
 
-  const handleApplyNow = () => {
-    setShowDetails(true);
+  const handleApplyNow = async () => {
+    if (!recruitmentId || isApplying || isAlreadyEmployed) {
+      if (!recruitmentId) {
+        setApplyError("Recruitment id is missing");
+      }
+      if (isAlreadyEmployed) {
+        setApplyError(translateApiMessage("already_employed"));
+      }
+      return;
+    }
+
+    try {
+      setApplyError(null);
+      setIsApplying(true);
+      await applyToRecruitment(String(recruitmentId));
+      setShowDetails(true);
+    } catch (error: any) {
+      const message = error?.message || "Failed to apply";
+      setApplyError(message);
+    } finally {
+      setIsApplying(false);
+    }
   };
 
   const handleBackToJobBoard = () => {
@@ -65,12 +163,11 @@ const JobApplyModal = ({ visible, onClose }: any) => {
     <Modal
       visible={visible}
       animationType="fade"
-      transparent={true}
+      transparent
       onRequestClose={handleDone}
     >
       <BlurView intensity={80} tint="dark" className="flex-1 justify-end">
         <View className="bg-white rounded-t-3xl">
-          {/* Close Button */}
           <View className="absolute -top-24 inset-x-0 items-center pt-4 pb-2">
             <TouchableOpacity onPress={handleDone}>
               <View className="bg-[#000] rounded-full p-2.5">
@@ -79,11 +176,9 @@ const JobApplyModal = ({ visible, onClose }: any) => {
             </TouchableOpacity>
           </View>
 
-          {/* Modal Content */}
           <SafeAreaView edges={["bottom"]} className="px-5 py-7 items-center">
-            {/* image */}
             <Image
-              source="https://images-platform.99static.com//gkoGE5-VZ1k4SXxg0mrUj7O0V38=/250x0:1750x1500/fit-in/500x500/99designs-contests-attachments/102/102585/attachment_102585463"
+              source={companyLogo}
               style={{
                 width: 100,
                 height: 100,
@@ -92,12 +187,10 @@ const JobApplyModal = ({ visible, onClose }: any) => {
               contentFit="cover"
             />
 
-            {/* name */}
             <Text className="text-xl font-proximanova-semibold text-primary dark:text-dark-primary mt-2.5">
-              Farout Beach Club
+              {companyName}
             </Text>
 
-            {/* location */}
             <View className="flex-row items-center justify-center mt-2.5 gap-7">
               <View className="flex-row items-center gap-2.5 border-r-hairline border-[#7A7A7A] pr-7">
                 <SimpleLineIcons
@@ -106,7 +199,7 @@ const JobApplyModal = ({ visible, onClose }: any) => {
                   color="#7A7A7A"
                 />
                 <Text className="font-proximanova-regular text-sm text-secondary dark:text-dark-secondary">
-                  New York, North Bergen
+                  {locationLabel}
                 </Text>
               </View>
 
@@ -115,32 +208,33 @@ const JobApplyModal = ({ visible, onClose }: any) => {
               </Text>
             </View>
 
-            {/* badges */}
             <View className="flex-row flex-wrap justify-center gap-2.5 mt-2.5">
-              <SimpleStatusBadge title="Hiring: Bartender" bgColor="#F5F5F5" />
-              <SimpleStatusBadge title="Salary: 5-10$/hr" bgColor="#F5F5F5" />
-              <SimpleStatusBadge
-                title="Shift: 10:00 AM – 11:00 PM"
-                bgColor="#F5F5F5"
-              />
-              <SimpleStatusBadge title="4km away" bgColor="#F5F5F5" />
+              <SimpleStatusBadge title={`Hiring: ${roleName}`} bgColor="#F5F5F5" />
+              <SimpleStatusBadge title={`Salary: ${salaryLabel}`} bgColor="#F5F5F5" />
+              <SimpleStatusBadge title={`Shift: ${shiftLabel}`} bgColor="#F5F5F5" />
+              {distanceLabel ? (
+                <SimpleStatusBadge title={distanceLabel} bgColor="#F5F5F5" />
+              ) : null}
             </View>
 
-            {/* note */}
             <Text className="text-sm font-proximanova-regular text-secondary dark:text-dark-secondary text-center mt-2.5">
               To apply for this job, please share Details so the business can
               contact you.
             </Text>
+            {applyError ? (
+              <Text className="text-sm font-proximanova-semibold text-[#F34F4F] text-center mt-2">
+                {applyError}
+              </Text>
+            ) : null}
 
-            {/* button */}
             <PrimaryButton
-              title="Apply Now"
+              title={isAlreadyEmployed ? "Already Employed" : isApplying ? "Applying..." : "Apply Now"}
               className="mt-7"
               onPress={handleApplyNow}
+              disabled={isApplying || isAlreadyEmployed}
             />
           </SafeAreaView>
 
-          {/* Details Screen - Slides from Right */}
           <Animated.View
             style={{
               position: "absolute",
@@ -163,7 +257,6 @@ const JobApplyModal = ({ visible, onClose }: any) => {
                 style={{
                   width: 156,
                   height: 120,
-
                   alignSelf: "center",
                 }}
                 contentFit="cover"
@@ -173,10 +266,9 @@ const JobApplyModal = ({ visible, onClose }: any) => {
                 Application Sent! successfully
               </Text>
 
-              {/* note */}
               <Text className="w-4/6 mx-auto text-sm font-proximanova-regular text-secondary dark:text-dark-secondary text-center mt-2.5">
-                You applied to Farout Beach Club. They may contact you soon.
-                Good luck!
+                You applied to {companyName}. They may contact you soon. Good
+                luck!
               </Text>
 
               <SmallButton

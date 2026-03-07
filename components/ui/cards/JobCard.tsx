@@ -16,16 +16,10 @@ const getAddressLabel = (value: unknown): string => {
   if (typeof value === "string") return value;
   if (!value || typeof value !== "object") return "-";
 
-  const addr = value as {
-    address?: unknown;
-    state?: unknown;
-    country?: unknown;
-  };
-  const parts = [addr.address, addr.state, addr.country]
-    .filter((item): item is string => typeof item === "string" && item.trim().length > 0)
-    .map((item) => item.trim());
-
-  return parts.length > 0 ? parts.join(", ") : "-";
+  const addr = value as { address?: unknown };
+  return typeof addr.address === "string" && addr.address.trim().length > 0
+    ? addr.address.trim()
+    : "-";
 };
 
 const MarqueeText = ({
@@ -97,8 +91,6 @@ const MarqueeText = ({
 const JobCard = ({ className, compact = false, job }: JobCardProps) => {
   const router = useRouter();
   const [showModal, setShowModal] = useState(false);
-  const isPlainSurface =
-    className?.includes("bg-white") || className?.includes("bg-[#FFFFFF]");
 
   const salarySuffix = useMemo(
     () => (job?.salaryType === "monthly" ? "/mo" : "/hr"),
@@ -108,6 +100,7 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
   const hasSalary =
     typeof job?.salaryMin === "number" && typeof job?.salaryMax === "number";
   const isFeatured = Boolean(job?.isFeatured);
+  const isPlainSurface = !isFeatured;
   const isPremiumBusiness = Boolean(job?.business?.isPremium);
   const metaBadgeLabel = isFeatured ? "Featured" : "Standard";
   const shareCount =
@@ -142,7 +135,10 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
   const addressLabel = getAddressLabel(job?.business?.address);
 
   return (
-    <View className={`${className} bg-[#E5F4FD] p-4 rounded-xl`}>
+    <View
+      className={`${className} p-4 rounded-xl`}
+      style={{ backgroundColor: isFeatured ? "#E5F4FD" : "#FFFFFF" }}
+    >
       <TouchableOpacity
         onPress={() => {
           const businessId = job?.businessId || job?.business?.id;
@@ -309,7 +305,11 @@ const JobCard = ({ className, compact = false, job }: JobCardProps) => {
         </>
       )}
 
-      <JobApplyModal visible={showModal} onClose={() => setShowModal(false)} />
+      <JobApplyModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        job={job}
+      />
     </View>
   );
 };

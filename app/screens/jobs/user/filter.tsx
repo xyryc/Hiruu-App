@@ -2,9 +2,11 @@ import ScreenHeader from "@/components/header/ScreenHeader";
 import SimpleStatusBadge from "@/components/ui/badges/SimpleStatusBadge";
 import PrimaryButton from "@/components/ui/buttons/PrimaryButton";
 import RoleSlotsInput from "@/components/ui/inputs/RoleSlotsInput";
+import { useJobStore } from "@/stores/jobStore";
+import type { RecruitmentSortBy } from "@/types";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Slider from "@react-native-community/slider";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
   ScrollView,
@@ -17,36 +19,54 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const FindJobFilters = () => {
-  const [verifiedOnly, setVerifiedOnly] = useState(true);
-  const [postCode, setPostCode] = useState("885522");
-  const [distance, setDistance] = useState(25);
-  const [shiftType, setShiftType] = useState("onsite");
-  const [salaryRange, setSalaryRange] = useState(5000);
-  const [experiences, setExperiences] = useState({
-    cashier: 5,
-    receptionist: 5,
-  });
+  const params = useLocalSearchParams<{
+    from?: string;
+    page?: string;
+    limit?: string;
+    shiftType?: string;
+    jobTypes?: string;
+    maxSalary?: string;
+    location?: string;
+    maxDistanceKm?: string;
+    sortBy?: RecruitmentSortBy;
+    search?: string;
+  }>();
   const router = useRouter();
+  const setAllJobsFilters = useJobStore((s) => s.setAllJobsFilters);
+  const currentLimit = Number(params.limit ?? 10);
+  const initialMaxSalary = Number(params.maxSalary ?? 10000);
+  const initialDistance = Number(params.maxDistanceKm ?? 25);
 
-  const updateExperience = (role: string, increment: boolean) => {
-    setExperiences({
-      ...experiences,
-      [role]: increment
-        ? experiences[role] + 1
-        : Math.max(0, experiences[role] - 1),
-    });
+  const [postCode, setPostCode] = useState(params.location ?? "");
+  const [distance, setDistance] = useState(Number.isFinite(initialDistance) ? initialDistance : 25);
+  const [salaryRange, setSalaryRange] = useState(
+    Number.isFinite(initialMaxSalary) ? initialMaxSalary : 10000
+  );
+  const [jobCategory, setJobCategory] = useState(params.search ?? "");
+
+  const toLabelCase = (value: string) => {
+    return value
+      .split("_")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
   };
 
-  //   sorty by
-  const sortOptions = [
-    "Newest",
-    "Oldest",
-    "Most Popular",
-    "Highest Rated",
-    "Price: Low to High",
-    "Price: High to Low",
-  ];
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const sortLabelToValue: Record<string, RecruitmentSortBy> = {
+    Newest: "newest",
+    "Highest Rated": "highest_rating",
+    "Most Experience": "most_experience",
+    "Best Fit": "best_fit",
+  };
+  const sortValueToLabel: Record<RecruitmentSortBy, string> = {
+    newest: "Newest",
+    highest_rating: "Highest Rated",
+    most_experience: "Most Experience",
+    best_fit: "Best Fit",
+  };
+  const sortOptions = Object.keys(sortLabelToValue);
+  const [selectedOption, setSelectedOption] = useState<string | null>(
+    params.sortBy ? sortValueToLabel[params.sortBy] : null
+  );
 
   const handleOptionPress = (option: string) => {
     setSelectedOption((prev) => (prev === option ? null : option));
@@ -55,10 +75,9 @@ const FindJobFilters = () => {
     return selectedOption === option;
   };
 
-  // shift type
   const shiftOptions = ["Onsite", "Remote", "Hybrid"];
   const [selectedShiftOption, setSelectedShiftOption] = useState<string | null>(
-    null
+    params.shiftType ? toLabelCase(params.shiftType) : null
   );
 
   const handleShiftOptionPress = (option: string) => {
@@ -69,7 +88,24 @@ const FindJobFilters = () => {
     return selectedShiftOption === option;
   };
 
-  //   job type
+  const badgeToValue: Record<string, string> = {
+    "Full Time": "full_time",
+    "Part Time": "part_time",
+    Hourly: "hourly",
+    Contract: "contract",
+    Freelance: "freelance",
+    Internship: "internship",
+  };
+
+  const initialSelectedBadges = (params.jobTypes || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .map((value) =>
+      Object.entries(badgeToValue).find(([, mapped]) => mapped === value)?.[0]
+    )
+    .filter((item): item is string => Boolean(item));
+
   const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
   const badgeOptions = [
     "Full Time",
@@ -78,10 +114,15 @@ const FindJobFilters = () => {
     "Contract",
     "Freelance",
     "Internship",
-    "On-site",
-    "Remote",
-    "Hybrid",
   ];
+
+  React.useEffect(() => {
+    if (initialSelectedBadges.length > 0) {
+      setSelectedBadges(initialSelectedBadges);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleBadgePress = (badgeTitle: string) => {
     setSelectedBadges((prev) => {
       if (prev.includes(badgeTitle)) {
@@ -95,6 +136,36 @@ const FindJobFilters = () => {
   };
   const isBadgeSelected = (badgeTitle: string) => {
     return selectedBadges.includes(badgeTitle);
+  };
+
+  const handleApplyFilters = () => {
+    const sortBy = selectedOption ? sortLabelToValue[selectedOption] : undefined;
+    const shiftType = selectedShiftOption?.toLowerCase();
+    const jobTypes = selectedBadges
+      .map((badge) => badgeToValue[badge])
+      .filter(Boolean)
+      .join(",");
+    const nextSearch = jobCategory.trim();
+    const nextFilters = {
+      page: 1,
+      limit: Number.isFinite(currentLimit) ? currentLimit : 10,
+      shiftType: shiftType || undefined,
+      jobTypes: jobTypes || undefined,
+      maxSalary: Math.round(salaryRange) < 10000 ? Math.round(salaryRange) : undefined,
+      location: postCode.trim() || undefined,
+      maxDistanceKm: postCode.trim() ? Math.round(distance) : undefined,
+      sortBy: sortBy || undefined,
+      search: nextSearch || undefined,
+    };
+
+    setAllJobsFilters(nextFilters);
+
+    if (params.from === "all-jobs") {
+      router.back();
+      return;
+    }
+
+    router.navigate("/screens/jobs/user/all-jobs");
   };
 
   return (
@@ -112,28 +183,22 @@ const FindJobFilters = () => {
       />
 
       <ScrollView className="flex-1 px-5" showsVerticalScrollIndicator={false}>
-        {/* Verified Candidates Only */}
-        <View className="mt-7 flex-row justify-between items-center py-5 border border-[#EEEEEE] p-4 rounded-xl">
-          <Text className="text-[#4FB2F3] font-proximanova-semibold">
-            Verified Candidates only
+        {/* Search */}
+        <View className="pt-7">
+          <Text className="text-base font-proximanova-semibold text-primary mb-4">
+            Search
           </Text>
-          <TouchableOpacity
-            onPress={() => setVerifiedOnly(!verifiedOnly)}
-            className={`w-12 h-7 rounded-full p-1 ${
-              verifiedOnly ? "bg-[#34C759]" : "bg-gray-300"
-            }`}
-            style={{ justifyContent: "center" }}
-          >
-            <View
-              className={`w-5 h-5 rounded-full bg-white ${
-                verifiedOnly ? "self-end" : "self-start"
-              }`}
-            />
-          </TouchableOpacity>
+
+          <TextInput
+            value={jobCategory}
+            onChangeText={setJobCategory}
+            placeholder="Search jobs..."
+            className="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-proximanova-regular"
+          />
         </View>
 
         {/* Sort by */}
-        <View className="mt-5">
+        <View className="mt-7">
           <Text className="text-base font-proximanova-semibold text-primary mb-4">
             Sort by
           </Text>
@@ -192,18 +257,6 @@ const FindJobFilters = () => {
           <Text className="text-sm font-proximanova-regular text-secondary mt-1">
             5km From Post Code
           </Text>
-        </View>
-
-        {/* Job Category */}
-        <View className="pt-7">
-          <Text className="text-base font-proximanova-semibold text-primary mb-4">
-            Job Category
-          </Text>
-
-          <TextInput
-            placeholder="Bartender"
-            className="bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm font-proximanova-regular"
-          />
         </View>
 
         {/* Shift Type */}
@@ -294,7 +347,7 @@ const FindJobFilters = () => {
 
       {/* button */}
       <View className="mx-5 pt-5">
-        <PrimaryButton title="Apply Filters" onPress={() => router.back()} />
+        <PrimaryButton title="Apply Filters" onPress={handleApplyFilters} />
       </View>
     </SafeAreaView>
   );

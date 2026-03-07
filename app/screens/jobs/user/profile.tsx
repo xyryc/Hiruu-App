@@ -462,7 +462,11 @@ const JobProfile = () => {
         </ScrollView>
       </View>
 
-      <JobApplyModal visible={showModal} onClose={() => setShowModal(false)} />
+      <JobApplyModal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        job={job}
+      />
     </SafeAreaView>
   );
 };
