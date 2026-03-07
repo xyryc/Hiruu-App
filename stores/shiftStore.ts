@@ -11,9 +11,26 @@ type ShiftStoreState = {
   businessAssignments: any[];
   businessAssignmentsLoading: boolean;
   businessAssignmentsError: string | null;
+  businessAssignmentsPagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrev: boolean;
+  } | null;
   fetchMyShifts: (date?: string) => Promise<any[]>;
   fetchHomeShifts: (businessIds?: string[]) => Promise<any[]>;
-  fetchBusinessAssignments: (businessId: string) => Promise<any[]>;
+  fetchBusinessAssignments: (
+    businessId: string,
+    params?: {
+      page?: number;
+      limit?: number;
+      employmentId?: string;
+      date?: string;
+      shiftTemplateId?: string;
+    }
+  ) => Promise<any[]>;
   clearMyShiftsError: () => void;
   clearHomeShiftsError: () => void;
   clearBusinessAssignmentsError: () => void;
@@ -29,6 +46,7 @@ export const useShiftStore = create<ShiftStoreState>((set) => ({
   businessAssignments: [],
   businessAssignmentsLoading: false,
   businessAssignmentsError: null,
+  businessAssignmentsPagination: null,
 
   fetchMyShifts: async (date) => {
     try {
@@ -129,13 +147,14 @@ export const useShiftStore = create<ShiftStoreState>((set) => ({
 
   clearHomeShiftsError: () => set({ homeShiftsError: null }),
 
-  fetchBusinessAssignments: async (businessId) => {
+  fetchBusinessAssignments: async (businessId, params) => {
     try {
       if (!businessId) {
         set({
           businessAssignments: [],
           businessAssignmentsLoading: false,
           businessAssignmentsError: null,
+          businessAssignmentsPagination: null,
         });
         return [];
       }
@@ -145,7 +164,15 @@ export const useShiftStore = create<ShiftStoreState>((set) => ({
         businessAssignmentsError: null,
       });
 
-      const response = await axiosInstance.get(`/shift-assignment/${businessId}`);
+      const response = await axiosInstance.get(`/shift-assignment/${businessId}`, {
+        params: {
+          page: params?.page,
+          limit: params?.limit,
+          employmentId: params?.employmentId,
+          date: params?.date,
+          shiftTemplateId: params?.shiftTemplateId,
+        },
+      });
       const result = response?.data;
 
       if (!result?.success) {
@@ -153,9 +180,11 @@ export const useShiftStore = create<ShiftStoreState>((set) => ({
       }
 
       const assignments = Array.isArray(result?.data) ? result.data : [];
+      const pagination = result?.pagination || null;
       set({
         businessAssignments: assignments,
         businessAssignmentsLoading: false,
+        businessAssignmentsPagination: pagination,
       });
       return assignments;
     } catch (error: any) {
@@ -167,6 +196,7 @@ export const useShiftStore = create<ShiftStoreState>((set) => ({
         businessAssignments: [],
         businessAssignmentsLoading: false,
         businessAssignmentsError: message,
+        businessAssignmentsPagination: null,
       });
       throw error;
     }

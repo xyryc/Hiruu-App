@@ -1,6 +1,7 @@
 import ShiftCard from "@/components/ui/cards/ShiftCard";
 import AnimatedFABMenu from "@/components/ui/dropdown/AnimatedFabMenu";
 import BusinessSelectionTrigger from "@/components/ui/dropdown/BusinessSelectionTrigger";
+import UserCalendarScheduleModal from "@/components/ui/modals/UserCalendarScheduleModal";
 import BusinessSelectionModal from "@/components/ui/modals/BusinessSelectionModal";
 import { useBusinessStore } from "@/stores/businessStore";
 import { useShiftStore } from "@/stores/shiftStore";
@@ -27,12 +28,27 @@ const resolveMediaUrl = (value?: string | null) => {
   return `${base}${value.startsWith("/") ? value : `/${value}`}`;
 };
 
+const toYmd = (value: Date) => {
+  const year = value.getFullYear();
+  const month = `${value.getMonth() + 1}`.padStart(2, "0");
+  const day = `${value.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 const BusinessScheduleScreen = () => {
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState(() =>
+    toYmd(new Date())
+  );
+  const [isCalendarModalVisible, setCalendarModalVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
   const [selectedTimeSlot, setSelectedTimeSlot] = useState<number | null>(null);
-  const [selectedShift, setSelectedShift] = useState("all");
+  const [selectedShiftTemplateId, setSelectedShiftTemplateId] = useState("all");
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [roleOptions, setRoleOptions] = useState<{ id: string; label: string }[]>([]);
-  const [shiftTemplateOptions, setShiftTemplateOptions] = useState<string[]>([]);
+  const [shiftTemplateOptions, setShiftTemplateOptions] = useState<
+    { id: string; name: string }[]
+  >([]);
 
   const [showModal, setShowModal] = useState(false);
   const {
@@ -46,6 +62,7 @@ const BusinessScheduleScreen = () => {
   const {
     businessAssignments,
     businessAssignmentsLoading,
+    businessAssignmentsPagination,
     fetchBusinessAssignments,
   } = useShiftStore();
 
@@ -65,10 +82,22 @@ const BusinessScheduleScreen = () => {
     const businessId = selectedBusinesses?.[0];
     if (!businessId) return;
 
-    fetchBusinessAssignments(businessId).catch((error: any) => {
+    fetchBusinessAssignments(businessId, {
+      page: currentPage,
+      limit: pageSize,
+      date: selectedCalendarDate,
+      shiftTemplateId:
+        selectedShiftTemplateId !== "all" ? selectedShiftTemplateId : undefined,
+    }).catch((error: any) => {
       toast.error(error?.response?.data?.message || error?.message || "Failed to load shifts");
     });
-  }, [fetchBusinessAssignments, selectedBusinesses]);
+  }, [
+    currentPage,
+    fetchBusinessAssignments,
+    selectedBusinesses,
+    selectedCalendarDate,
+    selectedShiftTemplateId,
+  ]);
 
   useEffect(() => {
     const businessId = selectedBusinesses?.[0];
@@ -97,20 +126,19 @@ const BusinessScheduleScreen = () => {
     const businessId = selectedBusinesses?.[0];
     if (!businessId) {
       setShiftTemplateOptions([]);
-      setSelectedShift("all");
+      setSelectedShiftTemplateId("all");
       return;
     }
 
     getShiftTemplates(businessId)
       .then((data: any[]) => {
-        const names = Array.from(
-          new Set(
-            (Array.isArray(data) ? data : [])
-              .map((item: any) => item?.name || "")
-              .filter((name: string) => Boolean(name))
-          )
-        );
-        setShiftTemplateOptions(names);
+        const templates = (Array.isArray(data) ? data : [])
+          .map((item: any) => ({
+            id: item?.id || "",
+            name: item?.name || "",
+          }))
+          .filter((item: any) => item.id && item.name);
+        setShiftTemplateOptions(templates);
       })
       .catch(() => {
         setShiftTemplateOptions([]);
@@ -168,6 +196,7 @@ const BusinessScheduleScreen = () => {
               ? 0
               : templateHour;
         const shiftTemplateName = item?.shiftTemplate?.name || "Shift";
+        const shiftTemplateId = item?.shiftTemplate?.id || "";
         const roleName =
           item?.employment?.roleName ||
           item?.employment?.role?.name ||
@@ -183,7 +212,9 @@ const BusinessScheduleScreen = () => {
           roleId: item?.employment?.roleId || "",
           role: roleName,
           avatar: resolveMediaUrl(item?.employment?.avatar),
+          shiftDateYmd: isValidStartDate ? toYmd(startsAtDate) : null,
           startHour,
+          shiftTemplateId,
           shiftTemplateName,
           shiftTime: `${to12Hour(startTime)} - ${to12Hour(endTime)}`,
           location: item?.business?.address?.address || "-",
@@ -193,16 +224,19 @@ const BusinessScheduleScreen = () => {
   }, [businessAssignments]);
 
   useEffect(() => {
-    if (selectedShift === "all") return;
-    if (!shiftTemplateOptions.includes(selectedShift)) {
-      setSelectedShift("all");
-    }
-  }, [selectedShift, shiftTemplateOptions]);
+    if (selectedShiftTemplateId === "all") return;
+    const exists = shiftTemplateOptions.some((item) => item.id === selectedShiftTemplateId);
+    if (!exists) setSelectedShiftTemplateId("all");
+  }, [selectedShiftTemplateId, shiftTemplateOptions]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedBusinesses, selectedCalendarDate, selectedShiftTemplateId]);
 
   const shiftFilteredShifts = useMemo(() => {
-    if (selectedShift === "all") return shifts;
-    return shifts.filter((item: any) => item.shiftTemplateName === selectedShift);
-  }, [selectedShift, shifts]);
+    if (selectedShiftTemplateId === "all") return shifts;
+    return shifts.filter((item: any) => item.shiftTemplateId === selectedShiftTemplateId);
+  }, [selectedShiftTemplateId, shifts]);
 
   const timeSlotFilters = useMemo(
     () =>
@@ -242,16 +276,29 @@ const BusinessScheduleScreen = () => {
   }, [selectedFilter, timeFilteredShifts]);
 
   const headerTitle = useMemo(() => {
-    if (selectedShift === "all") {
+    if (selectedShiftTemplateId === "all") {
       return `All Shifts (${visibleShifts.length})`;
     }
-    return `${selectedShift} (${visibleShifts.length})`;
-  }, [selectedShift, visibleShifts.length]);
+    const selectedTemplate = shiftTemplateOptions.find(
+      (item) => item.id === selectedShiftTemplateId
+    );
+    return `${selectedTemplate?.name || "Shift"} (${visibleShifts.length})`;
+  }, [selectedShiftTemplateId, shiftTemplateOptions, visibleShifts.length]);
 
   const headerTimeRange = useMemo(() => {
     if (visibleShifts.length === 0) return "--";
     return visibleShifts[0]?.shiftTime || "--";
   }, [visibleShifts]);
+
+  const headerDateLabel = useMemo(() => {
+    const parsed = new Date(selectedCalendarDate);
+    if (Number.isNaN(parsed.getTime())) return "Select Date";
+    return parsed.toLocaleDateString(undefined, {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  }, [selectedCalendarDate]);
 
   const checkAndNavigate = (route: RelativePathString) => {
     if (selectedBusinesses.length === 0) {
@@ -321,12 +368,15 @@ const BusinessScheduleScreen = () => {
             <Text className="font-proximanova-regular text-primary">
               All Shift
             </Text>
-            <View className="flex-row items-center gap-2">
+            <TouchableOpacity
+              className="flex-row items-center gap-2"
+              onPress={() => setCalendarModalVisible(true)}
+            >
               <Text className="text-xl font-proximanova-bold text-primary">
-                12 June, 2025
+                {headerDateLabel}
               </Text>
               <Ionicons name="chevron-down" size={18} color="black" />
-            </View>
+            </TouchableOpacity>
           </View>
 
           {/* right */}
@@ -374,11 +424,11 @@ const BusinessScheduleScreen = () => {
           {/* shift selection */}
           <View className="flex-row items-center gap-1">
             <TouchableOpacity
-              onPress={() => setSelectedShift("all")}
+              onPress={() => setSelectedShiftTemplateId("all")}
               className="px-2.5 py-1"
             >
               <Text
-                className={`text-sm ${selectedShift === "all"
+                className={`text-sm ${selectedShiftTemplateId === "all"
                   ? "text-primary font-proximanova-semibold"
                   : "text-secondary"
                   }`}
@@ -389,19 +439,19 @@ const BusinessScheduleScreen = () => {
 
             {shiftTemplateOptions.length > 0 ? <Text className="text-secondary">|</Text> : null}
 
-            {shiftTemplateOptions.map((name, index) => (
-              <React.Fragment key={name}>
+            {shiftTemplateOptions.map((template, index) => (
+              <React.Fragment key={template.id}>
                 <TouchableOpacity
-                  onPress={() => setSelectedShift(name)}
+                  onPress={() => setSelectedShiftTemplateId(template.id)}
                   className="px-2.5 py-1"
                 >
                   <Text
-                    className={`text-sm ${selectedShift === name
+                    className={`text-sm ${selectedShiftTemplateId === template.id
                       ? "text-primary font-proximanova-semibold"
                       : "text-secondary"
                       }`}
                   >
-                    {name}
+                    {template.name}
                   </Text>
                 </TouchableOpacity>
 
@@ -501,6 +551,45 @@ const BusinessScheduleScreen = () => {
             No shifts found.
           </Text>
         )}
+
+        <View className="flex-row items-center justify-between mt-4">
+          <TouchableOpacity
+            onPress={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            disabled={!businessAssignmentsPagination?.hasPrev}
+            className={`px-4 py-2 rounded-full border ${businessAssignmentsPagination?.hasPrev
+              ? "border-[#4FB2F3]"
+              : "border-[#EEEEEE]"
+              }`}
+          >
+            <Text
+              className={`${businessAssignmentsPagination?.hasPrev ? "text-[#4FB2F3]" : "text-secondary"
+                }`}
+            >
+              Prev
+            </Text>
+          </TouchableOpacity>
+
+          <Text className="text-sm text-secondary">
+            Page {businessAssignmentsPagination?.page || 1} /{" "}
+            {businessAssignmentsPagination?.totalPages || 1}
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => setCurrentPage((prev) => prev + 1)}
+            disabled={!businessAssignmentsPagination?.hasNext}
+            className={`px-4 py-2 rounded-full border ${businessAssignmentsPagination?.hasNext
+              ? "border-[#4FB2F3]"
+              : "border-[#EEEEEE]"
+              }`}
+          >
+            <Text
+              className={`${businessAssignmentsPagination?.hasNext ? "text-[#4FB2F3]" : "text-secondary"
+                }`}
+            >
+              Next
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {/* modal */}
@@ -516,6 +605,12 @@ const BusinessScheduleScreen = () => {
         }))}
         selectedBusinesses={selectedBusinesses}
         onSelectionChange={setSelectedBusinesses}
+      />
+      <UserCalendarScheduleModal
+        visible={isCalendarModalVisible}
+        onClose={() => setCalendarModalVisible(false)}
+        selectedDate={selectedCalendarDate}
+        onSelectDate={setSelectedCalendarDate}
       />
 
       {/* add icon */}
